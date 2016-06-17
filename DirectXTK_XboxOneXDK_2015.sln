@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "DirectXTK_XboxOneXDK_2015.vcxproj", "{0EE6C863-556C-4815-8BFF-A5A0B25A948F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Durango = Debug|Durango
+		Profile|Durango = Profile|Durango
+		Release|Durango = Release|Durango
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Debug|Durango.ActiveCfg = Debug|Durango
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Debug|Durango.Build.0 = Debug|Durango
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Profile|Durango.ActiveCfg = Profile|Durango
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Profile|Durango.Build.0 = Profile|Durango
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Release|Durango.ActiveCfg = Release|Durango
+		{0EE6C863-556C-4815-8BFF-A5A0B25A948F}.Release|Durango.Build.0 = Release|Durango
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

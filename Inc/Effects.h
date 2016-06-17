@@ -1,0 +1,475 @@
+//--------------------------------------------------------------------------------------
+// File: Effects.h
+//
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// http://go.microsoft.com/fwlink/?LinkId=248929
+//--------------------------------------------------------------------------------------
+
+#pragma once
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+#include <d3d12_x.h>
+#else
+#include <d3d12.h>
+#endif
+
+#include <DirectXMath.h>
+#include <memory>
+#include <unordered_set>
+
+#include "RenderTargetState.h"
+
+namespace DirectX
+{
+    class DescriptorHeap;
+    class ResourceUploadBatch;
+
+    //----------------------------------------------------------------------------------
+    // Abstract interface representing any effect which can be applied onto a D3D device context.
+    class IEffect
+    {
+    public:
+        virtual ~IEffect() { }
+
+        virtual void __cdecl Apply( _In_ ID3D12GraphicsCommandList* deviceContext ) = 0;
+    };
+
+
+    // Abstract interface for effects with world, view, and projection matrices.
+    class IEffectMatrices
+    {
+    public:
+        virtual ~IEffectMatrices() { }
+
+        virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
+        virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
+        virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
+    };
+
+
+    // Abstract interface for effects which support directional lighting.
+    class IEffectLights
+    {
+    public:
+        virtual ~IEffectLights() { }
+
+        virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
+
+        virtual void __cdecl SetLightEnabled(int whichLight, bool value) = 0;
+        virtual void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) = 0;
+        virtual void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) = 0;
+        virtual void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) = 0;
+
+        virtual void __cdecl EnableDefaultLighting() = 0;
+
+        static const int MaxDirectionalLights = 3;
+    };
+
+
+    // Abstract interface for effects which support fog.
+    class IEffectFog
+    {
+    public:
+        virtual ~IEffectFog() { }
+
+        virtual void __cdecl SetFogStart(float value) = 0;
+        virtual void __cdecl SetFogEnd(float value) = 0;
+        virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
+    };
+
+
+    // Abstract interface for effects which support skinning
+    class IEffectSkinning
+    {
+    public:
+        virtual ~IEffectSkinning() { } 
+
+        virtual void __cdecl SetWeightsPerVertex(int value) = 0;
+        virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
+        virtual void __cdecl ResetBoneTransforms() = 0;
+
+        static const int MaxBones = 72;
+    };
+
+    struct EffectPipelineStateDescription
+    {
+        EffectPipelineStateDescription(
+            _In_ const D3D12_INPUT_LAYOUT_DESC* inputLayout,
+            _In_ const D3D12_BLEND_DESC* blend,
+            _In_ const D3D12_DEPTH_STENCIL_DESC* depthStencil,
+            _In_ const D3D12_RASTERIZER_DESC* rasterizer,
+            _In_ const RenderTargetState* renderTarget,
+            _In_opt_ D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+            _In_opt_ D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
+            :
+            inputLayout(inputLayout),
+            blendDesc(blend),
+            depthStencilDesc(depthStencil),
+            rasterizerDesc(rasterizer),
+            renderTargetState(renderTarget),
+            primitiveTopology(primitiveTopology),
+            stripCutValue(stripCutValue)
+        {
+            // constructor
+        }
+
+        const D3D12_INPUT_LAYOUT_DESC* inputLayout;
+        const D3D12_BLEND_DESC* blendDesc;
+        const D3D12_DEPTH_STENCIL_DESC* depthStencilDesc;
+        const D3D12_RASTERIZER_DESC* rasterizerDesc;
+        const RenderTargetState* renderTargetState;
+        const D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology;
+        const D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue;
+    };
+
+    namespace EffectFlags
+    {
+        const int None              = 0x00;
+        const int Fog               = 0x01;
+        const int Lighting          = 0x02;
+        const int PerPixelLighting  = 0x04 | Lighting; // per pixel lighting implies lighting enabled
+        const int VertexColor       = 0x08;
+        const int Texture           = 0x10;
+    }
+
+    //----------------------------------------------------------------------------------
+    // Built-in shader supports optional texture mapping, vertex coloring, directional lighting, and fog.
+    class BasicEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
+    {
+    public:
+        BasicEffect( _In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription );
+        BasicEffect(BasicEffect&& moveFrom);
+        BasicEffect& operator= (BasicEffect&& moveFrom);
+
+        BasicEffect(BasicEffect const&) = delete;
+        BasicEffect& operator= (BasicEffect const&) = delete;
+
+        virtual ~BasicEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
+        void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
+        void __cdecl SetSpecularPower(float value);
+        void __cdecl DisableSpecular();
+        void __cdecl SetAlpha(float value);
+        
+        // Light settings.
+        void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
+
+        void __cdecl SetLightEnabled(int whichLight, bool value) override;
+        void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+
+        void __cdecl EnableDefaultLighting() override;
+
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Texture setting.
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+    // Built-in shader supports per-pixel alpha testing.
+    class AlphaTestEffect : public IEffect, public IEffectMatrices, public IEffectFog
+    {
+    public:
+        AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+                        D3D12_COMPARISON_FUNC alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
+        AlphaTestEffect(AlphaTestEffect&& moveFrom);
+        AlphaTestEffect& operator= (AlphaTestEffect&& moveFrom);
+
+        AlphaTestEffect(AlphaTestEffect const&) = delete;
+        AlphaTestEffect& operator= (AlphaTestEffect const&) = delete;
+
+        virtual ~AlphaTestEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void __cdecl SetAlpha(float value);
+        
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Texture setting.
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+
+        // Alpha test settings.
+        void __cdecl SetReferenceAlpha(int value);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+    // Built-in shader supports two layer multitexturing (eg. for lightmaps or detail textures).
+    class DualTextureEffect : public IEffect, public IEffectMatrices, public IEffectFog
+    {
+    public:
+        DualTextureEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        DualTextureEffect(DualTextureEffect&& moveFrom);
+        DualTextureEffect& operator= (DualTextureEffect&& moveFrom);
+
+        DualTextureEffect(DualTextureEffect const&) = delete;
+        DualTextureEffect& operator= (DualTextureEffect const&) = delete;
+
+        ~DualTextureEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void __cdecl SetAlpha(float value);
+        
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Vertex color setting.
+        //void __cdecl SetVertexColorEnabled(bool value);
+
+        // Texture settings.
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+
+    // Built-in shader supports cubic environment mapping.
+    class EnvironmentMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
+    {
+    public:
+        EnvironmentMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool fresnelEnabled, bool specularEnabled);
+        EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom);
+        EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom);
+
+        EnvironmentMapEffect(EnvironmentMapEffect const&) = delete;
+        EnvironmentMapEffect& operator= (EnvironmentMapEffect const&) = delete;
+
+        virtual ~EnvironmentMapEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
+        void __cdecl SetAlpha(float value);
+        
+        // Light settings.
+        void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
+
+        void __cdecl SetLightEnabled(int whichLight, bool value) override;
+        void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
+
+        void __cdecl EnableDefaultLighting() override;
+
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Texture setting.
+        void __cdecl SetTexture(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value);
+
+        // Environment map settings.
+        void __cdecl SetEnvironmentMap(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value);
+        void __cdecl SetEnvironmentMapAmount(float value);
+        void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
+        void __cdecl SetFresnelFactor(float value);
+        
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+
+        // Unsupported interface methods.
+        void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+    };
+
+
+    // Built-in shader supports skinned animation.
+    class SkinnedEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog, public IEffectSkinning
+    {
+    public:
+        SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        SkinnedEffect(SkinnedEffect&& moveFrom);
+        SkinnedEffect& operator= (SkinnedEffect&& moveFrom);
+
+        SkinnedEffect(SkinnedEffect const&) = delete;
+        SkinnedEffect& operator= (SkinnedEffect const&) = delete;
+
+        virtual ~SkinnedEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
+        void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
+        void __cdecl SetSpecularPower(float value);
+        void __cdecl DisableSpecular();
+        void __cdecl SetAlpha(float value);
+        
+        // Light settings.
+        void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
+
+        void __cdecl SetLightEnabled(int whichLight, bool value) override;
+        void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+
+        void __cdecl EnableDefaultLighting() override;
+
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Texture setting.
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        
+        // Animation settings.
+        void __cdecl SetWeightsPerVertex(int value) override;
+        void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+        void __cdecl ResetBoneTransforms() override;
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+
+    //----------------------------------------------------------------------------------
+    // Abstract interface to factory for sharing effects and texture resources
+    class IEffectFactory
+    {
+    public:
+        virtual ~IEffectFactory() {}
+
+        struct EffectInfo
+        {
+            const wchar_t*      name;
+            bool                perVertexColor;
+            bool                enableSkinning;
+            bool                enableDualTexture;
+            bool                isPremultipliedAlpha;
+            float               specularPower;
+            float               alphaValue;
+            DirectX::XMFLOAT3   ambientColor;
+            DirectX::XMFLOAT3   diffuseColor;
+            DirectX::XMFLOAT3   specularColor;
+            DirectX::XMFLOAT3   emissiveColor;
+            const wchar_t*      texture;
+            const wchar_t*      texture2;
+
+            EffectInfo() { memset( this, 0, sizeof(EffectInfo) ); };
+        };
+
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect( _In_ const EffectInfo& info, 
+                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout) = 0;
+
+        virtual size_t __cdecl CreateTexture( _In_z_ const wchar_t* name) = 0;
+    };
+
+    // Factory for sharing effects and texture resources
+    class EffectFactory : public IEffectFactory
+    {
+    public:
+        EffectFactory( _In_ ID3D12Device*                          device, 
+                       _In_ ID3D12CommandQueue*                    uploadCommandQueue,
+                       _In_ const EffectPipelineStateDescription&  basePipelineState,
+                       _Inout_ ID3D12DescriptorHeap*               textureDescriptorHeap,
+                       _In_    size_t                              textureDescriptorHeapStartIndex,
+                       _Inout_ ResourceUploadBatch&                resourceUploadBatch);
+
+        EffectFactory(EffectFactory&& moveFrom);
+        EffectFactory& operator= (EffectFactory&& moveFrom);
+
+        EffectFactory(EffectFactory const&) = delete;
+        EffectFactory& operator= (EffectFactory const&) = delete;
+
+        virtual ~EffectFactory();
+
+        // IEffectFactory methods.
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(_In_ const EffectInfo& info,
+                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout) override;
+
+        virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name) override;
+        
+        // Settings.
+        void __cdecl ReleaseCache();
+
+        void __cdecl SetSharing( bool enabled );
+
+        void __cdecl SetDirectory( _In_opt_z_ const wchar_t* path );
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::shared_ptr<Impl> pImpl;
+    };
+}
