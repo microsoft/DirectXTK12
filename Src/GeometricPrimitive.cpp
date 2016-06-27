@@ -28,11 +28,9 @@ using Microsoft::WRL::ComPtr;
 class GeometricPrimitive::Impl
 {
 public:
-    void Initialize(_In_ ID3D12Device* device, const VertexCollection& vertices, const IndexCollection& indices);
+    void Initialize(const VertexCollection& vertices, const IndexCollection& indices);
 
-    void Draw(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect);
-
-    void XM_CALLCONV Draw(_In_ ID3D12GraphicsCommandList* commandList, FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color, _In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE* texture = nullptr);
+    void Draw(_In_ ID3D12GraphicsCommandList* commandList);
     
     UINT					 mIndexCount;
     GraphicsResource		 mIndexBuffer;
@@ -40,58 +38,15 @@ public:
 
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView;
     D3D12_INDEX_BUFFER_VIEW  mIndexBufferView;
-
-private:
-    
-    // Only one of these helpers is allocated per D3D device context, even if there are multiple GeometricPrimitive instances.
-    class SharedResources
-    {
-    public:
-        SharedResources(_In_ ID3D12Device* device);
-
-        ComPtr<ID3D12Device>  m_device;
-        std::unique_ptr<BasicEffect> effect;
-    };
-
-
-    // Per-device-context data.
-    std::shared_ptr<SharedResources> mResources;
-
-    static SharedResourcePool<ID3D12Device*, SharedResources> sharedResourcesPool;
 };
 
-// Global pool of per-device GeometricPrimitive resources.
-SharedResourcePool<ID3D12Device*, GeometricPrimitive::Impl::SharedResources> GeometricPrimitive::Impl::sharedResourcesPool;
-
-
-// Per-device-context constructor.
-GeometricPrimitive::Impl::SharedResources::SharedResources(_In_ ID3D12Device* device)
-    : m_device(device)
-{
-    // We assume this RT. 
-    RenderTargetState rtState(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_D32_FLOAT);
-
-    EffectPipelineStateDescription pd(
-        &VertexPositionNormalColorTexture::InputLayout,
-        &CommonStates::Opaque,
-        &CommonStates::DepthDefault,
-        &CommonStates::CullNone,
-        &rtState
-        );
-
-    // Create the BasicEffect.
-    effect = std::make_unique<BasicEffect>(device, EffectFlags::PerPixelLighting, pd);
-    effect->EnableDefaultLighting();
-}
 
 // Initializes a geometric primitive instance that will draw the specified vertex and index data.
 _Use_decl_annotations_
-void GeometricPrimitive::Impl::Initialize(ID3D12Device* device, const VertexCollection& vertices, const IndexCollection& indices)
+void GeometricPrimitive::Impl::Initialize(const VertexCollection& vertices, const IndexCollection& indices)
 {
     if (vertices.size() >= USHRT_MAX)
         throw std::exception("Too many vertices for 16-bit index buffer");
-
-    mResources = sharedResourcesPool.DemandCreate(device);
 
     // Vertex data
     auto verts = reinterpret_cast<const uint8_t*>(vertices.data());
@@ -123,39 +78,8 @@ void GeometricPrimitive::Impl::Initialize(ID3D12Device* device, const VertexColl
 
 // Draws the primitive.
 _Use_decl_annotations_
-void XM_CALLCONV GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList, 
-                                                FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color,
-                                                D3D12_GPU_DESCRIPTOR_HANDLE* textureGpuHandle)
+void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList)
 {
-    assert(mResources != 0);
-    auto effect = mResources->effect.get();
-    assert(effect != 0);
-
-    if (textureGpuHandle)
-    {
-        effect->SetTexture(*textureGpuHandle);
-    }
-
-    float alpha = XMVectorGetW(color);
-
-    // Set effect parameters.
-    effect->SetWorld(world);
-    effect->SetView(view);
-    effect->SetProjection(projection);
-
-    effect->SetDiffuseColor(color);
-    effect->SetAlpha(alpha);
-    effect->EnableDefaultLighting();
-
-    Draw(commandList, effect);
-}
-
-// Draw the primitive using a custom effect.
-_Use_decl_annotations_
-void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList, IEffect* effect)
-{
-    effect->Apply(commandList);
-
     commandList->IASetVertexBuffers(0, 1, &mVertexBufferView);
     commandList->IASetIndexBuffer(&mIndexBufferView);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -182,15 +106,9 @@ GeometricPrimitive::~GeometricPrimitive()
 
 // Public entrypoints.
 _Use_decl_annotations_
-void XM_CALLCONV GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList, FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color)
+void GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList)
 {
-    pImpl->Draw(commandList, world, view, projection, color);
-}
-
-_Use_decl_annotations_
-void GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList, IEffect* effect)
-{
-    pImpl->Draw(commandList, effect);
+    pImpl->Draw(commandList);
 }
 
 
@@ -199,7 +117,7 @@ void GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList, IEffect* e
 //--------------------------------------------------------------------------------------
 
 // Creates a cube primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCube(_In_ ID3D12Device* device, float size, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCube(float size, bool rhcoords)
 {
     VertexCollection vertices;
     IndexCollection indices;
@@ -208,19 +126,19 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCube(_In_ ID3D12De
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateCube(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
+void GeometricPrimitive::CreateCube(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
 {
     ComputeBox(vertices, indices, XMFLOAT3(size, size, size), rhcoords, false);
 }
 
 
 // Creates a box primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateBox(_In_ ID3D12Device* device, const XMFLOAT3& size, bool rhcoords, bool invertn)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateBox(const XMFLOAT3& size, bool rhcoords, bool invertn)
 {
     VertexCollection vertices;
     IndexCollection indices;
@@ -229,12 +147,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateBox(_In_ ID3D12Dev
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateBox(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, const XMFLOAT3& size, bool rhcoords, bool invertn)
+void GeometricPrimitive::CreateBox(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, const XMFLOAT3& size, bool rhcoords, bool invertn)
 {
     ComputeBox(vertices, indices, size, rhcoords, invertn);
 }
@@ -245,7 +163,7 @@ void GeometricPrimitive::CreateBox(std::vector<VertexPositionNormalTexture>& ver
 //--------------------------------------------------------------------------------------
 
 // Creates a sphere primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateSphere(_In_ ID3D12Device* device, float diameter, size_t tessellation, bool rhcoords, bool invertn)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateSphere(float diameter, size_t tessellation, bool rhcoords, bool invertn)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -255,12 +173,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateSphere(_In_ ID3D12
 
     ComputeSphere(vertices, indices, diameter, tessellation, rhcoords, invertn);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateSphere(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float diameter, size_t tessellation, bool rhcoords, bool invertn)
+void GeometricPrimitive::CreateSphere(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float diameter, size_t tessellation, bool rhcoords, bool invertn)
 {
     ComputeSphere(vertices, indices, diameter, tessellation, rhcoords, invertn);
 }
@@ -271,7 +189,7 @@ void GeometricPrimitive::CreateSphere(std::vector<VertexPositionNormalTexture>& 
 //--------------------------------------------------------------------------------------
 
 // Creates a geosphere primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateGeoSphere(_In_ ID3D12Device* device, float diameter, size_t tessellation, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateGeoSphere(float diameter, size_t tessellation, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -280,12 +198,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateGeoSphere(_In_ ID3
     IndexCollection indices;
     ComputeGeoSphere(vertices, indices, diameter, tessellation, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateGeoSphere(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float diameter, size_t tessellation, bool rhcoords)
+void GeometricPrimitive::CreateGeoSphere(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float diameter, size_t tessellation, bool rhcoords)
 {
     ComputeGeoSphere(vertices, indices, diameter, tessellation, rhcoords);
 }
@@ -296,7 +214,7 @@ void GeometricPrimitive::CreateGeoSphere(std::vector<VertexPositionNormalTexture
 //--------------------------------------------------------------------------------------
 
 // Creates a cylinder primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCylinder(_In_ ID3D12Device* device, float height, float diameter, size_t tessellation, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCylinder(float height, float diameter, size_t tessellation, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -305,19 +223,19 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCylinder(_In_ ID3D
     IndexCollection indices;
     ComputeCylinder(vertices, indices, height, diameter, tessellation, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateCylinder(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float height, float diameter, size_t tessellation, bool rhcoords)
+void GeometricPrimitive::CreateCylinder(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float height, float diameter, size_t tessellation, bool rhcoords)
 {
     ComputeCylinder(vertices, indices, height, diameter, tessellation, rhcoords);
 }
 
 
 // Creates a cone primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCone(_In_ ID3D12Device* device, float diameter, float height, size_t tessellation, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCone(float diameter, float height, size_t tessellation, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -326,12 +244,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCone(_In_ ID3D12De
     IndexCollection indices;
     ComputeCone(vertices, indices, diameter, height, tessellation, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateCone(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float diameter, float height, size_t tessellation, bool rhcoords)
+void GeometricPrimitive::CreateCone(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float diameter, float height, size_t tessellation, bool rhcoords)
 {
     ComputeCone(vertices, indices, diameter, height, tessellation, rhcoords);
 }
@@ -342,7 +260,7 @@ void GeometricPrimitive::CreateCone(std::vector<VertexPositionNormalTexture>& ve
 //--------------------------------------------------------------------------------------
 
 // Creates a torus primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTorus(_In_ ID3D12Device* device, float diameter, float thickness, size_t tessellation, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTorus(float diameter, float thickness, size_t tessellation, bool rhcoords)
 {	
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -351,12 +269,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTorus(_In_ ID3D12D
     IndexCollection indices;
     ComputeTorus(vertices, indices, diameter, thickness, tessellation, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateTorus(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float diameter, float thickness, size_t tessellation, bool rhcoords)
+void GeometricPrimitive::CreateTorus(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float diameter, float thickness, size_t tessellation, bool rhcoords)
 {
     ComputeTorus(vertices, indices, diameter, thickness, tessellation, rhcoords);
 }
@@ -366,7 +284,7 @@ void GeometricPrimitive::CreateTorus(std::vector<VertexPositionNormalTexture>& v
 // Tetrahedron
 //--------------------------------------------------------------------------------------
 
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTetrahedron(_In_ ID3D12Device* device, float size, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTetrahedron(float size, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -375,12 +293,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTetrahedron(_In_ I
     IndexCollection indices;
     ComputeTetrahedron(vertices, indices, size, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateTetrahedron(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
+void GeometricPrimitive::CreateTetrahedron(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
 {
     ComputeTetrahedron(vertices, indices, size, rhcoords);
 }
@@ -390,7 +308,7 @@ void GeometricPrimitive::CreateTetrahedron(std::vector<VertexPositionNormalTextu
 // Octahedron
 //--------------------------------------------------------------------------------------
 
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateOctahedron(_In_ ID3D12Device* device, float size, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateOctahedron(float size, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -399,12 +317,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateOctahedron(_In_ ID
     IndexCollection indices;
     ComputeOctahedron(vertices, indices, size, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateOctahedron(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
+void GeometricPrimitive::CreateOctahedron(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
 {
     ComputeOctahedron(vertices, indices, size, rhcoords);
 }
@@ -414,7 +332,7 @@ void GeometricPrimitive::CreateOctahedron(std::vector<VertexPositionNormalTextur
 // Dodecahedron
 //--------------------------------------------------------------------------------------
 
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateDodecahedron(_In_ ID3D12Device* device, float size, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateDodecahedron(float size, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -423,12 +341,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateDodecahedron(_In_ 
     IndexCollection indices;
     ComputeDodecahedron(vertices, indices, size, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateDodecahedron(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
+void GeometricPrimitive::CreateDodecahedron(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
 {
     ComputeDodecahedron(vertices, indices, size, rhcoords);
 }
@@ -438,7 +356,7 @@ void GeometricPrimitive::CreateDodecahedron(std::vector<VertexPositionNormalText
 // Icosahedron
 //--------------------------------------------------------------------------------------
 
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateIcosahedron(_In_ ID3D12Device* device, float size, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateIcosahedron(float size, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -447,12 +365,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateIcosahedron(_In_ I
     IndexCollection indices;
     ComputeIcosahedron(vertices, indices, size, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateIcosahedron(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
+void GeometricPrimitive::CreateIcosahedron(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, bool rhcoords)
 {
     ComputeIcosahedron(vertices, indices, size, rhcoords);
 }
@@ -463,7 +381,7 @@ void GeometricPrimitive::CreateIcosahedron(std::vector<VertexPositionNormalTextu
 //--------------------------------------------------------------------------------------
 
 // Creates a teapot primitive.
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTeapot(_In_ ID3D12Device* device, float size, size_t tessellation, bool rhcoords)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTeapot(float size, size_t tessellation, bool rhcoords)
 {
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
@@ -472,12 +390,12 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTeapot(_In_ ID3D12
     IndexCollection indices;
     ComputeTeapot(vertices, indices, size, tessellation, rhcoords);
 
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
 
-void GeometricPrimitive::CreateTeapot(std::vector<VertexPositionNormalTexture>& vertices, std::vector<uint16_t>& indices, float size, size_t tessellation, bool rhcoords)
+void GeometricPrimitive::CreateTeapot(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size, size_t tessellation, bool rhcoords)
 {
     ComputeTeapot(vertices, indices, size, tessellation, rhcoords);
 }
@@ -487,7 +405,7 @@ void GeometricPrimitive::CreateTeapot(std::vector<VertexPositionNormalTexture>& 
 // Custom
 //--------------------------------------------------------------------------------------
 
-std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(_In_ ID3D12Device* device, const std::vector<VertexPositionNormalTexture>& vertices, const std::vector<uint16_t>& indices)
+std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(const std::vector<VertexType>& vertices, const std::vector<uint16_t>& indices)
 {
     // Extra validation
     if (vertices.empty() || indices.empty())
@@ -511,7 +429,7 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(_In_ ID3D12
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
 
     // copy geometry
-    primitive->pImpl->Initialize(device, vertices, indices);
+    primitive->pImpl->Initialize(vertices, indices);
 
     return primitive;
 }
