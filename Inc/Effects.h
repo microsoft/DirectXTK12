@@ -21,6 +21,7 @@
 
 #include <DirectXMath.h>
 #include <memory>
+#include <string>
 #include <unordered_set>
 
 #include "RenderTargetState.h"
@@ -403,6 +404,66 @@ namespace DirectX
 
 
     //----------------------------------------------------------------------------------
+    // Abstract interface to factory texture resources
+    class IEffectTextureFactory
+    {
+    public:
+        virtual ~IEffectTextureFactory() {}
+
+        virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
+    };
+
+    class EffectTextureFactory : public IEffectTextureFactory
+    {
+    public:
+        EffectTextureFactory(
+            _In_ ID3D12Device* device,
+            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            _In_ ID3D12DescriptorHeap* descriptorHeap);
+
+        EffectTextureFactory(
+            _In_ ID3D12Device* device,
+            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            _In_ size_t numDescriptors,
+            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags);
+
+        EffectTextureFactory(EffectTextureFactory&& moveFrom);
+        EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom);
+
+        EffectTextureFactory(EffectTextureFactory const&) = delete;
+        EffectTextureFactory& operator= (EffectTextureFactory const&) = delete;
+
+        virtual ~EffectTextureFactory();
+
+        virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
+
+        ID3D12DescriptorHeap* DescriptorHeap() const;
+
+        // Shorthand accessors for the descriptor heap
+        D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(size_t index) const;
+        D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(size_t index) const;
+
+        // How many textures are there in this factory?
+        size_t ResourceCount() const;
+
+        // Get a resource in a specific slot
+        void GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
+
+        // Settings.
+        void __cdecl ReleaseCache();
+
+        void __cdecl SetSharing( bool enabled );
+
+        void __cdecl SetDirectory(_In_opt_z_ const wchar_t* path);
+
+    private:
+        // Private implementation
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+    //----------------------------------------------------------------------------------
     // Abstract interface to factory for sharing effects and texture resources
     class IEffectFactory
     {
@@ -411,7 +472,7 @@ namespace DirectX
 
         struct EffectInfo
         {
-            const wchar_t*      name;
+            std::wstring        name;
             bool                perVertexColor;
             bool                enableSkinning;
             bool                enableDualTexture;
@@ -422,28 +483,38 @@ namespace DirectX
             DirectX::XMFLOAT3   diffuseColor;
             DirectX::XMFLOAT3   specularColor;
             DirectX::XMFLOAT3   emissiveColor;
-            const wchar_t*      texture;
-            const wchar_t*      texture2;
+            int                 textureIndex;
+            int                 textureIndex2;
 
-            EffectInfo() { memset( this, 0, sizeof(EffectInfo) ); };
+            EffectInfo()
+                : perVertexColor(false)
+                , enableSkinning(false)
+                , enableDualTexture(false)
+                , isPremultipliedAlpha(false)
+                , specularPower(0)
+                , alphaValue(0)
+                , ambientColor(0, 0, 0)
+                , diffuseColor(0, 0, 0)
+                , specularColor(0, 0, 0)
+                , emissiveColor(0, 0, 0)
+                , textureIndex(-1)
+                , textureIndex2(-1)
+            {
+            }
         };
 
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect( _In_ const EffectInfo& info, 
-                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout) = 0;
-
-        virtual size_t __cdecl CreateTexture( _In_z_ const wchar_t* name) = 0;
+                                                               _In_ const EffectPipelineStateDescription& pipelineState,
+                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+                                                               _In_opt_ int descriptorOffset = 0) = 0;
     };
 
-    // Factory for sharing effects and texture resources
+    // Factory for sharing effects
     class EffectFactory : public IEffectFactory
     {
     public:
-        EffectFactory( _In_ ID3D12Device*                          device, 
-                       _In_ ID3D12CommandQueue*                    uploadCommandQueue,
-                       _In_ const EffectPipelineStateDescription&  basePipelineState,
-                       _Inout_ ID3D12DescriptorHeap*               textureDescriptorHeap,
-                       _In_    size_t                              textureDescriptorHeapStartIndex,
-                       _Inout_ ResourceUploadBatch&                resourceUploadBatch);
+        EffectFactory(_In_ ID3D12Device* device);
+        EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors);
 
         EffectFactory(EffectFactory&& moveFrom);
         EffectFactory& operator= (EffectFactory&& moveFrom);
@@ -454,17 +525,16 @@ namespace DirectX
         virtual ~EffectFactory();
 
         // IEffectFactory methods.
-        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(_In_ const EffectInfo& info,
-                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout) override;
-
-        virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name) override;
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+            _In_ const EffectInfo& info, 
+            _In_ const EffectPipelineStateDescription& pipelineState,
+            _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+            _In_opt_ int descriptorOffset = 0) override;
         
         // Settings.
         void __cdecl ReleaseCache();
 
         void __cdecl SetSharing( bool enabled );
-
-        void __cdecl SetDirectory( _In_opt_z_ const wchar_t* path );
 
     private:
         // Private implementation.

@@ -29,20 +29,32 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    struct MaterialRecordSDKMESH
+    int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
     {
-        std::shared_ptr<IEffect> effect;
-        bool isAlpha;
-    };
+        if (textureName == nullptr || !textureName[0])
+            return -1;
 
-    void LoadMaterial(_In_ const DXUT::SDKMESH_MATERIAL& mh,
+        auto i = textureDictionary.find(textureName);
+        if (i == std::cend(textureDictionary))
+        {
+            int index = (int) textureDictionary.size();
+            textureDictionary[textureName] = index;
+            return index;
+        }
+        else
+        {
+            return i->second;
+        }
+    }
+
+    void InitMaterial(
+        _In_ const DXUT::SDKMESH_MATERIAL& mh,
         _In_ bool perVertexColor,
         _In_ bool enableSkinning,
         _In_ bool enableDualTexture,
         _In_ bool isPremultipliedAlpha,
-        _Inout_ IEffectFactory& fxFactory,
-        _Inout_ MaterialRecordSDKMESH& m,
-        _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc)
+        _Out_ Model::ModelMaterialInfo& m,
+        _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
         wchar_t matName[DXUT::MAX_MATERIAL_NAME];
         MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
@@ -59,34 +71,30 @@ namespace
             enableDualTexture = false;
         }
 
-        EffectFactory::EffectInfo info;
-        info.name = matName;
-        info.perVertexColor = perVertexColor;
-        info.enableSkinning = enableSkinning;
-        info.enableDualTexture = enableDualTexture;
-        info.isPremultipliedAlpha = isPremultipliedAlpha;
-        info.ambientColor = XMFLOAT3(mh.Ambient.x, mh.Ambient.y, mh.Ambient.z);
-        info.diffuseColor = XMFLOAT3(mh.Diffuse.x, mh.Diffuse.y, mh.Diffuse.z);
-        info.emissiveColor = XMFLOAT3(mh.Emissive.x, mh.Emissive.y, mh.Emissive.z);
+        m.name = matName;
+        m.perVertexColor = perVertexColor;
+        m.enableSkinning = enableSkinning;
+        m.enableDualTexture = enableDualTexture;
+        m.isPremultipliedAlpha = isPremultipliedAlpha;
+        m.ambientColor = XMFLOAT3(mh.Ambient.x, mh.Ambient.y, mh.Ambient.z);
+        m.diffuseColor = XMFLOAT3(mh.Diffuse.x, mh.Diffuse.y, mh.Diffuse.z);
+        m.emissiveColor = XMFLOAT3(mh.Emissive.x, mh.Emissive.y, mh.Emissive.z);
 
         if (mh.Diffuse.w != 1.f && mh.Diffuse.w != 0.f)
         {
-            info.alphaValue = mh.Diffuse.w;
+            m.alphaValue = mh.Diffuse.w;
         }
         else
-            info.alphaValue = 1.f;
+            m.alphaValue = 1.f;
 
         if (mh.Power)
         {
-            info.specularPower = mh.Power;
-            info.specularColor = XMFLOAT3(mh.Specular.x, mh.Specular.y, mh.Specular.z);
+            m.specularPower = mh.Power;
+            m.specularColor = XMFLOAT3(mh.Specular.x, mh.Specular.y, mh.Specular.z);
         }
 
-        info.texture = txtName;
-        info.texture2 = txtName2;
-
-        m.effect = fxFactory.CreateEffect(info, inputLayoutDesc);
-        m.isAlpha = info.alphaValue < 1.0f;
+        m.textureIndex = GetUniqueTextureIndex(txtName, textureDictionary);
+        m.textureIndex2 = GetUniqueTextureIndex(txtName2, textureDictionary);
     }
 
 
@@ -289,10 +297,10 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevice, const uint8_t* meshData, size_t dataSize, IEffectFactory& fxFactory, bool ccw, bool pmalpha )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshData, size_t dataSize, bool ccw, bool pmalpha )
 {
-    if ( !d3dDevice || !meshData )
-        throw std::exception("Device and meshData cannot be null");
+    if ( !meshData )
+        throw std::exception("meshData cannot be null");
 
     // File Headers
     if ( dataSize < sizeof(DXUT::SDKMESH_HEADER) )
@@ -412,8 +420,10 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
     }
 
     // Create meshes
-    std::vector<MaterialRecordSDKMESH> materials;
+    std::vector<ModelMaterialInfo> materials;
     materials.resize( header->NumMaterials );
+
+    std::map<std::wstring, int> textureDictionary;
 
     std::unique_ptr<Model> model(new Model);
     model->meshes.reserve( header->NumMeshes );
@@ -458,7 +468,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
         BoundingSphere::CreateFromBoundingBox( mesh->boundingSphere, mesh->boundingBox );
        
         // Create subsets
-        mesh->meshParts.reserve( mh.NumSubsets );
         for( UINT j = 0; j < mh.NumSubsets; ++j )
         {
             auto sIndex = subsets[ j ];
@@ -493,22 +502,13 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
 
             auto& mat = materials[ subset.MaterialID ];
 
-            if ( !mat.effect )
-            {
-                ComPtr<ID3D12Resource> newTextureResource;
-
-                // convert vector of decls to temporary input layout desc, used when creating effect 
-                const size_t vi = mh.VertexBuffers[0];
-                const auto& decls = *vbDecls[vi];
-                const D3D12_INPUT_LAYOUT_DESC inputLayoutDesc = { decls.data(),  (UINT)decls.size() };
-
-                LoadMaterial(materialArray[subset.MaterialID],
-                    perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], mesh->pmalpha,
-                    fxFactory, mat, inputLayoutDesc);
-            }
+            const size_t vi = mh.VertexBuffers[0];
+            InitMaterial(materialArray[subset.MaterialID],
+                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], mesh->pmalpha,
+                mat, textureDictionary);
 
             auto part = new ModelMeshPart();
-            part->isAlpha = mat.isAlpha;
+            part->isAlpha = mat.alphaValue < 1.0f;
 
             const auto& vh = vbArray[mh.VertexBuffers[0]];
             const auto& ih = ibArray[mh.IndexBuffer];
@@ -530,13 +530,24 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
             part->indexBuffer = GraphicsMemory::Get().Allocate((size_t) ih.SizeBytes);
             memcpy(part->indexBuffer.Memory(), indices, (size_t) ih.SizeBytes);
 
-            part->effect = mat.effect;
+            part->materialIndex = subset.MaterialID;
             part->vbDecl = vbDecls[ mh.VertexBuffers[0] ];
 
-            mesh->meshParts.emplace_back( part );
+            if (part->isAlpha)
+                mesh->alphaMeshParts.emplace_back( part );
+            else
+                mesh->opaqueMeshParts.emplace_back( part );
         }
 
         model->meshes.emplace_back( mesh );
+    }
+
+    // Copy the materials and texture names into contiguous arrays
+    model->materials = std::move(materials);
+    model->textureNames.resize(textureDictionary.size());
+    for (auto texture = std::cbegin(textureDictionary); texture != std::cend(textureDictionary); ++texture)
+    {
+        model->textureNames[texture->second] = texture->first;
     }
 
     return model;
@@ -545,7 +556,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevice, const wchar_t* szFileName, IEffectFactory& fxFactory, bool ccw, bool pmalpha )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const wchar_t* szFileName, bool ccw, bool pmalpha )
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -556,7 +567,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( ID3D12Device* d3dDevic
         throw std::exception( "CreateFromSDKMESH" );
     }
 
-    auto model = CreateFromSDKMESH( d3dDevice, data.get(), dataSize, fxFactory, ccw, pmalpha );
+    auto model = CreateFromSDKMESH( data.get(), dataSize, ccw, pmalpha );
 
     model->name = szFileName;
 

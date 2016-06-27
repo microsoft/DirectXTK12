@@ -27,8 +27,7 @@ float4 Mip(uint2 coord)
 }
 
 [RootSignature(GenerateMipsRS)]
-// TODO: we have to do this due to an nvidia bug where SV_DispatchThreadID doesn't work
-// correctly.
+// Workaround for NVidia bug: some driver versions don't handle SV_DispatchThreadID correctly.
 [numthreads(8, 8, 1)]
 void main(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID)
 {

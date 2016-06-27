@@ -26,6 +26,7 @@ using namespace DirectX;
 #error Model requires RTTI
 #endif
 
+
 //--------------------------------------------------------------------------------------
 // ModelMeshPart
 //--------------------------------------------------------------------------------------
@@ -48,11 +49,8 @@ ModelMeshPart::~ModelMeshPart()
 
 
 _Use_decl_annotations_
-void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList, IEffect* ieffect) const
+void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 {
-    assert( ieffect != 0 );
-    ieffect->Apply(commandList);
-
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = vertexBuffer.GpuAddress();
     vbv.StrideInBytes = vertexStride;
@@ -70,6 +68,41 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList, IEffect* i
     commandList->DrawIndexedInstanced( indexCount, 1, startIndex, vertexOffset, 0 );
 }
 
+_Use_decl_annotations_
+void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
+{
+    for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
+    {
+        auto part = (*it).get();
+        assert( part != 0 );
+
+        part->Draw(commandList);
+    }
+}
+
+
+_Use_decl_annotations_
+void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, ModelMeshPart::DrawCallback callback)
+{
+    for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
+    {
+        auto part = (*it).get();
+        assert( part != 0 );
+
+        callback(commandList, *part);
+        part->Draw(commandList);
+    }
+}
+
+
+_Use_decl_annotations_
+void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, IEffect* effect)
+{
+    effect->Apply(commandList);
+    DrawMeshParts(commandList, meshParts);
+}
+
+
 //--------------------------------------------------------------------------------------
 // ModelMesh
 //--------------------------------------------------------------------------------------
@@ -85,34 +118,36 @@ ModelMesh::~ModelMesh()
 {
 }
 
-
-_Use_decl_annotations_
-void XM_CALLCONV ModelMesh::Draw(_In_ ID3D12GraphicsCommandList* commandList,
-                                  FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection,
-                                  bool alpha ) const
+// Draw the mesh
+void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
 {
-    for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
-    {
-        auto part = (*it).get();
-        assert( part != 0 );
-
-        if ( part->isAlpha != alpha )
-        {
-            // Skip alpha parts when drawing opaque or skip opaque parts if drawing alpha
-            continue;
-        }
-
-        auto imatrices = dynamic_cast<IEffectMatrices*>( part->effect.get() );
-        if ( imatrices )
-        {
-            imatrices->SetWorld( world );
-            imatrices->SetView( view );
-            imatrices->SetProjection( projection );
-        }
-
-        part->Draw(commandList, part->effect.get());
-    }
+    ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts);
 }
+void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
+{
+    ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
+}
+
+// Draw the mesh with an effect
+void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+{
+    ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, effect);
+}
+void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+{
+    ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
+}
+
+// Draw the mesh with a callback for each mesh part
+void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+{
+    ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, callback);
+}
+void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+{
+    ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
+}
+
 
 //--------------------------------------------------------------------------------------
 // Model
@@ -127,51 +162,118 @@ Model::~Model()
 }
 
 
-_Use_decl_annotations_
-void XM_CALLCONV Model::Draw(_In_ ID3D12GraphicsCommandList* commandList,
-    FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) const
+// Load texture resources
+void Model::LoadTextures(_In_ IEffectTextureFactory& texFactory, _In_opt_ int destinationDescriptorOffset)
 {
-    // Draw opaque parts
-    for( auto it = meshes.cbegin(); it != meshes.cend(); ++it )
+    for (size_t i = 0; i < textureNames.size(); ++i)
     {
-        auto mesh = it->get();
-        assert( mesh != 0 );
-        
-        mesh->Draw(commandList, world, view, projection, false);
-    }
-
-    // Draw alpha parts
-    for( auto it = meshes.cbegin(); it != meshes.cend(); ++it )
-    {
-        auto mesh = it->get();
-        assert( mesh != 0 );
-
-        mesh->Draw(commandList, world, view, projection, true);
+        texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + (int) i);
     }
 }
 
-void Model::UpdateEffects( _In_ std::function<void(IEffect*)> setEffect )
-{
-    if ( mEffectCache.empty() )
-    {
-        // This cache ensures we only set each effect once (could be shared)
-        for( auto mit  = meshes.cbegin(); mit != meshes.cend(); ++mit )
-        {
-            auto mesh = mit->get();
-            assert( mesh != 0 );
 
-            for ( auto it = mesh->meshParts.cbegin(); it != mesh->meshParts.cend(); ++it )
-            {
-                if ( (*it)->effect != 0 )
-                    mEffectCache.insert( (*it)->effect.get() );
-            }
+// Load texture resources (helper function)
+std::unique_ptr<EffectTextureFactory> Model::LoadTextures(_In_ ID3D12Device* device, _Inout_ ResourceUploadBatch& resourceUploadBatch, _In_opt_z_ const wchar_t* texturesPath, _In_opt_ D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+{
+    if (textureNames.size() == 0)
+        return nullptr;
+
+    std::unique_ptr<EffectTextureFactory> texFactory = std::make_unique<EffectTextureFactory>(
+        device, 
+        resourceUploadBatch, 
+        textureNames.size(),
+        flags);
+    if (texturesPath != nullptr && *texturesPath != 0)
+    {
+        texFactory->SetDirectory(texturesPath);
+    }
+
+    LoadTextures(*texFactory);
+
+    return std::move(texFactory);
+}
+
+
+// Create effects for each mesh piece
+std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
+    _In_ IEffectFactory& fxFactory, 
+    _In_ const EffectPipelineStateDescription& pipelineState,
+    _In_opt_ int descriptorOffset)
+{
+    std::vector<std::shared_ptr<IEffect>> effects;
+    effects.reserve(materials.size());
+
+    for (const auto& mesh : meshes)
+    {
+        assert(mesh != nullptr);
+
+        for (const auto& part : mesh->opaqueMeshParts)
+        {
+            assert(part != nullptr);
+
+            if (part->materialIndex == ~0ull)
+                continue;
+
+            effects.push_back(CreateEffectForMeshPart(fxFactory, pipelineState, descriptorOffset, part.get()));
+        }
+
+        for (const auto& part : mesh->alphaMeshParts)
+        {
+            assert(part != nullptr);
+
+            if (part->materialIndex == ~0ull)
+                continue;
+
+            effects.push_back(CreateEffectForMeshPart(fxFactory, pipelineState, descriptorOffset, part.get()));
         }
     }
 
-    assert( setEffect != 0 );
+    return std::move(effects);
+}
 
-    for( auto it = mEffectCache.begin(); it != mEffectCache.end(); ++it )
+// Creates an effect for a mesh part
+std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
+    _In_ IEffectFactory& fxFactory, 
+    _In_ const EffectPipelineStateDescription& pipelineState,
+    _In_opt_ int descriptorOffset,
+    _In_ const ModelMeshPart* part) const
+{
+    assert(part->materialIndex < materials.size());
+
+    const auto& m = materials[part->materialIndex];
+
+    D3D12_INPUT_LAYOUT_DESC il = {};
+    il.NumElements = (uint32_t) part->vbDecl->size();
+    il.pInputElementDescs = part->vbDecl->data();
+
+    return fxFactory.CreateEffect(m, pipelineState, il, descriptorOffset);
+}
+
+// Create effects for each mesh piece with the default factory
+std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
+    _In_ const EffectPipelineStateDescription& pipelineState,
+    _In_ ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap, 
+    _In_opt_ int descriptorOffset)
+{
+    EffectFactory fxFactory(gpuVisibleTextureDescriptorHeap);
+    return CreateEffects(fxFactory, pipelineState, descriptorOffset);
+}
+
+// Updates effect matrices (if applicable)
+void XM_CALLCONV Model::UpdateEffectMatrices(
+    _In_ std::vector<std::shared_ptr<IEffect>>& effectList,
+    DirectX::FXMMATRIX world,
+    DirectX::CXMMATRIX view,
+    DirectX::CXMMATRIX proj)
+{
+    for (auto& fx : effectList)
     {
-        setEffect( *it );
+        IEffectMatrices* matFx = dynamic_cast<IEffectMatrices*>(fx.get());
+        if (matFx != nullptr)
+        {
+            matFx->SetWorld(world);
+            matFx->SetView(view);
+            matFx->SetProjection(proj);
+        }
     }
 }

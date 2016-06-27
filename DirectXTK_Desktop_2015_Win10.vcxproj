@@ -80,6 +80,7 @@
     <ClCompile Include="Src\BinaryReader.cpp" />
     <ClCompile Include="Src\EffectCommon.cpp" />
     <ClCompile Include="Src\EffectFactory.cpp" />
+    <ClCompile Include="Src\EffectTextureFactory.cpp" />
     <ClCompile Include="Src\EnvironmentMapEffect.cpp" />
     <ClCompile Include="Src\GamePad.cpp" />
     <ClCompile Include="Src\GeometricPrimitive.cpp" />

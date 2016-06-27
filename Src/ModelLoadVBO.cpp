@@ -51,17 +51,13 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, const uint8_t* meshData, size_t dataSize,
-                                                     std::shared_ptr<IEffect> ieffect, bool ccw, bool pmalpha)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize, bool ccw, bool pmalpha)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
 
-    if ( !d3dDevice || !meshData )
-        throw std::exception("Device and meshData cannot be null");
-
-    if (!ieffect)
-        throw std::exception("Effect is required in DirectXTK for DirectX 12");
+    if ( !meshData )
+        throw std::exception("meshData cannot be null");
 
     // File Header
     if ( dataSize < sizeof(VBO::header_t) )
@@ -97,7 +93,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, co
     part->vertexStride = static_cast<UINT>( sizeof(VertexPositionNormalTexture) );
     part->indexBuffer = std::move(ib);
     part->vertexBuffer = std::move(vb);
-    part->effect = ieffect;
+    part->materialIndex = 0;
     part->vbDecl = g_vbdecl;
 
     auto mesh = std::make_shared<ModelMesh>();
@@ -105,7 +101,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, co
     mesh->pmalpha = pmalpha;
     BoundingSphere::CreateFromPoints(mesh->boundingSphere, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
     BoundingBox::CreateFromPoints(mesh->boundingBox, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
-    mesh->meshParts.emplace_back(part);
+    mesh->opaqueMeshParts.emplace_back(part);
 
     std::unique_ptr<Model> model(new Model());
     model->meshes.emplace_back(mesh);
@@ -116,8 +112,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, co
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, const wchar_t* szFileName,
-                                                     std::shared_ptr<IEffect> ieffect, bool ccw, bool pmalpha)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName,
+                                                     bool ccw, bool pmalpha)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -128,7 +124,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(ID3D12Device* d3dDevice, co
         throw std::exception( "CreateFromVBO" );
     }
 
-    auto model = CreateFromVBO( d3dDevice, data.get(), dataSize, ieffect, ccw, pmalpha );
+    auto model = CreateFromVBO( data.get(), dataSize, ccw, pmalpha );
 
     model->name = szFileName;
 

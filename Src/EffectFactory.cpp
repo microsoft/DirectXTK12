@@ -13,78 +13,47 @@
 
 #include "pch.h"
 #include "Effects.h"
-#include "DemandCreate.h"
-#include "SharedResourcePool.h"
 #include "CommonStates.h"
 #include "DirectXHelpers.h"
-#include "DDSTextureLoader.h"
-#include "DescriptorHeap.h"
-#include "ResourceUploadBatch.h"
-#include "WICTextureLoader.h"
+#include "PlatformHelpers.h"
+
+#include <mutex>
+
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
-
 
 // Internal EffectFactory implementation class. Only one of these helpers is allocated
 // per D3D device, even if there are multiple public facing EffectFactory instances.
 class EffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D12Device*                          device,
-         _In_ ID3D12CommandQueue*                    uploadCommandQueue,
-         _In_ const EffectPipelineStateDescription&  basePipelineState,
-         _Inout_ ID3D12DescriptorHeap*               textureDescriptorHeap,
-         _In_ size_t                                 textureDescriptorHeapStartIndex,
-        _Inout_  ResourceUploadBatch&                resourceUploadBatch)
+    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* heap)
         : device(device)
-        , mUploadCommandQueue(uploadCommandQueue)
-        , mBasePipelineStateDesc(basePipelineState)
-        , mTextureDescriptorHeap(textureDescriptorHeap)
-        , mTextureDescriptorHeapSlot((int)textureDescriptorHeapStartIndex)
-        , mTextureDescriptorHeapIncrement(device->GetDescriptorHandleIncrementSize(textureDescriptorHeap->GetDesc().Type))
-        , mTextureDescriptorHeapGpuHandle(textureDescriptorHeap->GetGPUDescriptorHandleForHeapStart())
-        , mResourceUploadBatch(resourceUploadBatch)
+        , mDescriptors(heap)
         , mSharing(true)
     { 
-        *mPath = 0; 
     }
 
-    std::shared_ptr<IEffect> CreateEffect(_In_ const IEffectFactory::EffectInfo&   info,
-                                          _In_ const D3D12_INPUT_LAYOUT_DESC&      inputLayoutDesc);
-
-    int CreateTexture(_In_z_ const wchar_t* name);
+    std::shared_ptr<IEffect> CreateEffect(
+        _In_ const EffectInfo& info, 
+        _In_ const EffectPipelineStateDescription& pipelineState,
+        _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+        _In_opt_ int baseDescriptorOffset);
 
     void ReleaseCache();
     void SetSharing( bool enabled ) { mSharing = enabled; }
 
-    static SharedResourcePool<ID3D12Device*, Impl> instancePool;
-
-    wchar_t mPath[MAX_PATH];
+    ComPtr<ID3D12DescriptorHeap> mDescriptors;
 
 private:
     ID3D12Device*                  device;
-    ID3D12CommandQueue*            mUploadCommandQueue;
-    EffectPipelineStateDescription mBasePipelineStateDesc;
-    ID3D12DescriptorHeap*          mTextureDescriptorHeap;
-    D3D12_GPU_DESCRIPTOR_HANDLE    mTextureDescriptorHeapGpuHandle;
-    int                            mTextureDescriptorHeapIncrement;
-    int                            mTextureDescriptorHeapSlot;
-    ResourceUploadBatch&           mResourceUploadBatch;
-
-    struct TextureCacheEntry
-    {
-        ComPtr<ID3D12Resource> mResource;
-        int                    mDescriptorHeapIndex;
-    };
 
     typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
-    typedef std::map< std::wstring, TextureCacheEntry > TextureCache;
 
     EffectCache  mEffectCache;
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
-    TextureCache mTextureCache;
 
     bool mSharing;
 
@@ -92,17 +61,48 @@ private:
 };
 
 
-// Global instance pool.
-SharedResourcePool<ID3D12Device*, EffectFactory::Impl> EffectFactory::Impl::instancePool;
-
-
 _Use_decl_annotations_
-std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFactory::EffectInfo&   info,
-                                                           _In_ const D3D12_INPUT_LAYOUT_DESC&      inputLayoutDesc)
+std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
+    const EffectInfo& info, 
+    const EffectPipelineStateDescription& pipelineState,
+    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc, 
+    int baseDescriptorOffset)
 {
+    D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
+    CD3DX12_GPU_DESCRIPTOR_HANDLE textureDescriptorHeapGpuHandle = {};
+    CD3DX12_GPU_DESCRIPTOR_HANDLE endDescriptor = {};
+    int textureDescriptorHeapIncrement = 0;
+
+    // If we have descriptors, get some information about that
+    if (mDescriptors != nullptr)
+    {
+        descriptorHeapDesc = mDescriptors->GetDesc();
+
+        // Get the texture offsets and descriptor handles
+        textureDescriptorHeapIncrement = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        textureDescriptorHeapGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(
+            mDescriptors->GetGPUDescriptorHandleForHeapStart(),
+            baseDescriptorOffset, 
+            textureDescriptorHeapIncrement);
+
+        // For validation, get the last descriptor
+        endDescriptor = CD3DX12_GPU_DESCRIPTOR_HANDLE(
+            mDescriptors->GetGPUDescriptorHandleForHeapStart(), 
+            descriptorHeapDesc.NumDescriptors, 
+            textureDescriptorHeapIncrement);
+    }
+
+    auto checkDescriptor = [endDescriptor] (D3D12_GPU_DESCRIPTOR_HANDLE handle)
+    {
+        if (handle.ptr >= endDescriptor.ptr)
+        {
+            throw std::exception("Out of descriptor heap space.");
+        }
+    };
+
     // Modify base pipeline state
-    EffectPipelineStateDescription derivedPSD = mBasePipelineStateDesc;
-    
+    EffectPipelineStateDescription derivedPSD = pipelineState;
+
     // Input layout
     derivedPSD.inputLayout = &inputLayoutDesc;
 
@@ -124,7 +124,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
     if ( info.enableSkinning )
     {
         // SkinnedEffect
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             auto it = mEffectCacheSkinning.find( info.name );
             if ( mSharing && it != mEffectCacheSkinning.end() )
@@ -161,18 +161,17 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
             effect->SetEmissiveColor( color );
         }
 
-        if ( info.texture && *info.texture )
+        if ( mDescriptors != nullptr && info.textureIndex != -1 )
         {
-            int newDescriptorSlot = CreateTexture(info.texture);
-
             CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
-                mTextureDescriptorHeapGpuHandle,
-                mTextureDescriptorHeapIncrement * newDescriptorSlot);
+                textureDescriptorHeapGpuHandle,
+                textureDescriptorHeapIncrement * info.textureIndex);
 
+            checkDescriptor(handle);
             effect->SetTexture(handle);
         }
 
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
             mEffectCacheSkinning.insert( EffectCache::value_type( info.name, effect ) );
@@ -183,7 +182,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
     else if ( info.enableDualTexture )
     {
         // DualTextureEffect
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             auto it = mEffectCacheDualTexture.find( info.name );
             if ( mSharing && it != mEffectCacheDualTexture.end() )
@@ -208,23 +207,27 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
         XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
         effect->SetDiffuseColor( color );
 
-        if ( info.texture && *info.texture )
+        if ( mDescriptors != nullptr && info.textureIndex != -1 )
         {
-            int newDescriptorSlot = CreateTexture(info.texture);
-            effect->SetTexture(CD3DX12_GPU_DESCRIPTOR_HANDLE(
-                mTextureDescriptorHeapGpuHandle,
-                mTextureDescriptorHeapIncrement * newDescriptorSlot));
+            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
+                textureDescriptorHeapGpuHandle,
+                textureDescriptorHeapIncrement * info.textureIndex);
+
+            checkDescriptor(handle);
+            effect->SetTexture(handle);
         }
 
-        if ( info.texture2 && *info.texture2 )
+        if ( mDescriptors != nullptr && info.textureIndex2 != -1 )
         {
-            int newDescriptorSlot = CreateTexture(info.texture2);
-            effect->SetTexture2(CD3DX12_GPU_DESCRIPTOR_HANDLE(
-                mTextureDescriptorHeapGpuHandle,
-                mTextureDescriptorHeapIncrement * newDescriptorSlot));
+            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
+                textureDescriptorHeapGpuHandle,
+                textureDescriptorHeapIncrement * info.textureIndex2);
+
+            checkDescriptor(handle);
+            effect->SetTexture2(handle);
         }
 
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
             mEffectCacheDualTexture.insert( EffectCache::value_type( info.name, effect ) );
@@ -235,7 +238,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
     else
     {
         // BasicEffect
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             auto it = mEffectCache.find( info.name );
             if ( mSharing && it != mEffectCache.end() )
@@ -252,7 +255,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
             flags |= EffectFlags::VertexColor;
         }
         
-        if (info.texture && *info.texture)
+        if (info.textureIndex != -1)
         {
             flags |= EffectFlags::Texture;
         }
@@ -284,15 +287,17 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
             effect->SetEmissiveColor( color );
         }
 
-        if ( info.texture && *info.texture )
+        if ( mDescriptors != nullptr && info.textureIndex != -1 )
         {
-            int newDescriptorSlot = CreateTexture( info.texture );
-            effect->SetTexture(CD3DX12_GPU_DESCRIPTOR_HANDLE(
-                mTextureDescriptorHeapGpuHandle,
-                mTextureDescriptorHeapIncrement * newDescriptorSlot));
+            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
+                textureDescriptorHeapGpuHandle,
+                textureDescriptorHeapIncrement * info.textureIndex);
+
+            checkDescriptor(handle);
+            effect->SetTexture(handle);
         }
 
-        if ( mSharing && info.name && *info.name )
+        if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
             mEffectCache.insert( EffectCache::value_type( info.name, effect ) );
@@ -302,79 +307,12 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(_In_ const IEffectFac
     }
 }
 
-_Use_decl_annotations_
-int EffectFactory::Impl::CreateTexture(_In_z_  const wchar_t* name)
-{
-   if ( !name )
-        throw std::exception("invalid arguments");
-
-    int newDescriptorSlot = -1;
-
-    auto it = mTextureCache.find( name );
-
-    if ( mSharing && it != mTextureCache.end() )
-    {
-        newDescriptorSlot = it->second.mDescriptorHeapIndex;
-    }
-    else
-    {
-        ComPtr<ID3D12Resource> newTextureResource;
-
-        wchar_t fullName[MAX_PATH] = {};
-        wcscpy_s( fullName, mPath );
-        wcscat_s( fullName, name );
-
-        wchar_t ext[_MAX_EXT];
-        _wsplitpath_s( name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT );
-
-        if ( _wcsicmp( ext, L".dds" ) == 0 )
-        {
-            // load resource
-            HRESULT hr = CreateDDSTextureFromFile( device, &mResourceUploadBatch, fullName, newTextureResource.ReleaseAndGetAddressOf());
-            if ( FAILED(hr) )
-            {
-                DebugTrace( "CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName );
-                throw std::exception( "CreateDDSTextureFromFile" );
-            }
-
-            // bind a new descriptor in slot 
-            CD3DX12_CPU_DESCRIPTOR_HANDLE newTextureDescriptor(
-                mTextureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-                mTextureDescriptorHeapIncrement * mTextureDescriptorHeapSlot);
-            DirectX::CreateShaderResourceView(device, newTextureResource.Get(), newTextureDescriptor, false);
-
-            // return slot index, then increment
-            newDescriptorSlot = mTextureDescriptorHeapSlot++;
-        }
-        else
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            HRESULT hr = CreateWICTextureFromFile( device, &mResourceUploadBatch, fullName, newTextureResource.ReleaseAndGetAddressOf() );
-            if ( FAILED(hr) )
-            {
-                DebugTrace( "CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName );
-                throw std::exception( "CreateWICTextureFromFile" );
-            }
-        }
-
-        if ( mSharing )
-        {   
-            std::lock_guard<std::mutex> lock(mutex);
-            TextureCacheEntry newEntry = { newTextureResource, newDescriptorSlot };
-            mTextureCache.insert( TextureCache::value_type( name, newEntry ) );
-        }
-    }
-
-    return newDescriptorSlot;
-}
-
 void EffectFactory::Impl::ReleaseCache()
 {
     std::lock_guard<std::mutex> lock(mutex);
     mEffectCache.clear();
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
-    mTextureCache.clear();
 }
 
 
@@ -383,14 +321,35 @@ void EffectFactory::Impl::ReleaseCache()
 // EffectFactory
 //--------------------------------------------------------------------------------------
 
-EffectFactory::EffectFactory(_In_ ID3D12Device*                          device,
-                             _In_ ID3D12CommandQueue*                    uploadCommandQueue,
-                             _In_ const EffectPipelineStateDescription&  basePipelineState,
-                             _Inout_ ID3D12DescriptorHeap*               textureDescriptorHeap,
-                             _In_    size_t                              textureDescriptorHeapStartIndex,
-                            _Inout_  ResourceUploadBatch&                resourceUploadBatch)
+EffectFactory::EffectFactory(_In_ ID3D12Device* device)
 {
-    pImpl = std::make_shared<Impl>(device, uploadCommandQueue, basePipelineState, textureDescriptorHeap, textureDescriptorHeapStartIndex, resourceUploadBatch);
+    pImpl = std::make_shared<Impl>(device, nullptr);
+}
+
+EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* descriptors)
+{
+    if (descriptors == nullptr)
+    {
+        throw std::exception("Descriptor heap cannot be null of no device is provided. Use the alternative EffectFactory constructor instead.");
+    }
+
+    if (descriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+    {
+        throw std::exception("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap as input.");
+    }
+
+    ComPtr<ID3D12Device> device;
+#if defined(_XBOX_ONE) && defined(_TITLE)
+    descriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
+#else
+    HRESULT hresult = descriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
+    if (FAILED(hresult))
+    {
+        throw com_exception(hresult);
+    }
+#endif
+
+    pImpl = std::make_shared<Impl>(device.Get(), descriptors);
 }
 
 EffectFactory::~EffectFactory()
@@ -410,16 +369,13 @@ EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom)
 }
 
 _Use_decl_annotations_
-std::shared_ptr<IEffect> EffectFactory::CreateEffect(_In_ const EffectInfo& info,
-                                                     _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout)
+std::shared_ptr<IEffect> EffectFactory::CreateEffect(
+    _In_ const EffectInfo& info, 
+    _In_ const EffectPipelineStateDescription& pipelineState,
+    _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+    _In_opt_ int descriptorOffset)
 {
-    return pImpl->CreateEffect(info, inputLayout );
-}
-
-_Use_decl_annotations_
-size_t EffectFactory::CreateTexture(_In_z_  const wchar_t* name)
-{
-    return pImpl->CreateTexture(name);
+    return pImpl->CreateEffect(info, pipelineState, inputLayout, descriptorOffset);
 }
 
 void EffectFactory::ReleaseCache()
@@ -430,24 +386,4 @@ void EffectFactory::ReleaseCache()
 void EffectFactory::SetSharing( bool enabled )
 {
     pImpl->SetSharing( enabled );
-}
-
-void EffectFactory::SetDirectory( _In_opt_z_ const wchar_t* path )
-{
-    if ( path && *path != 0 )
-    {
-        wcscpy_s( pImpl->mPath, path );
-        size_t len = wcsnlen( pImpl->mPath, MAX_PATH );
-        if ( len > 0 && len < (MAX_PATH-1) )
-        {
-            // Ensure it has a trailing slash
-            if ( pImpl->mPath[len-1] != L'\\' )
-            {
-                pImpl->mPath[len] = L'\\';
-                pImpl->mPath[len+1] = 0;
-            }
-        }
-    }
-    else
-        *pImpl->mPath = 0;
 }

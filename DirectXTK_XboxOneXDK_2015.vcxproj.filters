@@ -271,6 +271,9 @@
     <ClCompile Include="Src\Geometry.cpp">
       <Filter>Src\Shared</Filter>
     </ClCompile>
+    <ClCompile Include="Src\EffectTextureFactory.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\Common.fxh">
