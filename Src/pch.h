@@ -62,12 +62,15 @@
 #include <algorithm>
 #include <array>
 #include <exception>
+#include <list>
 #include <malloc.h>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
+
 #include <stdint.h>
 
 #include <wrl.h>

@@ -40,7 +40,7 @@ namespace DirectX
     // Standard version
     HRESULT __cdecl CreateWICTextureFromMemory(
         _In_ ID3D12Device* d3dDevice,
-        _In_ ResourceUploadBatch* resourceUpload,
+        _In_ ResourceUploadBatch& resourceUpload,
         _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
         _In_ size_t wicDataSize,
         _Outptr_ ID3D12Resource** texture,
@@ -49,7 +49,7 @@ namespace DirectX
 
     HRESULT __cdecl CreateWICTextureFromFile(
         _In_ ID3D12Device* d3dDevice,
-        _In_ ResourceUploadBatch* resourceUpload,
+        _In_ ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
         _Outptr_  ID3D12Resource** texture,
         _In_ bool generateMips = true,
@@ -58,7 +58,7 @@ namespace DirectX
     // Extended version
     HRESULT __cdecl CreateWICTextureFromMemoryEx(
         _In_ ID3D12Device* d3dDevice,
-        _In_ ResourceUploadBatch* resourceUpload,
+        _In_ ResourceUploadBatch& resourceUpload,
         _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
         _In_ size_t wicDataSize,
         _In_ size_t maxsize,
@@ -69,7 +69,7 @@ namespace DirectX
 
     HRESULT __cdecl CreateWICTextureFromFileEx(
         _In_ ID3D12Device* d3dDevice,
-        _In_ ResourceUploadBatch* resourceUpload,
+        _In_ ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
         _In_ size_t maxsize,
         _In_ D3D12_RESOURCE_FLAGS flags,

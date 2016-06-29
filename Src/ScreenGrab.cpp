@@ -191,9 +191,10 @@ namespace
 
 
 //--------------------------------------------------------------------------------------
-HRESULT DirectX::SaveDDSTextureToFile( _In_ ID3D12CommandQueue* pCommandQ,
-                                       _In_ ID3D12Resource* pSource,
-                                       _In_z_ LPCWSTR fileName )
+_Use_decl_annotations_
+HRESULT DirectX::SaveDDSTextureToFile( ID3D12CommandQueue* pCommandQ,
+                                       ID3D12Resource* pSource,
+                                       const wchar_t* fileName )
 {
     if ( !fileName )
         return E_INVALIDARG;
@@ -382,12 +383,13 @@ namespace DirectX
 extern IWICImagingFactory2* _GetWIC();
 }
 
-HRESULT DirectX::SaveWICTextureToFile( _In_ ID3D12CommandQueue* pCommandQ,
-                                       _In_ ID3D12Resource* pSource,
-                                       _In_ REFGUID guidContainerFormat, 
-                                       _In_z_ LPCWSTR fileName,
-                                       _In_opt_ const GUID* targetFormat,
-                                       _In_opt_ std::function<void(IPropertyBag2*)> setCustomProps )
+_Use_decl_annotations_
+HRESULT DirectX::SaveWICTextureToFile( ID3D12CommandQueue* pCommandQ,
+                                       ID3D12Resource* pSource,
+                                       REFGUID guidContainerFormat, 
+                                       const wchar_t* fileName,
+                                       const GUID* targetFormat,
+                                       std::function<void(IPropertyBag2*)> setCustomProps )
 {
     if ( !fileName )
         return E_INVALIDARG;

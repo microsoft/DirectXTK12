@@ -35,6 +35,10 @@ namespace DirectX
 
 using namespace DirectX;
 
+static_assert(DDS_DIMENSION_TEXTURE1D == D3D12_RESOURCE_DIMENSION_TEXTURE1D, "dds mismatch");
+static_assert(DDS_DIMENSION_TEXTURE2D == D3D12_RESOURCE_DIMENSION_TEXTURE2D, "dds mismatch");
+static_assert(DDS_DIMENSION_TEXTURE3D == D3D12_RESOURCE_DIMENSION_TEXTURE3D, "dds mismatch");
+
 namespace
 {
 
@@ -400,8 +404,8 @@ namespace
             if (FAILED(hr) && !maxsize && (mipCount > 1))
             {
                 maxsize = (resDim == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
-                    ? 2048 /*D3D10_REQ_TEXTURE3D_U_V_OR_W_DIMENSION*/
-                    : 8192 /*D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION*/;
+                    ? D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION
+                    : D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 
                 hr = FillInitData(width, height, depth, mipCount, arraySize, format, maxsize, bitSize, bitData,
                     twidth, theight, tdepth, skipMip, &initData[0]);
@@ -671,7 +675,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
 _Use_decl_annotations_
 HRESULT DirectX::CreateDDSTextureFromMemory(
     ID3D12Device* d3dDevice,
-    ResourceUploadBatch* resourceUpload,
+    ResourceUploadBatch& resourceUpload,
     const uint8_t* ddsData,
     size_t ddsDataSize,
     ID3D12Resource** texture,
@@ -698,7 +702,7 @@ HRESULT DirectX::CreateDDSTextureFromMemory(
 _Use_decl_annotations_
 HRESULT DirectX::CreateDDSTextureFromMemoryEx(
     ID3D12Device* d3dDevice,
-    ResourceUploadBatch* resourceUpload,
+    ResourceUploadBatch& resourceUpload,
     const uint8_t* ddsData,
     size_t ddsDataSize,
     size_t maxsize,
@@ -725,13 +729,13 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
 
     if (SUCCEEDED(hr))
     {
-        resourceUpload->Upload(
+        resourceUpload.Upload(
             *texture,
             0,
             &subresources[0],
             (UINT)subresources.size());
 
-        resourceUpload->Transition(
+        resourceUpload.Transition(
             *texture,
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -739,7 +743,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
         // If it's missing mips, let's generate them
         if (generateMipsIfMissing && subresources.size() != (*texture)->GetDesc().MipLevels)
         {
-            resourceUpload->GenerateMips(*texture);
+            resourceUpload.GenerateMips(*texture);
         }
     }
 
@@ -751,7 +755,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
 _Use_decl_annotations_
 HRESULT DirectX::CreateDDSTextureFromFile(
     ID3D12Device* d3dDevice,
-    ResourceUploadBatch* resourceUpload,
+    ResourceUploadBatch& resourceUpload,
     const wchar_t* fileName,
     ID3D12Resource** texture,
     bool generateMipsIfMissing,
@@ -775,7 +779,7 @@ HRESULT DirectX::CreateDDSTextureFromFile(
 _Use_decl_annotations_
 HRESULT DirectX::CreateDDSTextureFromFileEx(
     ID3D12Device* d3dDevice,
-    ResourceUploadBatch* resourceUpload,
+    ResourceUploadBatch& resourceUpload,
     const wchar_t* fileName,
     size_t maxsize,
     D3D12_RESOURCE_FLAGS flags,
@@ -802,13 +806,13 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
 
     if (SUCCEEDED(hr))
     {
-        resourceUpload->Upload(
+        resourceUpload.Upload(
             *texture,
             0,
             &subresources[0],
             (UINT)subresources.size());
 
-        resourceUpload->Transition(
+        resourceUpload.Transition(
             *texture,
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -816,7 +820,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
         // If it's missing mips, let's generate them
         if (generateMipsIfMissing && subresources.size() != (*texture)->GetDesc().MipLevels)
         {
-            resourceUpload->GenerateMips(*texture);
+            resourceUpload.GenerateMips(*texture);
         }
     }
 

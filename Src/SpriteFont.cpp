@@ -31,7 +31,7 @@ class SpriteFont::Impl
 {
 public:
     Impl(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch* upload,
+        _In_ ResourceUploadBatch& upload,
         _In_ BinaryReader* reader,
         _In_ D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
         _In_ D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc);
@@ -49,7 +49,7 @@ public:
     void ForEachGlyph(_In_z_ wchar_t const* text, TAction action) const;
 
     void CreateTextureResource(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch* upload,
+        _In_ ResourceUploadBatch& upload,
         _In_ uint32_t width, _In_ uint32_t height,
         _In_ DXGI_FORMAT format, 
         _In_ uint32_t stride, _In_ uint32_t rows, 
@@ -95,7 +95,7 @@ namespace DirectX
 _Use_decl_annotations_
 SpriteFont::Impl::Impl(
     ID3D12Device* device,
-    ResourceUploadBatch* upload,
+    ResourceUploadBatch& upload,
     BinaryReader* reader,
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
     D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc)
@@ -247,7 +247,7 @@ void SpriteFont::Impl::ForEachGlyph(_In_z_ wchar_t const* text, TAction action) 
 _Use_decl_annotations_
 void SpriteFont::Impl::CreateTextureResource(
     ID3D12Device* device,
-    ResourceUploadBatch* upload,
+    ResourceUploadBatch& upload,
     uint32_t width, uint32_t height,
     DXGI_FORMAT format, 
     uint32_t stride, uint32_t rows, 
@@ -281,13 +281,13 @@ void SpriteFont::Impl::CreateTextureResource(
     subres.RowPitch = stride;
     subres.SlicePitch = stride * rows;
 
-    upload->Upload(
+    upload.Upload(
         textureResource.Get(), 
         0, 
         &subres, 
         1);
 
-    upload->Transition(
+    upload.Transition(
         textureResource.Get(),
         D3D12_RESOURCE_STATE_COPY_DEST,
         D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -296,7 +296,7 @@ void SpriteFont::Impl::CreateTextureResource(
 
 // Construct from a binary file created by the MakeSpriteFont utility.
 _Use_decl_annotations_
-SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch* upload, wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
+SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
 {
     BinaryReader reader(fileName);
 
@@ -306,7 +306,7 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch* upload, wchar_
 
 // Construct from a binary blob created by the MakeSpriteFont utility and already loaded into memory.
 _Use_decl_annotations_
-SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch* upload, uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
+SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
 {
     BinaryReader reader(dataBlob, dataSize);
 

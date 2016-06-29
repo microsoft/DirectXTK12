@@ -20,6 +20,10 @@
 #endif
 
 #include <stdexcept>
+#include <assert.h>
+#include <stdint.h>
+
+#include <wrl/client.h>
 
 
 namespace DirectX

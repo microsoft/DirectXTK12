@@ -22,17 +22,14 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
-#include <memory>
 #include <functional>
-#include <set>
-#include <string>
-#include <vector>
-#include <stdint.h>
-
 #include <iterator>
+#include <memory>
+#include <string>
 #include <type_traits>
-
-#include <wrl\client.h>
+#include <vector>
+#include <assert.h>
+#include <stdint.h>
 
 #include "GraphicsMemory.h"
 #include "Effects.h"

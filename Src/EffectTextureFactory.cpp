@@ -124,7 +124,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
             // load resource
             HRESULT hr = CreateDDSTextureFromFile(
                 device, 
-                &mResourceUploadBatch, 
+                mResourceUploadBatch, 
                 fullName, 
                 textureEntry.mResource.ReleaseAndGetAddressOf(),
                 false,
@@ -142,7 +142,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
             std::lock_guard<std::mutex> lock(mutex);
             HRESULT hr = CreateWICTextureFromFile( 
                 device, 
-                &mResourceUploadBatch, 
+                mResourceUploadBatch, 
                 fullName, 
                 textureEntry.mResource.ReleaseAndGetAddressOf() );
             if ( FAILED(hr) )
@@ -269,6 +269,7 @@ size_t EffectTextureFactory::ResourceCount() const
     return pImpl->mResources.size();
 }
 
+_Use_decl_annotations_
 void EffectTextureFactory::GetResource(size_t slot, ID3D12Resource** resource, bool* isCubeMap)
 {
     if (slot >= pImpl->mResources.size())

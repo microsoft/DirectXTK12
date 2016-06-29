@@ -42,7 +42,6 @@ public:
 
 
 // Initializes a geometric primitive instance that will draw the specified vertex and index data.
-_Use_decl_annotations_
 void GeometricPrimitive::Impl::Initialize(const VertexCollection& vertices, const IndexCollection& indices)
 {
     if (vertices.size() >= USHRT_MAX)

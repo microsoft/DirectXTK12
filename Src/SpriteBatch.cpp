@@ -68,7 +68,7 @@ __declspec(align(16)) class SpriteBatch::Impl : public AlignedNew<SpriteBatch::I
 {
 public:
     Impl(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch* upload,
+        _In_ ResourceUploadBatch& upload,
         _In_ const SpriteBatchPipelineStateDescription* psoDesc,
         _In_opt_ const D3D12_VIEWPORT* viewport);
 
@@ -189,14 +189,14 @@ private:
     // Only one of these helpers is allocated per D3D device, even if there are multiple SpriteBatch instances.
     struct DeviceResources
     {
-        DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch* upload);
+        DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload);
 
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignature;
 
     private:
-        void CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch* upload);
+        void CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload);
         void CreateRootSignature(_In_ ID3D12Device* device);
 
         static std::vector<short> CreateIndexValues();
@@ -204,12 +204,12 @@ private:
 
     // Per-device data.
     std::shared_ptr<DeviceResources> mDeviceResources;
-    static SharedResourcePool<ID3D12Device*, DeviceResources, ResourceUploadBatch*> deviceResourcesPool;
+    static SharedResourcePool<ID3D12Device*, DeviceResources, ResourceUploadBatch&> deviceResourcesPool;
 };
 
 
 // Global pools of per-device and per-context SpriteBatch resources.
-SharedResourcePool<ID3D12Device*, SpriteBatch::Impl::DeviceResources, ResourceUploadBatch*> SpriteBatch::Impl::deviceResourcesPool;
+SharedResourcePool<ID3D12Device*, SpriteBatch::Impl::DeviceResources, ResourceUploadBatch&> SpriteBatch::Impl::deviceResourcesPool;
 
 
 // Constants.
@@ -224,14 +224,14 @@ const D3D12_RASTERIZER_DESC SpriteBatch::Impl::s_DefaultRasterizerDesc = {D3D12_
 const D3D12_DEPTH_STENCIL_DESC SpriteBatch::Impl::s_DefaultDepthStencilDesc = {FALSE, D3D12_DEPTH_WRITE_MASK_ALL, D3D12_COMPARISON_FUNC_ALWAYS, FALSE, 0, 0};
 
 // Per-device constructor.
-SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch* upload)
+SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload)
 {
     CreateIndexBuffer(device, upload);
     CreateRootSignature(device);
 }
 
 // Creates the SpriteBatch index buffer.
-void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch* upload)
+void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload)
 {
     static_assert((MaxBatchSize * VerticesPerSprite) < USHRT_MAX, "MaxBatchSize too large for 16-bit indices");
 
@@ -255,8 +255,8 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
     indexDataDesc.SlicePitch = indexDataDesc.RowPitch;
 
     // Upload the resource
-    upload->Upload(indexBuffer.Get(), 0, &indexDataDesc, 1);
-    upload->Transition(indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+    upload.Upload(indexBuffer.Get(), 0, &indexDataDesc, 1);
+    upload.Transition(indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
     SetDebugObjectName(indexBuffer.Get(), L"DirectXTK:SpriteBatch Index Buffer");
 
     // Create the index buffer view
@@ -310,7 +310,7 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 
 // Per-SpriteBatch constructor.
 _Use_decl_annotations_
-SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch* upload, const SpriteBatchPipelineStateDescription* psoDesc, const D3D12_VIEWPORT* viewport)
+SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription* psoDesc, const D3D12_VIEWPORT* viewport)
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
     mSetViewport(false),
     mSpriteQueueCount(0),
@@ -876,7 +876,7 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
 // Public constructor.
 _Use_decl_annotations_
 SpriteBatch::SpriteBatch(ID3D12Device* device,
-    ResourceUploadBatch* upload,
+    ResourceUploadBatch& upload,
     const SpriteBatchPipelineStateDescription* psoDesc,
     const D3D12_VIEWPORT* viewport)
     : pImpl(new Impl(device, upload, psoDesc, viewport))

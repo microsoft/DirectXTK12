@@ -71,6 +71,7 @@ namespace
             enableDualTexture = false;
         }
 
+        m = {};
         m.name = matName;
         m.perVertexColor = perVertexColor;
         m.enableSkinning = enableSkinning;

@@ -15,8 +15,6 @@
 
 #include "VertexTypes.h"
 
-#include <DirectXColors.h>
-#include <functional>
 #include <memory>
 #include <vector>
 

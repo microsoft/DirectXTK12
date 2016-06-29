@@ -19,7 +19,9 @@
 #include <d3d12.h>
 #endif
 
+#include <DirectXMath.h>
 #include <pix.h>
+#include <wrl/client.h>
 
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
@@ -68,7 +70,7 @@ namespace DirectX
         _In_ ID3D12Device* d3dDevice,
         _In_ ID3D12Resource* tex,
         _In_ D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
-        _In_ bool isCubeMap);
+        _In_ bool isCubeMap = false);
 
     // Shorthand for creating a root signature
     inline HRESULT CreateRootSignature(
@@ -86,6 +88,13 @@ namespace DirectX
                 );
         }
         return hr;
+    }
+
+    // Helper for obtaining texture size
+    inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex)
+    {
+        auto desc = tex->GetDesc();
+        return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
     }
 
     // Scoped PIX event.

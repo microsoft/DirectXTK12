@@ -225,7 +225,7 @@ namespace
 
     //---------------------------------------------------------------------------------
     HRESULT CreateTextureFromWIC(_In_ ID3D12Device* d3dDevice,
-        _In_ ResourceUploadBatch* resourceUpload,
+        _In_ ResourceUploadBatch& resourceUpload,
         _In_ IWICBitmapFrameDecode *frame,
         _In_ size_t maxsize,
         _In_ D3D12_RESOURCE_FLAGS flags,
@@ -513,13 +513,13 @@ namespace
         initData.RowPitch = static_cast<UINT>(rowPitch);
         initData.SlicePitch = static_cast<UINT>(imageSize);
 
-        resourceUpload->Upload(
+        resourceUpload.Upload(
             tex,
             0,
             &initData,
             1);
 
-        resourceUpload->Transition(
+        resourceUpload.Transition(
             tex,
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -527,7 +527,7 @@ namespace
         // Generate mips?
         if (generateMips)
         {
-            resourceUpload->GenerateMips(tex);
+            resourceUpload.GenerateMips(tex);
         }
 
         *texture = tex;
@@ -538,7 +538,7 @@ namespace
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 HRESULT DirectX::CreateWICTextureFromMemory( ID3D12Device* d3dDevice,
-                                             ResourceUploadBatch* resourceUpload,
+                                             ResourceUploadBatch& resourceUpload,
                                              const uint8_t* wicData,
                                              size_t wicDataSize,
                                              ID3D12Resource** texture,
@@ -553,7 +553,7 @@ HRESULT DirectX::CreateWICTextureFromMemory( ID3D12Device* d3dDevice,
 
 _Use_decl_annotations_
 HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
-                                               ResourceUploadBatch* resourceUpload,
+                                               ResourceUploadBatch& resourceUpload,
                                                const uint8_t* wicData,
                                                size_t wicDataSize,
                                                size_t maxsize,
@@ -567,7 +567,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
         *texture = nullptr;
     }
 
-    if (!d3dDevice || !resourceUpload || !wicData  || !texture)
+    if (!d3dDevice || !wicData  || !texture)
         return E_INVALIDARG;
 
     if ( !wicDataSize )
@@ -619,7 +619,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 HRESULT DirectX::CreateWICTextureFromFile( ID3D12Device* d3dDevice,
-                                           ResourceUploadBatch* resourceUpload,
+                                           ResourceUploadBatch& resourceUpload,
                                            const wchar_t* fileName,
                                            ID3D12Resource** texture,
                                            bool generateMips,
@@ -633,7 +633,7 @@ HRESULT DirectX::CreateWICTextureFromFile( ID3D12Device* d3dDevice,
 
 _Use_decl_annotations_
 HRESULT DirectX::CreateWICTextureFromFileEx( ID3D12Device* d3dDevice,
-                                             ResourceUploadBatch* resourceUpload,
+                                             ResourceUploadBatch& resourceUpload,
                                              const wchar_t* fileName,
                                              size_t maxsize,
                                              D3D12_RESOURCE_FLAGS flags,
@@ -646,7 +646,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx( ID3D12Device* d3dDevice,
         *texture = nullptr;
     }
 
-    if (!d3dDevice || !resourceUpload || !fileName || !texture )
+    if (!d3dDevice || !fileName || !texture )
         return E_INVALIDARG;
 
     auto pWIC = _GetWIC();
