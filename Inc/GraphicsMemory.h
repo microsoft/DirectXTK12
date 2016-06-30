@@ -86,13 +86,13 @@ namespace DirectX
         GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 0);
 
         // Special overload of Allocate that aligns to D3D12 constant buffer alignment requirements
-        template<typename T> GraphicsResource __cdecl AllocateConstant()
+        template<typename T> GraphicsResource AllocateConstant()
         {
             const size_t alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
             const size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
             return std::move(Allocate(alignedSize, alignment));
         }
-        template<typename T> GraphicsResource __cdecl AllocateConstant(const T& setData)
+        template<typename T> GraphicsResource AllocateConstant(const T& setData)
         {
             GraphicsResource alloc = AllocateConstant<T>();
             memcpy(alloc.Memory(), &setData, sizeof(T));

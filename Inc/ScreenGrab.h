@@ -34,13 +34,15 @@
 
 namespace DirectX
 {
-    // pSource MUST be in the COPY_SOURCE state before calling
+    //
+    // pSource must be in the COPY_SOURCE state before calling
+    //
+
     HRESULT __cdecl SaveDDSTextureToFile(
         _In_ ID3D12CommandQueue* pCommandQueue,
         _In_ ID3D12Resource* pSource,
         _In_z_ const wchar_t* fileName);
 
-    // pSource MUST be in the COPY_SOURCE state before calling
     HRESULT __cdecl SaveWICTextureToFile(
         _In_ ID3D12CommandQueue* pCommandQ,
         _In_ ID3D12Resource* pSource,

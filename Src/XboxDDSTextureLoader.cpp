@@ -2,7 +2,7 @@
 // File: XboxDDSTextureLoader.cpp
 //
 // Functions for loading a DDS texture using the XBOX extended header and creating a
-// Direct3D11.X runtime resource for it via the CreatePlacement APIs
+// Direct3D12.X runtime resource for it via the CreatePlacedResourceX API
 //
 // Note these functions will not load standard DDS files. Use the DDSTextureLoader
 // module in the DirectXTex package or as part of the DirectXTK library to load

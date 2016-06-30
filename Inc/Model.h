@@ -85,7 +85,7 @@ namespace DirectX
         // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         // The iterator passed to this method should have random access capabilities for best performance.
         template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
-        static void __cdecl DrawMeshParts(
+        static void DrawMeshParts(
             _In_ ID3D12GraphicsCommandList* commandList, 
             _In_ const ModelMeshPart::Collection& meshParts,
             TEffectIterator effects)
@@ -145,12 +145,12 @@ namespace DirectX
         // Draw the mesh with a range of effects that mesh parts will index into. 
         // TEffectPtr can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
-        void __cdecl DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
+        void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, opaqueMeshParts, effects);
         }
         template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
-        void __cdecl DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
+        void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, effects);
         }
@@ -179,7 +179,7 @@ namespace DirectX
         //
 
         // Draw all the opaque meshes in the model
-        template<typename... TForwardArgs> void __cdecl DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
         {
             // Draw opaque parts
             for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
@@ -192,7 +192,7 @@ namespace DirectX
         }
 
         // Draw all the alpha meshes in the model
-        template<typename... TForwardArgs> void __cdecl DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
         {
             // Draw opaque parts
             for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
@@ -205,7 +205,7 @@ namespace DirectX
         }
 
         // Draw all the meshes in the model
-        template<typename... TForwardArgs> void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void Draw(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
         {
             DrawOpaque(commandList, std::forward<TForwardArgs>(args)...);
             DrawAlpha(commandList, std::forward<TForwardArgs>(args)...);
@@ -278,7 +278,7 @@ namespace DirectX
         std::wstring                    name;
 
     private:
-        std::shared_ptr<IEffect> CreateEffectForMeshPart(
+        std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(
             _In_ IEffectFactory& fxFactory, 
             _In_ const EffectPipelineStateDescription& pipelineState,
             _In_opt_ int descriptorOffset,

@@ -437,17 +437,17 @@ namespace DirectX
 
         virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
-        ID3D12DescriptorHeap* DescriptorHeap() const;
+        ID3D12DescriptorHeap* __cdecl DescriptorHeap() const;
 
         // Shorthand accessors for the descriptor heap
-        D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(size_t index) const;
-        D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(size_t index) const;
+        D3D12_CPU_DESCRIPTOR_HANDLE __cdecl GetCpuDescriptorHandle(size_t index) const;
+        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuDescriptorHandle(size_t index) const;
 
         // How many textures are there in this factory?
-        size_t ResourceCount() const;
+        size_t __cdecl ResourceCount() const;
 
         // Get a resource in a specific slot
-        void GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
+        void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
 
         // Settings.
         void __cdecl ReleaseCache();

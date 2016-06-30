@@ -28,7 +28,7 @@
 #endif
 
 //
-// The d3dx12.h header includes the following helper C++ classes
+// The d3dx12.h header includes the following helper C++ classes and functions
 //  CD3DX12_RECT
 //  CD3DX12_BOX
 //  CD3DX12_DEPTH_STENCIL_DESC
@@ -58,6 +58,14 @@
 //  CD3DX12_CPU_DESCRIPTOR_HANDLE
 //  CD3DX12_GPU_DESCRIPTOR_HANDLE
 //  CD3DX12_RESOURCE_DESC
+//  D3D12CalcSubresource
+//  D3D12DecomposeSubresource
+//  D3D12GetFormatPlaneCount
+//  MemcpySubresource
+//  GetRequiredIntermediateSize
+//  UpdateSubresources
+//  D3D12IsLayoutOpaque
+//  CommandListCast
 // 
 
 

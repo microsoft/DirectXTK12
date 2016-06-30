@@ -100,7 +100,7 @@ namespace
 
 
     //--------------------------------------------------------------------------------------
-    // Direct3D 9 Vertex Declaration to DirectInput 11 Input Layout mapping
+    // Direct3D 9 Vertex Declaration to Direct3D 12 Input Layout mapping
 
     void GetInputLayoutDesc(_In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[], std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc,
         bool &perVertexColor, bool& enableSkinning, bool& dualTexture)
