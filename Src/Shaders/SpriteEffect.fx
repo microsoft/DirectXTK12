@@ -5,10 +5,11 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248929
+// http://go.microsoft.com/fwlink/?LinkID=615561
 // http://create.msdn.com/en-US/education/catalog/sample/stock_effects
 
 #include "Structures.fxh"
+#include "RootSig.fxh"
 
 Texture2D<float4> Texture : register(t0);
 sampler TextureSampler : register(s0);

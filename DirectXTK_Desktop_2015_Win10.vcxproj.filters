@@ -22,6 +22,9 @@
     <Filter Include="Src\Shared">
       <UniqueIdentifier>{95983e6d-a96c-4fb5-b014-8e0527c1d68b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Shaders\Shared">
+      <UniqueIdentifier>{bb6c909b-3081-409a-a30f-5129414801ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\CommonStates.h">
@@ -277,15 +280,6 @@
     <None Include="Src\Shaders\SpriteEffect.fx">
       <Filter>Src\Shaders</Filter>
     </None>
-    <None Include="Src\Shaders\Common.fxh">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\Lighting.fxh">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\Structures.fxh">
-      <Filter>Src\Shaders</Filter>
-    </None>
     <None Include="Src\Shaders\BasicEffect.fx">
       <Filter>Src\Shaders</Filter>
     </None>
@@ -508,6 +502,18 @@
     </None>
     <None Include="Src\TeapotData.inc">
       <Filter>Src\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Common.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Lighting.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Structures.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\RootSig.fxh">
+      <Filter>Src\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

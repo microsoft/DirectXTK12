@@ -6,7 +6,7 @@
 //
 // Note these functions will not load standard DDS files. Use the DDSTextureLoader
 // module in the DirectXTex package or as part of the DirectXTK library to load
-// these files which use standard Direct3D 11 resource creation APIs.
+// these files which use standard Direct3D resource creation APIs.
 //
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
@@ -15,8 +15,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248926
-// http://go.microsoft.com/fwlink/?LinkId=248929
+// http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
 #pragma once

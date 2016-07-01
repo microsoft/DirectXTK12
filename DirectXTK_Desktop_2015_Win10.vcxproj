@@ -180,6 +180,7 @@
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShader.inc" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />
+    <None Include="Src\Shaders\RootSig.fxh" />
     <None Include="Src\Shaders\SpriteEffect.fx" />
     <None Include="Src\Shaders\Structures.fxh" />
     <None Include="Src\TeapotData.inc" />

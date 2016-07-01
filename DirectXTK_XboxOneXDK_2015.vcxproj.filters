@@ -24,6 +24,9 @@
     <Filter Include="Src\Shared">
       <UniqueIdentifier>{302026c2-811a-448d-b7c5-67fc7c84c157}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Shaders\Shared">
+      <UniqueIdentifier>{3c422910-8708-452c-81b7-9e692884dca8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\Audio.h">
@@ -276,16 +279,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Src\Shaders\Common.fxh">
-      <Filter>Src\Shaders</Filter>
-    </None>
     <None Include="Src\Shaders\CompileShaders.cmd">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\Lighting.fxh">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\Structures.fxh">
       <Filter>Src\Shaders</Filter>
     </None>
     <None Include="Src\Shaders\SkinnedEffect.fx">
@@ -515,6 +509,18 @@
     </None>
     <None Include="Src\TeapotData.inc">
       <Filter>Src\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Common.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Lighting.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\RootSig.fxh">
+      <Filter>Src\Shaders</Filter>
+    </None>
+    <None Include="Src\Shaders\Structures.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

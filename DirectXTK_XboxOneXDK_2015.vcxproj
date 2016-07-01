@@ -176,6 +176,7 @@
     <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpriteVertexShader.inc" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />
+    <None Include="Src\Shaders\RootSig.fxh" />
     <None Include="Src\Shaders\Structures.fxh" />
     <None Include="Src\TeapotData.inc" />
   </ItemGroup>
