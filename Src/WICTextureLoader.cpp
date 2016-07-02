@@ -363,19 +363,6 @@ namespace
             }
         }
 
-        // Verify our target format is supported by the current device
-        // (handles WDDM 1.0 or WDDM 1.1 device driver cases as well as DirectX 11.0 Runtime without 16bpp format support)
-        D3D12_FEATURE_DATA_FORMAT_SUPPORT support = {};
-        support.Format = format;
-        hr = d3dDevice->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &support, sizeof(support));
-        if (FAILED(hr) || !(support.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURE2D))
-        {
-            // Fallback to RGBA 32-bit format which is supported by all devices
-            memcpy(&convertGUID, &GUID_WICPixelFormat32bppRGBA, sizeof(WICPixelFormatGUID));
-            format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            bpp = 32;
-        }
-
         // Allocate temporary memory for image
         size_t rowPitch = (twidth * bpp + 7) / 8;
         size_t imageSize = rowPitch * theight;
