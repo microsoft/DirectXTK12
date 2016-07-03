@@ -60,7 +60,6 @@ namespace DirectX
         GraphicsResource                                        indexBuffer;
         GraphicsResource                                        vertexBuffer;
         std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
-        bool                                                    isAlpha;
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
         using DrawCallback = std::function<void (_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;

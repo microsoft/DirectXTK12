@@ -505,7 +505,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
                 mat, textureDictionary);
 
             auto part = new ModelMeshPart();
-            part->isAlpha = mat.alphaValue < 1.0f;
 
             const auto& vh = vbArray[mh.VertexBuffers[0]];
             const auto& ih = ibArray[mh.IndexBuffer];
@@ -530,7 +529,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
             part->materialIndex = subset.MaterialID;
             part->vbDecl = vbDecls[ mh.VertexBuffers[0] ];
 
-            if (part->isAlpha)
+            if (mat.alphaValue < 1.0f)
                 mesh->alphaMeshParts.emplace_back( part );
             else
                 mesh->opaqueMeshParts.emplace_back( part );
