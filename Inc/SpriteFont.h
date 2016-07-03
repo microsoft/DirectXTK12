@@ -23,9 +23,9 @@ namespace DirectX
     public:
         struct Glyph;
 
-        SpriteFont(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload, _In_z_ wchar_t const* fileName, _In_ D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, _In_ D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor);
-        SpriteFont(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload, _In_reads_bytes_(dataSize) uint8_t const* dataBlob, _In_ size_t dataSize, _In_ D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, _In_ D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor);
-        SpriteFont(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture, _In_ XMUINT2 textureSize, _In_reads_(glyphCount) Glyph const* glyphs, _In_ size_t glyphCount, _In_ float lineSpacing);
+        SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, _In_z_ wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor);
+        SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, _In_reads_bytes_(dataSize) uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor);
+        SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, _In_reads_(glyphCount) Glyph const* glyphs, size_t glyphCount, float lineSpacing);
 
         SpriteFont(SpriteFont&& moveFrom);
         SpriteFont& operator= (SpriteFont&& moveFrom);

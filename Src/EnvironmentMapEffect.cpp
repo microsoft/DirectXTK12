@@ -462,13 +462,13 @@ void XM_CALLCONV EnvironmentMapEffect::SetFogColor(FXMVECTOR value)
 }
 
 
-void EnvironmentMapEffect::SetTexture(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value)
+void EnvironmentMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE value)
 {
     pImpl->texture = value;
 }
 
 
-void EnvironmentMapEffect::SetEnvironmentMap(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value)
+void EnvironmentMapEffect::SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE value)
 {
     pImpl->environmentMap = value;
 }

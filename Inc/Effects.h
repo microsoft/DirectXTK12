@@ -324,10 +324,10 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE value);
 
         // Environment map settings.
-        void __cdecl SetEnvironmentMap(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value);
+        void __cdecl SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE value);
         void __cdecl SetEnvironmentMapAmount(float value);
         void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
         void __cdecl SetFresnelFactor(float value);

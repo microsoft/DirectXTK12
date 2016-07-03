@@ -31,15 +31,15 @@ class SpriteFont::Impl
 {
 public:
     Impl(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& upload,
+        ResourceUploadBatch& upload,
         _In_ BinaryReader* reader,
-        _In_ D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
-        _In_ D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc);
-    Impl(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture,
-        _In_ XMUINT2 textureSize,
+        D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
+        D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc);
+    Impl(D3D12_GPU_DESCRIPTOR_HANDLE texture,
+        XMUINT2 textureSize,
         _In_reads_(glyphCount) Glyph const* glyphs,
-        _In_ size_t glyphCount,
-        _In_ float lineSpacing);
+        size_t glyphCount,
+        float lineSpacing);
 
     Glyph const* FindGlyph(wchar_t character) const;
 
@@ -49,10 +49,10 @@ public:
     void ForEachGlyph(_In_z_ wchar_t const* text, TAction action) const;
 
     void CreateTextureResource(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& upload,
-        _In_ uint32_t width, _In_ uint32_t height,
-        _In_ DXGI_FORMAT format, 
-        _In_ uint32_t stride, _In_ uint32_t rows, 
+        ResourceUploadBatch& upload,
+        uint32_t width, uint32_t height,
+        DXGI_FORMAT format, 
+        uint32_t stride, uint32_t rows, 
         _In_reads_(stride * rows) const uint8_t* data);
     
     // Fields.
@@ -315,7 +315,8 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_
 
 
 // Construct from arbitrary user specified glyph data (for those not using the MakeSpriteFont utility).
-SpriteFont::SpriteFont(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture, _In_ XMUINT2 textureSize, _In_reads_(glyphCount) Glyph const* glyphs, _In_ size_t glyphCount, _In_ float lineSpacing)
+_Use_decl_annotations_
+SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
   : pImpl(new Impl(texture, textureSize, glyphs, glyphCount, lineSpacing))
 {
 }

@@ -68,18 +68,19 @@ __declspec(align(16)) class SpriteBatch::Impl : public AlignedNew<SpriteBatch::I
 {
 public:
     Impl(_In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& upload,
-        _In_ const SpriteBatchPipelineStateDescription* psoDesc,
-        _In_opt_ const D3D12_VIEWPORT* viewport);
+         ResourceUploadBatch& upload,
+         _In_ const SpriteBatchPipelineStateDescription* psoDesc,
+         const D3D12_VIEWPORT* viewport);
 
     void XM_CALLCONV Begin(
         _In_ ID3D12GraphicsCommandList* commandList,
-        _In_opt_ SpriteSortMode sortMode = SpriteSortMode_Deferred,
-        _In_opt_ FXMMATRIX transformMatrix = MatrixIdentity);
+        SpriteSortMode sortMode = SpriteSortMode_Deferred,
+        FXMMATRIX transformMatrix = MatrixIdentity);
     void End();
 
-    void XM_CALLCONV Draw(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture,
-        _In_ XMUINT2 textureSize,
+    void XM_CALLCONV Draw(
+        D3D12_GPU_DESCRIPTOR_HANDLE texture,
+        XMUINT2 textureSize,
         FXMVECTOR destination,
         _In_opt_ RECT const* sourceRectangle,
         FXMVECTOR color,
@@ -189,14 +190,14 @@ private:
     // Only one of these helpers is allocated per D3D device, even if there are multiple SpriteBatch instances.
     struct DeviceResources
     {
-        DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload);
+        DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload);
 
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignature;
 
     private:
-        void CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload);
+        void CreateIndexBuffer(_In_ ID3D12Device* device, ResourceUploadBatch& upload);
         void CreateRootSignature(_In_ ID3D12Device* device);
 
         static std::vector<short> CreateIndexValues();
@@ -224,14 +225,14 @@ const D3D12_RASTERIZER_DESC SpriteBatch::Impl::s_DefaultRasterizerDesc = {D3D12_
 const D3D12_DEPTH_STENCIL_DESC SpriteBatch::Impl::s_DefaultDepthStencilDesc = {FALSE, D3D12_DEPTH_WRITE_MASK_ALL, D3D12_COMPARISON_FUNC_ALWAYS, FALSE, 0, 0};
 
 // Per-device constructor.
-SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload)
+SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
 {
     CreateIndexBuffer(device, upload);
     CreateRootSignature(device);
 }
 
 // Creates the SpriteBatch index buffer.
-void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* device, _In_ ResourceUploadBatch& upload)
+void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
 {
     static_assert((MaxBatchSize * VerticesPerSprite) < USHRT_MAX, "MaxBatchSize too large for 16-bit indices");
 
@@ -923,7 +924,6 @@ void SpriteBatch::End()
 }
 
 
-_Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 textureSize,
     XMFLOAT2 const& position,
@@ -975,7 +975,6 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 }
 
 
-_Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, FXMVECTOR position, FXMVECTOR color)
 {
     XMVECTOR destination = XMVectorPermute<0, 1, 4, 5>(position, g_XMOne); // x, y, 1, 1
@@ -1028,7 +1027,6 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 }
 
 
-_Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
     XMUINT2 textureSize,
     RECT const& destinationRectangle,
