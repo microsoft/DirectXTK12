@@ -51,7 +51,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize, bool ccw, bool pmalpha)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
@@ -97,8 +97,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     part->vbDecl = g_vbdecl;
 
     auto mesh = std::make_shared<ModelMesh>();
-    mesh->ccw = ccw;
-    mesh->pmalpha = pmalpha;
     BoundingSphere::CreateFromPoints(mesh->boundingSphere, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
     BoundingBox::CreateFromPoints(mesh->boundingBox, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
     mesh->opaqueMeshParts.emplace_back(part);
@@ -112,8 +110,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName,
-                                                     bool ccw, bool pmalpha)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -124,7 +121,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName,
         throw std::exception( "CreateFromVBO" );
     }
 
-    auto model = CreateFromVBO( data.get(), dataSize, ccw, pmalpha );
+    auto model = CreateFromVBO( data.get(), dataSize );
 
     model->name = szFileName;
 

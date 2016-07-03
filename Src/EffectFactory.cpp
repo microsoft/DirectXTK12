@@ -36,10 +36,11 @@ public:
     }
 
     std::shared_ptr<IEffect> CreateEffect(
-        _In_ const EffectInfo& info, 
-        _In_ const EffectPipelineStateDescription& pipelineState,
-        _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-        _In_opt_ int baseDescriptorOffset);
+        const EffectInfo& info, 
+        const EffectPipelineStateDescription& opaquePipelineState,
+        const EffectPipelineStateDescription& alphaPipelineState,
+        const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+        int baseDescriptorOffset);
 
     void ReleaseCache();
     void SetSharing( bool enabled ) { mSharing = enabled; }
@@ -61,11 +62,11 @@ private:
 };
 
 
-_Use_decl_annotations_
 std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     const EffectInfo& info, 
-    const EffectPipelineStateDescription& pipelineState,
-    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc, 
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState,
+    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
     int baseDescriptorOffset)
 {
     D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
@@ -101,25 +102,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     };
 
     // Modify base pipeline state
-    EffectPipelineStateDescription derivedPSD = pipelineState;
+    EffectPipelineStateDescription derivedPSD = (info.alphaValue < 1.0f) ? alphaPipelineState : opaquePipelineState;
 
     // Input layout
     derivedPSD.inputLayout = &inputLayoutDesc;
-
-    // Alpha state modification
-    if ( info.alphaValue < 1.0f )
-    {
-        derivedPSD.depthStencilDesc = &CommonStates::DepthRead;
-
-        if ( info.isPremultipliedAlpha )
-        {
-            derivedPSD.blendDesc = &CommonStates::AlphaBlend;
-        }
-        else
-        {
-            derivedPSD.blendDesc = &CommonStates::NonPremultiplied;
-        }
-    }
 
     if ( info.enableSkinning )
     {
@@ -368,14 +354,14 @@ EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom)
     return *this;
 }
 
-_Use_decl_annotations_
 std::shared_ptr<IEffect> EffectFactory::CreateEffect(
-    _In_ const EffectInfo& info, 
-    _In_ const EffectPipelineStateDescription& pipelineState,
-    _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-    _In_opt_ int descriptorOffset)
+    const EffectInfo& info, 
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState,
+    const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+    int descriptorOffset)
 {
-    return pImpl->CreateEffect(info, pipelineState, inputLayout, descriptorOffset);
+    return pImpl->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, descriptorOffset);
 }
 
 void EffectFactory::ReleaseCache()

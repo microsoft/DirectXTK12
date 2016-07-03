@@ -125,8 +125,6 @@ namespace DirectX
         ModelMeshPart::Collection   opaqueMeshParts;
         ModelMeshPart::Collection   alphaMeshParts;
         std::wstring                name;
-        bool                        ccw;
-        bool                        pmalpha;
 
         using Collection = std::vector<std::shared_ptr<ModelMesh>>;
 
@@ -179,7 +177,7 @@ namespace DirectX
         //
 
         // Draw all the opaque meshes in the model
-        template<typename... TForwardArgs> void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
             // Draw opaque parts
             for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
@@ -192,7 +190,7 @@ namespace DirectX
         }
 
         // Draw all the alpha meshes in the model
-        template<typename... TForwardArgs> void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
             // Draw opaque parts
             for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
@@ -205,45 +203,43 @@ namespace DirectX
         }
 
         // Draw all the meshes in the model
-        template<typename... TForwardArgs> void Draw(_In_ ID3D12GraphicsCommandList* commandList, _In_opt_ TForwardArgs&&... args) const
+        template<typename... TForwardArgs> void Draw(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
             DrawOpaque(commandList, std::forward<TForwardArgs>(args)...);
             DrawAlpha(commandList, std::forward<TForwardArgs>(args)...);
         }
 
         // Load texture resources into an existing Effect Texture Factory
-        void __cdecl LoadTextures(_In_ IEffectTextureFactory& texFactory, _In_opt_ int destinationDescriptorOffset = 0);
+        void __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0);
 
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
             _In_ ID3D12Device* device, 
             _Inout_ ResourceUploadBatch& resourceUploadBatch, 
             _In_opt_z_ const wchar_t* texturesPath = nullptr,
-            _In_opt_ D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+            D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
         // Create effects using the default effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
-            _In_ const EffectPipelineStateDescription& pipelineState,
-            _In_ ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap, 
-            _In_opt_ int baseDescriptorOffset = 0);
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            _In_ ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap,
+            int baseDescriptorOffset = 0);
 
         // Create effects using a custom effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
-            _In_ IEffectFactory& fxFactory, 
-            _In_ const EffectPipelineStateDescription& pipelineState,
-            _In_opt_ int baseDescriptorOffset = 0);
+            IEffectFactory& fxFactory, 
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            int baseDescriptorOffset = 0);
 
         // Loads a model from a DirectX SDK .SDKMESH file
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
-                                                                 bool ccw = false, bool pmalpha = false );
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_z_ const wchar_t* szFileName,
-                                                                 bool ccw = false, bool pmalpha = false );
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_z_ const wchar_t* szFileName );
 
         // Loads a model from a .VBO file
-        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
-                                                             bool ccw = false, bool pmalpha = false );
-        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_z_ const wchar_t* szFileName, 
-                                                             bool ccw = false, bool pmalpha = false );
+        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );
+        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_z_ const wchar_t* szFileName );
 
         // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
         // descriptor will be zero.
@@ -279,9 +275,10 @@ namespace DirectX
 
     private:
         std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(
-            _In_ IEffectFactory& fxFactory, 
-            _In_ const EffectPipelineStateDescription& pipelineState,
-            _In_opt_ int descriptorOffset,
+            IEffectFactory& fxFactory, 
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            int descriptorOffset,
             _In_ const ModelMeshPart* part) const;
     };
  }

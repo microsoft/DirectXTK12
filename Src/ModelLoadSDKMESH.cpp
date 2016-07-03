@@ -52,7 +52,6 @@ namespace
         _In_ bool perVertexColor,
         _In_ bool enableSkinning,
         _In_ bool enableDualTexture,
-        _In_ bool isPremultipliedAlpha,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
@@ -76,7 +75,6 @@ namespace
         m.perVertexColor = perVertexColor;
         m.enableSkinning = enableSkinning;
         m.enableDualTexture = enableDualTexture;
-        m.isPremultipliedAlpha = isPremultipliedAlpha;
         m.ambientColor = XMFLOAT3(mh.Ambient.x, mh.Ambient.y, mh.Ambient.z);
         m.diffuseColor = XMFLOAT3(mh.Diffuse.x, mh.Diffuse.y, mh.Diffuse.z);
         m.emissiveColor = XMFLOAT3(mh.Emissive.x, mh.Emissive.y, mh.Emissive.z);
@@ -298,7 +296,7 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshData, size_t dataSize, bool ccw, bool pmalpha )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshData, size_t dataSize )
 {
     if ( !meshData )
         throw std::exception("meshData cannot be null");
@@ -460,8 +458,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
         wchar_t meshName[ DXUT::MAX_MESH_NAME ];
         MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME );
         mesh->name = meshName;
-        mesh->ccw = ccw;
-        mesh->pmalpha = pmalpha;
 
         // Extents
         mesh->boundingBox.Center = mh.BoundingBoxCenter;
@@ -505,7 +501,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
 
             const size_t vi = mh.VertexBuffers[0];
             InitMaterial(materialArray[subset.MaterialID],
-                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], mesh->pmalpha,
+                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi],
                 mat, textureDictionary);
 
             auto part = new ModelMeshPart();
@@ -557,7 +553,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const wchar_t* szFileName, bool ccw, bool pmalpha )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const wchar_t* szFileName )
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -568,7 +564,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const wchar_t* szFileN
         throw std::exception( "CreateFromSDKMESH" );
     }
 
-    auto model = CreateFromSDKMESH( data.get(), dataSize, ccw, pmalpha );
+    auto model = CreateFromSDKMESH( data.get(), dataSize );
 
     model->name = szFileName;
 

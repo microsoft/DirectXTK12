@@ -106,8 +106,8 @@ namespace DirectX
             _In_ const D3D12_DEPTH_STENCIL_DESC* depthStencil,
             _In_ const D3D12_RASTERIZER_DESC* rasterizer,
             _In_ const RenderTargetState* renderTarget,
-            _In_opt_ D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-            _In_opt_ D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
+            D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
             :
             inputLayout(inputLayout),
             blendDesc(blend),
@@ -476,7 +476,6 @@ namespace DirectX
             bool                perVertexColor;
             bool                enableSkinning;
             bool                enableDualTexture;
-            bool                isPremultipliedAlpha;
             float               specularPower;
             float               alphaValue;
             DirectX::XMFLOAT3   ambientColor;
@@ -490,7 +489,6 @@ namespace DirectX
                 : perVertexColor(false)
                 , enableSkinning(false)
                 , enableDualTexture(false)
-                , isPremultipliedAlpha(false)
                 , specularPower(0)
                 , alphaValue(0)
                 , ambientColor(0, 0, 0)
@@ -503,10 +501,12 @@ namespace DirectX
             }
         };
 
-        virtual std::shared_ptr<IEffect> __cdecl CreateEffect( _In_ const EffectInfo& info, 
-                                                               _In_ const EffectPipelineStateDescription& pipelineState,
-                                                               _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-                                                               _In_opt_ int descriptorOffset = 0) = 0;
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+            const EffectInfo& info, 
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+            int descriptorOffset = 0) = 0;
     };
 
     // Factory for sharing effects
@@ -526,10 +526,11 @@ namespace DirectX
 
         // IEffectFactory methods.
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
-            _In_ const EffectInfo& info, 
-            _In_ const EffectPipelineStateDescription& pipelineState,
-            _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout,
-            _In_opt_ int descriptorOffset = 0) override;
+            const EffectInfo& info, 
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+            int descriptorOffset = 0) override;
         
         // Settings.
         void __cdecl ReleaseCache();
