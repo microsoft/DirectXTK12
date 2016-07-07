@@ -27,6 +27,26 @@ float4 Mip(uint2 coord)
     return SrcMip.SampleLevel(Sampler, uv, SrcMipIndex);
 }
 
+float3 SRGBToLinear(float3 c)
+{
+    return c < 0.04045 ? c / 12.92 : pow(abs(c) + 0.055, 2.4);
+}
+
+float4 SRGBToLinear(float4 c)
+{
+    return float4(SRGBToLinear(c.rgb), c.a);
+}
+
+float3 LinearToSRGB(float3 c)
+{
+    return c < 0.003131 ? 12.92 * c : 1.055 * pow(abs(c), 1.0 / 2.4) - 0.055;
+}
+
+float4 LinearToSRGB(float4 c)
+{
+    return float4(LinearToSRGB(c.rgb), c.a);
+}
+
 [RootSignature(GenerateMipsRS)]
 // Workaround for NVidia bug: some driver versions don't handle SV_DispatchThreadID correctly.
 [numthreads(8, 8, 1)]
@@ -34,4 +54,22 @@ void main(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID)
 {
     uint3 DTid = Gid * uint3(8,8,1) + GTid;
     OutMip[DTid.xy] = Mip(DTid.xy);
+}
+
+[RootSignature(GenerateMipsRS)]
+// Workaround for NVidia bug: some driver versions don't handle SV_DispatchThreadID correctly.
+[numthreads(8, 8, 1)]
+void DegammaInPlace(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID)
+{
+    uint3 DTid = Gid * uint3(8,8,1) + GTid;
+    OutMip[DTid.xy] = SRGBToLinear(OutMip[DTid.xy]);
+}
+
+[RootSignature(GenerateMipsRS)]
+// Workaround for NVidia bug: some driver versions don't handle SV_DispatchThreadID correctly.
+[numthreads(8, 8, 1)]
+void RegammaInPlace(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID)
+{
+    uint3 DTid = Gid * uint3(8,8,1) + GTid;
+    OutMip[DTid.xy] = LinearToSRGB(OutMip[DTid.xy]);
 }

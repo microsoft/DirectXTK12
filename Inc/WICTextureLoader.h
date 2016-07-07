@@ -43,7 +43,7 @@ namespace DirectX
         _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
         size_t wicDataSize,
         _Outptr_ ID3D12Resource** texture,
-        bool generateMips = true,
+        bool generateMips = false,
         size_t maxsize = 0);
 
     HRESULT __cdecl CreateWICTextureFromFile(
@@ -51,7 +51,7 @@ namespace DirectX
         ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
         _Outptr_  ID3D12Resource** texture,
-        bool generateMips = true,
+        bool generateMips = false,
         size_t maxsize = 0);
 
     // Extended version
