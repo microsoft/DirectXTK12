@@ -6,9 +6,6 @@
 //
 // Note: Assumes application has already called CoInitializeEx
 //
-// Warning: CreateWICTexture* functions are not thread-safe if given a d3dContext instance for
-//          auto-gen mipmap support.
-//
 // Note these functions are useful for images created as simple 2D textures. For
 // more complex resources, DDSTextureLoader is an excellent light-weight runtime loader.
 // For a full-featured DDS file reader, writer, and texture processing pipeline see

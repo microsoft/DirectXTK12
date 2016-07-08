@@ -30,6 +30,7 @@
 #endif
 
 #include <stdint.h>
+#include <memory>
 
 
 namespace DirectX
