@@ -37,6 +37,24 @@ namespace DirectX
     class ResourceUploadBatch;
 
     // Standard version
+    HRESULT __cdecl LoadWICTextureFromMemory(
+        _In_ ID3D12Device* d3dDevice,
+        _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
+        size_t wicDataSize,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& decodedData,
+        D3D12_SUBRESOURCE_DATA& subresource,
+        size_t maxsize = 0);
+
+    HRESULT __cdecl LoadWICTextureFromFile(
+        _In_ ID3D12Device* d3dDevice,
+        _In_z_ const wchar_t* szFileName,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& decodedData,
+        D3D12_SUBRESOURCE_DATA& subresource,
+        size_t maxsize = 0);
+
+    // Standard version with resource upload
     HRESULT __cdecl CreateWICTextureFromMemory(
         _In_ ID3D12Device* d3dDevice,
          ResourceUploadBatch& resourceUpload,
@@ -50,11 +68,35 @@ namespace DirectX
         _In_ ID3D12Device* d3dDevice,
         ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
-        _Outptr_  ID3D12Resource** texture,
+        _Outptr_ ID3D12Resource** texture,
         bool generateMips = false,
         size_t maxsize = 0);
 
     // Extended version
+    HRESULT __cdecl LoadWICTextureFromMemoryEx(
+        _In_ ID3D12Device* d3dDevice,
+        _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
+        size_t wicDataSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool reserveFullMipChain,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& decodedData,
+        D3D12_SUBRESOURCE_DATA& subresource);
+
+    HRESULT __cdecl LoadWICTextureFromFileEx(
+        _In_ ID3D12Device* d3dDevice,
+        _In_z_ const wchar_t* szFileName,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool reserveFullMipChain,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& decodedData,
+        D3D12_SUBRESOURCE_DATA& subresource);
+
+    // Extended version with resource upload
     HRESULT __cdecl CreateWICTextureFromMemoryEx(
         _In_ ID3D12Device* d3dDevice,
         ResourceUploadBatch& resourceUpload,
@@ -64,7 +106,7 @@ namespace DirectX
         D3D12_RESOURCE_FLAGS flags,
         bool forceSRGB,
         bool generateMips,
-        _Outptr_  ID3D12Resource** texture);
+        _Outptr_ ID3D12Resource** texture);
 
     HRESULT __cdecl CreateWICTextureFromFileEx(
         _In_ ID3D12Device* d3dDevice,

@@ -63,10 +63,10 @@ namespace
         { GUID_WICPixelFormat64bppRGBA,             DXGI_FORMAT_R16G16B16A16_UNORM },
 
         { GUID_WICPixelFormat32bppRGBA,             DXGI_FORMAT_R8G8B8A8_UNORM },
-        { GUID_WICPixelFormat32bppBGRA,             DXGI_FORMAT_B8G8R8A8_UNORM }, // DXGI 1.1
-        { GUID_WICPixelFormat32bppBGR,              DXGI_FORMAT_B8G8R8X8_UNORM }, // DXGI 1.1
+        { GUID_WICPixelFormat32bppBGRA,             DXGI_FORMAT_B8G8R8A8_UNORM },
+        { GUID_WICPixelFormat32bppBGR,              DXGI_FORMAT_B8G8R8X8_UNORM },
 
-        { GUID_WICPixelFormat32bppRGBA1010102XR,    DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM }, // DXGI 1.1
+        { GUID_WICPixelFormat32bppRGBA1010102XR,    DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM },
         { GUID_WICPixelFormat32bppRGBA1010102,      DXGI_FORMAT_R10G10B10A2_UNORM },
 
         { GUID_WICPixelFormat16bppBGRA5551,         DXGI_FORMAT_B5G5R5A1_UNORM },
@@ -79,7 +79,7 @@ namespace
 
         { GUID_WICPixelFormat8bppAlpha,             DXGI_FORMAT_A8_UNORM },
 
-        { GUID_WICPixelFormat96bppRGBFloat,         DXGI_FORMAT_R32G32B32_FLOAT }, // WIC 2
+        { GUID_WICPixelFormat96bppRGBFloat,         DXGI_FORMAT_R32G32B32_FLOAT },
     };
 
     //-------------------------------------------------------------------------------------
@@ -143,11 +143,11 @@ namespace
         { GUID_WICPixelFormat40bppCMYKAlpha,        GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
         { GUID_WICPixelFormat80bppCMYKAlpha,        GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
 
-        { GUID_WICPixelFormat32bppRGB,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM (WIC2)
-        { GUID_WICPixelFormat64bppRGB,              GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM (WIC2)
-        { GUID_WICPixelFormat64bppPRGBAHalf,        GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT (WIC2)
+        { GUID_WICPixelFormat32bppRGB,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat64bppRGB,              GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
+        { GUID_WICPixelFormat64bppPRGBAHalf,        GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
 
-        { GUID_WICPixelFormat96bppRGBFixedPoint,   GUID_WICPixelFormat96bppRGBFloat }, // DXGI_FORMAT_R32G32B32_FLOAT (WIC2)
+        { GUID_WICPixelFormat96bppRGBFixedPoint,   GUID_WICPixelFormat96bppRGBFloat }, // DXGI_FORMAT_R32G32B32_FLOAT
 
         // We don't support n-channel formats
     };
@@ -224,13 +224,14 @@ namespace
 
     //---------------------------------------------------------------------------------
     HRESULT CreateTextureFromWIC(_In_ ID3D12Device* d3dDevice,
-        ResourceUploadBatch& resourceUpload,
         _In_ IWICBitmapFrameDecode *frame,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS flags,
         bool forceSRGB,
-        bool generateMips,
-        _Outptr_ ID3D12Resource** texture)
+        bool reserveFullMipChain,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& decodedData,
+        D3D12_SUBRESOURCE_DATA& subresource)
     {
         UINT width, height;
         HRESULT hr = frame->GetSize(&width, &height);
@@ -363,25 +364,12 @@ namespace
             }
         }
 
-        // Verify our target format is supported by the current device
-        // (handles WDDM 1.0 or WDDM 1.1 device driver cases as well as DirectX 11.0 Runtime without 16bpp format support)
-        D3D12_FEATURE_DATA_FORMAT_SUPPORT support = {};
-        support.Format = format;
-        hr = d3dDevice->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &support, sizeof(support));
-        if (FAILED(hr) || !(support.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURE2D))
-        {
-            // Fallback to RGBA 32-bit format which is supported by all devices
-            memcpy(&convertGUID, &GUID_WICPixelFormat32bppRGBA, sizeof(WICPixelFormatGUID));
-            format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            bpp = 32;
-        }
-
-        // Allocate temporary memory for image
+        // Allocate memory for decoded image
         size_t rowPitch = (twidth * bpp + 7) / 8;
         size_t imageSize = rowPitch * theight;
 
-        std::unique_ptr<uint8_t[]> temp(new (std::nothrow) uint8_t[imageSize]);
-        if (!temp)
+        decodedData.reset(new (std::nothrow) uint8_t[imageSize]);
+        if (!decodedData)
             return E_OUTOFMEMORY;
 
         // Load image data
@@ -390,7 +378,7 @@ namespace
             && theight == height)
         {
             // No format conversion or resize needed
-            hr = frame->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
+            hr = frame->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
             if (FAILED(hr))
                 return hr;
         }
@@ -418,7 +406,7 @@ namespace
             if (memcmp(&convertGUID, &pfScaler, sizeof(GUID)) == 0)
             {
                 // No format conversion needed
-                hr = scaler->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
+                hr = scaler->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
                 if (FAILED(hr))
                     return hr;
             }
@@ -440,7 +428,7 @@ namespace
                 if (FAILED(hr))
                     return hr;
 
-                hr = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
+                hr = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
                 if (FAILED(hr))
                     return hr;
             }
@@ -468,13 +456,13 @@ namespace
             if (FAILED(hr))
                 return hr;
 
-            hr = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
+            hr = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
             if (FAILED(hr))
                 return hr;
         }
 
         // Count the number of mips
-        uint32_t mipCount = (generateMips) ? CountMips(twidth, theight) : 1;
+        uint32_t mipCount = (reserveFullMipChain) ? CountMips(twidth, theight) : 1;
 
         // Create texture
         D3D12_RESOURCE_DESC desc = {};
@@ -506,60 +494,76 @@ namespace
 
         _Analysis_assume_(tex != 0);
 
-        // Upload the texture data
-        D3D12_SUBRESOURCE_DATA initData;
-        initData.pData = temp.get();
-        initData.RowPitch = static_cast<UINT>(rowPitch);
-        initData.SlicePitch = static_cast<UINT>(imageSize);
-
-        resourceUpload.Upload(
-            tex,
-            0,
-            &initData,
-            1);
-
-        resourceUpload.Transition(
-            tex,
-            D3D12_RESOURCE_STATE_COPY_DEST,
-            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-
-        // Generate mips?
-        if (generateMips)
-        {
-            resourceUpload.GenerateMips(tex);
-        }
+        subresource.pData = decodedData.get();
+        subresource.RowPitch = rowPitch;
+        subresource.SlicePitch = imageSize;
 
         *texture = tex;
         return hr;
     }
 } // anonymous namespace
 
+
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT DirectX::CreateWICTextureFromMemory( ID3D12Device* d3dDevice,
-                                             ResourceUploadBatch& resourceUpload,
-                                             const uint8_t* wicData,
-                                             size_t wicDataSize,
-                                             ID3D12Resource** texture,
-                                             bool generateMips,
-                                             size_t maxsize )
+HRESULT DirectX::LoadWICTextureFromMemory(
+    ID3D12Device* d3dDevice,
+    const uint8_t* wicData,
+    size_t wicDataSize,
+    ID3D12Resource** texture,
+    std::unique_ptr<uint8_t[]>& decodedData,
+    D3D12_SUBRESOURCE_DATA& subresource,
+    size_t maxsize)
 {
-    return CreateWICTextureFromMemoryEx( d3dDevice, resourceUpload, wicData, wicDataSize, maxsize,
-                                         D3D12_RESOURCE_FLAG_NONE, false, generateMips,
-                                         texture );
+    return LoadWICTextureFromMemoryEx(
+        d3dDevice,
+        wicData,
+        wicDataSize,
+        maxsize,
+        D3D12_RESOURCE_FLAG_NONE,
+        false,
+        false,
+        texture,
+        decodedData,
+        subresource);
+}
+
+_Use_decl_annotations_
+HRESULT DirectX::CreateWICTextureFromMemory(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const uint8_t* wicData,
+    size_t wicDataSize,
+    ID3D12Resource** texture,
+    bool generateMips,
+    size_t maxsize )
+{
+    return CreateWICTextureFromMemoryEx(
+        d3dDevice,
+        resourceUpload,
+        wicData,
+        wicDataSize,
+        maxsize,
+        D3D12_RESOURCE_FLAG_NONE,
+        false,
+        generateMips,
+        texture );
 }
 
 
+//--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
-                                               ResourceUploadBatch& resourceUpload,
-                                               const uint8_t* wicData,
-                                               size_t wicDataSize,
-                                               size_t maxsize,
-                                               D3D12_RESOURCE_FLAGS flags,
-                                               bool forceSRGB,
-                                               bool generateMips,
-                                               ID3D12Resource** texture )
+HRESULT DirectX::LoadWICTextureFromMemoryEx(
+    ID3D12Device* d3dDevice,
+    const uint8_t* wicData,
+    size_t wicDataSize,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS flags,
+    bool forceSRGB,
+    bool reserveFullMipChain,
+    ID3D12Resource** texture,
+    std::unique_ptr<uint8_t[]>& decodedData,
+    D3D12_SUBRESOURCE_DATA& subresource)
 {
     if ( texture )
     {
@@ -602,10 +606,10 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
     if ( FAILED(hr) )
         return hr;
 
-    hr = CreateTextureFromWIC( d3dDevice, resourceUpload,
+    hr = CreateTextureFromWIC( d3dDevice,
                                frame.Get(), maxsize,
-                               flags, forceSRGB,
-                               generateMips, texture );
+                               flags, forceSRGB, reserveFullMipChain,
+                               texture, decodedData, subresource);
     if ( FAILED(hr)) 
         return hr;
 
@@ -615,30 +619,111 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx( ID3D12Device* d3dDevice,
     return hr;
 }
 
-//--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT DirectX::CreateWICTextureFromFile( ID3D12Device* d3dDevice,
-                                           ResourceUploadBatch& resourceUpload,
-                                           const wchar_t* fileName,
-                                           ID3D12Resource** texture,
-                                           bool generateMips,
-                                           size_t maxsize )
+HRESULT DirectX::CreateWICTextureFromMemoryEx(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const uint8_t* wicData,
+    size_t wicDataSize,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS flags,
+    bool forceSRGB,
+    bool generateMips,
+    ID3D12Resource** texture)
 {
-    return CreateWICTextureFromFileEx( d3dDevice, resourceUpload, fileName, maxsize,
-                                       D3D12_RESOURCE_FLAG_NONE, false, generateMips,
-                                       texture );
+    std::unique_ptr<uint8_t[]> decodedData;
+    D3D12_SUBRESOURCE_DATA initData;
+    HRESULT hr = LoadWICTextureFromMemoryEx(
+        d3dDevice,
+        wicData,
+        wicDataSize,
+        maxsize,
+        flags,
+        forceSRGB,
+        generateMips,
+        texture,
+        decodedData,
+        initData);
+
+    if (SUCCEEDED(hr))
+    {
+        resourceUpload.Upload(
+            *texture,
+            0,
+            &initData,
+            1);
+
+        resourceUpload.Transition(
+            *texture,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+        // Generate mips?
+        if (generateMips)
+        {
+            resourceUpload.GenerateMips(*texture);
+        }
+    }
+
+    return hr;
 }
 
 
+//--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT DirectX::CreateWICTextureFromFileEx( ID3D12Device* d3dDevice,
-                                             ResourceUploadBatch& resourceUpload,
-                                             const wchar_t* fileName,
-                                             size_t maxsize,
-                                             D3D12_RESOURCE_FLAGS flags,
-                                             bool forceSRGB,
-                                             bool generateMips,
-                                             ID3D12Resource** texture )
+HRESULT DirectX::LoadWICTextureFromFile(
+    ID3D12Device* d3dDevice,
+    const wchar_t* fileName,
+    ID3D12Resource** texture,
+    std::unique_ptr<uint8_t[]>& wicData,
+    D3D12_SUBRESOURCE_DATA& subresource,
+    size_t maxsize)
+{
+    return LoadWICTextureFromFileEx(
+        d3dDevice,
+        fileName,
+        maxsize,
+        D3D12_RESOURCE_FLAG_NONE,
+        false,
+        false,
+        texture,
+        wicData,
+        subresource);
+}
+
+_Use_decl_annotations_
+HRESULT DirectX::CreateWICTextureFromFile(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const wchar_t* fileName,
+    ID3D12Resource** texture,
+    bool generateMips,
+    size_t maxsize )
+{
+    return CreateWICTextureFromFileEx(
+        d3dDevice,
+        resourceUpload,
+        fileName,
+        maxsize,
+        D3D12_RESOURCE_FLAG_NONE,
+        false,
+        generateMips,
+        texture );
+}
+
+
+//--------------------------------------------------------------------------------------
+_Use_decl_annotations_
+HRESULT DirectX::LoadWICTextureFromFileEx(
+    ID3D12Device* d3dDevice,
+    const wchar_t* fileName,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS flags,
+    bool forceSRGB,
+    bool reserveFullMipChain,
+    ID3D12Resource** texture,
+    std::unique_ptr<uint8_t[]>& decodedData,
+    D3D12_SUBRESOURCE_DATA& subresource)
 {
     if ( texture )
     {
@@ -663,12 +748,11 @@ HRESULT DirectX::CreateWICTextureFromFileEx( ID3D12Device* d3dDevice,
     if ( FAILED(hr) )
         return hr;
 
-    hr = CreateTextureFromWIC( d3dDevice, resourceUpload,
-                               frame.Get(), maxsize,
-                               flags, forceSRGB,
-                               generateMips, texture );
+    hr = CreateTextureFromWIC( d3dDevice, frame.Get(), maxsize,
+                               flags, forceSRGB, reserveFullMipChain,
+                               texture, decodedData, subresource );
 
-#if !defined(NO_D3D11_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
+#if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
     if ( SUCCEEDED(hr) )
     {
         const wchar_t* pstrName = wcsrchr(fileName, '\\' );
@@ -691,3 +775,49 @@ HRESULT DirectX::CreateWICTextureFromFileEx( ID3D12Device* d3dDevice,
     return hr;
 }
 
+_Use_decl_annotations_
+HRESULT DirectX::CreateWICTextureFromFileEx(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const wchar_t* fileName,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS flags,
+    bool forceSRGB,
+    bool generateMips,
+    ID3D12Resource** texture)
+{
+    std::unique_ptr<uint8_t[]> decodedData;
+    D3D12_SUBRESOURCE_DATA initData;
+    HRESULT hr = LoadWICTextureFromFileEx(
+        d3dDevice,
+        fileName,
+        maxsize,
+        flags,
+        forceSRGB,
+        generateMips,
+        texture,
+        decodedData,
+        initData);
+
+    if (SUCCEEDED(hr))
+    {
+        resourceUpload.Upload(
+            *texture,
+            0,
+            &initData,
+            1);
+
+        resourceUpload.Transition(
+            *texture,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+        // Generate mips?
+        if (generateMips)
+        {
+            resourceUpload.GenerateMips(*texture);
+        }
+    }
+
+    return hr;
+}
