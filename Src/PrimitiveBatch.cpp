@@ -209,8 +209,8 @@ void PrimitiveBatchBase::Impl::FlushBatch()
     // Set the vertex buffer view
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = mVertexSegment.GpuAddress();
-    vbv.SizeInBytes = (UINT) ( mVertexSize * (mVertexCount - mBaseVertex) );
-    vbv.StrideInBytes = (UINT) mVertexSize;
+    vbv.SizeInBytes = static_cast<UINT>( mVertexSize * (mVertexCount - mBaseVertex) );
+    vbv.StrideInBytes = static_cast<UINT>(mVertexSize);
     mCommandList->IASetVertexBuffers(0, 1, &vbv);
 
     if (mCurrentlyIndexed)
@@ -219,16 +219,16 @@ void PrimitiveBatchBase::Impl::FlushBatch()
         D3D12_INDEX_BUFFER_VIEW ibv;
         ibv.BufferLocation = mIndexSegment.GpuAddress();
         ibv.Format = DXGI_FORMAT_R16_UINT;
-        ibv.SizeInBytes = (UINT) (mIndexCount - mBaseIndex) * sizeof(uint16_t);
+        ibv.SizeInBytes = static_cast<UINT>(mIndexCount - mBaseIndex) * sizeof(uint16_t);
         mCommandList->IASetIndexBuffer(&ibv);
 
         // Draw indexed geometry.
-        mCommandList->DrawIndexedInstanced((UINT)(mIndexCount - mBaseIndex), 1, 0, 0, 0);
+        mCommandList->DrawIndexedInstanced(static_cast<UINT>(mIndexCount - mBaseIndex), 1, 0, 0, 0);
     }
     else
     {
         // Draw non-indexed geometry.
-        mCommandList->DrawInstanced((UINT)(mVertexCount - mBaseVertex), 1, 0, 0);
+        mCommandList->DrawInstanced(static_cast<UINT>(mVertexCount - mBaseVertex), 1, 0, 0);
     }
 
     mCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;

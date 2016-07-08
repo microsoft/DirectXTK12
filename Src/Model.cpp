@@ -53,12 +53,12 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = vertexBuffer.GpuAddress();
     vbv.StrideInBytes = vertexStride;
-    vbv.SizeInBytes = (UINT)vertexBuffer.Size();
+    vbv.SizeInBytes = static_cast<UINT>(vertexBuffer.Size());
     commandList->IASetVertexBuffers(0, 1, &vbv);
 
     D3D12_INDEX_BUFFER_VIEW ibv;
     ibv.BufferLocation = indexBuffer.GpuAddress();
-    ibv.SizeInBytes = (UINT)indexBuffer.Size();
+    ibv.SizeInBytes = static_cast<UINT>(indexBuffer.Size());
     ibv.Format = indexFormat;
     commandList->IASetIndexBuffer(&ibv);
 
@@ -164,7 +164,7 @@ void Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescr
 {
     for (size_t i = 0; i < textureNames.size(); ++i)
     {
-        texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + (int) i);
+        texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + static_cast<int>(i));
     }
 }
 

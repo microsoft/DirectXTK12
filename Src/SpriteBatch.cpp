@@ -252,7 +252,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
 
     D3D12_SUBRESOURCE_DATA indexDataDesc = {};
     indexDataDesc.pData = indexValues.data();
-    indexDataDesc.RowPitch = (LONG_PTR) bufferDesc.Width;
+    indexDataDesc.RowPitch = static_cast<LONG_PTR>(bufferDesc.Width);
     indexDataDesc.SlicePitch = indexDataDesc.RowPitch;
 
     // Upload the resource
@@ -263,7 +263,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
     // Create the index buffer view
     indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
     indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-    indexBufferView.SizeInBytes = (UINT) bufferDesc.Width;
+    indexBufferView.SizeInBytes = static_cast<UINT>(bufferDesc.Width);
 }
 
 void SpriteBatch::Impl::DeviceResources::CreateRootSignature(_In_ ID3D12Device* device)
@@ -694,11 +694,11 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
         size_t spriteVertexTotalSize = sizeof(VertexPositionColorTexture) * VerticesPerSprite;
         vbv.BufferLocation = mVertexSegment.GpuAddress() + mSpriteCount * spriteVertexTotalSize;
         vbv.StrideInBytes = sizeof(VertexPositionColorTexture);
-        vbv.SizeInBytes = (UINT) (batchSize * spriteVertexTotalSize);
+        vbv.SizeInBytes = static_cast<UINT>(batchSize * spriteVertexTotalSize);
         commandList->IASetVertexBuffers(0, 1, &vbv);
 
         // Ok lads, the time has come for us draw ourselves some sprites!
-        UINT indexCount = (UINT) batchSize * IndicesPerSprite;
+        UINT indexCount = static_cast<UINT>(batchSize * IndicesPerSprite);
 
         commandList->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
 

@@ -695,8 +695,8 @@ private:
 
             // Copy the resource and degamma
             mList->Dispatch(
-                ((UINT)resourceDesc.Width  + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
-                ((UINT)resourceDesc.Height + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
+                (static_cast<UINT>(resourceDesc.Width)  + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
+                (static_cast<UINT>(resourceDesc.Height) + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
                 1);
 
             // Transition to pixel shader resource

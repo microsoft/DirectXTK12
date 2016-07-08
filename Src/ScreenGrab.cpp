@@ -165,10 +165,10 @@ namespace
 
         // Get the copy target location
         D3D12_PLACED_SUBRESOURCE_FOOTPRINT bufferFootprint = {};
-        bufferFootprint.Footprint.Width = (UINT)desc.Width;
+        bufferFootprint.Footprint.Width = static_cast<UINT>(desc.Width);
         bufferFootprint.Footprint.Height = desc.Height;
         bufferFootprint.Footprint.Depth = 1;
-        bufferFootprint.Footprint.RowPitch = (UINT)(srcPitch);
+        bufferFootprint.Footprint.RowPitch = static_cast<UINT>(srcPitch);
         bufferFootprint.Footprint.Format = desc.Format;
 
         CD3DX12_TEXTURE_COPY_LOCATION copyDest(pStaging.Get(), bufferFootprint);
@@ -542,7 +542,7 @@ HRESULT DirectX::SaveWICTextureToFile( ID3D12CommandQueue* pCommandQ,
     if ( FAILED(hr) )
         return hr;
 
-    hr = frame->SetSize( (UINT)desc.Width, desc.Height );
+    hr = frame->SetSize(static_cast<UINT>(desc.Width), desc.Height );
     if ( FAILED(hr) )
         return hr;
 
@@ -672,8 +672,8 @@ HRESULT DirectX::SaveWICTextureToFile( ID3D12CommandQueue* pCommandQ,
     {
         // Conversion required to write
         ComPtr<IWICBitmap> source;
-        hr = pWIC->CreateBitmapFromMemory((UINT) desc.Width, desc.Height, pfGuid,
-                                           (UINT) dstRowPitch, (UINT) dstRowPitch * desc.Height,
+        hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height, pfGuid,
+                                          static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height),
                                            reinterpret_cast<BYTE*>(pMappedMemory), source.GetAddressOf() );
         if ( FAILED(hr) )
         {
@@ -714,7 +714,7 @@ HRESULT DirectX::SaveWICTextureToFile( ID3D12CommandQueue* pCommandQ,
     else
     {
         // No conversion required
-        hr = frame->WritePixels( desc.Height, (UINT) dstRowPitch, (UINT) dstRowPitch * desc.Height, reinterpret_cast<BYTE*>( pMappedMemory ) );
+        hr = frame->WritePixels( desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height), reinterpret_cast<BYTE*>( pMappedMemory ) );
         if ( FAILED(hr) )
             return hr;
     }

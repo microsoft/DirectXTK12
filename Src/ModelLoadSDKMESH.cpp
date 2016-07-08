@@ -37,7 +37,7 @@ namespace
         auto i = textureDictionary.find(textureName);
         if (i == std::cend(textureDictionary))
         {
-            int index = (int) textureDictionary.size();
+            int index = static_cast<int>(textureDictionary.size());
             textureDictionary[textureName] = index;
             return index;
         }

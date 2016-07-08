@@ -67,10 +67,10 @@ void GeometricPrimitive::Impl::Initialize(const VertexCollection& vertices, cons
     // Create views
     mVertexBufferView.BufferLocation = mVertexBuffer.GpuAddress();
     mVertexBufferView.StrideInBytes = static_cast<UINT>(sizeof(VertexCollection::value_type));
-    mVertexBufferView.SizeInBytes = (UINT)mVertexBuffer.Size();
+    mVertexBufferView.SizeInBytes = static_cast<UINT>(mVertexBuffer.Size());
 
     mIndexBufferView.BufferLocation = mIndexBuffer.GpuAddress();
-    mIndexBufferView.SizeInBytes = (UINT)mIndexBuffer.Size();
+    mIndexBufferView.SizeInBytes = static_cast<UINT>(mIndexBuffer.Size());
     mIndexBufferView.Format = DXGI_FORMAT_R16_UINT;
 }
 
