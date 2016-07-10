@@ -296,7 +296,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources
 
 
 // Constructor.
-BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipelineStateDescription& pipelineDescription)
+BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
   : EffectBase(device)
 {
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch" );
@@ -325,11 +325,11 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipeli
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    lightingEnabled = (flags & EffectFlags::Lighting) != 0;
-    preferPerPixelLighting = (flags & EffectFlags::PerPixelLighting) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
-    textureEnabled = (flags & EffectFlags::Texture) != 0;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
+    preferPerPixelLighting = (effectFlags & EffectFlags::PerPixelLightingBit) != 0;
+    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
+    textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
    
     int sp = GetCurrentPipelineStatePermutation();
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
@@ -450,11 +450,14 @@ BasicEffect::~BasicEffect()
 }
 
 
+// IEffect methods
 void BasicEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV BasicEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -479,6 +482,17 @@ void XM_CALLCONV BasicEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV BasicEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV BasicEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->lights.diffuseColor = value;
@@ -512,6 +526,7 @@ void BasicEffect::SetSpecularPower(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void BasicEffect::DisableSpecular()
 {
     // Set specular color to black, power to 1
@@ -522,6 +537,7 @@ void BasicEffect::DisableSpecular()
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void BasicEffect::SetAlpha(float value)
 {
     pImpl->lights.alpha = value;
@@ -529,6 +545,17 @@ void BasicEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV BasicEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->lights.diffuseColor = value;
+    pImpl->lights.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Light settings
 void XM_CALLCONV BasicEffect::SetAmbientLightColor(FXMVECTOR value)
 {
     pImpl->lights.ambientLightColor = value;
@@ -570,6 +597,8 @@ void BasicEffect::EnableDefaultLighting()
     EffectLights::EnableDefaultLighting(this);
 }
 
+
+// Fog settings.
 void BasicEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -593,9 +622,9 @@ void XM_CALLCONV BasicEffect::SetFogColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
+// Texture settings.
 void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->texture = srvDescriptor;
 }
-
-

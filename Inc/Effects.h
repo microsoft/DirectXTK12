@@ -38,7 +38,7 @@ namespace DirectX
     public:
         virtual ~IEffect() { }
 
-        virtual void __cdecl Apply( _In_ ID3D12GraphicsCommandList* deviceContext ) = 0;
+        virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
     };
 
 
@@ -51,6 +51,7 @@ namespace DirectX
         virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
+        virtual void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection);
     };
 
 
@@ -91,7 +92,6 @@ namespace DirectX
     public:
         virtual ~IEffectSkinning() { } 
 
-        virtual void __cdecl SetWeightsPerVertex(int value) = 0;
         virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
         virtual void __cdecl ResetBoneTransforms() = 0;
 
@@ -154,12 +154,13 @@ namespace DirectX
         virtual ~BasicEffect();
 
         // IEffect methods.
-        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
 
         // Camera settings.
         void XM_CALLCONV SetWorld(FXMMATRIX value) override;
         void XM_CALLCONV SetView(FXMMATRIX value) override;
         void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
         // Material settings.
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
@@ -168,6 +169,7 @@ namespace DirectX
         void __cdecl SetSpecularPower(float value);
         void __cdecl DisableSpecular();
         void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
         
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
@@ -209,16 +211,18 @@ namespace DirectX
         virtual ~AlphaTestEffect();
 
         // IEffect methods.
-        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
 
         // Camera settings.
         void XM_CALLCONV SetWorld(FXMMATRIX value) override;
         void XM_CALLCONV SetView(FXMMATRIX value) override;
         void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
         // Material settings.
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
         
         // Fog settings.
         void __cdecl SetFogStart(float value) override;
@@ -252,16 +256,18 @@ namespace DirectX
         ~DualTextureEffect();
 
         // IEffect methods.
-        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
 
         // Camera settings.
         void XM_CALLCONV SetWorld(FXMMATRIX value) override;
         void XM_CALLCONV SetView(FXMMATRIX value) override;
         void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
         // Material settings.
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
         
         // Fog settings.
         void __cdecl SetFogStart(float value) override;
@@ -287,7 +293,7 @@ namespace DirectX
     class EnvironmentMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        EnvironmentMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool fresnelEnabled, bool specularEnabled);
+        EnvironmentMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool fresnelEnabled = true, bool specularEnabled = false);
         EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom);
         EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom);
 
@@ -297,17 +303,19 @@ namespace DirectX
         virtual ~EnvironmentMapEffect();
 
         // IEffect methods.
-        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* cmdList) override;
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
 
         // Camera settings.
         void XM_CALLCONV SetWorld(FXMMATRIX value) override;
         void XM_CALLCONV SetView(FXMMATRIX value) override;
         void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
         // Material settings.
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
         void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
         
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
@@ -347,7 +355,7 @@ namespace DirectX
     class SkinnedEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog, public IEffectSkinning
     {
     public:
-        SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex = 4);
         SkinnedEffect(SkinnedEffect&& moveFrom);
         SkinnedEffect& operator= (SkinnedEffect&& moveFrom);
 
@@ -363,6 +371,7 @@ namespace DirectX
         void XM_CALLCONV SetWorld(FXMMATRIX value) override;
         void XM_CALLCONV SetView(FXMMATRIX value) override;
         void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
         // Material settings.
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
@@ -371,6 +380,7 @@ namespace DirectX
         void __cdecl SetSpecularPower(float value);
         void __cdecl DisableSpecular();
         void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
         
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
@@ -391,7 +401,6 @@ namespace DirectX
         void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
         
         // Animation settings.
-        void __cdecl SetWeightsPerVertex(int value) override;
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
         void __cdecl ResetBoneTransforms() override;
 

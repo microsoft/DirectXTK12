@@ -152,7 +152,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResou
 
 // Constructor.
 AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device, 
-    int flags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
+    int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
   : EffectBase(device),
     mAlphaFunction(alphaFunction),
     referenceAlpha(0),
@@ -182,14 +182,20 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
-  
-    // overridden alpha test state
-    D3D12_DEPTH_STENCIL_DESC override = *pipelineDescription.depthStencilDesc;
-    override.BackFace.StencilFunc = alphaFunction;
-    override.FrontFace.StencilFunc = alphaFunction;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
 
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
+    {
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::PerPixelLighting\n");
+        throw std::invalid_argument("AlphaTestEffect");
+    }
+    else if (effectFlags & EffectFlags::Lighting)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        throw std::invalid_argument("AlphaTestEffect");
+    }
+  
     int sp = GetCurrentPipelineStatePermutation();
     int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
@@ -200,7 +206,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         &EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
         &EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
         pipelineDescription.blendDesc,
-        &override,
+        pipelineDescription.depthStencilDesc,
         pipelineDescription.rasterizerDesc,
         pipelineDescription.renderTargetState,
         pipelineDescription.primitiveTopology,
@@ -363,11 +369,14 @@ AlphaTestEffect::~AlphaTestEffect()
 }
 
 
+// IEffect methods
 void AlphaTestEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV AlphaTestEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -392,6 +401,17 @@ void XM_CALLCONV AlphaTestEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV AlphaTestEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV AlphaTestEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->color.diffuseColor = value;
@@ -407,6 +427,17 @@ void AlphaTestEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV AlphaTestEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->color.diffuseColor = value;
+    pImpl->color.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Fog settings.
 void AlphaTestEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -430,10 +461,13 @@ void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
+// Texture settings.
 void AlphaTestEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->texture = srvDescriptor;
 }
+
 
 void AlphaTestEffect::SetReferenceAlpha(int value)
 {

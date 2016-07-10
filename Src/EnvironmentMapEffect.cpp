@@ -227,6 +227,18 @@ EnvironmentMapEffect::Impl::Impl(
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
+    {
+        DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::PerPixelLighting\n");
+        throw std::invalid_argument("EnvironmentMapEffect");
+    }
+
+    if (effectFlags & EffectFlags::VertexColor)
+    {
+        DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
+        throw std::invalid_argument("EnvironmentMapEffect");
+    }
+
     constants.environmentMapAmount = 1;
     constants.fresnelFactor = 1;
 
@@ -339,6 +351,7 @@ EnvironmentMapEffect::~EnvironmentMapEffect()
 }
 
 
+// IEffect methods.
 void EnvironmentMapEffect::Apply(
     _In_ ID3D12GraphicsCommandList* cmdList)
 {
@@ -346,6 +359,7 @@ void EnvironmentMapEffect::Apply(
 }
 
 
+// Camera settings.
 void XM_CALLCONV EnvironmentMapEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -370,6 +384,17 @@ void XM_CALLCONV EnvironmentMapEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV EnvironmentMapEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings.
 void XM_CALLCONV EnvironmentMapEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->lights.diffuseColor = value;
@@ -394,6 +419,16 @@ void EnvironmentMapEffect::SetAlpha(float value)
 }
 
 
+void XM_CALLCONV EnvironmentMapEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->lights.diffuseColor = value;
+    pImpl->lights.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Light settings.
 void XM_CALLCONV EnvironmentMapEffect::SetAmbientLightColor(FXMVECTOR value)
 {
     pImpl->lights.ambientLightColor = value;
@@ -438,6 +473,7 @@ void EnvironmentMapEffect::EnableDefaultLighting()
 }
 
 
+// Fog settings.
 void EnvironmentMapEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -462,6 +498,7 @@ void XM_CALLCONV EnvironmentMapEffect::SetFogColor(FXMVECTOR value)
 }
 
 
+// Texture settings.
 void EnvironmentMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE value)
 {
     pImpl->texture = value;
@@ -474,6 +511,7 @@ void EnvironmentMapEffect::SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE value)
 }
 
 
+// Additional settings.
 void EnvironmentMapEffect::SetEnvironmentMapAmount(float value)
 {
     pImpl->constants.environmentMapAmount = value;

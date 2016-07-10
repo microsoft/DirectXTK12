@@ -32,6 +32,14 @@
 
 namespace DirectX
 {
+    // Internal effect flags
+    namespace EffectFlags
+    {
+        const int PerPixelLightingBit = 0x04;
+    }
+
+    static_assert(((EffectFlags::PerPixelLighting) & EffectFlags::PerPixelLightingBit) != 0, "PerPixelLighting enum flags mismatch");
+
     // Bitfield tracks which derived parameter values need to be recomputed.
     namespace EffectDirtyFlags
     {

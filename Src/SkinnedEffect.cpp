@@ -58,7 +58,7 @@ struct SkinnedEffectTraits
 class SkinnedEffect::Impl : public EffectBase<SkinnedEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex);
 
     enum DescriptorIndex
     {
@@ -204,15 +204,23 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 
 
 // Constructor.
-SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipelineStateDescription& pipelineDescription)
+SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
   : EffectBase(device),
     preferPerPixelLighting(false),
-    weightsPerVertex(4)
+    weightsPerVertex(weightsPerVertex)
 {
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::PixelShaderBytecode) == SkinnedEffectTraits::PixelShaderCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::PixelShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
+
+    if ((weightsPerVertex != 1) &&
+        (weightsPerVertex != 2) &&
+        (weightsPerVertex != 4))
+    {
+        DebugTrace("ERROR: SkinnedEffect's weightsPerVertex parameter must be 1, 2, or 4");
+        throw std::out_of_range("weightsPerVertex must be 1, 2, or 4");
+    }
 
     lights.InitializeConstants(constants.specularColorAndPower, constants.lightDirection, constants.lightDiffuseColor, constants.lightSpecularColor);
 
@@ -242,8 +250,14 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipe
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    preferPerPixelLighting = (flags & EffectFlags::PerPixelLighting) != 0;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    preferPerPixelLighting = (effectFlags & EffectFlags::PerPixelLightingBit) != 0;
+
+    if (effectFlags & EffectFlags::VertexColor)
+    {
+        DebugTrace("ERROR: SkinnedEffect does not implement EffectFlags::VertexColor\n");
+        throw std::invalid_argument("SkinnedEffect");
+    }
  
     int sp = GetCurrentPipelineStatePermutation();
     int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
@@ -323,8 +337,8 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription))
+SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
+  : pImpl(new Impl(device, effectFlags, pipelineDescription, weightsPerVertex))
 {
 }
 
@@ -350,11 +364,14 @@ SkinnedEffect::~SkinnedEffect()
 }
 
 
+// IEffect methods.
 void SkinnedEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings.
 void XM_CALLCONV SkinnedEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -379,6 +396,17 @@ void XM_CALLCONV SkinnedEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV SkinnedEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings.
 void XM_CALLCONV SkinnedEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->lights.diffuseColor = value;
@@ -412,6 +440,7 @@ void SkinnedEffect::SetSpecularPower(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void SkinnedEffect::DisableSpecular()
 {
     // Set specular color to black, power to 1
@@ -422,6 +451,7 @@ void SkinnedEffect::DisableSpecular()
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void SkinnedEffect::SetAlpha(float value)
 {
     pImpl->lights.alpha = value;
@@ -429,6 +459,17 @@ void SkinnedEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV SkinnedEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->lights.diffuseColor = value;
+    pImpl->lights.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Light settings.
 void XM_CALLCONV SkinnedEffect::SetAmbientLightColor(FXMVECTOR value)
 {
     pImpl->lights.ambientLightColor = value;
@@ -470,6 +511,8 @@ void SkinnedEffect::EnableDefaultLighting()
     EffectLights::EnableDefaultLighting(this);
 }
 
+
+// Fog settings.
 void SkinnedEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -494,25 +537,14 @@ void XM_CALLCONV SkinnedEffect::SetFogColor(FXMVECTOR value)
 }
 
 
+// Texture settings.
 void SkinnedEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->texture = srvDescriptor;
 }
 
 
-void SkinnedEffect::SetWeightsPerVertex(int value)
-{
-    if ((value != 1) &&
-        (value != 2) &&
-        (value != 4))
-    {
-        throw std::out_of_range("WeightsPerVertex must be 1, 2, or 4");
-    }
-
-    pImpl->weightsPerVertex = value;
-}
-
-
+// Animation settings.
 void SkinnedEffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
 {
     if (count > MaxBones)

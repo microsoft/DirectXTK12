@@ -131,7 +131,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
 
 
 // Constructor.
-DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipelineStateDescription& pipelineDescription)
+DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device)
 {
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
@@ -171,8 +171,19 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const Effect
     }
 
     // Validate flags & state
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
+
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::PerPixelLighting\n");
+        throw std::invalid_argument("DualTextureEffect");
+    }
+    else if (effectFlags & EffectFlags::Lighting)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        throw std::invalid_argument("DualTextureEffect");
+    }
 
     {   // Create pipeline state
         int sp = GetCurrentPipelineStatePermutation();
@@ -265,11 +276,14 @@ DualTextureEffect::~DualTextureEffect()
 }
 
 
+// IEffect methods
 void DualTextureEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV DualTextureEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -294,6 +308,17 @@ void XM_CALLCONV DualTextureEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV DualTextureEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV DualTextureEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->color.diffuseColor = value;
@@ -309,6 +334,17 @@ void DualTextureEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV DualTextureEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->color.diffuseColor = value;
+    pImpl->color.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Fog settings.
 void DualTextureEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -333,10 +369,12 @@ void XM_CALLCONV DualTextureEffect::SetFogColor(FXMVECTOR value)
 }
 
 
+// Texture settings.
 void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->texture1 = srvDescriptor;
 }
+
 
 void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {

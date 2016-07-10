@@ -272,11 +272,9 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
     for (auto& fx : effectList)
     {
         IEffectMatrices* matFx = dynamic_cast<IEffectMatrices*>(fx.get());
-        if (matFx != nullptr)
+        if (matFx)
         {
-            matFx->SetWorld(world);
-            matFx->SetView(view);
-            matFx->SetProjection(proj);
+            matFx->SetMatrices(world, view, proj);
         }
     }
 }
