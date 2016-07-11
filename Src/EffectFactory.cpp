@@ -31,6 +31,8 @@ public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* heap)
         : device(device)
         , mDescriptors(heap)
+        , mEnablePerPixelLighting(false)
+        , mEnableFog(false)
         , mSharing(true)
     { 
     }
@@ -47,9 +49,13 @@ public:
 
     ComPtr<ID3D12DescriptorHeap> mDescriptors;
 
+    bool mEnablePerPixelLighting;
+    bool mEnableFog;
+
 private:
     ID3D12Device*                  device;
 
+    // BUGBUG: needs to include effectflags and pso details in key!
     typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
 
     EffectCache  mEffectCache;
@@ -107,6 +113,12 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     // Input layout
     derivedPSD.inputLayout = &inputLayoutDesc;
 
+    if (mDescriptors == nullptr && (info.textureIndex != -1 || info.textureIndex2 != -1))
+    {
+        DebugTrace("ERROR: EffectFactory created without descriptor heap with texture index set (textureIndex %d, textureIndex2 %d)!\n", info.textureIndex, info.textureIndex2);
+        throw std::exception("EffectFactory");
+    }
+
     if ( info.enableSkinning )
     {
         // SkinnedEffect
@@ -119,7 +131,15 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, EffectFlags::None, derivedPSD );
+        // set effect flags for creation
+        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
+        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, effectflags, derivedPSD );
 
         effect->EnableDefaultLighting();
 
@@ -178,14 +198,19 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         }
 
         // set effect flags for creation
-        int flags = EffectFlags::Lighting;
+        int effectflags = EffectFlags::None;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
 
         if (info.perVertexColor)
         {
-            flags |= EffectFlags::VertexColor;
+            effectflags |= EffectFlags::VertexColor;
         }
 
-        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, flags, derivedPSD );
+        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD );
 
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
         effect->SetAlpha( info.alphaValue );
@@ -234,19 +259,24 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         }
         
         // set effect flags for creation
-        int flags = EffectFlags::Lighting;
+        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
 
         if (info.perVertexColor)
         {
-            flags |= EffectFlags::VertexColor;
+            effectflags |= EffectFlags::VertexColor;
         }
         
         if (info.textureIndex != -1)
         {
-            flags |= EffectFlags::Texture;
+            effectflags |= EffectFlags::Texture;
         }
 
-        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, flags, derivedPSD );
+        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, effectflags, derivedPSD );
 
         effect->EnableDefaultLighting();
         
@@ -316,7 +346,7 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* descriptors)
 {
     if (descriptors == nullptr)
     {
-        throw std::exception("Descriptor heap cannot be null of no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::exception("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
 
     if (descriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
@@ -373,3 +403,14 @@ void EffectFactory::SetSharing( bool enabled )
 {
     pImpl->SetSharing( enabled );
 }
+
+void EffectFactory::EnablePerPixelLighting(bool enabled)
+{
+    pImpl->mEnablePerPixelLighting = enabled;
+}
+
+void EffectFactory::EnableFogging(bool enabled)
+{
+    pImpl->mEnableFog = enabled;
+}
+

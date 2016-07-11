@@ -32,6 +32,7 @@ using namespace DirectX;
 //--------------------------------------------------------------------------------------
 
 ModelMeshPart::ModelMeshPart() :
+    materialIndex(0),
     indexCount(0),
     startIndex(0),
     vertexOffset(0),
@@ -66,6 +67,7 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
     commandList->DrawIndexedInstanced( indexCount, 1, startIndex, vertexOffset, 0 );
 }
+
 
 _Use_decl_annotations_
 void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
@@ -120,26 +122,31 @@ void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) 
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
 }
+
 
 // Draw the mesh with an effect
 void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, effect);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
 }
+
 
 // Draw the mesh with a callback for each mesh part
 void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, callback);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
@@ -160,12 +167,14 @@ Model::~Model()
 
 
 // Load texture resources
-void Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset)
+int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset)
 {
     for (size_t i = 0; i < textureNames.size(); ++i)
     {
         texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + static_cast<int>(i));
     }
+
+    return static_cast<int>(textureNames.size());
 }
 
 
@@ -173,7 +182,7 @@ void Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescr
 _Use_decl_annotations_
 std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch, const wchar_t* texturesPath, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 {
-    if (textureNames.size() == 0)
+    if (textureNames.empty())
         return nullptr;
 
     std::unique_ptr<EffectTextureFactory> texFactory = std::make_unique<EffectTextureFactory>(
@@ -199,6 +208,12 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     const EffectPipelineStateDescription& alphaPipelineState,
     int descriptorOffset)
 {
+    if (materials.empty())
+    {
+        DebugTrace("ERROR: Model has no material information to create effects!\n");
+        throw std::exception("CreateEffects");
+    }
+
     std::vector<std::shared_ptr<IEffect>> effects;
     effects.reserve(materials.size());
 

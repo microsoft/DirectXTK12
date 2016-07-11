@@ -428,6 +428,9 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     if (!mInBeginEndPair)
         throw std::exception("Begin must be called before Draw");
 
+    if (!texture.ptr)
+        throw std::exception("Invalid texture for Draw");
+
     // Get a pointer to the output sprite.
     if (mSpriteQueueCount >= mSpriteQueueArraySize)
     {
@@ -551,6 +554,7 @@ void SpriteBatch::Impl::FlushBatch()
     for (size_t pos = 0; pos < mSpriteQueueCount; pos++)
     {
         D3D12_GPU_DESCRIPTOR_HANDLE texture = mSortedSprites[pos]->texture;
+        assert(texture.ptr != 0);
         XMVECTOR textureSize = mSortedSprites[pos]->textureSize;
 
         // Flush whenever the texture changes.
@@ -642,6 +646,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
     auto commandList = mCommandList.Get();
 
     // Draw using the specified texture.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
 
     // Convert to vector format.

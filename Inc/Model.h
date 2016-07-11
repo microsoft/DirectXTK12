@@ -209,7 +209,7 @@ namespace DirectX
         }
 
         // Load texture resources into an existing Effect Texture Factory
-        void __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0);
+        int __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0);
 
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(

@@ -132,7 +132,9 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
 
 // Constructor.
 DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
-    : EffectBase(device)
+    : EffectBase(device),
+    texture1{},
+    texture2{}
 {
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -239,8 +241,18 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+    // Set the textures
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    if (!texture1.ptr || !texture2.ptr)
+    {
+        DebugTrace("Missing textures for DualTextureEffect (texture1 %p, texture2 %p)\n", texture1.ptr, texture2.ptr);
+        throw std::exception("DualTextureEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1SRV, texture1);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2SRV, texture2);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
 
     // Set the pipeline state

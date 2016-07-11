@@ -546,6 +546,10 @@ namespace DirectX
 
         void __cdecl SetSharing( bool enabled );
 
+        void __cdecl EnablePerPixelLighting(bool enabled);
+
+        void __cdecl EnableFogging(bool enabled);
+
     private:
         // Private implementation.
         class Impl;

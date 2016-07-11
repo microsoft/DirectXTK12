@@ -297,7 +297,8 @@ SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources
 
 // Constructor.
 BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
-  : EffectBase(device)
+    : EffectBase(device),
+    texture{}
 {
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderBytecode) == BasicEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -407,10 +408,15 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    // Set the texture descriptors.
+    // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
     if (textureEnabled)
-    {    
+    {
+        if (!texture.ptr)
+        {
+            DebugTrace("ERROR: Missing texture for textured BasicEffect\n");
+            throw std::exception("BasicEffect");
+        }
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     }
 

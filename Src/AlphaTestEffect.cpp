@@ -153,10 +153,11 @@ SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResou
 // Constructor.
 AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device, 
     int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
-  : EffectBase(device),
+    : EffectBase(device),
     mAlphaFunction(alphaFunction),
     referenceAlpha(0),
-    vertexColorEnabled(false)
+    vertexColorEnabled(false),
+    texture{}
 {
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -333,8 +334,16 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    // Set the texture.
+    // Set the texture
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    if (!texture.ptr)
+    {
+        DebugTrace("ERROR: Missing texture for AlphaTestEffect\n");
+        throw std::exception("AlphaTestEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
 
     // Set the pipeline state

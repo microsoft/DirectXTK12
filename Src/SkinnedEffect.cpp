@@ -207,7 +207,8 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
   : EffectBase(device),
     preferPerPixelLighting(false),
-    weightsPerVertex(weightsPerVertex)
+    weightsPerVertex(weightsPerVertex),
+    texture{}
 {
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -325,7 +326,13 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    // Set the texture.
+    // Set the texture
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    if (!texture.ptr)
+    {
+        DebugTrace("ERROR: Missing texture for SkinnedEffect\n");
+        throw std::exception("SkinnedEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     
     // Set constants

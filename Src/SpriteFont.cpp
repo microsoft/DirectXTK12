@@ -98,7 +98,8 @@ SpriteFont::Impl::Impl(
     ResourceUploadBatch& upload,
     BinaryReader* reader,
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
-    D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc)
+    D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc) :
+    texture{}
 {
     // Validate the header.
     for (char const* magic = spriteFontMagic; *magic; magic++)

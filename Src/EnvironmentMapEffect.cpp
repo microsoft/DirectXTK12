@@ -186,7 +186,9 @@ EnvironmentMapEffect::Impl::Impl(
     const EffectPipelineStateDescription& pipelineDescription, 
     bool fresnelEnabled, 
     bool specularEnabled)
-  : EffectBase(device)
+    : EffectBase(device),
+    texture{},
+    environmentMap{}
 {
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -311,9 +313,21 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
 
     // Set the resources and state
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+    // Set the textures
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    if (!texture.ptr || !environmentMap.ptr)
+    {
+        DebugTrace("ERROR: Missing textures for EnvironmentMapEffect (texture %p, environmentMap %p)\n", texture.ptr, environmentMap.ptr);
+        throw std::exception("EnvironmentMapEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSRV, environmentMap);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
+
+    // Set the pipeline state
     commandList->SetPipelineState(EffectBase::mPipelineState.Get());
 }
 
