@@ -603,10 +603,12 @@ private:
         // the original resource format (which we know will be 8888). That means we can do our 
         // SRGB conversion operations in-place, and avoids the need to manually swizzle.
         const auto& resourceDesc = resource->GetDesc();
-        auto aliasDesc = resourceDesc;
-        assert(FormatRequiresSwizzle(aliasDesc.Format) || FormatIsSRGB(aliasDesc.Format));
-        aliasDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        aliasDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+        assert(FormatRequiresSwizzle(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
+        auto aliasDesc8888 = resourceDesc;
+        aliasDesc8888.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        aliasDesc8888.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+        auto aliasDescU32 = aliasDesc8888;
+        aliasDescU32.Format = DXGI_FORMAT_R32_UINT;
 
         // What will be the total size of this texture?
         auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
@@ -614,7 +616,7 @@ private:
         // Create a heap that we'll use to store our placement textures
         D3D12_HEAP_DESC heapDesc = {};
         heapDesc.Alignment = allocInfo.Alignment;
-        heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES;
+        heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
         heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -636,16 +638,28 @@ private:
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
         // Now create a target aliased on top of that that isn't SRGB and isn't swizzled
-        ComPtr<ID3D12Resource> resourceCopyAlias;
+        ComPtr<ID3D12Resource> resourceAlias8888;
         ThrowIfFailed(mDevice->CreatePlacedResource(
             heap.Get(),
             0,
-            &aliasDesc,
+            &aliasDesc8888,
             D3D12_RESOURCE_STATE_COPY_DEST,
             nullptr,
-            IID_GRAPHICS_PPV_ARGS(resourceCopyAlias.GetAddressOf())));
+            IID_GRAPHICS_PPV_ARGS(resourceAlias8888.GetAddressOf())));
 
-        SetDebugObjectName(resourceCopyAlias.Get(), L"GenerateMips Resource Copy Alias");
+        SetDebugObjectName(resourceAlias8888.Get(), L"GenerateMips Resource Copy R8G8B8A8 Alias");
+
+        // Now create a target aliased on top of the target that we can do Typed UAV loads on for Tier 1 HW
+        ComPtr<ID3D12Resource> resourceAliasU32;
+        ThrowIfFailed(mDevice->CreatePlacedResource(
+            heap.Get(),
+            0,
+            &aliasDescU32,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(resourceAliasU32.GetAddressOf())));
+
+        SetDebugObjectName(resourceAliasU32.Get(), L"GenerateMips Resource Copy R32 Alias");
 
         // Will remain null in the case that the texture isn't SRGB
         ComPtr<ID3D12DescriptorHeap> descriptorHeap;
@@ -658,14 +672,11 @@ private:
         Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
         mList->CopyResource(resourceCopy.Get(), resource);
 
-        // Transition the resource so we can use it as a UAV
-        AliasBarrier(resourceCopy.Get(), resourceCopyAlias.Get());
-
         // If it's SRGB, convert it to linear using a compute shader.
         if (FormatIsSRGB(resourceDesc.Format))
         {
             // Transition the resource so that we can use the aliased texture
-            AliasBarrier(nullptr, resourceCopyAlias.Get());
+            AliasBarrier(nullptr, resourceAliasU32.Get());
 
             // Create a descriptor heap so we can run our degamma and regamma shaders
             D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
@@ -676,14 +687,14 @@ private:
 
             // Create UAVs for the output mip levels
             CD3DX12_CPU_DESCRIPTOR_HANDLE handleIt(descriptorHeap->GetCPUDescriptorHandleForHeapStart());
-            for (uint16_t mip = 0; mip < aliasDesc.MipLevels; ++mip)
+            for (uint16_t mip = 0; mip < aliasDescU32.MipLevels; ++mip)
             {
                 D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-                uavDesc.Format = aliasDesc.Format;
+                uavDesc.Format = aliasDescU32.Format;
                 uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
                 uavDesc.Texture2D.MipSlice = mip;
 
-                mDevice->CreateUnorderedAccessView(resourceCopyAlias.Get(), nullptr, &uavDesc, handleIt);
+                mDevice->CreateUnorderedAccessView(resourceAliasU32.Get(), nullptr, &uavDesc, handleIt);
                 handleIt.Offset(descriptorSize);
             }
 
@@ -699,21 +710,28 @@ private:
                 (static_cast<UINT>(resourceDesc.Height) + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
                 1);
 
+            // Transition the resource so we can use it as a UAV
+            AliasBarrier(resourceAliasU32.Get(), resourceAlias8888.Get());
+
             // Transition to pixel shader resource
-            Transition(resourceCopyAlias.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+            Transition(resourceAlias8888.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
         else
         {
-            Transition(resourceCopyAlias.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+            AliasBarrier(resourceCopy.Get(), resourceAlias8888.Get());
+            Transition(resourceAlias8888.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
         
         // Generate the mips
-        GenerateMips_FastPath(resourceCopyAlias.Get());
+        GenerateMips_FastPath(resourceAlias8888.Get());
 
         // Convert it back to SRGB
         if (FormatIsSRGB(resourceDesc.Format))
         {
-            Transition(resourceCopyAlias.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+            Transition(resourceAlias8888.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+            // Transition the resource so we can use it as a UAV
+            AliasBarrier(resourceAlias8888.Get(), resourceAliasU32.Get());
 
             // Convert back to SRGB in-place
             mList->SetComputeRootSignature(mGenMipsResources->rootSignature.Get());
@@ -739,12 +757,16 @@ private:
                 mipHeight = std::max<uint32_t>(1, mipHeight >> 1);
             }
 
-            Transition(resourceCopyAlias.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+            Transition(resourceAliasU32.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+            AliasBarrier(resourceAliasU32.Get(), resourceCopy.Get());
             mTrackedObjects.push_back(descriptorHeap);
+        }
+        else
+        {
+            AliasBarrier(resourceAlias8888.Get(), resourceCopy.Get());
         }
 
         // Direct copy back
-        AliasBarrier(resourceCopyAlias.Get(), resourceCopy.Get());
         Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
         Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
         mList->CopyResource(resource, resourceCopy.Get());
@@ -753,6 +775,8 @@ private:
         // Track these object lifetimes on the GPU
         mTrackedObjects.push_back(heap);
         mTrackedObjects.push_back(resourceCopy);
+        mTrackedObjects.push_back(resourceAlias8888);
+        mTrackedObjects.push_back(resourceAliasU32);
         mTrackedObjects.push_back(resource);
     }
 
