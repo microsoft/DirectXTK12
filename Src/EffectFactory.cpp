@@ -55,7 +55,6 @@ public:
 private:
     ID3D12Device*                  device;
 
-    // BUGBUG: needs to include effectflags and pso details in key!
     typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
 
     EffectCache  mEffectCache;
@@ -109,9 +108,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
     // Modify base pipeline state
     EffectPipelineStateDescription derivedPSD = (info.alphaValue < 1.0f) ? alphaPipelineState : opaquePipelineState;
-
-    // Input layout
-    derivedPSD.inputLayout = &inputLayoutDesc;
+    derivedPSD.inputLayout = inputLayoutDesc;
 
     if (mDescriptors == nullptr && (info.textureIndex != -1 || info.textureIndex2 != -1))
     {
@@ -119,24 +116,27 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         throw std::exception("EffectFactory");
     }
 
+    std::wstring cacheName;
     if ( info.enableSkinning )
     {
         // SkinnedEffect
-        if ( mSharing && !info.name.empty() )
-        {
-            auto it = mEffectCacheSkinning.find( info.name );
-            if ( mSharing && it != mEffectCacheSkinning.end() )
-            {
-                return it->second;
-            }
-        }
-
-        // set effect flags for creation
         int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
 
         if (mEnableFog)
         {
             effectflags |= EffectFlags::Fog;
+        }
+
+        if ( mSharing && !info.name.empty() )
+        {
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCacheSkinning.find( cacheName );
+            if ( mSharing && it != mEffectCacheSkinning.end() )
+            {
+                return it->second;
+            }
         }
 
         std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, effectflags, derivedPSD );
@@ -180,7 +180,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheSkinning.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCacheSkinning.insert( EffectCache::value_type( cacheName, effect ) );
         }
 
         return effect;
@@ -188,21 +188,23 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     else if ( info.enableDualTexture )
     {
         // DualTextureEffect
-        if ( mSharing && !info.name.empty() )
-        {
-            auto it = mEffectCacheDualTexture.find( info.name );
-            if ( mSharing && it != mEffectCacheDualTexture.end() )
-            {
-                return it->second;
-            }
-        }
-
-        // set effect flags for creation
         int effectflags = EffectFlags::None;
 
         if (mEnableFog)
         {
             effectflags |= EffectFlags::Fog;
+        }
+
+        if ( mSharing && !info.name.empty() )
+        {
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCacheDualTexture.find( cacheName );
+            if ( mSharing && it != mEffectCacheDualTexture.end() )
+            {
+                return it->second;
+            }
         }
 
         if (info.perVertexColor)
@@ -241,23 +243,13 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheDualTexture.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCacheDualTexture.insert( EffectCache::value_type( cacheName, effect ) );
         }
 
         return effect;
     }
     else
     {
-        // BasicEffect
-        if ( mSharing && !info.name.empty() )
-        {
-            auto it = mEffectCache.find( info.name );
-            if ( mSharing && it != mEffectCache.end() )
-            {
-                return it->second;
-            }
-        }
-        
         // set effect flags for creation
         int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
 
@@ -270,10 +262,23 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         {
             effectflags |= EffectFlags::VertexColor;
         }
-        
+
         if (info.textureIndex != -1)
         {
             effectflags |= EffectFlags::Texture;
+        }
+
+        // BasicEffect
+        if ( mSharing && !info.name.empty() )
+        {
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCache.find( cacheName );
+            if ( mSharing && it != mEffectCache.end() )
+            {
+                return it->second;
+            }
         }
 
         std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, effectflags, derivedPSD );
@@ -316,7 +321,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCache.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCache.insert( EffectCache::value_type( cacheName, effect ) );
         }
 
         return effect;

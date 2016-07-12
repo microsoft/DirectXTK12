@@ -175,30 +175,30 @@ namespace DirectX
 
         void CreatePipelineState(
             _In_ ID3D12RootSignature* rootSignature,
-            _In_ const D3D12_INPUT_LAYOUT_DESC* inputLayout,
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
             _In_ const D3D12_SHADER_BYTECODE* vertexShaderByteCode,
             _In_ const D3D12_SHADER_BYTECODE* pixelShaderByteCode,
-            _In_ const D3D12_BLEND_DESC* blend,
-            _In_ const D3D12_DEPTH_STENCIL_DESC* depthStencil,
-            _In_ const D3D12_RASTERIZER_DESC* rasterizer,
-            _In_ const RenderTargetState* renderTarget,
-            _In_ D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology,
-            _In_ D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue)
+            const D3D12_BLEND_DESC& blend,
+            const D3D12_DEPTH_STENCIL_DESC& depthStencil,
+            const D3D12_RASTERIZER_DESC& rasterizer,
+            const RenderTargetState& renderTarget,
+            D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology,
+            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue)
         {
             ID3D12Device* device = mDeviceResources->GetDevice();
             
             D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
             psoDesc.pRootSignature = rootSignature;
-            psoDesc.BlendState = *blend;
-            psoDesc.DepthStencilState = *depthStencil;
-            psoDesc.RasterizerState = *rasterizer;
-            psoDesc.DSVFormat = renderTarget->dsvFormat;
-            psoDesc.NodeMask = renderTarget->nodeMask;
-            psoDesc.NumRenderTargets = renderTarget->numRenderTargets;
-            memcpy(psoDesc.RTVFormats, renderTarget->rtvFormats, sizeof(psoDesc.RTVFormats));
-            psoDesc.SampleDesc = renderTarget->sampleDesc;
-            psoDesc.SampleMask = renderTarget->sampleMask;
-            psoDesc.InputLayout = *inputLayout;
+            psoDesc.BlendState = blend;
+            psoDesc.DepthStencilState = depthStencil;
+            psoDesc.RasterizerState = rasterizer;
+            psoDesc.DSVFormat = renderTarget.dsvFormat;
+            psoDesc.NodeMask = renderTarget.nodeMask;
+            psoDesc.NumRenderTargets = renderTarget.numRenderTargets;
+            memcpy(psoDesc.RTVFormats, renderTarget.rtvFormats, sizeof(psoDesc.RTVFormats));
+            psoDesc.SampleDesc = renderTarget.sampleDesc;
+            psoDesc.SampleMask = renderTarget.sampleMask;
+            psoDesc.InputLayout = inputLayout;
             psoDesc.IBStripCutValue = stripCutValue;
             psoDesc.PrimitiveTopologyType = primitiveTopology;
             psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -209,13 +209,11 @@ namespace DirectX
             HRESULT hr = device->CreateGraphicsPipelineState(
                 &psoDesc,
                 IID_GRAPHICS_PPV_ARGS(mPipelineState.ReleaseAndGetAddressOf()));
-
                 
             if (FAILED(hr))
             {
-                throw std::exception(
-                    "CreatePipelineState failed to create a PSO. "
-                    "Enable the Direct3D Debug Layer for more information.");
+                DebugTrace("CreatePipelineState failed to create a PSO. Enable the Direct3D Debug Layer for more information (%08X)\n", hr);
+                throw std::exception("CreateGraphicsPipelineState");
             }
         }
 

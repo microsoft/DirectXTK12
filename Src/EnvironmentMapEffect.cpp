@@ -318,7 +318,7 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
     if (!texture.ptr || !environmentMap.ptr)
     {
-        DebugTrace("ERROR: Missing textures for EnvironmentMapEffect (texture %p, environmentMap %p)\n", texture.ptr, environmentMap.ptr);
+        DebugTrace("ERROR: Missing textures for EnvironmentMapEffect (texture %llp, environmentMap %llp)\n", texture.ptr, environmentMap.ptr);
         throw std::exception("EnvironmentMapEffect");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);

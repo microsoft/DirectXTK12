@@ -101,15 +101,15 @@ namespace DirectX
     struct EffectPipelineStateDescription
     {
         EffectPipelineStateDescription(
-            _In_ const D3D12_INPUT_LAYOUT_DESC* inputLayout,
-            _In_ const D3D12_BLEND_DESC* blend,
-            _In_ const D3D12_DEPTH_STENCIL_DESC* depthStencil,
-            _In_ const D3D12_RASTERIZER_DESC* rasterizer,
-            _In_ const RenderTargetState* renderTarget,
+            _In_opt_ const D3D12_INPUT_LAYOUT_DESC* inputLayout,
+            const D3D12_BLEND_DESC& blend,
+            const D3D12_DEPTH_STENCIL_DESC& depthStencil,
+            const D3D12_RASTERIZER_DESC& rasterizer,
+            const RenderTargetState& renderTarget,
             D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
             D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
             :
-            inputLayout(inputLayout),
+            inputLayout{},
             blendDesc(blend),
             depthStencilDesc(depthStencil),
             rasterizerDesc(rasterizer),
@@ -117,16 +117,19 @@ namespace DirectX
             primitiveTopology(primitiveTopology),
             stripCutValue(stripCutValue)
         {
-            // constructor
+            if (inputLayout)
+                this->inputLayout = *inputLayout;
         }
 
-        const D3D12_INPUT_LAYOUT_DESC* inputLayout;
-        const D3D12_BLEND_DESC* blendDesc;
-        const D3D12_DEPTH_STENCIL_DESC* depthStencilDesc;
-        const D3D12_RASTERIZER_DESC* rasterizerDesc;
-        const RenderTargetState* renderTargetState;
-        const D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology;
-        const D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue;
+        uint32_t ComputeHash() const;
+
+        D3D12_INPUT_LAYOUT_DESC             inputLayout;
+        D3D12_BLEND_DESC                    blendDesc;
+        D3D12_DEPTH_STENCIL_DESC            depthStencilDesc;
+        D3D12_RASTERIZER_DESC               rasterizerDesc;
+        RenderTargetState                   renderTargetState;
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE       primitiveTopology;
+        D3D12_INDEX_BUFFER_STRIP_CUT_VALUE  stripCutValue;
     };
 
     namespace EffectFlags

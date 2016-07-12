@@ -69,7 +69,7 @@ __declspec(align(16)) class SpriteBatch::Impl : public AlignedNew<SpriteBatch::I
 public:
     Impl(_In_ ID3D12Device* device,
          ResourceUploadBatch& upload,
-         _In_ const SpriteBatchPipelineStateDescription* psoDesc,
+         const SpriteBatchPipelineStateDescription& psoDesc,
          const D3D12_VIEWPORT* viewport);
 
     void XM_CALLCONV Begin(
@@ -80,7 +80,7 @@ public:
 
     void XM_CALLCONV Draw(
         D3D12_GPU_DESCRIPTOR_HANDLE texture,
-        XMUINT2 textureSize,
+        XMUINT2 const& textureSize,
         FXMVECTOR destination,
         _In_opt_ RECT const* sourceRectangle,
         FXMVECTOR color,
@@ -140,9 +140,6 @@ private:
     static const D3D12_SHADER_BYTECODE s_DefaultVertexShaderByteCode;
     static const D3D12_SHADER_BYTECODE s_DefaultPixelShaderByteCode;
     static const D3D12_INPUT_LAYOUT_DESC s_DefaultInputLayoutDesc;
-    static const D3D12_BLEND_DESC s_DefaultBlendDesc;
-    static const D3D12_RASTERIZER_DESC s_DefaultRasterizerDesc;
-    static const D3D12_DEPTH_STENCIL_DESC s_DefaultDepthStencilDesc;
 
 
     // Queue of sprites waiting to be drawn.
@@ -220,9 +217,10 @@ const XMFLOAT2 SpriteBatch::Float2Zero(0, 0);
 const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCode = {SpriteEffect_SpriteVertexShader, sizeof(SpriteEffect_SpriteVertexShader)};
 const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCode = {SpriteEffect_SpritePixelShader, sizeof(SpriteEffect_SpritePixelShader)};
 const D3D12_INPUT_LAYOUT_DESC SpriteBatch::Impl::s_DefaultInputLayoutDesc = VertexPositionColorTexture::InputLayout;
-const D3D12_BLEND_DESC SpriteBatch::Impl::s_DefaultBlendDesc = {FALSE, FALSE, {TRUE, FALSE, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_LOGIC_OP_CLEAR, D3D12_COLOR_WRITE_ENABLE_ALL}};
-const D3D12_RASTERIZER_DESC SpriteBatch::Impl::s_DefaultRasterizerDesc = {D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_NONE, FALSE, 0, 0, 0, FALSE, FALSE, FALSE, 0, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF};
-const D3D12_DEPTH_STENCIL_DESC SpriteBatch::Impl::s_DefaultDepthStencilDesc = {FALSE, D3D12_DEPTH_WRITE_MASK_ALL, D3D12_COMPARISON_FUNC_ALWAYS, FALSE, 0, 0};
+
+const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc = {FALSE, FALSE, {TRUE, FALSE, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_LOGIC_OP_CLEAR, D3D12_COLOR_WRITE_ENABLE_ALL}};
+const D3D12_RASTERIZER_DESC SpriteBatchPipelineStateDescription::s_DefaultRasterizerDesc = {D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_NONE, FALSE, 0, 0, 0, FALSE, FALSE, FALSE, 0, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF};
+const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDepthStencilDesc = {FALSE, D3D12_DEPTH_WRITE_MASK_ALL, D3D12_COMPARISON_FUNC_ALWAYS, FALSE, 0, 0};
 
 // Per-device constructor.
 SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
@@ -311,7 +309,7 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 
 // Per-SpriteBatch constructor.
 _Use_decl_annotations_
-SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription* psoDesc, const D3D12_VIEWPORT* viewport)
+SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription& psoDesc, const D3D12_VIEWPORT* viewport)
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
     mSetViewport(false),
     mSpriteQueueCount(0),
@@ -324,46 +322,28 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     mVertexSegment {},
     mSpriteCount(0)
 {
-    if (psoDesc == nullptr)
-        throw std::exception("SpriteBatch: PSO description cannot be null.");
-
-    if (psoDesc->renderTargetState == nullptr)
-        throw std::exception("SpriteBatchPipelineStateDescription must have a non-null render target state.");
-
     if (viewport != nullptr)
     {
         mViewPort = *viewport;
         mSetViewport = true;
     }
 
-    mRootSignature = mDeviceResources->rootSignature.Get();
-    D3D12_SHADER_BYTECODE vertexShader = s_DefaultVertexShaderByteCode;
-    D3D12_SHADER_BYTECODE pixelShader = s_DefaultPixelShaderByteCode;
-
-    if (psoDesc->shaders)
-    {
-        if (psoDesc->shaders->rootSignature)
-            mRootSignature = psoDesc->shaders->rootSignature;
-        if (psoDesc->shaders->vertexShaderByteCode)
-            vertexShader = *psoDesc->shaders->vertexShaderByteCode;
-        if (psoDesc->shaders->pixelShaderByteCode)
-            pixelShader = *psoDesc->shaders->pixelShaderByteCode;
-    }
+    mRootSignature = psoDesc.customRootSignature ? psoDesc.customRootSignature : mDeviceResources->rootSignature.Get();
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dDesc = {};
     d3dDesc.pRootSignature = mRootSignature.Get();
-    d3dDesc.VS = vertexShader;
-    d3dDesc.PS = pixelShader;
+    d3dDesc.VS = psoDesc.customVertexShader.pShaderBytecode ? psoDesc.customVertexShader : s_DefaultVertexShaderByteCode;
+    d3dDesc.PS = psoDesc.customPixelShader.pShaderBytecode ? psoDesc.customPixelShader : s_DefaultPixelShaderByteCode;
     d3dDesc.InputLayout = s_DefaultInputLayoutDesc;
-    d3dDesc.BlendState = psoDesc->blendDesc ? *psoDesc->blendDesc : s_DefaultBlendDesc;
-    d3dDesc.DepthStencilState = psoDesc->depthStencilDesc ? *psoDesc->depthStencilDesc : s_DefaultDepthStencilDesc;
-    d3dDesc.RasterizerState = psoDesc->rasterizerDesc ? *psoDesc->rasterizerDesc : s_DefaultRasterizerDesc;
-    d3dDesc.DSVFormat = psoDesc->renderTargetState->dsvFormat;
-    d3dDesc.NodeMask = psoDesc->renderTargetState->nodeMask;
-    d3dDesc.NumRenderTargets = psoDesc->renderTargetState->numRenderTargets;
-    memcpy(d3dDesc.RTVFormats, psoDesc->renderTargetState->rtvFormats, sizeof(d3dDesc.RTVFormats));
-    d3dDesc.SampleDesc = psoDesc->renderTargetState->sampleDesc;
-    d3dDesc.SampleMask = psoDesc->renderTargetState->sampleMask;
+    d3dDesc.BlendState = psoDesc.blendDesc;
+    d3dDesc.DepthStencilState = psoDesc.depthStencilDesc;
+    d3dDesc.RasterizerState = psoDesc.rasterizerDesc;
+    d3dDesc.DSVFormat = psoDesc.renderTargetState.dsvFormat;
+    d3dDesc.NodeMask = psoDesc.renderTargetState.nodeMask;
+    d3dDesc.NumRenderTargets = psoDesc.renderTargetState.numRenderTargets;
+    memcpy(d3dDesc.RTVFormats, psoDesc.renderTargetState.rtvFormats, sizeof(d3dDesc.RTVFormats));
+    d3dDesc.SampleDesc = psoDesc.renderTargetState.sampleDesc;
+    d3dDesc.SampleMask = psoDesc.renderTargetState.sampleMask;
     d3dDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
     d3dDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
@@ -418,7 +398,7 @@ void SpriteBatch::Impl::End()
 // Adds a single sprite to the queue.
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     FXMVECTOR destination,
     RECT const* sourceRectangle,
     FXMVECTOR color,
@@ -883,7 +863,7 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
 _Use_decl_annotations_
 SpriteBatch::SpriteBatch(ID3D12Device* device,
     ResourceUploadBatch& upload,
-    const SpriteBatchPipelineStateDescription* psoDesc,
+    const SpriteBatchPipelineStateDescription& psoDesc,
     const D3D12_VIEWPORT* viewport)
     : pImpl(new Impl(device, upload, psoDesc, viewport))
 {
@@ -930,7 +910,7 @@ void SpriteBatch::End()
 
 
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     XMFLOAT2 const& position,
     FXMVECTOR color)
 {
@@ -942,7 +922,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     XMFLOAT2 const& position, 
     RECT const* sourceRectangle,
     FXMVECTOR color,
@@ -962,7 +942,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     XMFLOAT2 const& position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
@@ -980,7 +960,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 }
 
 
-void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, FXMVECTOR position, FXMVECTOR color)
+void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 const& textureSize, FXMVECTOR position, FXMVECTOR color)
 {
     XMVECTOR destination = XMVectorPermute<0, 1, 4, 5>(position, g_XMOne); // x, y, 1, 1
 
@@ -990,7 +970,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     FXMVECTOR position, 
     RECT const* sourceRectangle,
     FXMVECTOR color,
@@ -1012,7 +992,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     FXMVECTOR position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
@@ -1033,7 +1013,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     RECT const& destinationRectangle,
     FXMVECTOR color)
 {
@@ -1045,7 +1025,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
-    XMUINT2 textureSize,
+    XMUINT2 const& textureSize,
     RECT const& destinationRectangle,
     RECT const* sourceRectangle,
     FXMVECTOR color,

@@ -246,7 +246,7 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
     if (!texture1.ptr || !texture2.ptr)
     {
-        DebugTrace("Missing textures for DualTextureEffect (texture1 %p, texture2 %p)\n", texture1.ptr, texture2.ptr);
+        DebugTrace("Missing textures for DualTextureEffect (texture1 %llp, texture2 %llp)\n", texture1.ptr, texture2.ptr);
         throw std::exception("DualTextureEffect");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1SRV, texture1);

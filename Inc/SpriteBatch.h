@@ -47,54 +47,43 @@ namespace DirectX
         SpriteEffects_FlipBoth = SpriteEffects_FlipHorizontally | SpriteEffects_FlipVertically,
     };
 
-    class SpriteBatchShaderDescription
-    {
-    public:
-        SpriteBatchShaderDescription(
-            _In_ ID3D12RootSignature* rootSignature,
-            _In_ const D3D12_SHADER_BYTECODE* vertexShader,
-            _In_ const D3D12_SHADER_BYTECODE* pixelShader)
-            : rootSignature(rootSignature),
-            vertexShaderByteCode(vertexShader),
-            pixelShaderByteCode(pixelShader)
-        {
-        }
-
-        ID3D12RootSignature* rootSignature;
-        const D3D12_SHADER_BYTECODE* vertexShaderByteCode;
-        const D3D12_SHADER_BYTECODE* pixelShaderByteCode;
-    };
-
     class SpriteBatchPipelineStateDescription
     {
     public:
         explicit SpriteBatchPipelineStateDescription(
-            _In_ const RenderTargetState* renderTarget,
+            const RenderTargetState& renderTarget,
             _In_opt_ const D3D12_BLEND_DESC* blend = nullptr,
             _In_opt_ const D3D12_DEPTH_STENCIL_DESC* depthStencil = nullptr,
-            _In_opt_ const D3D12_RASTERIZER_DESC* rasterizer = nullptr,
-            _In_opt_ const SpriteBatchShaderDescription* shaders = nullptr)
+            _In_opt_ const D3D12_RASTERIZER_DESC* rasterizer = nullptr)
             :
-            blendDesc(blend),
-            depthStencilDesc(depthStencil),
-            rasterizerDesc(rasterizer),
+            blendDesc(blend ? *blend : s_DefaultBlendDesc),
+            depthStencilDesc(depthStencil ? *depthStencil : s_DefaultDepthStencilDesc),
+            rasterizerDesc(rasterizer ? *rasterizer : s_DefaultRasterizerDesc),
             renderTargetState(renderTarget),
-            shaders(shaders)
+            customRootSignature(nullptr),
+            customVertexShader{},
+            customPixelShader{}
         {
-            // constructor
         }
 
-        const D3D12_BLEND_DESC* blendDesc;
-        const D3D12_DEPTH_STENCIL_DESC* depthStencilDesc;
-        const D3D12_RASTERIZER_DESC* rasterizerDesc;
-        const RenderTargetState* renderTargetState;
-        const SpriteBatchShaderDescription* shaders;
+        D3D12_BLEND_DESC            blendDesc;
+        D3D12_DEPTH_STENCIL_DESC    depthStencilDesc;
+        D3D12_RASTERIZER_DESC       rasterizerDesc;
+        RenderTargetState           renderTargetState;
+        ID3D12RootSignature*        customRootSignature;
+        D3D12_SHADER_BYTECODE       customVertexShader;
+        D3D12_SHADER_BYTECODE       customPixelShader;
+
+    private:
+        static const D3D12_BLEND_DESC           s_DefaultBlendDesc;
+        static const D3D12_RASTERIZER_DESC      s_DefaultRasterizerDesc;
+        static const D3D12_DEPTH_STENCIL_DESC   s_DefaultDepthStencilDesc;
     };
     
     class SpriteBatch
     {
     public:
-        SpriteBatch(_In_ ID3D12Device* device, ResourceUploadBatch& upload, _In_ const SpriteBatchPipelineStateDescription* psoDesc, _In_opt_ const D3D12_VIEWPORT* viewport = nullptr);
+        SpriteBatch(_In_ ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription& psoDesc, _In_opt_ const D3D12_VIEWPORT* viewport = nullptr);
         SpriteBatch(SpriteBatch&& moveFrom);
         SpriteBatch& operator= (SpriteBatch&& moveFrom);
 
@@ -111,18 +100,18 @@ namespace DirectX
         void __cdecl End();
 
         // Draw overloads specifying position, origin and scale as XMFLOAT2.
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, XMFLOAT2 const& position, FXMVECTOR color = Colors::White);
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, FXMVECTOR color = Colors::White);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
         // Draw overloads specifying position, origin and scale via the first two components of an XMVECTOR.
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, FXMVECTOR position, FXMVECTOR color = Colors::White);
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, FXMVECTOR origin = g_XMZero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, FXMVECTOR color = Colors::White);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, FXMVECTOR origin = g_XMZero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
         // Draw overloads specifying position as a RECT.
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, RECT const& destinationRectangle, FXMVECTOR color = Colors::White);
-        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 textureSize, RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, FXMVECTOR color = Colors::White);
+        void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
         // Rotation mode to be applied to the sprite transformation
         void __cdecl SetRotation( DXGI_MODE_ROTATION mode );
