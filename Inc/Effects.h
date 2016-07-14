@@ -190,7 +190,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
     private:
         // Private implementation.
@@ -233,7 +233,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
         // Alpha test settings.
         void __cdecl SetReferenceAlpha(int value);
@@ -281,8 +281,8 @@ namespace DirectX
         //void __cdecl SetVertexColorEnabled(bool value);
 
         // Texture settings.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
-        void __cdecl SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
     private:
         // Private implementation.
@@ -335,10 +335,10 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE value);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler);
 
         // Environment map settings.
-        void __cdecl SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE value);
+        void __cdecl SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler);
         void __cdecl SetEnvironmentMapAmount(float value);
         void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
         void __cdecl SetFresnelFactor(float value);
@@ -401,7 +401,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
@@ -496,6 +496,8 @@ namespace DirectX
             DirectX::XMFLOAT3   emissiveColor;
             int                 textureIndex;
             int                 textureIndex2;
+            int                 samplerIndex;
+            int                 samplerIndex2;
 
             EffectInfo()
                 : perVertexColor(false)
@@ -509,6 +511,8 @@ namespace DirectX
                 , emissiveColor(0, 0, 0)
                 , textureIndex(-1)
                 , textureIndex2(-1)
+                , samplerIndex(-1)
+                , samplerIndex2(-1)
             {
             }
         };
@@ -518,7 +522,8 @@ namespace DirectX
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-            int descriptorOffset = 0) = 0;
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0) = 0;
     };
 
     // Factory for sharing effects
@@ -526,7 +531,9 @@ namespace DirectX
     {
     public:
         EffectFactory(_In_ ID3D12Device* device);
-        EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors);
+        EffectFactory(
+            _In_ ID3D12DescriptorHeap* textureDescriptors, 
+            _In_ ID3D12DescriptorHeap* samplerDescriptors);
 
         EffectFactory(EffectFactory&& moveFrom);
         EffectFactory& operator= (EffectFactory&& moveFrom);
@@ -542,7 +549,8 @@ namespace DirectX
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             const D3D12_INPUT_LAYOUT_DESC& inputLayout,
-            int descriptorOffset = 0) override;
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0) override;
         
         // Settings.
         void __cdecl ReleaseCache();

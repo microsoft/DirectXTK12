@@ -25,7 +25,14 @@ namespace DirectX
     class CommonStates
     {
     public:
-        CommonStates() = delete;
+        explicit CommonStates(_In_ ID3D12Device* device);
+        CommonStates(CommonStates&& moveFrom);
+        CommonStates& operator = (CommonStates&& moveFrom);
+
+        CommonStates(const CommonStates&) = delete;
+        CommonStates& operator = (const CommonStates&) = delete;
+
+        virtual ~CommonStates();
 
         // Blend states.
         static const D3D12_BLEND_DESC Opaque;
@@ -44,14 +51,6 @@ namespace DirectX
         static const D3D12_RASTERIZER_DESC CullCounterClockwise;
         static const D3D12_RASTERIZER_DESC Wireframe;
 
-        // Sampler states.
-        static const D3D12_SAMPLER_DESC PointWrap;
-        static const D3D12_SAMPLER_DESC PointClamp;
-        static const D3D12_SAMPLER_DESC LinearWrap;
-        static const D3D12_SAMPLER_DESC LinearClamp;
-        static const D3D12_SAMPLER_DESC AnisotropicWrap;
-        static const D3D12_SAMPLER_DESC AnisotropicClamp;
-
         // Static sampler states.
         static const D3D12_STATIC_SAMPLER_DESC StaticPointWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0);
         static const D3D12_STATIC_SAMPLER_DESC StaticPointClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0);
@@ -59,5 +58,32 @@ namespace DirectX
         static const D3D12_STATIC_SAMPLER_DESC StaticLinearClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0);
         static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0);
         static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0);
+
+        // Sampler states.
+        D3D12_GPU_DESCRIPTOR_HANDLE PointWrap() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE PointClamp() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE LinearWrap() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE LinearClamp() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicWrap() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicClamp() const;
+
+        // These index into the heap returned by SamplerDescriptorHeap
+        enum class SamplerIndex
+        {
+            PointWrap,
+            PointClamp,
+            LinearWrap,
+            LinearClamp,
+            AnisotropicWrap,
+            AnisotropicClamp,
+            Count
+        };
+
+        ID3D12DescriptorHeap* Heap() const;
+
+    private:
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
     };
 }

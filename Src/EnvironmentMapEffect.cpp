@@ -69,7 +69,9 @@ public:
     enum RootParameterIndex
     {
         TextureSRV,
+        TextureSampler,
         CubemapSRV,
+        CubemapSampler,
         ConstantBuffer,
         RootParameterCount
     };
@@ -77,7 +79,9 @@ public:
     EffectLights lights;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMap;
+    D3D12_GPU_DESCRIPTOR_HANDLE environmentMapSampler;
 
     int GetCurrentShaderPermutation(bool fresnelEnabled, bool specularEnabled) const;
 
@@ -211,18 +215,20 @@ EnvironmentMapEffect::Impl::Impl(
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         // Texture 1
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange1;
-        descriptorRange1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &descriptorRange1);
+        CD3DX12_DESCRIPTOR_RANGE textureDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE textureSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureDescriptor);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerDescriptor);
 
         // Texture 2
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange2;
-        descriptorRange2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &descriptorRange2);
+        CD3DX12_DESCRIPTOR_RANGE cubemapDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        CD3DX12_DESCRIPTOR_RANGE cubemapSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
+        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &cubemapDescriptor);
+        rootParameters[RootParameterIndex::CubemapSampler].InitAsDescriptorTable(1, &cubemapSamplerDescriptor);
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, _countof(samplers), samplers, rootSignatureFlags);
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
     }
@@ -315,14 +321,21 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
     // Set the textures
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (!texture.ptr || !environmentMap.ptr)
     {
-        DebugTrace("ERROR: Missing textures for EnvironmentMapEffect (texture %llp, environmentMap %llp)\n", texture.ptr, environmentMap.ptr);
+        DebugTrace("ERROR: Missing texture(s) for EnvironmentMapEffect (texture %llu, environmentMap %llu)\n", texture.ptr, environmentMap.ptr);
+        throw std::exception("EnvironmentMapEffect");
+    }
+    if (!textureSampler.ptr || !environmentMapSampler.ptr)
+    {
+        DebugTrace("ERROR: Missing sampler(s) for EnvironmentMapEffect (sampler %llu, environmentMap %llu)\n", textureSampler.ptr, environmentMapSampler.ptr);
         throw std::exception("EnvironmentMapEffect");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, textureSampler);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSRV, environmentMap);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSampler, environmentMapSampler);
 
     // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
@@ -513,15 +526,17 @@ void XM_CALLCONV EnvironmentMapEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void EnvironmentMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE value)
+void EnvironmentMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler)
 {
-    pImpl->texture = value;
+    pImpl->texture = texture;
+    pImpl->textureSampler = sampler;
 }
 
 
-void EnvironmentMapEffect::SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE value)
+void EnvironmentMapEffect::SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler)
 {
-    pImpl->environmentMap = value;
+    pImpl->environmentMap = texture;
+    pImpl->environmentMapSampler = sampler;
 }
 
 

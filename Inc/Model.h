@@ -39,7 +39,6 @@ namespace DirectX
 {
     class IEffect;
     class IEffectFactory;
-    class CommonStates;
     class ModelMesh;
 
     //----------------------------------------------------------------------------------
@@ -222,15 +221,18 @@ namespace DirectX
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
-            _In_ ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap,
-            int baseDescriptorOffset = 0);
+            _In_ ID3D12DescriptorHeap* textureDescriptorHeap, 
+            _In_ ID3D12DescriptorHeap* samplerDescriptorHeap, 
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0);
 
         // Create effects using a custom effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
             IEffectFactory& fxFactory, 
             const EffectPipelineStateDescription& opaquePipelineState,
-            const EffectPipelineStateDescription& alphaPipelineState,
-            int baseDescriptorOffset = 0);
+            const EffectPipelineStateDescription& alphaPipelineState, 
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0);
 
         // Loads a model from a DirectX SDK .SDKMESH file
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );
@@ -277,7 +279,8 @@ namespace DirectX
             IEffectFactory& fxFactory, 
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
-            int descriptorOffset,
+            int textureDescriptorOffset,
+            int samplerDescriptorOffset,
             _In_ const ModelMeshPart* part) const;
     };
  }

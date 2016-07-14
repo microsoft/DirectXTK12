@@ -50,7 +50,9 @@ public:
     enum RootParameterIndex
     {
         Texture1SRV,
+        Texture1Sampler,
         Texture2SRV,
+        Texture2Sampler,
         ConstantBuffer,
         RootParameterCount
     };
@@ -59,7 +61,9 @@ public:
     EffectColor color;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture1;
+    D3D12_GPU_DESCRIPTOR_HANDLE texture1Sampler;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
+    D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
     int GetCurrentPipelineStatePermutation() const;
 
@@ -148,26 +152,24 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_STATIC_SAMPLER_DESC samplers[2];
-        samplers[0] = CD3DX12_STATIC_SAMPLER_DESC(0);
-        samplers[1] = CD3DX12_STATIC_SAMPLER_DESC(1);
-
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         // Texture 1
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange1;
-        descriptorRange1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &descriptorRange1);
+        CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE texture1SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &texture1Range);
+        rootParameters[RootParameterIndex::Texture1Sampler].InitAsDescriptorTable(1, &texture1SamplerRange);
         
         // Texture 2
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange2;
-        descriptorRange2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &descriptorRange2);
+        CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        CD3DX12_DESCRIPTOR_RANGE texture2SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
+        rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range);
+        rootParameters[RootParameterIndex::Texture2Sampler].InitAsDescriptorTable(1, &texture2SamplerRange);
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, _countof(samplers), samplers, rootSignatureFlags);
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
     }
@@ -243,14 +245,21 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
     // Set the textures
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (!texture1.ptr || !texture2.ptr)
     {
-        DebugTrace("Missing textures for DualTextureEffect (texture1 %llp, texture2 %llp)\n", texture1.ptr, texture2.ptr);
+        DebugTrace("Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
+        throw std::exception("DualTextureEffect");
+    }
+    if (!texture1Sampler.ptr || !texture2Sampler.ptr)
+    {
+        DebugTrace("Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
         throw std::exception("DualTextureEffect");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1SRV, texture1);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1Sampler, texture1Sampler);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2SRV, texture2);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2Sampler, texture2Sampler);
 
     // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
@@ -382,13 +391,15 @@ void XM_CALLCONV DualTextureEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture1 = srvDescriptor;
+    pImpl->texture1Sampler = samplerDescriptor;
 }
 
 
-void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture2 = srvDescriptor;
+    pImpl->texture2Sampler = samplerDescriptor;
 }

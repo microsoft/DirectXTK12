@@ -21,6 +21,7 @@
 #include "PlatformHelpers.h"
 #include "BinaryReader.h"
 #include "DescriptorHeap.h"
+#include "CommonStates.h"
 
 #include "SDKMesh.h"
 
@@ -48,10 +49,10 @@ namespace
     }
 
     void InitMaterial(
-        _In_ const DXUT::SDKMESH_MATERIAL& mh,
-        _In_ bool perVertexColor,
-        _In_ bool enableSkinning,
-        _In_ bool enableDualTexture,
+        const DXUT::SDKMESH_MATERIAL& mh,
+        bool perVertexColor,
+        bool enableSkinning,
+        bool enableDualTexture,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
@@ -94,6 +95,9 @@ namespace
 
         m.textureIndex = GetUniqueTextureIndex(txtName, textureDictionary);
         m.textureIndex2 = GetUniqueTextureIndex(txtName2, textureDictionary);
+
+        m.samplerIndex = (m.textureIndex == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
+        m.samplerIndex2 = (m.textureIndex2 == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
     }
 
 

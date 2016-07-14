@@ -14,6 +14,7 @@
 #include "pch.h"
 #include "CommonStates.h"
 #include "DirectXHelpers.h"
+#include "DescriptorHeap.h"
 
 using namespace DirectX;
 
@@ -231,95 +232,6 @@ const D3D12_RASTERIZER_DESC CommonStates::Wireframe =
 
 
 // --------------------------------------------------------------------------
-// Sampler States
-// --------------------------------------------------------------------------
-
-const D3D12_SAMPLER_DESC CommonStates::PointWrap = 
-{
-    D3D12_FILTER_MIN_MAG_MIP_POINT,
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-const D3D12_SAMPLER_DESC CommonStates::PointClamp =
-{
-    D3D12_FILTER_MIN_MAG_MIP_POINT,
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-const D3D12_SAMPLER_DESC CommonStates::LinearWrap = 
-{
-    D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-const D3D12_SAMPLER_DESC CommonStates::LinearClamp =
-{
-    D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-const D3D12_SAMPLER_DESC CommonStates::AnisotropicWrap = 
-{
-    D3D12_FILTER_ANISOTROPIC,
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-const D3D12_SAMPLER_DESC CommonStates::AnisotropicClamp =
-{
-    D3D12_FILTER_ANISOTROPIC,
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
-    D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
-    0, // MipLODBias
-    D3D12_MAX_MAXANISOTROPY,
-    D3D12_COMPARISON_FUNC_NEVER,
-    { 0, 0, 0, 0 }, // BorderColor
-    0, // MinLOD
-    FLT_MAX // MaxLOD
-};
-
-
-// --------------------------------------------------------------------------
 // Static sampler States
 // --------------------------------------------------------------------------
 
@@ -471,3 +383,147 @@ const D3D12_STATIC_SAMPLER_DESC CommonStates::StaticAnisotropicClamp(unsigned in
     desc.RegisterSpace = registerSpace;
     return desc;
 };
+
+// --------------------------------------------------------------------------
+// Samplers
+// --------------------------------------------------------------------------
+
+class CommonStates::Impl
+{
+public:
+
+    static const D3D12_SAMPLER_DESC SamplerDescs[static_cast<int>(SamplerIndex::Count)];
+
+    Impl(_In_ ID3D12Device* device)
+        : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, (int) SamplerIndex::Count)
+    {
+        for (int i = 0; i < static_cast<int>(SamplerIndex::Count); ++i)
+        {
+            device->CreateSampler(&SamplerDescs[i], mDescriptors.GetCpuHandle(i));
+        }
+    }
+
+    D3D12_GPU_DESCRIPTOR_HANDLE Get(SamplerIndex i) const
+    {
+        return mDescriptors.GetGpuHandle((int) i);
+    }
+
+    ID3D12DescriptorHeap* Heap() const
+    {
+        return mDescriptors.Heap();
+    }
+
+private:
+    DescriptorHeap mDescriptors;
+};
+
+const D3D12_SAMPLER_DESC CommonStates::Impl::SamplerDescs[] = 
+{
+    // PointWrap
+    {
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    },
+    // PointClamp
+    {
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    },
+    // LinearWrap
+    {
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    },
+    // LinearClamp
+    {
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    },
+    // AnisotropicWrap
+    {
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    },
+    // AnisotropicClamp
+    {
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressU
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressV
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP, // AddressW
+        0, // MipLODBias
+        D3D12_MAX_MAXANISOTROPY,
+        D3D12_COMPARISON_FUNC_NEVER,
+        { 0, 0, 0, 0 }, // BorderColor
+        0, // MinLOD
+        FLT_MAX // MaxLOD
+    }
+};
+
+
+_Use_decl_annotations_
+CommonStates::CommonStates(ID3D12Device* device)
+{
+    pImpl = std::make_unique<Impl>(device);
+}
+
+CommonStates::CommonStates(CommonStates&& moveFrom)
+    : pImpl(std::move(moveFrom.pImpl))
+{
+}
+
+CommonStates::~CommonStates() {}
+
+CommonStates& CommonStates::operator = (CommonStates&& moveFrom)
+{
+    pImpl = std::move(moveFrom.pImpl);
+    return *this;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::PointWrap() const { return pImpl->Get(SamplerIndex::PointWrap); }
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::PointClamp() const { return pImpl->Get(SamplerIndex::PointClamp); }
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::LinearWrap() const { return pImpl->Get(SamplerIndex::LinearWrap); }
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::LinearClamp() const { return pImpl->Get(SamplerIndex::LinearClamp); }
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::AnisotropicWrap() const { return pImpl->Get(SamplerIndex::AnisotropicWrap); }
+D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::AnisotropicClamp() const { return pImpl->Get(SamplerIndex::AnisotropicClamp); }
+
+ID3D12DescriptorHeap* CommonStates::Heap() const { return pImpl->Heap(); }

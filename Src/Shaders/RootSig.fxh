@@ -14,8 +14,8 @@
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
 "DescriptorTable ( SRV(t0) ),"\
-"CBV(b0)," \
-"StaticSampler(s0)"
+"DescriptorTable ( Sampler(s0) )," \
+"CBV(b0)"
 
 #define DualTextureRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
@@ -23,10 +23,10 @@
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
 "DescriptorTable ( SRV(t0) )," \
+"DescriptorTable ( Sampler(s0) )," \
 "DescriptorTable ( SRV(t1) )," \
-"CBV(b0)," \
-"StaticSampler(s0)," \
-"StaticSampler(s1)"
+"DescriptorTable ( Sampler(s1) )," \
+"CBV(b0)"
 
 #define GenerateMipsRS \
 "RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS   |" \
@@ -42,3 +42,13 @@
 "           addressU = TEXTURE_ADDRESS_CLAMP,"\
 "           addressV = TEXTURE_ADDRESS_CLAMP,"\
 "           addressW = TEXTURE_ADDRESS_CLAMP )"
+
+#define SpriteRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) ),"\
+"CBV(b0)"\
+"StaticSampler(s0)"
+

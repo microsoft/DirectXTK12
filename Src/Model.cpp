@@ -205,8 +205,9 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device, 
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     IEffectFactory& fxFactory, 
     const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    int descriptorOffset)
+    const EffectPipelineStateDescription& alphaPipelineState, 
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
     if (materials.empty())
     {
@@ -228,7 +229,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, descriptorOffset, part.get()));
+            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
 
         for (const auto& part : mesh->alphaMeshParts)
@@ -238,7 +239,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, descriptorOffset, part.get()));
+            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
     }
 
@@ -250,8 +251,9 @@ _Use_decl_annotations_
 std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     IEffectFactory& fxFactory, 
     const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    int descriptorOffset,
+    const EffectPipelineStateDescription& alphaPipelineState, 
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset,
     const ModelMeshPart* part) const
 {
     assert(part->materialIndex < materials.size());
@@ -262,7 +264,7 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     il.NumElements = (uint32_t) part->vbDecl->size();
     il.pInputElementDescs = part->vbDecl->data();
 
-    return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, descriptorOffset);
+    return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
 // Create effects for each mesh piece with the default factory
@@ -270,11 +272,13 @@ _Use_decl_annotations_
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
-    ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap,
-    int descriptorOffset)
+    ID3D12DescriptorHeap* textureDescriptorHeap, 
+    ID3D12DescriptorHeap* samplerDescriptorHeap,
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
-    EffectFactory fxFactory(gpuVisibleTextureDescriptorHeap);
-    return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, descriptorOffset);
+    EffectFactory fxFactory(textureDescriptorHeap, samplerDescriptorHeap);
+    return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
 // Updates effect matrices (if applicable)

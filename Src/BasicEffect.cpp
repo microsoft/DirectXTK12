@@ -59,15 +59,10 @@ class BasicEffect::Impl : public EffectBase<BasicEffectTraits>
 public:
     Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
 
-    enum DescriptorIndex
-    {
-        Texture,
-        DescriptorCount
-    };
-
     enum RootParameterIndex
     {
         TextureSRV,
+        TextureSampler,
         ConstantBuffer,
         RootParameterCount
     };
@@ -78,6 +73,7 @@ public:
     bool textureEnabled;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    D3D12_GPU_DESCRIPTOR_HANDLE sampler;
 
     EffectLights lights;
 
@@ -313,16 +309,16 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    CD3DX12_STATIC_SAMPLER_DESC sampler(0);
-    CD3DX12_DESCRIPTOR_RANGE descriptorRanges[DescriptorIndex::DescriptorCount];
-    descriptorRanges[DescriptorIndex::Texture].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
     CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(
-        _countof(descriptorRanges), 
-        descriptorRanges);
+    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV); 
+    rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler); 
     rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
@@ -409,15 +405,16 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
     // Set the texture
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (textureEnabled)
     {
-        if (!texture.ptr)
+        if (!texture.ptr || !sampler.ptr)
         {
-            DebugTrace("ERROR: Missing texture for textured BasicEffect\n");
+            DebugTrace("ERROR: Missing texture or sampler for BasicEffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
             throw std::exception("BasicEffect");
         }
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
     }
 
     // Set constants
@@ -630,7 +627,8 @@ void XM_CALLCONV BasicEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
+    pImpl->sampler = samplerDescriptor;
 }
