@@ -363,3 +363,71 @@ void GraphicsResource::Reset(GraphicsResource&& alloc)
     alloc.mSize = 0;
     alloc.mPage = nullptr;
 }
+
+
+//--------------------------------------------------------------------------------------
+// SharedGraphicsResource
+//--------------------------------------------------------------------------------------
+
+SharedGraphicsResource::SharedGraphicsResource()
+    : mSharedResource(nullptr)
+{
+}
+
+SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource)
+    : mSharedResource(std::make_shared<GraphicsResource>(std::move(resource)))
+{
+}
+
+SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource)
+    : mSharedResource(std::move(resource.mSharedResource))
+{
+}
+
+SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource)
+    : mSharedResource(resource.mSharedResource)
+{
+}
+
+SharedGraphicsResource::~SharedGraphicsResource()
+{
+}
+
+SharedGraphicsResource&& SharedGraphicsResource::operator= (SharedGraphicsResource&& resource)
+{
+    mSharedResource = std::move(resource.mSharedResource);
+    return std::move(*this);
+}
+
+SharedGraphicsResource&& SharedGraphicsResource::operator= (GraphicsResource&& resource)
+{
+    mSharedResource = std::make_shared<GraphicsResource>(std::move(resource));
+    return std::move(*this);
+}
+
+SharedGraphicsResource& SharedGraphicsResource::operator= (const SharedGraphicsResource& resource)
+{
+    mSharedResource = resource.mSharedResource;
+    return *this;
+}
+
+void SharedGraphicsResource::Reset()
+{
+    mSharedResource.reset();
+}
+
+void SharedGraphicsResource::Reset(GraphicsResource&& resource)
+{
+    mSharedResource = std::make_shared<GraphicsResource>(std::move(resource));
+}
+
+void SharedGraphicsResource::Reset(SharedGraphicsResource&& resource)
+{
+    mSharedResource = std::move(resource.mSharedResource);
+}
+
+void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource)
+{
+    mSharedResource = resource.mSharedResource;
+}
+

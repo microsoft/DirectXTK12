@@ -53,6 +53,8 @@ namespace DirectX
         void* Memory() const { return mMemory; }
         size_t ResourceOffset() const { return mBufferOffset; }
         size_t Size() const { return mSize; }
+        
+        explicit operator bool () const { return mResource != nullptr; }
 
         // Clear the pointer. Using operator -> will produce bad results.
         void __cdecl Reset();
@@ -65,6 +67,43 @@ namespace DirectX
         void*                       mMemory;
         size_t                      mBufferOffset;
         size_t                      mSize;
+    };
+
+    class SharedGraphicsResource
+    {
+    public:
+        SharedGraphicsResource();
+
+        SharedGraphicsResource(SharedGraphicsResource&&);
+        SharedGraphicsResource&& operator= (SharedGraphicsResource&&);
+
+        SharedGraphicsResource(GraphicsResource&&);
+        SharedGraphicsResource&& operator= (GraphicsResource&&);
+
+        SharedGraphicsResource(const SharedGraphicsResource&);
+        SharedGraphicsResource& operator= (const SharedGraphicsResource&);
+
+        SharedGraphicsResource(const GraphicsResource&) = delete;
+        SharedGraphicsResource& operator= (const GraphicsResource&) = delete;
+
+        ~SharedGraphicsResource();
+
+        D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const { return mSharedResource->GpuAddress(); }
+        ID3D12Resource* Resource() const { return mSharedResource->Resource(); }
+        void* Memory() const { return mSharedResource->Memory(); }
+        size_t ResourceOffset() const { return mSharedResource->ResourceOffset(); }
+        size_t Size() const { return mSharedResource->Size(); }
+        
+        explicit operator bool () const { return mSharedResource != nullptr; }
+
+        // Clear the pointer. Using operator -> will produce bad results.
+        void __cdecl Reset();
+        void __cdecl Reset(GraphicsResource&&);
+        void __cdecl Reset(SharedGraphicsResource&&);
+        void __cdecl Reset(const SharedGraphicsResource& resource);
+        
+    private:
+        std::shared_ptr<GraphicsResource> mSharedResource;
     };
 
     class GraphicsMemory
