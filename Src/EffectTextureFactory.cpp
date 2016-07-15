@@ -248,7 +248,7 @@ void EffectTextureFactory::SetDirectory( _In_opt_z_ const wchar_t* path )
         *pImpl->mPath = 0;
 }
 
-ID3D12DescriptorHeap* EffectTextureFactory::DescriptorHeap() const
+ID3D12DescriptorHeap* EffectTextureFactory::Heap() const
 {
     return pImpl->mTextureDescriptorHeap.Heap();
 }

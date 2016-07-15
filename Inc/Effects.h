@@ -449,7 +449,7 @@ namespace DirectX
 
         virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
-        ID3D12DescriptorHeap* __cdecl DescriptorHeap() const;
+        ID3D12DescriptorHeap* __cdecl Heap() const;
 
         // Shorthand accessors for the descriptor heap
         D3D12_CPU_DESCRIPTOR_HANDLE __cdecl GetCpuDescriptorHandle(size_t index) const;
