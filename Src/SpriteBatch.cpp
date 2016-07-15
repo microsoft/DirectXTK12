@@ -31,9 +31,13 @@ namespace
     #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShader.inc"
     #include "Shaders/Compiled/XboxOneSpriteEffect_SpritePixelShader.inc"
+    #include "Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "Shaders/Compiled/XboxOneSpriteEffect_SpritePixelShaderHeap.inc"
     #else
     #include "Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
     #include "Shaders/Compiled/SpriteEffect_SpritePixelShader.inc"
+    #include "Shaders/Compiled/SpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "Shaders/Compiled/SpriteEffect_SpritePixelShaderHeap.inc"
     #endif
 
     inline bool operator ! (D3D12_GPU_DESCRIPTOR_HANDLE h)
@@ -137,8 +141,10 @@ private:
     //
     // The following functions and members are used to create the default pipeline state objects.
     //
-    static const D3D12_SHADER_BYTECODE s_DefaultVertexShaderByteCode;
-    static const D3D12_SHADER_BYTECODE s_DefaultPixelShaderByteCode;
+    static const D3D12_SHADER_BYTECODE s_DefaultVertexShaderByteCodeStatic;
+    static const D3D12_SHADER_BYTECODE s_DefaultPixelShaderByteCodeStatic;
+    static const D3D12_SHADER_BYTECODE s_DefaultVertexShaderByteCodeHeap;
+    static const D3D12_SHADER_BYTECODE s_DefaultPixelShaderByteCodeHeap;
     static const D3D12_INPUT_LAYOUT_DESC s_DefaultInputLayoutDesc;
 
 
@@ -162,6 +168,7 @@ private:
     SpriteSortMode mSortMode;
     ComPtr<ID3D12PipelineState> mPSO;
     ComPtr<ID3D12RootSignature> mRootSignature;
+    D3D12_GPU_DESCRIPTOR_HANDLE mSampler;
     XMMATRIX mTransformMatrix;
     ComPtr<ID3D12GraphicsCommandList> mCommandList;
 
@@ -171,16 +178,11 @@ private:
     size_t mSpriteCount;
     GraphicsResource mConstantBuffer;
 
-    enum DescriptorIndex
-    {
-        Texture,
-        DescriptorCount
-    };
-
     enum RootParameterIndex
     {
         TextureSRV,
         ConstantBuffer,
+        TextureSampler,
         RootParameterCount
     };
 
@@ -191,11 +193,12 @@ private:
 
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
-        ComPtr<ID3D12RootSignature> rootSignature;
+        ComPtr<ID3D12RootSignature> rootSignatureStatic;
+        ComPtr<ID3D12RootSignature> rootSignatureHeap;
 
     private:
         void CreateIndexBuffer(_In_ ID3D12Device* device, ResourceUploadBatch& upload);
-        void CreateRootSignature(_In_ ID3D12Device* device);
+        void CreateRootSignatures(_In_ ID3D12Device* device);
 
         static std::vector<short> CreateIndexValues();
     };
@@ -214,8 +217,12 @@ SharedResourcePool<ID3D12Device*, SpriteBatch::Impl::DeviceResources, ResourceUp
 const XMMATRIX SpriteBatch::MatrixIdentity = XMMatrixIdentity();
 const XMFLOAT2 SpriteBatch::Float2Zero(0, 0);
 
-const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCode = {SpriteEffect_SpriteVertexShader, sizeof(SpriteEffect_SpriteVertexShader)};
-const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCode = {SpriteEffect_SpritePixelShader, sizeof(SpriteEffect_SpritePixelShader)};
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCodeStatic = {SpriteEffect_SpriteVertexShader, sizeof(SpriteEffect_SpriteVertexShader)};
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeStatic = {SpriteEffect_SpritePixelShader, sizeof(SpriteEffect_SpritePixelShader)};
+
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCodeHeap = { SpriteEffect_SpriteVertexShaderHeap, sizeof(SpriteEffect_SpriteVertexShaderHeap) };
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeHeap = { SpriteEffect_SpritePixelShaderHeap, sizeof(SpriteEffect_SpritePixelShaderHeap) };
+
 const D3D12_INPUT_LAYOUT_DESC SpriteBatch::Impl::s_DefaultInputLayoutDesc = VertexPositionColorTexture::InputLayout;
 
 const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc = {FALSE, FALSE, {TRUE, FALSE, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_LOGIC_OP_CLEAR, D3D12_COLOR_WRITE_ENABLE_ALL}};
@@ -226,7 +233,7 @@ const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDep
 SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
 {
     CreateIndexBuffer(device, upload);
-    CreateRootSignature(device);
+    CreateRootSignatures(device);
 }
 
 // Creates the SpriteBatch index buffer.
@@ -264,7 +271,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
     indexBufferView.SizeInBytes = static_cast<UINT>(bufferDesc.Width);
 }
 
-void SpriteBatch::Impl::DeviceResources::CreateRootSignature(_In_ ID3D12Device* device)
+void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device* device)
 {
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
@@ -272,18 +279,39 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignature(_In_ ID3D12Device* 
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    CD3DX12_STATIC_SAMPLER_DESC sampler(0);
-    CD3DX12_DESCRIPTOR_RANGE descriptorRanges[DescriptorIndex::DescriptorCount];
-    descriptorRanges[DescriptorIndex::Texture].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-    CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(
-        _countof(descriptorRanges),
-        descriptorRanges);
-    rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-    CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+    CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-    ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignature.ReleaseAndGetAddressOf()));
+    {
+        CD3DX12_STATIC_SAMPLER_DESC sampler(
+            0, // register
+            D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+            D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+            D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+            D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
+
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount - 1];
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+
+        ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureStatic.ReleaseAndGetAddressOf()));
+    }
+
+    {
+        CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler);
+
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+
+        ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureHeap.ReleaseAndGetAddressOf()));
+    }
 }
 
 // Helper for populating the SpriteBatch index buffer.
@@ -316,6 +344,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     mSpriteQueueArraySize(0),
     mInBeginEndPair(false),
     mSortMode(SpriteSortMode_Deferred),
+    mSampler{},
     mTransformMatrix(MatrixIdentity),
     mDeviceResources(deviceResourcesPool.DemandCreate(device, upload)),
     mVertexPageSize(sizeof(VertexPositionNormalColorTexture) * MaxBatchSize * VerticesPerSprite),
@@ -328,12 +357,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
         mSetViewport = true;
     }
 
-    mRootSignature = psoDesc.customRootSignature ? psoDesc.customRootSignature : mDeviceResources->rootSignature.Get();
-
     D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dDesc = {};
-    d3dDesc.pRootSignature = mRootSignature.Get();
-    d3dDesc.VS = psoDesc.customVertexShader.pShaderBytecode ? psoDesc.customVertexShader : s_DefaultVertexShaderByteCode;
-    d3dDesc.PS = psoDesc.customPixelShader.pShaderBytecode ? psoDesc.customPixelShader : s_DefaultPixelShaderByteCode;
     d3dDesc.InputLayout = s_DefaultInputLayoutDesc;
     d3dDesc.BlendState = psoDesc.blendDesc;
     d3dDesc.DepthStencilState = psoDesc.depthStencilDesc;
@@ -346,6 +370,40 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     d3dDesc.SampleMask = psoDesc.renderTargetState.sampleMask;
     d3dDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
     d3dDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+    // Three choices: (1) static sampler, (2) heap sampler, or (3) custom signature & shaders
+    if (psoDesc.customRootSignature)
+    {
+        mRootSignature = psoDesc.customRootSignature;
+    }
+    else
+    {
+        mRootSignature = (psoDesc.samplerDescriptor.ptr) ? mDeviceResources->rootSignatureHeap.Get() : mDeviceResources->rootSignatureStatic.Get();
+    }
+    d3dDesc.pRootSignature = mRootSignature.Get();
+
+    if (psoDesc.customVertexShader.pShaderBytecode)
+    {
+        d3dDesc.VS = psoDesc.customVertexShader;
+    }
+    else
+    {
+        d3dDesc.VS = (psoDesc.samplerDescriptor.ptr) ? s_DefaultVertexShaderByteCodeHeap : s_DefaultVertexShaderByteCodeStatic;
+    }
+
+    if (psoDesc.customPixelShader.pShaderBytecode)
+    {
+        d3dDesc.PS = psoDesc.customPixelShader;
+    }
+    else
+    {
+        d3dDesc.PS = (psoDesc.samplerDescriptor.ptr) ? s_DefaultPixelShaderByteCodeHeap : s_DefaultPixelShaderByteCodeStatic;
+    }
+
+    if (psoDesc.samplerDescriptor.ptr)
+    {
+        mSampler = psoDesc.samplerDescriptor;
+    }
 
     ThrowIfFailed(device->CreateGraphicsPipelineState(
         &d3dDesc,
@@ -626,8 +684,13 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
     auto commandList = mCommandList.Get();
 
     // Draw using the specified texture.
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heap(s)
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+
+    if (mSampler.ptr)
+    {
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, mSampler);
+    }
 
     // Convert to vector format.
     XMVECTOR inverseTextureSize = XMVectorReciprocal(textureSize);

@@ -54,22 +54,27 @@ namespace DirectX
             const RenderTargetState& renderTarget,
             _In_opt_ const D3D12_BLEND_DESC* blend = nullptr,
             _In_opt_ const D3D12_DEPTH_STENCIL_DESC* depthStencil = nullptr,
-            _In_opt_ const D3D12_RASTERIZER_DESC* rasterizer = nullptr)
+            _In_opt_ const D3D12_RASTERIZER_DESC* rasterizer = nullptr,
+            _In_opt_ const D3D12_GPU_DESCRIPTOR_HANDLE* samplerDescriptor = nullptr)
             :
             blendDesc(blend ? *blend : s_DefaultBlendDesc),
             depthStencilDesc(depthStencil ? *depthStencil : s_DefaultDepthStencilDesc),
             rasterizerDesc(rasterizer ? *rasterizer : s_DefaultRasterizerDesc),
             renderTargetState(renderTarget),
+            samplerDescriptor{},
             customRootSignature(nullptr),
             customVertexShader{},
             customPixelShader{}
         {
+            if (samplerDescriptor)
+                this->samplerDescriptor = *samplerDescriptor;
         }
 
         D3D12_BLEND_DESC            blendDesc;
         D3D12_DEPTH_STENCIL_DESC    depthStencilDesc;
         D3D12_RASTERIZER_DESC       rasterizerDesc;
         RenderTargetState           renderTargetState;
+        D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor;
         ID3D12RootSignature*        customRootSignature;
         D3D12_SHADER_BYTECODE       customVertexShader;
         D3D12_SHADER_BYTECODE       customPixelShader;

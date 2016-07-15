@@ -515,5 +515,11 @@
     <None Include="Src\Shaders\RootSig.fxh">
       <Filter>Src\Shaders</Filter>
     </None>
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShaderHeap.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShaderHeap.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
   </ItemGroup>
 </Project>

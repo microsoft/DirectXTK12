@@ -43,12 +43,25 @@
 "           addressV = TEXTURE_ADDRESS_CLAMP,"\
 "           addressW = TEXTURE_ADDRESS_CLAMP )"
 
-#define SpriteRS \
+#define SpriteStaticRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
 "            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
 "DescriptorTable ( SRV(t0) ),"\
-"CBV(b0)"\
-"StaticSampler(s0)"
+"CBV(b0), "\
+"StaticSampler(s0,"\
+"           filter = FILTER_MIN_MAG_MIP_LINEAR,"\
+"           addressU = TEXTURE_ADDRESS_CLAMP,"\
+"           addressV = TEXTURE_ADDRESS_CLAMP,"\
+"           addressW = TEXTURE_ADDRESS_CLAMP )"
+
+#define SpriteHeapRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) ),"\
+"CBV(b0), " \
+"DescriptorTable ( Sampler(s0) )"
 

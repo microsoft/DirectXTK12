@@ -173,7 +173,9 @@
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedVertexLightingOneBone.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedVertexLightingTwoBones.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpritePixelShader.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpritePixelShaderHeap.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpriteVertexShader.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpriteVertexShaderHeap.inc" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />
     <None Include="Src\Shaders\RootSig.fxh" />

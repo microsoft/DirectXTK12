@@ -137,7 +137,9 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc" />
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.inc" />
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShaderHeap.inc" />
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShader.inc" />
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShaderHeap.inc" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />
     <None Include="Src\Shaders\RootSig.fxh" />
