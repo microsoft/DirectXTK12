@@ -230,18 +230,6 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicNoFog.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLight.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLighting.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -320,12 +308,6 @@
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnel.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLight.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\GenerateMips_main.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -336,15 +318,6 @@
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBone.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBones.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc">

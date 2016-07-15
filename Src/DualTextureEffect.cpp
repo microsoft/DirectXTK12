@@ -65,7 +65,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation() const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -190,9 +190,12 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
     }
 
     {   // Create pipeline state
-        int sp = GetCurrentPipelineStatePermutation();
+        int sp = GetPipelineStatePermutation();
+        assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
         int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+        assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
         int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+        assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
         EffectBase::CreatePipelineState(
             mRootSignature.Get(),
@@ -209,7 +212,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
 }
 
 
-int DualTextureEffect::Impl::GetCurrentPipelineStatePermutation() const
+int DualTextureEffect::Impl::GetPipelineStatePermutation() const
 {
     int permutation = 0;
 

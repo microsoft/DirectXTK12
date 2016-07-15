@@ -50,9 +50,9 @@ struct EnvironmentMapEffectTraits
 {
     typedef EnvironmentMapEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 4;
+    static const int VertexShaderCount = 2;
     static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 16;
+    static const int ShaderPermutationCount = 8;
 };
 
 
@@ -95,8 +95,6 @@ namespace
 #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMap.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
 
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMap.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapNoFog.inc"
@@ -105,8 +103,6 @@ namespace
 #else
     #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMap.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
 
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMap.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapNoFog.inc"
@@ -120,8 +116,6 @@ const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::VertexShader
 {
     { EnvironmentMapEffect_VSEnvMap,                sizeof(EnvironmentMapEffect_VSEnvMap)                },
     { EnvironmentMapEffect_VSEnvMapFresnel,         sizeof(EnvironmentMapEffect_VSEnvMapFresnel)         },
-    { EnvironmentMapEffect_VSEnvMapOneLight,        sizeof(EnvironmentMapEffect_VSEnvMapOneLight)        },
-    { EnvironmentMapEffect_VSEnvMapOneLightFresnel, sizeof(EnvironmentMapEffect_VSEnvMapOneLightFresnel) },
 };
 
 
@@ -135,16 +129,6 @@ const int EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] =
     0,      // specular, no fog
     1,      // fresnel + specular
     1,      // fresnel + specular, no fog
-
-    2,      // one light
-    2,      // one light, no fog
-    3,      // one light, fresnel
-    3,      // one light, fresnel, no fog
-    2,      // one light, specular
-    2,      // one light, specular, no fog
-    3,      // one light, fresnel + specular
-    3,      // one light, fresnel + specular, no fog
-
 };
 
 
@@ -167,15 +151,6 @@ const int EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] =
     3,      // specular, no fog
     2,      // fresnel + specular
     3,      // fresnel + specular, no fog
-
-    0,      // one light
-    1,      // one light, no fog
-    0,      // one light, fresnel
-    1,      // one light, fresnel, no fog
-    2,      // one light, specular
-    3,      // one light, specular, no fog
-    2,      // one light, fresnel + specular
-    3,      // one light, fresnel + specular, no fog
 };
 
 
@@ -256,8 +231,11 @@ EnvironmentMapEffect::Impl::Impl(
 
     {   // Create pipeline state
         int sp = GetCurrentShaderPermutation(fresnelEnabled, specularEnabled);
+        assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
         int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
+        assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
         int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
+        assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
 
         EffectBase::CreatePipelineState(
             mRootSignature.Get(),
@@ -284,21 +262,16 @@ int EnvironmentMapEffect::Impl::GetCurrentShaderPermutation(bool fresnelEnabled,
         permutation += 1;
     }
 
-    // Support fresnel or specular?
+    // Support fresnel?
     if (fresnelEnabled)
     {
         permutation += 2;
     }
 
+    // Supporte specular?
     if (specularEnabled)
     {
         permutation += 4;
-    }
-
-    // Use the only-bother-with-the-first-light shader optimization?
-    if (!lights.lightEnabled[1] && !lights.lightEnabled[2])
-    {
-        permutation += 8;
     }
 
     return permutation;

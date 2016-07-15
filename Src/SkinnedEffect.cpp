@@ -48,9 +48,9 @@ struct SkinnedEffectTraits
 {
     typedef SkinnedEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 9;
+    static const int VertexShaderCount = 6;
     static const int PixelShaderCount = 3;
-    static const int ShaderPermutationCount = 18;
+    static const int ShaderPermutationCount = 12;
 };
 
 
@@ -76,7 +76,7 @@ public:
 
     EffectLights lights;
 
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation() const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -90,10 +90,6 @@ namespace
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingTwoBones.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
 
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedOneLightOneBone.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedOneLightTwoBones.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedOneLightFourBones.inc"
-
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingOneBone.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingTwoBones.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
@@ -105,10 +101,6 @@ namespace
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingOneBone.inc"
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc"
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedOneLightOneBone.inc"
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedOneLightTwoBones.inc"
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedOneLightFourBones.inc"
 
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingOneBone.inc"
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc"
@@ -127,10 +119,6 @@ const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::VertexShaderBytecod
     { SkinnedEffect_VSSkinnedVertexLightingTwoBones,  sizeof(SkinnedEffect_VSSkinnedVertexLightingTwoBones)  },
     { SkinnedEffect_VSSkinnedVertexLightingFourBones, sizeof(SkinnedEffect_VSSkinnedVertexLightingFourBones) },
 
-    { SkinnedEffect_VSSkinnedOneLightOneBone,         sizeof(SkinnedEffect_VSSkinnedOneLightOneBone)         },
-    { SkinnedEffect_VSSkinnedOneLightTwoBones,        sizeof(SkinnedEffect_VSSkinnedOneLightTwoBones)        },
-    { SkinnedEffect_VSSkinnedOneLightFourBones,       sizeof(SkinnedEffect_VSSkinnedOneLightFourBones)       },
-
     { SkinnedEffect_VSSkinnedPixelLightingOneBone,    sizeof(SkinnedEffect_VSSkinnedPixelLightingOneBone)    },
     { SkinnedEffect_VSSkinnedPixelLightingTwoBones,   sizeof(SkinnedEffect_VSSkinnedPixelLightingTwoBones)   },
     { SkinnedEffect_VSSkinnedPixelLightingFourBones,  sizeof(SkinnedEffect_VSSkinnedPixelLightingFourBones)  },
@@ -146,19 +134,12 @@ const int EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] =
     2,      // vertex lighting, four bones
     2,      // vertex lighting, four bones, no fog
     
-    3,      // one light, one bone
-    3,      // one light, one bone, no fog
-    4,      // one light, two bones
-    4,      // one light, two bones, no fog
-    5,      // one light, four bones
-    5,      // one light, four bones, no fog
-    
-    6,      // pixel lighting, one bone
-    6,      // pixel lighting, one bone, no fog
-    7,      // pixel lighting, two bones
-    7,      // pixel lighting, two bones, no fog
-    8,      // pixel lighting, four bones
-    8,      // pixel lighting, four bones, no fog
+    3,      // pixel lighting, one bone
+    3,      // pixel lighting, one bone, no fog
+    4,      // pixel lighting, two bones
+    4,      // pixel lighting, two bones, no fog
+    5,      // pixel lighting, four bones
+    5,      // pixel lighting, four bones, no fog
 };
 
 
@@ -178,13 +159,6 @@ const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] =
     1,      // vertex lighting, two bones, no fog
     0,      // vertex lighting, four bones
     1,      // vertex lighting, four bones, no fog
-    
-    0,      // one light, one bone
-    1,      // one light, one bone, no fog
-    0,      // one light, two bones
-    1,      // one light, two bones, no fog
-    0,      // one light, four bones
-    1,      // one light, four bones, no fog
     
     2,      // pixel lighting, one bone
     2,      // pixel lighting, one bone, no fog
@@ -256,9 +230,12 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         throw std::invalid_argument("SkinnedEffect");
     }
  
-    int sp = GetCurrentPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation();
+    assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
     int pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
 
     EffectBase::CreatePipelineState(
         mRootSignature.Get(),
@@ -274,7 +251,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
 }
 
 
-int SkinnedEffect::Impl::GetCurrentPipelineStatePermutation() const
+int SkinnedEffect::Impl::GetPipelineStatePermutation() const
 {
     int permutation = 0;
 
@@ -297,11 +274,6 @@ int SkinnedEffect::Impl::GetCurrentPipelineStatePermutation() const
     if (preferPerPixelLighting)
     {
         // Do lighting in the pixel shader.
-        permutation += 12;
-    }
-    else if (!lights.lightEnabled[1] && !lights.lightEnabled[2])
-    {
-        // Use the only-bother-with-the-first-light shader optimization.
         permutation += 6;
     }
 

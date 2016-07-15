@@ -131,10 +131,6 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_PSBasicVertexLightingTxNoFog.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasic.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicNoFog.inc" />
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLight.inc" />
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTx.inc" />
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVc.inc" />
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVc.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLightingTx.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLightingTxVc.inc" />
@@ -161,15 +157,10 @@
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc" />
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMap.inc" />
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnel.inc" />
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLight.inc" />
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc" />
     <None Include="Src\Shaders\Compiled\GenerateMips_main.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLighting.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc" />
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBones.inc" />
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBone.inc" />
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBones.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc" />

@@ -64,7 +64,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation() const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -193,9 +193,12 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         throw std::invalid_argument("AlphaTestEffect");
     }
   
-    int sp = GetCurrentPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation();
+    assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
   
     EffectBase::CreatePipelineState(
         mRootSignature.Get(),
@@ -211,7 +214,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int AlphaTestEffect::Impl::GetCurrentPipelineStatePermutation() const
+int AlphaTestEffect::Impl::GetPipelineStatePermutation() const
 {
     int permutation = 0;
 

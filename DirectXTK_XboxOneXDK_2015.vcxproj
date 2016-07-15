@@ -127,10 +127,6 @@
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasic.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicNoFog.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicOneLight.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicOneLightTx.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicOneLightTxVc.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicOneLightVc.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicPixelLightingTx.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicPixelLightingTxVc.inc" />
@@ -157,15 +153,10 @@
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_PSEnvMapSpecularNoFog.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMap.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapOneLight.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnel.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_main.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedOneLightFourBones.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedOneLightOneBone.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedOneLightTwoBones.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedPixelLightingOneBone.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_VSSkinnedPixelLightingTwoBones.inc" />

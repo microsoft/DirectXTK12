@@ -48,11 +48,6 @@ call :CompileShader%1 BasicEffect vs VSBasicVertexLightingVc
 call :CompileShader%1 BasicEffect vs VSBasicVertexLightingTx
 call :CompileShader%1 BasicEffect vs VSBasicVertexLightingTxVc
 
-call :CompileShader%1 BasicEffect vs VSBasicOneLight
-call :CompileShader%1 BasicEffect vs VSBasicOneLightVc
-call :CompileShader%1 BasicEffect vs VSBasicOneLightTx
-call :CompileShader%1 BasicEffect vs VSBasicOneLightTxVc
-
 call :CompileShader%1 BasicEffect vs VSBasicPixelLighting
 call :CompileShader%1 BasicEffect vs VSBasicPixelLightingVc
 call :CompileShader%1 BasicEffect vs VSBasicPixelLightingTx
@@ -81,8 +76,6 @@ call :CompileShader%1 DualTextureEffect ps PSDualTextureNoFog
 
 call :CompileShader%1 EnvironmentMapEffect vs VSEnvMap
 call :CompileShader%1 EnvironmentMapEffect vs VSEnvMapFresnel
-call :CompileShader%1 EnvironmentMapEffect vs VSEnvMapOneLight
-call :CompileShader%1 EnvironmentMapEffect vs VSEnvMapOneLightFresnel
 
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMap
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapNoFog
@@ -92,10 +85,6 @@ call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapSpecularNoFog
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingOneBone
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingTwoBones
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingFourBones
-
-call :CompileShader%1 SkinnedEffect vs VSSkinnedOneLightOneBone
-call :CompileShader%1 SkinnedEffect vs VSSkinnedOneLightTwoBones
-call :CompileShader%1 SkinnedEffect vs VSSkinnedOneLightFourBones
 
 call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingOneBone
 call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingTwoBones

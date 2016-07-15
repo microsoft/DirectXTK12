@@ -47,9 +47,9 @@ struct BasicEffectTraits
 {
     typedef BasicEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 20;
+    static const int VertexShaderCount = 16;
     static const int PixelShaderCount = 10;
-    static const int ShaderPermutationCount = 32;
+    static const int ShaderPermutationCount = 24;
 };
 
 
@@ -77,7 +77,7 @@ public:
 
     EffectLights lights;
 
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation() const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -100,11 +100,6 @@ namespace
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingVc.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingTx.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
-    
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLight.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightVc.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightTx.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightTxVc.inc"
     
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicPixelLighting.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicPixelLightingVc.inc"
@@ -137,11 +132,6 @@ namespace
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingVc.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingTx.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingTxVc.inc"
-    
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLight.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightVc.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightTx.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightTxVc.inc"
     
     #include "Shaders/Compiled/BasicEffect_VSBasicPixelLighting.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicPixelLightingVc.inc"
@@ -180,11 +170,6 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::VertexShaderBytecode[
     { BasicEffect_VSBasicVertexLightingTx,   sizeof(BasicEffect_VSBasicVertexLightingTx)   },
     { BasicEffect_VSBasicVertexLightingTxVc, sizeof(BasicEffect_VSBasicVertexLightingTxVc) },
     
-    { BasicEffect_VSBasicOneLight,           sizeof(BasicEffect_VSBasicOneLight)           },
-    { BasicEffect_VSBasicOneLightVc,         sizeof(BasicEffect_VSBasicOneLightVc)         },
-    { BasicEffect_VSBasicOneLightTx,         sizeof(BasicEffect_VSBasicOneLightTx)         },
-    { BasicEffect_VSBasicOneLightTxVc,       sizeof(BasicEffect_VSBasicOneLightTxVc)       },
-    
     { BasicEffect_VSBasicPixelLighting,      sizeof(BasicEffect_VSBasicPixelLighting)      },
     { BasicEffect_VSBasicPixelLightingVc,    sizeof(BasicEffect_VSBasicPixelLightingVc)    },
     { BasicEffect_VSBasicPixelLightingTx,    sizeof(BasicEffect_VSBasicPixelLightingTx)    },
@@ -212,23 +197,14 @@ const int EffectBase<BasicEffectTraits>::VertexShaderIndices[] =
     11,     // vertex lighting + texture + vertex color
     11,     // vertex lighting + texture + vertex color, no fog
     
-    12,     // one light
-    12,     // one light, no fog
-    13,     // one light + vertex color
-    13,     // one light + vertex color, no fog
-    14,     // one light + texture
-    14,     // one light + texture, no fog
-    15,     // one light + texture + vertex color
-    15,     // one light + texture + vertex color, no fog
-    
-    16,     // pixel lighting
-    16,     // pixel lighting, no fog
-    17,     // pixel lighting + vertex color
-    17,     // pixel lighting + vertex color, no fog
-    18,     // pixel lighting + texture
-    18,     // pixel lighting + texture, no fog
-    19,     // pixel lighting + texture + vertex color
-    19,     // pixel lighting + texture + vertex color, no fog
+    12,     // pixel lighting
+    12,     // pixel lighting, no fog
+    13,     // pixel lighting + vertex color
+    13,     // pixel lighting + vertex color, no fog
+    14,     // pixel lighting + texture
+    14,     // pixel lighting + texture, no fog
+    15,     // pixel lighting + texture + vertex color
+    15,     // pixel lighting + texture + vertex color, no fog
 };
 
 const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::PixelShaderBytecode[] =
@@ -267,16 +243,7 @@ const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] =
     7,      // vertex lighting + texture, no fog
     6,      // vertex lighting + texture + vertex color
     7,      // vertex lighting + texture + vertex color, no fog
-    
-    4,      // one light
-    5,      // one light, no fog
-    4,      // one light + vertex color
-    5,      // one light + vertex color, no fog
-    6,      // one light + texture
-    7,      // one light + texture, no fog
-    6,      // one light + texture + vertex color
-    7,      // one light + texture + vertex color, no fog
-    
+
     8,      // pixel lighting
     8,      // pixel lighting, no fog
     8,      // pixel lighting + vertex color
@@ -328,9 +295,12 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
    
-    int sp = GetCurrentPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation();
+    assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
     EffectBase::CreatePipelineState(
         mRootSignature.Get(),
@@ -346,7 +316,7 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 }
 
 
-int BasicEffect::Impl::GetCurrentPipelineStatePermutation() const
+int BasicEffect::Impl::GetPipelineStatePermutation() const
 {
     int permutation = 0;
 
@@ -373,16 +343,10 @@ int BasicEffect::Impl::GetCurrentPipelineStatePermutation() const
         if (preferPerPixelLighting)
         {
             // Do lighting in the pixel shader.
-            permutation += 24;
-        }
-        else if (!lights.lightEnabled[1] && !lights.lightEnabled[2])
-        {
-            // Use the only-bother-with-the-first-light shader optimization.
             permutation += 16;
         }
         else
         {
-            // Compute all three lights in the vertex shader.
             permutation += 8;
         }
     }
