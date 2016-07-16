@@ -501,6 +501,27 @@
     <None Include="Src\Shaders\Compiled\XboxOneSpriteEffect_SpriteVertexShaderHeap.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
+    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_PSEnvMapPixelLighting.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_DegammaInPlace.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_RegammaInPlace.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />

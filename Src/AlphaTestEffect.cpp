@@ -58,13 +58,12 @@ public:
     D3D12_COMPARISON_FUNC mAlphaFunction;
     int referenceAlpha;
 
-    bool vertexColorEnabled;
     EffectColor color;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     
-    int GetPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -152,7 +151,6 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     : EffectBase(device),
     mAlphaFunction(alphaFunction),
     referenceAlpha(0),
-    vertexColorEnabled(false),
     texture{}
 {
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
@@ -180,7 +178,6 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
 
     if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
@@ -193,8 +190,10 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         throw std::invalid_argument("AlphaTestEffect");
     }
   
-    int sp = GetPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
@@ -214,7 +213,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int AlphaTestEffect::Impl::GetPipelineStatePermutation() const
+int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
 {
     int permutation = 0;
 

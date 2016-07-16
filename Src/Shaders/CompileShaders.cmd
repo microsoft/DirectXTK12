@@ -76,11 +76,16 @@ call :CompileShader%1 DualTextureEffect ps PSDualTextureNoFog
 
 call :CompileShader%1 EnvironmentMapEffect vs VSEnvMap
 call :CompileShader%1 EnvironmentMapEffect vs VSEnvMapFresnel
+call :CompileShader%1 EnvironmentMapEffect vs VSEnvMapPixelLighting
 
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMap
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapNoFog
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapSpecular
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapSpecularNoFog
+call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapPixelLighting
+call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapPixelLightingNoFog
+call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapPixelLightingFresnel
+call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapPixelLightingFresnelNoFog
 
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingOneBone
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingTwoBones

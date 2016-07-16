@@ -57,7 +57,6 @@ public:
         RootParameterCount
     };
 
-    bool vertexColorEnabled;
     EffectColor color;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture1;
@@ -65,7 +64,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
-    int GetPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -176,7 +175,6 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
 
     // Validate flags & state
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
 
     if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
@@ -190,8 +188,10 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
     }
 
     {   // Create pipeline state
-        int sp = GetPipelineStatePermutation();
+        int sp = GetPipelineStatePermutation(
+            (effectFlags & EffectFlags::VertexColor) != 0);
         assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
+
         int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
         assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
         int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
@@ -212,7 +212,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
 }
 
 
-int DualTextureEffect::Impl::GetPipelineStatePermutation() const
+int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
 {
     int permutation = 0;
 

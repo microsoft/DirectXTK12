@@ -68,7 +68,6 @@ public:
         RootParameterCount
     };
 
-    bool preferPerPixelLighting;
     int weightsPerVertex;
     
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -76,7 +75,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool preferPerPixelLighting) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -176,7 +175,6 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 // Constructor.
 SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
   : EffectBase(device),
-    preferPerPixelLighting(false),
     weightsPerVertex(weightsPerVertex),
     texture{}
 {
@@ -222,7 +220,6 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-    preferPerPixelLighting = (effectFlags & EffectFlags::PerPixelLightingBit) != 0;
 
     if (effectFlags & EffectFlags::VertexColor)
     {
@@ -230,8 +227,10 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         throw std::invalid_argument("SkinnedEffect");
     }
  
-    int sp = GetPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
     int pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
@@ -251,7 +250,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
 }
 
 
-int SkinnedEffect::Impl::GetPipelineStatePermutation() const
+int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting) const
 {
     int permutation = 0;
 

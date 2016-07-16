@@ -68,8 +68,6 @@ public:
     };
 
     bool lightingEnabled;
-    bool preferPerPixelLighting;
-    bool vertexColorEnabled;
     bool textureEnabled;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -77,7 +75,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -291,12 +289,13 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
     lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
-    preferPerPixelLighting = (effectFlags & EffectFlags::PerPixelLightingBit) != 0;
-    vertexColorEnabled = (effectFlags & EffectFlags::VertexColor) != 0;
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
    
-    int sp = GetPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
+        (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
@@ -316,7 +315,7 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 }
 
 
-int BasicEffect::Impl::GetPipelineStatePermutation() const
+int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const
 {
     int permutation = 0;
 
