@@ -151,7 +151,8 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     : EffectBase(device),
     mAlphaFunction(alphaFunction),
     referenceAlpha(0),
-    texture{}
+    texture{},
+    textureSampler{}
 {
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch" );

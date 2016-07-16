@@ -28,6 +28,17 @@
 "DescriptorTable ( Sampler(s1) )," \
 "CBV(b0)"
 
+#define NormalMapRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) )," \
+"DescriptorTable ( SRV(t1) )," \
+"DescriptorTable ( SRV(t2) )," \
+"DescriptorTable ( Sampler(s0) )," \
+"CBV(b0)"
+
 #define GenerateMipsRS \
 "RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS   |" \
 "            DENY_DOMAIN_SHADER_ROOT_ACCESS   |" \

@@ -88,6 +88,7 @@
     <ClCompile Include="Src\ModelLoadSDKMESH.cpp" />
     <ClCompile Include="Src\ModelLoadVBO.cpp" />
     <ClCompile Include="Src\Mouse.cpp" />
+    <ClCompile Include="Src\NormalMapEffect.cpp" />
     <ClCompile Include="Src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Create</PrecompiledHeader>
@@ -161,6 +162,12 @@
     <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_DegammaInPlace.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_main.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_RegammaInPlace.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTx.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTx.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc" />
@@ -205,6 +212,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\GenerateMips.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\NormalMapEffect.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

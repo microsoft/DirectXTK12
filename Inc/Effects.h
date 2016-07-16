@@ -22,9 +22,9 @@
 #include <DirectXMath.h>
 #include <memory>
 #include <string>
-#include <unordered_set>
 
 #include "RenderTargetState.h"
+
 
 namespace DirectX
 {
@@ -98,6 +98,9 @@ namespace DirectX
         static const int MaxBones = 72;
     };
 
+
+    //----------------------------------------------------------------------------------
+    // Pipeline state information for creating effects.
     struct EffectPipelineStateDescription
     {
         EffectPipelineStateDescription(
@@ -141,6 +144,7 @@ namespace DirectX
         const int VertexColor       = 0x08;
         const int Texture           = 0x10;
     }
+
 
     //----------------------------------------------------------------------------------
     // Built-in shader supports optional texture mapping, vertex coloring, directional lighting, and fog.
@@ -199,6 +203,7 @@ namespace DirectX
         std::unique_ptr<Impl> pImpl;
     };
 
+
     // Built-in shader supports per-pixel alpha testing.
     class AlphaTestEffect : public IEffect, public IEffectMatrices, public IEffectFog
     {
@@ -244,6 +249,7 @@ namespace DirectX
 
         std::unique_ptr<Impl> pImpl;
     };
+
 
     // Built-in shader supports two layer multitexturing (eg. for lightmaps or detail textures).
     class DualTextureEffect : public IEffect, public IEffectMatrices, public IEffectFog
@@ -416,6 +422,66 @@ namespace DirectX
 
 
     //----------------------------------------------------------------------------------
+    // Built-in shader extends BasicEffect with normal map and optional specular map
+    class NormalMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
+    {
+    public:
+        NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap = true);
+        NormalMapEffect(NormalMapEffect&& moveFrom);
+        NormalMapEffect& operator= (NormalMapEffect&& moveFrom);
+
+        NormalMapEffect(NormalMapEffect const&) = delete;
+        NormalMapEffect& operator= (NormalMapEffect const&) = delete;
+
+        virtual ~NormalMapEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
+
+        // Material settings.
+        void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
+        void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
+        void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
+        void __cdecl SetSpecularPower(float value);
+        void __cdecl DisableSpecular();
+        void __cdecl SetAlpha(float value);
+        void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
+
+        // Light settings.
+        void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
+
+        void __cdecl SetLightEnabled(int whichLight, bool value) override;
+        void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+
+        void __cdecl EnableDefaultLighting() override;
+
+        // Fog settings.
+        void __cdecl SetFogStart(float value) override;
+        void __cdecl SetFogEnd(float value) override;
+        void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
+
+        // Texture setting - albedo, normal and specular intensity
+        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetNormalTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetSpecularTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+
+    //----------------------------------------------------------------------------------
     // Abstract interface to factory texture resources
     class IEffectTextureFactory
     {
@@ -425,6 +491,8 @@ namespace DirectX
         virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
     };
 
+
+    // Factory for sharing texture resources
     class EffectTextureFactory : public IEffectTextureFactory
     {
     public:
@@ -475,8 +543,9 @@ namespace DirectX
         std::unique_ptr<Impl> pImpl;
     };
 
+
     //----------------------------------------------------------------------------------
-    // Abstract interface to factory for sharing effects and texture resources
+    // Abstract interface to factory for sharing effects
     class IEffectFactory
     {
     public:
@@ -525,6 +594,7 @@ namespace DirectX
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) = 0;
     };
+
 
     // Factory for sharing effects
     class EffectFactory : public IEffectFactory

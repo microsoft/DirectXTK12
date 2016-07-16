@@ -192,7 +192,9 @@ EnvironmentMapEffect::Impl::Impl(
     bool specularEnabled)
     : EffectBase(device),
     texture{},
-    environmentMap{}
+    textureSampler{},
+    environmentMap{},
+    environmentMapSampler{}
 {
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch" );

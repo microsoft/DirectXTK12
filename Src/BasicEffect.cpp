@@ -13,7 +13,6 @@
 
 #include "pch.h"
 #include "EffectCommon.h"
-#include "VertexTypes.h"
 
 using namespace DirectX;
 
@@ -259,7 +258,8 @@ SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources
 // Constructor.
 BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-    texture{}
+    texture{},
+    sampler{}
 {
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderBytecode) == BasicEffectTraits::VertexShaderCount, "array/max mismatch" );

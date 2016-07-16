@@ -176,7 +176,8 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
   : EffectBase(device),
     weightsPerVertex(weightsPerVertex),
-    texture{}
+    texture{},
+    sampler{}
 {
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch" );

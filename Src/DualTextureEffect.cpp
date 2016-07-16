@@ -137,7 +137,9 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
 DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
     texture1{},
-    texture2{}
+    texture1Sampler{},
+    texture2{},
+    texture2Sampler{}
 {
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
