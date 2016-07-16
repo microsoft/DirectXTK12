@@ -534,16 +534,16 @@
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTx.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
   </ItemGroup>
