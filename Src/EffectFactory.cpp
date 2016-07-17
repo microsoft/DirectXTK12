@@ -33,6 +33,7 @@ public:
         : device(device)
         , mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
+        , mUseNormalMapEffect(true)
         , mEnablePerPixelLighting(false)
         , mEnableFog(false)
         , mSharing(true)
@@ -57,6 +58,7 @@ public:
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
 
+    bool mUseNormalMapEffect;
     bool mEnablePerPixelLighting;
     bool mEnableFog;
 
@@ -68,6 +70,7 @@ private:
     EffectCache  mEffectCache;
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
+    EffectCache  mEffectCacheNormalMap;
 
     bool mSharing;
 
@@ -84,35 +87,36 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     int samplerDescriptorOffset)
 {
     // If textures are required, make sure we have a descriptor heap
-    if (mTextureDescriptors == nullptr && (info.textureIndex != -1 || info.textureIndex2 != -1))
+    if (mTextureDescriptors == nullptr && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.normalTextureIndex != -1))
     {
-        DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (textureIndex %d, textureIndex2 %d)!\n", info.textureIndex, info.textureIndex2);
+        DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, normal %d)!\n",
+            info.diffuseTextureIndex, info.specularTextureIndex, info.normalTextureIndex);
         throw std::exception("EffectFactory");
     }
     if (mSamplerDescriptors == nullptr && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
     {
-        DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n", info.samplerIndex, info.samplerIndex2);
+        DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
+            info.samplerIndex, info.samplerIndex2);
         throw std::exception("EffectFactory");
     }
 
     // If we have descriptors, make sure we have both texture and sampler descriptors
     if ((mTextureDescriptors == nullptr) != (mSamplerDescriptors == nullptr))
     {
-        throw std::exception("A texture or sampler descriptor heap was provided, but both are required.");
+        DebugTrace("A texture or sampler descriptor heap was provided, but both are required.\n");
+        throw std::exception("EffectFactory");
     }
 
     // Validate the we have either both texture and sampler descriptors, or neither
-    if ((info.textureIndex == -1) != (info.samplerIndex == -1))
+    if ((info.diffuseTextureIndex == -1) != (info.samplerIndex == -1))
     {
-        throw std::exception("Material provides either a texture or sampler, but both are required.");
-    }
-    if ((info.textureIndex2 == -1) != (info.samplerIndex2 == -1))
-    {
-        throw std::exception("Material provides either a secondary texture or sampler, but both are required.");
+        DebugTrace("Material provides either a texture or sampler, but both are required.\n");
+        throw std::exception("EffectFactory");
     }
 
-    int textureIndex = (info.textureIndex != -1 && mTextureDescriptors != nullptr) ? info.textureIndex + textureDescriptorOffset : -1;
-    int textureIndex2 = (info.textureIndex2 != -1 && mTextureDescriptors != nullptr) ? info.textureIndex2 + textureDescriptorOffset : -1;
+    int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
+    int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+    int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
     int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
     int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
 
@@ -171,10 +175,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetEmissiveColor( color );
         }
 
-        if ( textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(textureIndex),
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
@@ -221,17 +225,23 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
         effect->SetDiffuseColor( color );
 
-        if ( textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(textureIndex),
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
-        if ( textureIndex2 != -1 )
+        if (specularTextureIndex != -1)
         {
+            if (samplerIndex2 == -1)
+            {
+                DebugTrace("Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
+                throw std::exception("EffectFactory");
+            }
+
             effect->SetTexture2(
-                mTextureDescriptors->GetGpuHandle(textureIndex2),
+                mTextureDescriptors->GetGpuHandle(specularTextureIndex),
                 mSamplerDescriptors->GetGpuHandle(samplerIndex2));
         }
 
@@ -239,6 +249,88 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         {
             std::lock_guard<std::mutex> lock(mutex);
             mEffectCacheDualTexture.insert( EffectCache::value_type( cacheName, effect ) );
+        }
+
+        return effect;
+    }
+    else if (info.enableNormalMaps && mUseNormalMapEffect)
+    {
+        // NormalMapEffect
+        int effectflags = EffectFlags::None;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
+        if (info.perVertexColor)
+        {
+            effectflags |= EffectFlags::VertexColor;
+        }
+
+        if (mSharing && !info.name.empty())
+        {
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+            if (specularTextureIndex != -1)
+                cacheName += L"spec";
+
+            auto it = mEffectCacheNormalMap.find(cacheName);
+            if (mSharing && it != mEffectCacheNormalMap.end())
+            {
+                return it->second;
+            }
+        }
+
+        std::shared_ptr<NormalMapEffect> effect = std::make_shared<NormalMapEffect>(device, effectflags, derivedPSD, (specularTextureIndex != -1));
+
+        effect->EnableDefaultLighting();
+
+        effect->SetAlpha( info.alphaValue );
+
+        // NormalMap Effect does not have an ambient material color
+
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
+
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
+        }
+        else
+        {
+            effect->DisableSpecular();
+        }
+
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
+        }
+
+        if (diffuseTextureIndex != -1)
+        {
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+        }
+
+        if (specularTextureIndex != -1)
+        {
+            effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(specularTextureIndex));
+        }
+
+        if (normalTextureIndex != -1)
+        {
+            effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(normalTextureIndex));
+        }
+
+        if ( mSharing && !info.name.empty() )
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            mEffectCacheNormalMap.insert(EffectCache::value_type(cacheName, effect));
         }
 
         return effect;
@@ -258,7 +350,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::VertexColor;
         }
 
-        if (info.textureIndex != -1)
+        if (diffuseTextureIndex != -1)
         {
             effectflags |= EffectFlags::Texture;
         }
@@ -303,10 +395,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetEmissiveColor( color );
         }
 
-        if ( textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(textureIndex),
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
@@ -326,6 +418,7 @@ void EffectFactory::Impl::ReleaseCache()
     mEffectCache.clear();
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
+    mEffectCacheNormalMap.clear();
 }
 
 
@@ -420,3 +513,7 @@ void EffectFactory::EnableFogging(bool enabled)
     pImpl->mEnableFog = enabled;
 }
 
+void EffectFactory::SetUseNormalMapEffect(bool enabled)
+{
+    pImpl->mUseNormalMapEffect = enabled;
+}

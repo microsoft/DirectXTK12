@@ -53,22 +53,40 @@ namespace
         bool perVertexColor,
         bool enableSkinning,
         bool enableDualTexture,
+        bool enableNormalMaps,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
         wchar_t matName[DXUT::MAX_MATERIAL_NAME];
         MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
 
-        wchar_t txtName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.DiffuseTexture, -1, txtName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t diffuseName[DXUT::MAX_TEXTURE_NAME];
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.DiffuseTexture, -1, diffuseName, DXUT::MAX_TEXTURE_NAME);
 
-        wchar_t txtName2[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.SpecularTexture, -1, txtName2, DXUT::MAX_TEXTURE_NAME);
+        wchar_t specularName[DXUT::MAX_TEXTURE_NAME];
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.SpecularTexture, -1, specularName, DXUT::MAX_TEXTURE_NAME);
 
-        if (!mh.SpecularTexture[0] && enableDualTexture)
+        wchar_t normalName[DXUT::MAX_TEXTURE_NAME];
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
+
+        if (enableDualTexture && !mh.SpecularTexture[0])
         {
             DebugTrace("WARNING: Material '%s' has multiple texture coords but not multiple textures\n", mh.Name);
             enableDualTexture = false;
+        }
+
+        if (enableNormalMaps)
+        {
+            if (!mh.NormalTexture[0])
+            {
+                enableNormalMaps = false;
+                *normalName = 0;
+            }
+        }
+        else if (mh.NormalTexture[0])
+        {
+            DebugTrace("WARNING: Material '%s' has a normal map, but vertex buffer is missing tangents\n", mh.Name);
+            *normalName = 0;
         }
 
         m = {};
@@ -76,6 +94,7 @@ namespace
         m.perVertexColor = perVertexColor;
         m.enableSkinning = enableSkinning;
         m.enableDualTexture = enableDualTexture;
+        m.enableNormalMaps = enableNormalMaps;
         m.ambientColor = XMFLOAT3(mh.Ambient.x, mh.Ambient.y, mh.Ambient.z);
         m.diffuseColor = XMFLOAT3(mh.Diffuse.x, mh.Diffuse.y, mh.Diffuse.z);
         m.emissiveColor = XMFLOAT3(mh.Emissive.x, mh.Emissive.y, mh.Emissive.z);
@@ -93,11 +112,12 @@ namespace
             m.specularColor = XMFLOAT3(mh.Specular.x, mh.Specular.y, mh.Specular.z);
         }
 
-        m.textureIndex = GetUniqueTextureIndex(txtName, textureDictionary);
-        m.textureIndex2 = GetUniqueTextureIndex(txtName2, textureDictionary);
+        m.diffuseTextureIndex = GetUniqueTextureIndex(diffuseName, textureDictionary);
+        m.specularTextureIndex = GetUniqueTextureIndex(specularName, textureDictionary);
+        m.normalTextureIndex = GetUniqueTextureIndex(normalName, textureDictionary);
 
-        m.samplerIndex = (m.textureIndex == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
-        m.samplerIndex2 = (m.textureIndex2 == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
+        m.samplerIndex = (m.diffuseTextureIndex == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
+        m.samplerIndex2 = (enableDualTexture) ? static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap) : -1;
     }
 
 
@@ -105,7 +125,7 @@ namespace
     // Direct3D 9 Vertex Declaration to Direct3D 12 Input Layout mapping
 
     void GetInputLayoutDesc(_In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[], std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc,
-        bool &perVertexColor, bool& enableSkinning, bool& dualTexture)
+        bool &perVertexColor, bool& enableSkinning, bool& dualTexture, bool& normalMaps)
     {
         static const D3D12_INPUT_ELEMENT_DESC elements[] =
         {
@@ -184,11 +204,13 @@ namespace
             {
                 if (decl[index].Type == D3DDECLTYPE_FLOAT3)
                 {
+                    normalMaps = true;
                     inputDesc.push_back(elements[3]);
                     offset += 12;
                 }
                 else if (decl[index].Type == D3DDECLTYPE_FLOAT16_4)
                 {
+                    normalMaps = true;
                     D3D12_INPUT_ELEMENT_DESC desc = elements[3];
                     desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
                     inputDesc.push_back(desc);
@@ -196,6 +218,7 @@ namespace
                 }
                 else if (decl[index].Type == D3DDECLTYPE_SHORT4N)
                 {
+                    normalMaps = true;
                     D3D12_INPUT_ELEMENT_DESC desc = elements[3];
                     desc.Format = DXGI_FORMAT_R16G16B16A16_SNORM;
                     inputDesc.push_back(desc);
@@ -203,6 +226,7 @@ namespace
                 }
                 else if (decl[index].Type == D3DDECLTYPE_UBYTE4N)
                 {
+                    normalMaps = true;
                     D3D12_INPUT_ELEMENT_DESC desc = elements[3];
                     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
                     inputDesc.push_back(desc);
@@ -391,6 +415,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
     std::vector<bool> enableDualTexture;
     enableDualTexture.resize( header->NumVertexBuffers );
 
+    std::vector<bool> enableNormalMaps;
+    enableNormalMaps.resize(header->NumVertexBuffers);
+
     for( UINT j=0; j < header->NumVertexBuffers; ++j )
     {
         auto& vh = vbArray[j];
@@ -403,10 +430,12 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
         bool vertColor = false;
         bool skinning = false;
         bool dualTexture = false;
-        GetInputLayoutDesc( vh.Decl, *vbDecls[j].get(), vertColor, skinning, dualTexture );
+        bool normalMaps = false;
+        GetInputLayoutDesc( vh.Decl, *vbDecls[j].get(), vertColor, skinning, dualTexture, normalMaps );
         perVertexColor[j] = vertColor;
         enableSkinning[j] = skinning;
-        enableDualTexture[j] = dualTexture;
+        enableDualTexture[j] = !skinning && dualTexture;
+        enableNormalMaps[j] = !skinning && !dualTexture && normalMaps;
     }
 
     // Validate index buffers
@@ -505,7 +534,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
 
             const size_t vi = mh.VertexBuffers[0];
             InitMaterial(materialArray[subset.MaterialID],
-                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi],
+                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], enableNormalMaps[vi],
                 mat, textureDictionary);
 
             auto part = new ModelMeshPart();

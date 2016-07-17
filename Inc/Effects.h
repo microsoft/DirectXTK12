@@ -557,14 +557,16 @@ namespace DirectX
             bool                perVertexColor;
             bool                enableSkinning;
             bool                enableDualTexture;
+            bool                enableNormalMaps;
             float               specularPower;
             float               alphaValue;
             DirectX::XMFLOAT3   ambientColor;
             DirectX::XMFLOAT3   diffuseColor;
             DirectX::XMFLOAT3   specularColor;
             DirectX::XMFLOAT3   emissiveColor;
-            int                 textureIndex;
-            int                 textureIndex2;
+            int                 diffuseTextureIndex;
+            int                 specularTextureIndex;
+            int                 normalTextureIndex;
             int                 samplerIndex;
             int                 samplerIndex2;
 
@@ -572,14 +574,16 @@ namespace DirectX
                 : perVertexColor(false)
                 , enableSkinning(false)
                 , enableDualTexture(false)
+                , enableNormalMaps(false)
                 , specularPower(0)
                 , alphaValue(0)
                 , ambientColor(0, 0, 0)
                 , diffuseColor(0, 0, 0)
                 , specularColor(0, 0, 0)
                 , emissiveColor(0, 0, 0)
-                , textureIndex(-1)
-                , textureIndex2(-1)
+                , diffuseTextureIndex(-1)
+                , specularTextureIndex(-1)
+                , normalTextureIndex(-1)
                 , samplerIndex(-1)
                 , samplerIndex2(-1)
             {
@@ -628,6 +632,8 @@ namespace DirectX
         void __cdecl SetSharing( bool enabled );
 
         void __cdecl EnablePerPixelLighting(bool enabled);
+
+        void __cdecl SetUseNormalMapEffect(bool enabled);
 
         void __cdecl EnableFogging(bool enabled);
 
