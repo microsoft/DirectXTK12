@@ -513,7 +513,7 @@ void EffectFactory::EnableFogging(bool enabled)
     pImpl->mEnableFog = enabled;
 }
 
-void EffectFactory::SetUseNormalMapEffect(bool enabled)
+void EffectFactory::EnableNormalMapEffect(bool enabled)
 {
     pImpl->mUseNormalMapEffect = enabled;
 }

@@ -633,7 +633,7 @@ namespace DirectX
 
         void __cdecl EnablePerPixelLighting(bool enabled);
 
-        void __cdecl SetUseNormalMapEffect(bool enabled);
+        void __cdecl EnableNormalMapEffect(bool enabled);
 
         void __cdecl EnableFogging(bool enabled);
 
