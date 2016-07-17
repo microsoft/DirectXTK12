@@ -34,7 +34,7 @@ public:
         , mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
         , mUseNormalMapEffect(true)
-        , mEnablePerPixelLighting(false)
+        , mEnablePerPixelLighting(true)
         , mEnableFog(false)
         , mSharing(true)
     { 
