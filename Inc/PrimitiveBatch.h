@@ -133,7 +133,7 @@ namespace DirectX
 
             TVertex* mappedVertices;
 
-            PrimitiveBatchBase::Draw(D3D_PRIMITIVE_TOPOLOGY_QUADLIST, true, quadIndices, 6, 4, reinterpret_cast<void**>(&mappedVertices));
+            PrimitiveBatchBase::Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, true, quadIndices, 6, 4, reinterpret_cast<void**>(&mappedVertices));
 
             mappedVertices[0] = v1;
             mappedVertices[1] = v2;
