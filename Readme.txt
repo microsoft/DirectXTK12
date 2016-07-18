@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-June 30, 2016
+July 18, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -92,6 +92,27 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+July 18, 2016
+    *breaking changes* to CommonStates, DescriptorHeap, Effects, Model,
+        EffectPipelineStateDescription, and SpriteBatchPipelineStateDescription
+    - added texture sampler control to Effects and SpriteBatch
+    - fixed Model control of blend and rasterizer state
+    - fixed problems with PerPixelLighting control (EffectFactory defaults to per-pixel lighting)
+    - fixed control of weights-per-vertex optimization for SkinnedEffect
+    - removed unnecesary "one-light" shader permutations
+    - fixed bug in AlphaTestEfect implementation
+    - improved debug messages for misconfigured effects
+    NormalMapEffect for normal-map with optional specular map rendering
+    EnvironmentMapEffect now supports per-pixel lighting
+    Effects updated with SetMatrices and SetColorAndAlpha methods
+    GraphicsMemory support for SharedGraphicsResource shared_ptr style smart-pointer
+    PrimitiveBatch fix for DrawQuad
+    ScreenGrab handles resource state transition
+    SimpleMath: improved interop with DirectXMath constants
+    WICTextureLoader module LoadWICTexture* methods
+    Fixed bugs with GenerateMips for sRGB and BGRA formats
+    Code cleanup
 
 June 30, 2016
     Original release
