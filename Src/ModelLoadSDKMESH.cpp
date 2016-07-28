@@ -460,6 +460,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
     std::unique_ptr<Model> model(new Model);
     model->meshes.reserve( header->NumMeshes );
 
+    uint32_t partCount = 0;
+
     for( UINT meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex )
     {
         auto& mh = meshArray[ meshIndex ];
@@ -537,7 +539,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
                 perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], enableNormalMaps[vi],
                 mat, textureDictionary);
 
-            auto part = new ModelMeshPart();
+            auto part = new ModelMeshPart(partCount++);
 
             const auto& vh = vbArray[mh.VertexBuffers[0]];
             const auto& ih = ibArray[mh.IndexBuffer];

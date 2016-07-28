@@ -31,7 +31,8 @@ using namespace DirectX;
 // ModelMeshPart
 //--------------------------------------------------------------------------------------
 
-ModelMeshPart::ModelMeshPart() :
+ModelMeshPart::ModelMeshPart(uint32_t partIndex) :
+    partIndex(partIndex),
     materialIndex(0),
     indexCount(0),
     startIndex(0),
@@ -216,7 +217,24 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     }
 
     std::vector<std::shared_ptr<IEffect>> effects;
-    effects.reserve(materials.size());
+
+    // Count the number of parts
+    uint32_t partCount = 0;
+    for (const auto& mesh : meshes)
+    {
+        for (const auto& part : mesh->opaqueMeshParts)
+            partCount = std::max(part->partIndex + 1, partCount);
+        for (const auto& part : mesh->alphaMeshParts)
+            partCount = std::max(part->partIndex + 1, partCount);
+    }
+
+    if (partCount == 0)
+        return std::move(effects);
+
+    // Create an array of effects for each part. We need to have an effect per part because the part's vertex layout
+    // combines with the material spec to create a unique effect. We rely on the EffectFactory to de-duplicate if it
+    // wants to.
+    effects.resize(partCount);
 
     for (const auto& mesh : meshes)
     {
@@ -229,7 +247,10 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
+            // If this fires, you have multiple parts with the same unique ID
+            assert(effects[part->partIndex] == nullptr);
+
+            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
 
         for (const auto& part : mesh->alphaMeshParts)
@@ -239,7 +260,10 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
+            // If this fires, you have multiple parts with the same unique ID
+            assert(effects[part->partIndex] == nullptr);
+
+            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
     }
 

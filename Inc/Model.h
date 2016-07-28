@@ -46,10 +46,11 @@ namespace DirectX
     class ModelMeshPart
     {
     public:
-        ModelMeshPart();
+        ModelMeshPart(uint32_t partIndex);
         virtual ~ModelMeshPart();
 
-        uint32_t                                                materialIndex;
+        uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
+        uint32_t                                                materialIndex;  // Index of the material spec to use
         uint32_t                                                indexCount;
         uint32_t                                                startIndex;
         uint32_t                                                vertexOffset;
@@ -86,7 +87,7 @@ namespace DirectX
         static void DrawMeshParts(
             _In_ ID3D12GraphicsCommandList* commandList, 
             _In_ const ModelMeshPart::Collection& meshParts,
-            TEffectIterator effects)
+            TEffectIterator partEffects)
         {
             // This assert is here to prevent accidental use of containers that would cause undesirable performance penalties.
             static_assert(
@@ -99,8 +100,8 @@ namespace DirectX
                 assert(part != nullptr);
 
                 // Get the effect at the location specified by the part's material
-                TEffectIterator effect_iterator = effects;
-                std::advance(effect_iterator, part->materialIndex);
+                TEffectIterator effect_iterator = partEffects;
+                std::advance(effect_iterator, part->partIndex);
 
                 // Apply the effect and draw
                 (*effect_iterator)->Apply(commandList);

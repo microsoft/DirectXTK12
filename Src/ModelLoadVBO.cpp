@@ -87,7 +87,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     auto ib = GraphicsMemory::Get().Allocate(indexSize);
     memcpy(ib.Memory(), indices, indexSize);
 
-    auto part = new ModelMeshPart();
+    auto part = new ModelMeshPart(0);
     part->indexCount = header->numIndices;
     part->startIndex = 0;
     part->vertexStride = static_cast<UINT>( sizeof(VertexPositionNormalTexture) );
