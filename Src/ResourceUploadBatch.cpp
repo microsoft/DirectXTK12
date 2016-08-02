@@ -655,7 +655,7 @@ private:
             heap.Get(),
             0,
             &aliasDescU32,
-            D3D12_RESOURCE_STATE_COPY_DEST,
+            D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
             nullptr,
             IID_GRAPHICS_PPV_ARGS(resourceAliasU32.GetAddressOf())));
 
@@ -714,7 +714,7 @@ private:
             AliasBarrier(resourceAliasU32.Get(), resourceAlias8888.Get());
 
             // Transition to pixel shader resource
-            Transition(resourceAlias8888.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+            Transition(resourceAlias8888.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
         else
         {
@@ -767,7 +767,7 @@ private:
         }
 
         // Direct copy back
-        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
         Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
         mList->CopyResource(resource, resourceCopy.Get());
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
