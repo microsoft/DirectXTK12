@@ -64,9 +64,9 @@ namespace DirectX
         size_t BytesUsed() const { return mOffset; }
         size_t Size() const { return mSize; }
 
-        int32_t AddRef() { return mRefCount.fetch_add(1); }
-        int32_t Release() { assert(mRefCount > 0); return mRefCount.fetch_sub(1); }
+        void AddRef() { mRefCount.fetch_add(1); }
         int32_t RefCount() const { return mRefCount.load(); }
+        void Release();
 
     protected:
         friend class LinearAllocator;

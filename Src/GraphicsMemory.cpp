@@ -96,6 +96,17 @@ namespace
             }
         }
 
+        // Explicitly destroy LinearAllocators inside a critical section
+        ~DeviceAllocator()
+        {
+            ScopedLock lock(mMutex);
+
+            for (auto& allocator : mPools)
+            {
+                allocator.reset();
+            }
+        }
+
         GraphicsResource Alloc(_In_ size_t size, _In_ size_t alignment)
         {
             ScopedLock lock(mMutex);

@@ -49,7 +49,7 @@ LinearAllocatorPage::LinearAllocatorPage()
     , mGpuAddress {}
     , mOffset(0)
     , mSize(0)
-    , mRefCount(0)
+    , mRefCount(1)
 {
 }
 
@@ -62,6 +62,17 @@ size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
 #endif
     mOffset = offset + size;
     return offset;
+}
+
+void LinearAllocatorPage::Release()
+{
+    assert(mRefCount > 0); 
+
+    if (mRefCount.fetch_sub(1) == 1)
+    {
+        mUploadResource->Unmap(0, nullptr);
+        delete this;
+    }
 }
 
 LinearAllocator::LinearAllocator(
@@ -439,8 +450,7 @@ void LinearAllocator::FreePages( LinearAllocatorPage* page )
     {
         LinearAllocatorPage* nextPage = page->pNextPage;
 
-        page->mUploadResource->Unmap( 0, nullptr );
-        delete page;
+        page->Release();
 
         page = nextPage;
         m_totalPages--;
