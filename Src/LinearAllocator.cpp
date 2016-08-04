@@ -161,7 +161,8 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
         // Disconnect from the list
         page->pPrevPage = nullptr;
 
-        if (page->RefCount() == 0)
+        // This implies the allocator is the only remaining reference to the page, and therefore the memory is ready for re-use.
+        if (page->RefCount() == 1)
         {
             // Signal the fence
             numReady++;
