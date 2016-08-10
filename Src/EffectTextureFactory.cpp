@@ -46,6 +46,8 @@ public:
         , mTextureDescriptorHeap(descriptorHeap)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
+        , mForceSRGB(false)
+        , mAutoGenMips(false)
     { 
         *mPath = 0; 
     }
@@ -59,6 +61,8 @@ public:
         , mTextureDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, descriptorHeapFlags, numDescriptors)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
+        , mForceSRGB(false)
+        , mAutoGenMips(false)
     { 
         *mPath = 0; 
     }
@@ -67,6 +71,8 @@ public:
 
     void ReleaseCache();
     void SetSharing( bool enabled ) { mSharing = enabled; }
+    void EnableForceSRGB( bool forceSRGB ) { mForceSRGB = forceSRGB; } 
+    void EnableAutoGenMips( bool generateMips ) { mAutoGenMips = generateMips; }
 
     wchar_t mPath[MAX_PATH];
 
@@ -78,7 +84,10 @@ private:
     ResourceUploadBatch&           mResourceUploadBatch;
 
     TextureCache                   mTextureCache;
+
     bool                           mSharing;
+    bool                           mForceSRGB;
+    bool                           mAutoGenMips;
 
     std::mutex                     mutex;
 };
@@ -122,15 +131,17 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         if ( _wcsicmp( ext, L".dds" ) == 0 )
         {
             // load resource
-            HRESULT hr = CreateDDSTextureFromFile(
-                device, 
-                mResourceUploadBatch, 
-                fullName, 
-                textureEntry.mResource.ReleaseAndGetAddressOf(),
-                false,
+            HRESULT hr = CreateDDSTextureFromFileEx(
+                device,
+                mResourceUploadBatch,
+                fullName,
                 0u,
+                D3D12_RESOURCE_FLAG_NONE,
+                mForceSRGB,
+                mAutoGenMips,
+                textureEntry.mResource.ReleaseAndGetAddressOf(),
                 nullptr,
-                &textureEntry.mIsCubeMap);
+                &textureEntry.mIsCubeMap );
             if ( FAILED(hr) )
             {
                 DebugTrace( "CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName );
@@ -139,11 +150,15 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         }
         else
         {
-            std::lock_guard<std::mutex> lock(mutex);
-            HRESULT hr = CreateWICTextureFromFile( 
-                device, 
-                mResourceUploadBatch, 
-                fullName, 
+            textureEntry.mIsCubeMap = false;
+            HRESULT hr = CreateWICTextureFromFileEx(
+                device,
+                mResourceUploadBatch,
+                fullName,
+                0u,
+                D3D12_RESOURCE_FLAG_NONE,
+                mForceSRGB,
+                mAutoGenMips,
                 textureEntry.mResource.ReleaseAndGetAddressOf() );
             if ( FAILED(hr) )
             {
@@ -226,6 +241,16 @@ void EffectTextureFactory::ReleaseCache()
 void EffectTextureFactory::SetSharing( bool enabled )
 {
     pImpl->SetSharing( enabled );
+}
+
+void EffectTextureFactory::EnableForceSRGB(bool forceSRGB)
+{
+    pImpl->EnableForceSRGB( forceSRGB ); 
+}
+
+void EffectTextureFactory::EnableAutoGenMips(bool generateMips)
+{
+    pImpl->EnableAutoGenMips( generateMips );
 }
 
 void EffectTextureFactory::SetDirectory( _In_opt_z_ const wchar_t* path )
