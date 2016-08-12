@@ -47,10 +47,6 @@
 #include "d3dx12.h"
 #endif
 
-#if (defined(_XBOX_ONE) && defined(_TITLE)) || (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP))
-#include <Windows.Foundation.h>
-#endif
-
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #include <Windows.UI.Core.h>
 #endif
