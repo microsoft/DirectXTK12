@@ -611,16 +611,27 @@ private:
         aliasDescU32.Format = DXGI_FORMAT_R32_UINT;
 
         // What will be the total size of this texture?
+        D3D12_HEAP_DESC heapDesc = {};
         auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
+        heapDesc.Alignment = allocInfo.Alignment;
+        heapDesc.SizeInBytes = allocInfo.SizeInBytes;
+
+        // Temporary workaround: mips can still be bad, but avoids a crash
+        {
+            allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &aliasDesc8888);
+            heapDesc.Alignment = std::max(heapDesc.Alignment, allocInfo.Alignment);
+            heapDesc.SizeInBytes = std::max(heapDesc.SizeInBytes, allocInfo.SizeInBytes);
+
+            allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &aliasDescU32);
+            heapDesc.Alignment = std::max(heapDesc.Alignment, allocInfo.Alignment);
+            heapDesc.SizeInBytes = std::max(heapDesc.SizeInBytes, allocInfo.SizeInBytes);
+        }
 
         // Create a heap that we'll use to store our placement textures
-        D3D12_HEAP_DESC heapDesc = {};
-        heapDesc.Alignment = allocInfo.Alignment;
         heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
         heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
-        heapDesc.SizeInBytes = allocInfo.SizeInBytes;
 
         ComPtr<ID3D12Heap> heap;
         ThrowIfFailed(mDevice->CreateHeap(&heapDesc, IID_GRAPHICS_PPV_ARGS(heap.GetAddressOf())));
