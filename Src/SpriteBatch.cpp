@@ -122,7 +122,7 @@ private:
     void SortSprites();
     void GrowSortedSprites();
 
-    void RenderBatch(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture, _In_ XMVECTOR textureSize, _In_reads_(count) SpriteInfo const* const* sprites, size_t count);
+    void RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTOR textureSize, _In_reads_(count) SpriteInfo const* const* sprites, size_t count);
 
     static void XM_CALLCONV RenderSprite(_In_ SpriteInfo const* sprite,
         _Out_writes_(VerticesPerSprite) VertexPositionColorTexture* vertices,

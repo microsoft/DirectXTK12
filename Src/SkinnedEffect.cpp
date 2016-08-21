@@ -514,7 +514,7 @@ void XM_CALLCONV SkinnedEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void SkinnedEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void SkinnedEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->sampler = samplerDescriptor;

@@ -396,14 +396,14 @@ void XM_CALLCONV DualTextureEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void DualTextureEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture1 = srvDescriptor;
     pImpl->texture1Sampler = samplerDescriptor;
 }
 
 
-void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void DualTextureEffect::SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture2 = srvDescriptor;
     pImpl->texture2Sampler = samplerDescriptor;

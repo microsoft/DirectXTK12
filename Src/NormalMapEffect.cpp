@@ -489,20 +489,20 @@ void XM_CALLCONV NormalMapEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void NormalMapEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void NormalMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->sampler = samplerDescriptor;
 }
 
 
-void NormalMapEffect::SetNormalTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+void NormalMapEffect::SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->normal = srvDescriptor;
 }
 
 
-void NormalMapEffect::SetSpecularTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+void NormalMapEffect::SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->specular = srvDescriptor;
 }

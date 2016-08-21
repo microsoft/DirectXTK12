@@ -472,7 +472,7 @@ void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void AlphaTestEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void AlphaTestEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->textureSampler = samplerDescriptor;

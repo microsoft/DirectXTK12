@@ -194,7 +194,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
     private:
         // Private implementation.
@@ -238,7 +238,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
         // Alpha test settings.
         void __cdecl SetReferenceAlpha(int value);
@@ -287,8 +287,8 @@ namespace DirectX
         //void __cdecl SetVertexColorEnabled(bool value);
 
         // Texture settings.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        void __cdecl SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
     private:
         // Private implementation.
@@ -407,7 +407,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
@@ -469,9 +469,9 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting - albedo, normal and specular intensity
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        void __cdecl SetNormalTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
-        void __cdecl SetSpecularTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
     private:
         // Private implementation.

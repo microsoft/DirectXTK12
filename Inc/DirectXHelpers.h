@@ -77,8 +77,8 @@ namespace DirectX
     void __cdecl CreateShaderResourceView(
         _In_ ID3D12Device* d3dDevice,
         _In_ ID3D12Resource* tex,
-        _In_ D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
-        _In_ bool isCubeMap = false);
+        D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
+        bool isCubeMap = false);
 
     // Shorthand for creating a root signature
     inline HRESULT CreateRootSignature(
