@@ -19,6 +19,7 @@
 #include "SpriteFont.h"
 #include "DirectXHelpers.h"
 #include "BinaryReader.h"
+#include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
 #include "DescriptorHeap.h"
 
@@ -34,7 +35,8 @@ public:
         ResourceUploadBatch& upload,
         _In_ BinaryReader* reader,
         D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
-        D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc);
+        D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
+        bool forceSRGB);
     Impl(D3D12_GPU_DESCRIPTOR_HANDLE texture,
         XMUINT2 textureSize,
         _In_reads_(glyphCount) Glyph const* glyphs,
@@ -98,7 +100,8 @@ SpriteFont::Impl::Impl(
     ResourceUploadBatch& upload,
     BinaryReader* reader,
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
-    D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc) :
+    D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
+    bool forceSRGB) :
     texture{}
 {
     // Validate the header.
@@ -129,6 +132,11 @@ SpriteFont::Impl::Impl(
     auto textureStride = reader->Read<uint32_t>();
     auto textureRows = reader->Read<uint32_t>();
     auto textureData = reader->ReadArray<uint8_t>(textureStride * textureRows);
+
+    if (forceSRGB)
+    {
+        textureFormat = MakeSRGB(textureFormat);
+    }
 
     // Create the D3D texture object.
     CreateTextureResource(
@@ -297,21 +305,21 @@ void SpriteFont::Impl::CreateTextureResource(
 
 // Construct from a binary file created by the MakeSpriteFont utility.
 _Use_decl_annotations_
-SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
+SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest, bool forceSRGB)
 {
     BinaryReader reader(fileName);
 
-    pImpl = std::make_unique<Impl>(device, upload, &reader, cpuDescriptorDest, gpuDescriptorDest);
+    pImpl = std::make_unique<Impl>(device, upload, &reader, cpuDescriptorDest, gpuDescriptorDest, forceSRGB);
 }
 
 
 // Construct from a binary blob created by the MakeSpriteFont utility and already loaded into memory.
 _Use_decl_annotations_
-SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest)
+SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest, bool forceSRGB)
 {
     BinaryReader reader(dataBlob, dataSize);
 
-    pImpl = std::make_unique<Impl>(device, upload, &reader, cpuDescriptorDest, gpuDescriptorDest);
+    pImpl = std::make_unique<Impl>(device, upload, &reader, cpuDescriptorDest, gpuDescriptorDest, forceSRGB);
 }
 
 
