@@ -42,7 +42,7 @@ cbuffer Parameters : register(b0)
 
 
 // Vertex shader: basic.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasic(VSInput vin)
 {
     VSOutput vout;
@@ -55,7 +55,7 @@ VSOutput VSBasic(VSInput vin)
 
 
 // Vertex shader: no fog.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutputNoFog VSBasicNoFog(VSInput vin)
 {
     VSOutputNoFog vout;
@@ -68,7 +68,7 @@ VSOutputNoFog VSBasicNoFog(VSInput vin)
 
 
 // Vertex shader: vertex color.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasicVc(VSInputVc vin)
 {
     VSOutput vout;
@@ -83,7 +83,7 @@ VSOutput VSBasicVc(VSInputVc vin)
 
 
 // Vertex shader: vertex color, no fog.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutputNoFog VSBasicVcNoFog(VSInputVc vin)
 {
     VSOutputNoFog vout;
@@ -160,7 +160,7 @@ VSOutputTxNoFog VSBasicTxVcNoFog(VSInputTxVc vin)
 
 
 // Vertex shader: vertex lighting.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasicVertexLighting(VSInputNm vin)
 {
     VSOutput vout;
@@ -173,7 +173,7 @@ VSOutput VSBasicVertexLighting(VSInputNm vin)
 
 
 // Vertex shader: vertex lighting + vertex color.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasicVertexLightingVc(VSInputNmVc vin)
 {
     VSOutput vout;
@@ -219,7 +219,7 @@ VSOutputTx VSBasicVertexLightingTxVc(VSInputNmTxVc vin)
 
 
 // Vertex shader: one light.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasicOneLight(VSInputNm vin)
 {
     VSOutput vout;
@@ -232,7 +232,7 @@ VSOutput VSBasicOneLight(VSInputNm vin)
 
 
 // Vertex shader: one light + vertex color.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutput VSBasicOneLightVc(VSInputNmVc vin)
 {
     VSOutput vout;
@@ -278,7 +278,7 @@ VSOutputTx VSBasicOneLightTxVc(VSInputNmTxVc vin)
 
 
 // Vertex shader: pixel lighting.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSBasicPixelLighting(VSInputNm vin)
 {
     VSOutputPixelLighting vout;
@@ -293,7 +293,7 @@ VSOutputPixelLighting VSBasicPixelLighting(VSInputNm vin)
 
 
 // Vertex shader: pixel lighting + vertex color.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSBasicPixelLightingVc(VSInputNmVc vin)
 {
     VSOutputPixelLighting vout;
@@ -342,7 +342,7 @@ VSOutputPixelLightingTx VSBasicPixelLightingTxVc(VSInputNmTxVc vin)
 
 
 // Pixel shader: basic.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 float4 PSBasic(PSInput pin) : SV_Target0
 {
     float4 color = pin.Diffuse;
@@ -354,7 +354,7 @@ float4 PSBasic(PSInput pin) : SV_Target0
 
 
 // Pixel shader: no fog.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 float4 PSBasicNoFog(PSInputNoFog pin) : SV_Target0
 {
     return pin.Diffuse;
@@ -382,7 +382,7 @@ float4 PSBasicTxNoFog(PSInputTxNoFog pin) : SV_Target0
 
 
 // Pixel shader: vertex lighting.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 float4 PSBasicVertexLighting(PSInput pin) : SV_Target0
 {
     float4 color = pin.Diffuse;
@@ -395,7 +395,7 @@ float4 PSBasicVertexLighting(PSInput pin) : SV_Target0
 
 
 // Pixel shader: vertex lighting, no fog.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 float4 PSBasicVertexLightingNoFog(PSInput pin) : SV_Target0
 {
     float4 color = pin.Diffuse;
@@ -432,7 +432,7 @@ float4 PSBasicVertexLightingTxNoFog(PSInputTx pin) : SV_Target0
 
 
 // Pixel shader: pixel lighting.
-[RootSignature(MainRS)]
+[RootSignature(NoTextureRS)]
 float4 PSBasicPixelLighting(PSInputPixelLighting pin) : SV_Target0
 {
     float4 color = pin.Diffuse;

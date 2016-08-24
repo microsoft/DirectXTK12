@@ -49,9 +49,9 @@ public:
 
     enum RootParameterIndex
     {
+        ConstantBuffer,
         TextureSRV,
         TextureSampler,
-        ConstantBuffer,
         RootParameterCount
     };
 

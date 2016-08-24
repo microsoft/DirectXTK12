@@ -8,14 +8,21 @@
 // http://go.microsoft.com/fwlink/?LinkID=615561
 
 // Root signatures must match definition in each effect, or shaders will be recompiled on Xbox when PSO loads
+#define NoTextureRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0)"
+
 #define MainRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
 "            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
 "DescriptorTable ( SRV(t0) ),"\
-"DescriptorTable ( Sampler(s0) )," \
-"CBV(b0)"
+"DescriptorTable ( Sampler(s0) )"
 
 #define DualTextureRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
