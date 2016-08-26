@@ -122,7 +122,7 @@ namespace DirectX
         // Make sure to keep the GraphicsResource handle alive as long as you need to access
         // the memory on the CPU. For example, do not simply cache GpuAddress() and discard
         // the GraphicsResource object, or your memory may be overwritten later.
-        GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 0);
+        GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16);
 
         // Special overload of Allocate that aligns to D3D12 constant buffer alignment requirements
         template<typename T> GraphicsResource AllocateConstant()

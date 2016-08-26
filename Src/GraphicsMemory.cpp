@@ -261,8 +261,10 @@ GraphicsMemory::~GraphicsMemory()
 {
 }
 
+
 GraphicsResource GraphicsMemory::Allocate(size_t size, size_t alignment)
 {
+    assert(alignment >= 4); // Should use at least DWORD alignment
     return std::move(pImpl->Allocate(size, alignment));
 }
 
@@ -271,6 +273,7 @@ void GraphicsMemory::Commit(_In_ ID3D12CommandQueue* commandQueue)
 {
     pImpl->Commit(commandQueue);
 }
+
 
 void GraphicsMemory::GarbageCollect()
 {
