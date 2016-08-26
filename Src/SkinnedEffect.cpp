@@ -51,6 +51,7 @@ struct SkinnedEffectTraits
     static const int VertexShaderCount = 6;
     static const int PixelShaderCount = 3;
     static const int ShaderPermutationCount = 12;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -218,7 +219,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
     rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+    mRootSignature = GetRootSignature(0, rsigDesc);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
@@ -227,7 +228,8 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         DebugTrace("ERROR: SkinnedEffect does not implement EffectFlags::VertexColor\n");
         throw std::invalid_argument("SkinnedEffect");
     }
- 
+
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
@@ -237,17 +239,12 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
     int pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
 
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<SkinnedEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<SkinnedEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -292,7 +289,7 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

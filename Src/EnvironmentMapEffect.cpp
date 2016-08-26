@@ -53,6 +53,7 @@ struct EnvironmentMapEffectTraits
     static const int VertexShaderCount = 3;
     static const int PixelShaderCount = 8;
     static const int ShaderPermutationCount = 12;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -232,7 +233,7 @@ EnvironmentMapEffect::Impl::Impl(
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-        ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+        mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
@@ -250,30 +251,24 @@ EnvironmentMapEffect::Impl::Impl(
 
     lights.InitializeConstants(unwantedOutput[0], constants.lightDirection, constants.lightDiffuseColor, unwantedOutput);
 
-    {   // Create pipeline state
-        int sp = GetPipelineStatePermutation(
-            fresnelEnabled,
-            specularEnabled,
-            (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
+    // Create pipeline state
+    int sp = GetPipelineStatePermutation(
+        fresnelEnabled,
+        specularEnabled,
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
 
-        assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
-        int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
-        assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
-        int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
-        assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
+    assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
+    int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
+    int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
 
-        EffectBase::CreatePipelineState(
-            mRootSignature.Get(),
-            pipelineDescription.inputLayout,
-            &EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[vi],
-            &EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[pi],
-            pipelineDescription.blendDesc,
-            pipelineDescription.depthStencilDesc,
-            pipelineDescription.rasterizerDesc,
-            pipelineDescription.renderTargetState,
-            pipelineDescription.primitiveTopology,
-            pipelineDescription.stripCutValue);
-    }
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -323,7 +318,7 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
     UpdateConstants();
 
     // Set the resources and state
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the textures
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

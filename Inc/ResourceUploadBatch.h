@@ -66,7 +66,9 @@ namespace DirectX
             _In_ ID3D12CommandQueue* commandQueue );
 
     private:
+        // Private implementation.
         class Impl;
+
         std::unique_ptr<Impl> pImpl;
     };
 }

@@ -38,6 +38,7 @@ struct AlphaTestEffectTraits
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 4;
     static const int ShaderPermutationCount = 8;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -176,7 +177,8 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
     rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+    // Create the root signature
+    mRootSignature = GetRootSignature(0, rsigDesc);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
@@ -190,7 +192,8 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
         throw std::invalid_argument("AlphaTestEffect");
     }
-  
+
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
@@ -200,17 +203,12 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
   
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -331,7 +329,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

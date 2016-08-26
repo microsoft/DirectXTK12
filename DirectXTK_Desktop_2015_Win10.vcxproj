@@ -27,6 +27,7 @@
     <ClInclude Include="Inc\DDSTextureLoader.h" />
     <ClInclude Include="Inc\DescriptorHeap.h" />
     <ClInclude Include="Inc\DirectXHelpers.h" />
+    <ClInclude Include="Inc\EffectPipelineStateDescription.h" />
     <ClInclude Include="Inc\Effects.h" />
     <ClInclude Include="Inc\GamePad.h" />
     <ClInclude Include="Inc\GeometricPrimitive.h" />
@@ -50,7 +51,6 @@
     <ClInclude Include="Src\d3dx12.h" />
     <ClInclude Include="Src\DemandCreate.h" />
     <ClInclude Include="Src\EffectCommon.h" />
-    <ClInclude Include="Src\GenericMultiBuffer.h" />
     <ClInclude Include="Src\Geometry.h" />
     <ClInclude Include="Src\LinearAllocator.h" />
     <ClInclude Include="Src\LoaderHelpers.h" />
@@ -80,6 +80,7 @@
     <ClCompile Include="Src\BinaryReader.cpp" />
     <ClCompile Include="Src\EffectCommon.cpp" />
     <ClCompile Include="Src\EffectFactory.cpp" />
+    <ClCompile Include="Src\EffectPipelineStateDescription.cpp" />
     <ClCompile Include="Src\EffectTextureFactory.cpp" />
     <ClCompile Include="Src\EnvironmentMapEffect.cpp" />
     <ClCompile Include="Src\GamePad.cpp" />

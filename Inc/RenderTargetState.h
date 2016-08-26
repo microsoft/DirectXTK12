@@ -19,6 +19,8 @@
 #include <d3d12.h>
 #endif
 
+#include <stdint.h>
+
 
 namespace DirectX
 {

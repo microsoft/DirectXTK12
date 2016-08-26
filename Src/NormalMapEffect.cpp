@@ -49,6 +49,7 @@ struct NormalMapEffectTraits
     static const int VertexShaderCount = 2;
     static const int PixelShaderCount = 4;
     static const int ShaderPermutationCount = 8;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -192,10 +193,11 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
     rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+    mRootSignature = GetRootSignature(0, rsigDesc);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-   
+
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
@@ -205,17 +207,12 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     int pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
 
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -256,7 +253,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

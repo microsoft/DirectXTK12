@@ -27,7 +27,6 @@
 #endif
 
 #include <ocidl.h>
-#include <stdint.h>
 #include <functional>
 
 

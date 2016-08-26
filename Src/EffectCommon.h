@@ -130,11 +130,10 @@ namespace DirectX
           : mDevice(device)
         { }
 
-        inline ID3D12Device* GetDevice() { return mDevice.Get(); }
+        ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
 
     protected:
         Microsoft::WRL::ComPtr<ID3D12Device> mDevice;
-        Microsoft::WRL::ComPtr<ID3D12Resource> mDefaultTexture;
 
         std::mutex mMutex;
     };
@@ -150,7 +149,8 @@ namespace DirectX
         EffectBase(_In_ ID3D12Device* device)
           : dirtyFlags(INT_MAX),
             mDeviceResources(deviceResourcesPool.DemandCreate(device)),
-            constants{}
+            constants{},
+            mRootSignature(nullptr)
         {
             // Initialize the constant buffer data
             mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
@@ -173,51 +173,10 @@ namespace DirectX
             return mConstantBuffer.GpuAddress();
         }
 
-        void CreatePipelineState(
-            _In_ ID3D12RootSignature* rootSignature,
-            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
-            _In_ const D3D12_SHADER_BYTECODE* vertexShaderByteCode,
-            _In_ const D3D12_SHADER_BYTECODE* pixelShaderByteCode,
-            const D3D12_BLEND_DESC& blend,
-            const D3D12_DEPTH_STENCIL_DESC& depthStencil,
-            const D3D12_RASTERIZER_DESC& rasterizer,
-            const RenderTargetState& renderTarget,
-            D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology,
-            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue)
+        ID3D12RootSignature* GetRootSignature(int slot, CD3DX12_ROOT_SIGNATURE_DESC const& rootSig)
         {
-            ID3D12Device* device = mDeviceResources->GetDevice();
-            
-            D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-            psoDesc.pRootSignature = rootSignature;
-            psoDesc.BlendState = blend;
-            psoDesc.DepthStencilState = depthStencil;
-            psoDesc.RasterizerState = rasterizer;
-            psoDesc.DSVFormat = renderTarget.dsvFormat;
-            psoDesc.NodeMask = renderTarget.nodeMask;
-            psoDesc.NumRenderTargets = renderTarget.numRenderTargets;
-            memcpy(psoDesc.RTVFormats, renderTarget.rtvFormats, sizeof(psoDesc.RTVFormats));
-            psoDesc.SampleDesc = renderTarget.sampleDesc;
-            psoDesc.SampleMask = renderTarget.sampleMask;
-            psoDesc.InputLayout = inputLayout;
-            psoDesc.IBStripCutValue = stripCutValue;
-            psoDesc.PrimitiveTopologyType = primitiveTopology;
-            psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-
-            psoDesc.VS = *vertexShaderByteCode;
-            psoDesc.PS = *pixelShaderByteCode;
-      
-            HRESULT hr = device->CreateGraphicsPipelineState(
-                &psoDesc,
-                IID_GRAPHICS_PPV_ARGS(mPipelineState.ReleaseAndGetAddressOf()));
-                
-            if (FAILED(hr))
-            {
-                DebugTrace("CreatePipelineState failed to create a PSO. Enable the Direct3D Debug Layer for more information (%08X)\n", hr);
-                throw std::exception("CreateGraphicsPipelineState");
-            }
+            return mDeviceResources->GetRootSignature(slot, rootSig);
         }
-
-        ID3D12Device* GetDevice() { return mDeviceResources->GetDevice(); }
 
         // Fields.
         EffectMatrices matrices;
@@ -237,8 +196,8 @@ namespace DirectX
         // Per instance cache of PSOs, populated with variants for each shader & layout
         Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
 
-        // Per instance root signature (this could possibly be per effect type)
-        Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
+        // Per instance root signature
+        ID3D12RootSignature* mRootSignature;
 
     private:
         // D3D constant buffer holds a copy of the same data as the public 'constants' field.
@@ -251,6 +210,17 @@ namespace DirectX
             DeviceResources(_In_ ID3D12Device* device)
               : EffectDeviceResources(device)
             { }
+
+            // Gets or lazily creates the specified root signature
+            ID3D12RootSignature* GetRootSignature(int slot, D3D12_ROOT_SIGNATURE_DESC const& desc)
+            {
+                assert(slot >= 0 && slot< Traits::RootSignatureCount);
+
+                return DemandCreateRootSig(mRootSignature[slot], desc);
+            }
+
+        private:
+            Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature[Traits::RootSignatureCount];
         };
 
         // Per-device resources.

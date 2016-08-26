@@ -78,9 +78,6 @@
     <ClInclude Include="Inc\DescriptorHeap.h">
       <Filter>Inc</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GenericMultiBuffer.h">
-      <Filter>Src</Filter>
-    </ClInclude>
     <ClInclude Include="Inc\GraphicsMemory.h">
       <Filter>Inc</Filter>
     </ClInclude>
@@ -148,6 +145,9 @@
       <Filter>Src\Shared</Filter>
     </ClInclude>
     <ClInclude Include="Inc\RenderTargetState.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\EffectPipelineStateDescription.h">
       <Filter>Inc</Filter>
     </ClInclude>
   </ItemGroup>
@@ -273,6 +273,9 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\NormalMapEffect.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectPipelineStateDescription.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

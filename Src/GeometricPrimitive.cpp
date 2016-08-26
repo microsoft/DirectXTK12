@@ -16,7 +16,6 @@
 #include "Effects.h"
 #include "CommonStates.h"
 #include "DirectXHelpers.h"
-#include "SharedResourcePool.h"
 #include "Geometry.h"
 #include "PrimitiveBatch.h"
 #include "GraphicsMemory.h"

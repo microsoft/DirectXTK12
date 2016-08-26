@@ -49,6 +49,7 @@ struct BasicEffectTraits
     static const int VertexShaderCount = 16;
     static const int PixelShaderCount = 10;
     static const int ShaderPermutationCount = 24;
+    static const int RootSignatureCount = 2;
 };
 
 
@@ -303,10 +304,10 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
 	}
 
-    // Finally, create root signature
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+    // Create the root signature
+    mRootSignature = GetRootSignature(textureEnabled ? 1 : 0, rsigDesc);
 
-
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
         (effectFlags & EffectFlags::VertexColor) != 0);
@@ -317,17 +318,12 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<BasicEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<BasicEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<BasicEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<BasicEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -381,7 +377,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

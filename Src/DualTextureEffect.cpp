@@ -38,6 +38,7 @@ struct DualTextureEffectTraits
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 2;
     static const int ShaderPermutationCount = 4;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -172,7 +173,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-        ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+        mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
     // Validate flags & state
@@ -189,28 +190,22 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         throw std::invalid_argument("DualTextureEffect");
     }
 
-    {   // Create pipeline state
-        int sp = GetPipelineStatePermutation(
-            (effectFlags & EffectFlags::VertexColor) != 0);
-        assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
+    // Create pipeline state
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::VertexColor) != 0);
+    assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
-        int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
-        assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
-        int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
-        assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
+    int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
+    int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
-        EffectBase::CreatePipelineState(
-            mRootSignature.Get(),
-            pipelineDescription.inputLayout,
-            &EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
-            &EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
-            pipelineDescription.blendDesc,
-            pipelineDescription.depthStencilDesc,
-            pipelineDescription.rasterizerDesc,
-            pipelineDescription.renderTargetState,
-            pipelineDescription.primitiveTopology,
-            pipelineDescription.stripCutValue);
-    }
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
 }
 
 
@@ -247,7 +242,7 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the textures
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
