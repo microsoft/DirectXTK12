@@ -19,6 +19,7 @@
 #include <d3d12.h>
 #endif
 
+
 namespace DirectX
 {
     // Encapsulates all render target state when creating pipeline state objects

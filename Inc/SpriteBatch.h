@@ -26,6 +26,7 @@
 
 #include "RenderTargetState.h"
 
+
 namespace DirectX
 {
     class ResourceUploadBatch;

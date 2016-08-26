@@ -283,9 +283,6 @@ namespace DirectX
         void __cdecl SetFogEnd(float value) override;
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
-        // Vertex color setting.
-        //void __cdecl SetVertexColorEnabled(bool value);
-
         // Texture settings.
         void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         void __cdecl SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);

@@ -613,17 +613,14 @@ private:
         // What will be the total size of this texture?
         D3D12_HEAP_DESC heapDesc = {};
         auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
-        heapDesc.Alignment = allocInfo.Alignment;
         heapDesc.SizeInBytes = allocInfo.SizeInBytes;
 
         // Temporary workaround: mips can still be bad, but avoids a crash
         {
             allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &aliasDesc8888);
-            heapDesc.Alignment = std::max(heapDesc.Alignment, allocInfo.Alignment);
             heapDesc.SizeInBytes = std::max(heapDesc.SizeInBytes, allocInfo.SizeInBytes);
 
             allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &aliasDescU32);
-            heapDesc.Alignment = std::max(heapDesc.Alignment, allocInfo.Alignment);
             heapDesc.SizeInBytes = std::max(heapDesc.SizeInBytes, allocInfo.SizeInBytes);
         }
 
