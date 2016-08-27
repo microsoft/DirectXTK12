@@ -273,39 +273,45 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
 
-    D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+    // Create root signature
+    {
+        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    // Create root parameters and initialize first (constants)
-    CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+        // Create root parameters and initialize first (constants)
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-    // Root paramteer descriptor - conditionally initialized
-    CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
+        // Root paramteer descriptor - conditionally initialized
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
 
-	if (textureEnabled)
-	{
-        // Include texture and srv
-        CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        if (textureEnabled)
+        {
+            // Include texture and srv
+            CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+            CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-		rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV); 
-		rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler); 
-        
-        // use all parameters
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
-	}
-	else
-	{
-        // only use constant
-        rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
-	}
+            rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+            rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler);
 
-    // Create the root signature
-    mRootSignature = GetRootSignature(textureEnabled ? 1 : 0, rsigDesc);
+            // use all parameters
+            rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(1, rsigDesc);
+        }
+        else
+        {
+            // only use constant
+            rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(0, rsigDesc);
+        }
+    }
+
+    assert(mRootSignature != 0);
 
     // Create pipeline state
     int sp = GetPipelineStatePermutation(

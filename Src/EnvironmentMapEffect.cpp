@@ -230,11 +230,13 @@ EnvironmentMapEffect::Impl::Impl(
         rootParameters[RootParameterIndex::CubemapSampler].InitAsDescriptorTable(1, &cubemapSamplerDescriptor);
 
         // Create the root signature
-        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
+
+    assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
