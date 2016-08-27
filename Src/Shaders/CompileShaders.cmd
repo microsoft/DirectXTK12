@@ -114,8 +114,6 @@ call :CompileShader%1 SpriteEffect vs SpriteVertexShaderHeap
 call :CompileShader%1 SpriteEffect ps SpritePixelShaderHeap
 
 call :CompileComputeShader%1 GenerateMips main
-call :CompileComputeShader%1 GenerateMips DegammaInPlace
-call :CompileComputeShader%1 GenerateMips RegammaInPlace
 echo.
 
 if %error% == 0 (

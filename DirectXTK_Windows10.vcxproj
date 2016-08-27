@@ -122,9 +122,7 @@
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMap.inc" />
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnel.inc" />
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLighting.inc" />
-    <None Include="Src\Shaders\Compiled\GenerateMips_DegammaInPlace.inc" />
     <None Include="Src\Shaders\Compiled\GenerateMips_main.inc" />
-    <None Include="Src\Shaders\Compiled\GenerateMips_RegammaInPlace.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTx.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc" />

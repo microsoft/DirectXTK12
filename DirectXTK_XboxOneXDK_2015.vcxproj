@@ -160,9 +160,7 @@
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMap.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_DegammaInPlace.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_main.inc" />
-    <None Include="Src\Shaders\Compiled\XboxOneGenerateMips_RegammaInPlace.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTx.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc" />
