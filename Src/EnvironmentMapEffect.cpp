@@ -271,6 +271,8 @@ EnvironmentMapEffect::Impl::Impl(
         EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"EnvironmentMapEffect");
 }
 
 

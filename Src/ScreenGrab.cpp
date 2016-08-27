@@ -73,17 +73,23 @@ namespace
         if (FAILED(hr))
             return hr;
 
+        SetDebugObjectName(commandAlloc.Get(), L"ScreenGrab");
+
         // Spin up a new command list
         ComPtr<ID3D12GraphicsCommandList> commandList;
         hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAlloc.Get(), nullptr, IID_GRAPHICS_PPV_ARGS(commandList.GetAddressOf()));
         if (FAILED(hr))
             return hr;
 
+        SetDebugObjectName(commandList.Get(), L"ScreenGrab");
+
         // Create a fence
         ComPtr<ID3D12Fence> fence;
         hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_GRAPHICS_PPV_ARGS(fence.GetAddressOf()));
         if (FAILED(hr))
             return hr;
+
+        SetDebugObjectName(fence.Get(), L"ScreenGrab");
 
         assert((srcPitch & 0xFF) == 0);
 
@@ -125,6 +131,8 @@ namespace
 
             assert(pTemp);
 
+            SetDebugObjectName(pTemp.Get(), L"ScreenGrab temporary");
+
             DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
 
             D3D12_FEATURE_DATA_FORMAT_SUPPORT formatInfo = { fmt };
@@ -157,6 +165,8 @@ namespace
             IID_GRAPHICS_PPV_ARGS(pStaging.GetAddressOf()));
         if (FAILED(hr))
             return hr;
+
+        SetDebugObjectName(pStaging.Get(), L"ScreenGrab staging");
 
         assert(pStaging);
 

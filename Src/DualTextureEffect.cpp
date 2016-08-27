@@ -209,6 +209,8 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"DualTextureEffect");
 }
 
 

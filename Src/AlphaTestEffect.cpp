@@ -213,6 +213,8 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"AlphaTestEffect");
 }
 
 

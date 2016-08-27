@@ -250,6 +250,8 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<SkinnedEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"SkinnedEffect");
 }
 
 

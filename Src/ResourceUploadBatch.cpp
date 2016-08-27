@@ -244,7 +244,12 @@ public:
             throw std::exception("Can't Begin: already in a Begin-End block.");
 
         ThrowIfFailed(mDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_GRAPHICS_PPV_ARGS(mCmdAlloc.ReleaseAndGetAddressOf())));
+
+        SetDebugObjectName(mCmdAlloc.Get(), L"ResourceUploadBatch");
+
         ThrowIfFailed(mDevice->CreateCommandList(1, D3D12_COMMAND_LIST_TYPE_DIRECT, mCmdAlloc.Get(), nullptr, IID_GRAPHICS_PPV_ARGS(mList.ReleaseAndGetAddressOf())));
+
+        SetDebugObjectName(mList.Get(), L"ResourceUploadBatch");
 
         PIXBeginEvent(mList.Get(), 0, __FUNCTIONW__);
 
@@ -378,6 +383,9 @@ public:
         // Set an event so we get notified when the GPU has completed all its work
         ComPtr<ID3D12Fence> fence;
         ThrowIfFailed(mDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_GRAPHICS_PPV_ARGS(fence.GetAddressOf())));
+
+        SetDebugObjectName(fence.Get(), L"ResourceUploadBatch");
+
         HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
         if (!gpuCompletedEvent)
             throw std::exception("CreateEventEx");
@@ -463,6 +471,8 @@ private:
         descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         descriptorHeapDesc.NumDescriptors = desc.MipLevels;
         mDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_GRAPHICS_PPV_ARGS(descriptorHeap.GetAddressOf()));
+
+        SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
 
         uint32_t descriptorSize = mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 

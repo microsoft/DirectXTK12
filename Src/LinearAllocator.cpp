@@ -307,6 +307,8 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
         return nullptr;
     }
 
+    SetDebugObjectName(spResource.Get(), L"LinearAllocator");
+
     if (m_debugName.size() > 0)
     {
         spResource->SetName(m_debugName.c_str());
@@ -326,6 +328,8 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     {
         return nullptr;
     }
+
+    SetDebugObjectName(spFence.Get(), L"LinearAllocator");
 
     // Add the page to the page list
     LinearAllocatorPage* page = new LinearAllocatorPage;

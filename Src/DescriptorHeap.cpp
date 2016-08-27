@@ -159,6 +159,8 @@ void DescriptorHeap::Create(
             pDesc,
             IID_GRAPHICS_PPV_ARGS( m_pHeap.ReleaseAndGetAddressOf() ) ) );
 
+        SetDebugObjectName(m_pHeap.Get(), L"DescriptorHeap");
+
         m_hCPU = m_pHeap->GetCPUDescriptorHandleForHeapStart();
 
         if ( pDesc->Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE )

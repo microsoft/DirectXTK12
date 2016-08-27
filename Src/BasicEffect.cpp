@@ -330,6 +330,8 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         EffectBase<BasicEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<BasicEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"BasicEffect");
 }
 
 

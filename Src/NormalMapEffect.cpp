@@ -218,6 +218,8 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
         EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"NormalMapEffect");
 }
 
 
