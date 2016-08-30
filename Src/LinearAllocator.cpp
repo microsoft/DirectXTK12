@@ -43,8 +43,6 @@ LinearAllocatorPage::LinearAllocatorPage()
     : pPrevPage(nullptr)
     , pNextPage(nullptr)
     , mMemory(nullptr)
-    , mUploadResource(nullptr)
-    , mFence(nullptr)
     , mPendingFence(0)
     , mGpuAddress {}
     , mOffset(0)
@@ -79,18 +77,17 @@ LinearAllocator::LinearAllocator(
     _In_ ID3D12Device* pDevice,
     _In_ size_t pageSize,
     _In_ size_t preallocateBytes)
-    : m_pendingPages( nullptr )
+    : m_device(pDevice) 
+    , m_pendingPages( nullptr )
     , m_usedPages( nullptr )
     , m_unusedPages( nullptr )
-    , m_increment( 0 )
+    , m_increment(pageSize)
+    , m_numPending(0)
+    , m_totalPages(0)
 {
-    m_increment = pageSize;
-    m_usedPages = nullptr;
-    m_unusedPages = nullptr;
-    m_pendingPages = nullptr;
-    m_device = pDevice;
-    m_totalPages = 0;
-    m_numPending = 0;
+#if defined(_DEBUG) || defined(PROFILE)
+    m_debugName = L"LinearAllocator";
+#endif
 
     size_t preallocatePageCount = ( ( preallocateBytes + pageSize - 1 ) / pageSize );
     for (size_t preallocatePages = 0; preallocateBytes != 0 && preallocatePages < preallocatePageCount; ++preallocatePages )
@@ -307,12 +304,12 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
         return nullptr;
     }
 
-    SetDebugObjectName(spResource.Get(), L"LinearAllocator");
-
-    if (m_debugName.size() > 0)
+#if defined(_DEBUG) || defined(PROFILE)
+    if (!m_debugName.empty())
     {
         spResource->SetName(m_debugName.c_str());
     }
+#endif
 
     // Get a pointer to the memory
     void* pMemory = nullptr;
@@ -337,9 +334,9 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     page->mMemory = pMemory;
     page->pPrevPage = nullptr;
     page->pNextPage = m_unusedPages;
-    page->mUploadResource = spResource;
-    page->mFence = spFence;
     page->mGpuAddress = spResource->GetGPUVirtualAddress();
+    page->mUploadResource.Swap(spResource);
+    page->mFence.Swap(spFence);
 
     // Set as head of the list
     page->pNextPage = m_unusedPages;
@@ -458,6 +455,7 @@ void LinearAllocator::FreePages( LinearAllocatorPage* page )
         page->Release();
 
         page = nextPage;
+        assert(m_totalPages > 0);
         m_totalPages--;
     }
 }
@@ -484,6 +482,7 @@ void LinearAllocator::ValidatePageLists()
 }
 #endif
 
+#if defined(_DEBUG) || defined(PROFILE)
 void LinearAllocator::SetDebugName(const char* name)
 {
     wchar_t wname[MAX_PATH] = {};
@@ -511,3 +510,5 @@ void LinearAllocator::SetPageDebugName(LinearAllocatorPage* list)
         page->mUploadResource->SetName(m_debugName.c_str());
     }
 }
+#endif
+

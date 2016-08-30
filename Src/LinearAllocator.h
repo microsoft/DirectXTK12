@@ -71,8 +71,8 @@ namespace DirectX
     protected:
         friend class LinearAllocator;
 
-        LinearAllocatorPage* pPrevPage;
-        LinearAllocatorPage* pNextPage;
+        LinearAllocatorPage*                    pPrevPage;
+        LinearAllocatorPage*                    pNextPage;
 
         void*                                   mMemory;
         Microsoft::WRL::ComPtr<ID3D12Resource>  mUploadResource;
@@ -124,13 +124,14 @@ namespace DirectX
         size_t TotalMemoryUsage() const { return m_totalPages * m_increment; }
         size_t PageSize() const { return m_increment; }
 
+#if defined(_DEBUG) || defined(PROFILE)
         // Debug info
         const wchar_t* GetDebugName() const { return m_debugName.c_str(); }
         void SetDebugName(const wchar_t* name);
         void SetDebugName(const char* name);
+#endif
 
     private:
-        std::wstring                            m_debugName;
         Microsoft::WRL::ComPtr<ID3D12Device>    m_device;
         LinearAllocatorPage*                    m_pendingPages; // Pages in use by the GPU
         LinearAllocatorPage*                    m_usedPages;    // Pages to be submitted to the GPU
@@ -152,10 +153,13 @@ namespace DirectX
         void ReleasePage(LinearAllocatorPage* page);
         void FreePages(LinearAllocatorPage* list);
 
-        // Debug only
+#if defined(_DEBUG) || defined(PROFILE)
+        std::wstring m_debugName;
+
         static void ValidateList(LinearAllocatorPage* list);
         void ValidatePageLists();
 
         void SetPageDebugName(LinearAllocatorPage* list);
+#endif
     };
 }
