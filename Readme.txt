@@ -4,15 +4,15 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-August 4, 2016
+September 1, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
 applications for Windows 10, and Xbox One exclusive apps.
 
 This code is designed to build with Visual Studio 2015. It is recommended that you
-make use of VS 2015 Update 3, Windows Tools 1.4.1., and the
-Windows 10 Anniversary Update (14393).
+make use of VS 2015 Update 3, Windows Tools 1.4.1, and the
+Windows 10 Anniversary Update SDK (14393).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -23,6 +23,7 @@ Inc\
     DescriptorHeap.h - helper for managing DX12 descriptor heaps
     DirectXHelpers.h - misc C++ helpers for D3D programming
     Effects.h - set of built-in shaders for common rendering tasks
+    EffectPipelineStateDescription.h - helper for creating PSOs
     GamePad.h - gamepad controller helper using XInput
     GeometricPrimitive.h - draws basic shapes such as cubes and spheres
     GraphicsMemory.h - helper for managing dynamic graphics memory allocation
@@ -79,7 +80,7 @@ COMPARISONS TO DIRECTX 11 VERSION
 * VertexTypes does not include VertexPositionNormalTangentColorTexture or
   VertexPositionNormalTangentColorTextureSkinning
 
-* DirectX Tool Kit for DirectX 11 supports Feature Level 9.3, while DirectX 12 requires
+* DirectX Tool Kit for DirectX 11 supports Feature Level 9.x, while DirectX 12 requires
   Direct3D Feature Level 11.0. There are no expected DirectX 12 drivers for
   any lower feature level devices.
 
@@ -93,6 +94,17 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+September 1, 2016
+    EffectPipelineStateDescription is now in it's own header
+    Additional debug object naming
+    Fixed Tier 1 hardware support issues with BasicEffect and generating mipmaps
+    Fixed default graphics memory alignment to resolve rendering problems on some hardware
+    Added forceSRGB optional parameter to SpriteFont ctor
+    EffectFactory method EnableForceSRGB added
+    Removed problematic ABI::Windows::Foundation::Rect interop for SimpleMath
+    Updated D3DX12 internal copy for the Windows 10 Anniversary Update SDK (14393)
+    Minor code cleanup
 
 August 4, 2016
     GraphicsMemory fix for robustness during cleanup
