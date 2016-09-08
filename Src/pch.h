@@ -27,10 +27,6 @@
 
 #include <windows.h>
 
-#ifndef _WIN32_WINNT_WIN10
-#define _WIN32_WINNT_WIN10 0x0A00
-#endif
-
 #if defined(_XBOX_ONE) && defined(_TITLE)
 #include <xdk.h>
 
