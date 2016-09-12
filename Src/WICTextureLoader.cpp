@@ -305,7 +305,7 @@ namespace
         // Handle sRGB formats
         if (forceSRGB)
         {
-            format = MakeSRGB(format);
+            format = LoaderHelpers::MakeSRGB(format);
         }
         else
         {
@@ -354,7 +354,7 @@ namespace
                     PropVariantClear(&value);
 
                     if (sRGB)
-                        format = MakeSRGB(format);
+                        format = LoaderHelpers::MakeSRGB(format);
                 }
             }
         }

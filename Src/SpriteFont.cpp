@@ -135,7 +135,7 @@ SpriteFont::Impl::Impl(
 
     if (forceSRGB)
     {
-        textureFormat = MakeSRGB(textureFormat);
+        textureFormat = LoaderHelpers::MakeSRGB(textureFormat);
     }
 
     // Create the D3D texture object.
