@@ -163,7 +163,7 @@ namespace
             &bufferDesc,
             D3D12_RESOURCE_STATE_COPY_DEST,
             nullptr,
-            IID_GRAPHICS_PPV_ARGS(pStaging.GetAddressOf()));
+            IID_GRAPHICS_PPV_ARGS(pStaging.ReleaseAndGetAddressOf()));
         if (FAILED(hr))
             return hr;
 
