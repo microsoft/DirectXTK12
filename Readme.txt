@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-September 1, 2016
+September 15, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -94,6 +94,10 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+September 15, 2016
+    Rebuild shaders using 1.0 Root Signature for improved compatibility
+    Minor code cleanup
 
 September 1, 2016
     EffectPipelineStateDescription is now in it's own header
