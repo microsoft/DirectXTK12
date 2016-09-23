@@ -142,15 +142,15 @@ namespace
     //--------------------------------------------------------------------------------------
     HRESULT CreateTextureResource(
         _In_ ID3D12Device* d3dDevice,
-        _In_ D3D12_RESOURCE_DIMENSION resDim,
-        _In_ size_t width,
-        _In_ size_t height,
-        _In_ size_t depth,
-        _In_ size_t mipCount,
-        _In_ size_t arraySize,
-        _In_ DXGI_FORMAT format,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
+        D3D12_RESOURCE_DIMENSION resDim,
+        size_t width,
+        size_t height,
+        size_t depth,
+        size_t mipCount,
+        size_t arraySize,
+        DXGI_FORMAT format,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture)
     {
         if (!d3dDevice)
@@ -158,7 +158,7 @@ namespace
 
         HRESULT hr = E_FAIL;
 
-        if (forceSRGB)
+        if (loadFlags & DDS_LOADER_FORCE_SRGB)
         {
             format = MakeSRGB(format);
         }
@@ -169,7 +169,7 @@ namespace
         desc.MipLevels = static_cast<UINT16>(mipCount);
         desc.DepthOrArraySize = (resDim == D3D12_RESOURCE_DIMENSION_TEXTURE3D) ? static_cast<UINT16>(depth) : static_cast<UINT16>(arraySize);
         desc.Format = format;
-        desc.Flags = flags;
+        desc.Flags = resFlags;
         desc.SampleDesc.Count = 1;
         desc.SampleDesc.Quality = 0;
         desc.Dimension = resDim;
@@ -197,13 +197,12 @@ namespace
     HRESULT CreateTextureFromDDS(_In_ ID3D12Device* d3dDevice,
         _In_ const DDS_HEADER* header,
         _In_reads_bytes_(bitSize) const uint8_t* bitData,
-        _In_ size_t bitSize,
-        _In_ size_t maxsize,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
-        _In_ bool reserveFullMipChain,
+        size_t bitSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
-        _Out_ std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ bool* outIsCubeMap)
     {
         HRESULT hr = S_OK;
@@ -393,13 +392,13 @@ namespace
         if (SUCCEEDED(hr))
         {
             size_t reservedMips = mipCount;
-            if (reserveFullMipChain)
+            if (loadFlags & (DDS_LOADER_MIP_AUTOGEN | DDS_LOADER_MIP_RESERVE))
             {
                 reservedMips = std::min<size_t>(D3D12_REQ_MIP_LEVELS, CountMips(width, height));
             }
 
             hr = CreateTextureResource(d3dDevice, resDim, twidth, theight, tdepth, reservedMips - skipMip, arraySize,
-                format, flags, forceSRGB, texture);
+                format, resFlags, loadFlags, texture);
 
             if (FAILED(hr) && !maxsize && (mipCount > 1))
             {
@@ -412,7 +411,7 @@ namespace
                 if (SUCCEEDED(hr))
                 {
                     hr = CreateTextureResource(d3dDevice, resDim, twidth, theight, tdepth, mipCount - skipMip, arraySize,
-                        format, flags, forceSRGB, texture);
+                        format, resFlags, loadFlags, texture);
                 }
             }
         }
@@ -445,8 +444,7 @@ HRESULT DirectX::LoadDDSTextureFromMemory(
         ddsDataSize, 
         maxsize, 
         D3D12_RESOURCE_FLAG_NONE, 
-        false, 
-        false,
+        DDS_LOADER_DEFAULT,
         texture, 
         subresources, 
         alphaMode,
@@ -460,9 +458,8 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
     const uint8_t* ddsData,
     size_t ddsDataSize,
     size_t maxsize,
-    D3D12_RESOURCE_FLAGS flags,
-    bool forceSRGB,
-    bool reserveFullMipChain,
+    D3D12_RESOURCE_FLAGS resFlags,
+    unsigned int loadFlags,
     ID3D12Resource** texture,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
@@ -527,7 +524,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
 
     HRESULT hr = CreateTextureFromDDS( d3dDevice, 
                                        header, ddsData + offset, ddsDataSize - offset, maxsize,
-                                       flags, forceSRGB, reserveFullMipChain,
+                                       resFlags, loadFlags,
                                        texture, subresources, isCubeMap );
     if ( SUCCEEDED(hr) )
     {
@@ -561,8 +558,7 @@ HRESULT DirectX::LoadDDSTextureFromFile(
         fileName, 
         maxsize, 
         D3D12_RESOURCE_FLAG_NONE, 
-        false,
-        false,
+        DDS_LOADER_DEFAULT,
         texture,
         ddsData,
         subresources, 
@@ -575,9 +571,8 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
     ID3D12Device* d3dDevice,
     const wchar_t* fileName,
     size_t maxsize,
-    D3D12_RESOURCE_FLAGS flags,
-    bool forceSRGB,
-    bool reserveFullMipChain,
+    D3D12_RESOURCE_FLAGS resFlags,
+    unsigned int loadFlags,
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& ddsData,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
@@ -602,8 +597,8 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
         return E_INVALIDARG;
     }
 
-    DDS_HEADER* header = nullptr;
-    uint8_t* bitData = nullptr;
+    const DDS_HEADER* header = nullptr;
+    const uint8_t* bitData = nullptr;
     size_t bitSize = 0;
 
     HRESULT hr = LoadTextureDataFromFile( fileName,
@@ -619,7 +614,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
 
     hr = CreateTextureFromDDS( d3dDevice,
                                header, bitData, bitSize, maxsize,
-                               flags, forceSRGB, reserveFullMipChain,
+                               resFlags, loadFlags,
                                texture, subresources, isCubeMap );
 
     if ( SUCCEEDED(hr) )
@@ -691,8 +686,7 @@ HRESULT DirectX::CreateDDSTextureFromMemory(
         ddsDataSize,
         maxsize,
         D3D12_RESOURCE_FLAG_NONE,
-        false,
-        generateMipsIfMissing,
+        generateMipsIfMissing ? DDS_LOADER_MIP_AUTOGEN : DDS_LOADER_DEFAULT,
         texture,
         alphaMode,
         isCubeMap);
@@ -706,9 +700,8 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
     const uint8_t* ddsData,
     size_t ddsDataSize,
     size_t maxsize,
-    D3D12_RESOURCE_FLAGS flags,
-    bool forceSRGB,
-    bool generateMipsIfMissing,
+    D3D12_RESOURCE_FLAGS resFlags,
+    unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
     bool* isCubeMap)
@@ -719,9 +712,8 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
         ddsData,
         ddsDataSize,
         maxsize,
-        flags,
-        forceSRGB,
-        generateMipsIfMissing,
+        resFlags,
+        loadFlags,
         texture,
         subresources,
         alphaMode,
@@ -741,7 +733,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // If it's missing mips, let's generate them
-        if (generateMipsIfMissing && subresources.size() != (*texture)->GetDesc().MipLevels)
+        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != (*texture)->GetDesc().MipLevels)
         {
             resourceUpload.GenerateMips(*texture);
         }
@@ -769,8 +761,7 @@ HRESULT DirectX::CreateDDSTextureFromFile(
         fileName,
         maxsize,
         D3D12_RESOURCE_FLAG_NONE,
-        false,
-        generateMipsIfMissing,
+        generateMipsIfMissing ? DDS_LOADER_MIP_AUTOGEN : DDS_LOADER_DEFAULT,
         texture,
         alphaMode,
         isCubeMap);
@@ -782,9 +773,8 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
     ResourceUploadBatch& resourceUpload,
     const wchar_t* fileName,
     size_t maxsize,
-    D3D12_RESOURCE_FLAGS flags,
-    bool forceSRGB,
-    bool generateMipsIfMissing,
+    D3D12_RESOURCE_FLAGS resFlags,
+    unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
     bool* isCubeMap)
@@ -795,9 +785,8 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
         d3dDevice,
         fileName,
         maxsize,
-        flags,
-        forceSRGB,
-        generateMipsIfMissing,
+        resFlags,
+        loadFlags,
         texture,
         ddsData,
         subresources,
@@ -818,7 +807,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // If it's missing mips, let's generate them
-        if (generateMipsIfMissing && subresources.size() != (*texture)->GetDesc().MipLevels)
+        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != (*texture)->GetDesc().MipLevels)
         {
             resourceUpload.GenerateMips(*texture);
         }

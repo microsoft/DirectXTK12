@@ -128,17 +128,26 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         wchar_t ext[_MAX_EXT];
         _wsplitpath_s( name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT );
 
+        unsigned int loadFlags = DDS_LOADER_DEFAULT;
+        if (mForceSRGB)
+            loadFlags |= DDS_LOADER_FORCE_SRGB;
+        if (mAutoGenMips)
+            loadFlags |= DDS_LOADER_MIP_AUTOGEN;
+
+        static_assert(DDS_LOADER_DEFAULT == WIC_LOADER_DEFAULT, "DDS/WIC Load flags mismatch");
+        static_assert(DDS_LOADER_FORCE_SRGB == WIC_LOADER_FORCE_SRGB, "DDS/WIC Load flags mismatch");
+        static_assert(DDS_LOADER_MIP_AUTOGEN == WIC_LOADER_MIP_AUTOGEN, "DDS/WIC Load flags mismatch");
+        static_assert(DDS_LOADER_MIP_RESERVE == WIC_LOADER_MIP_RESERVE, "DDS/WIC Load flags mismatch");
+
         if ( _wcsicmp( ext, L".dds" ) == 0 )
         {
-            // load resource
             HRESULT hr = CreateDDSTextureFromFileEx(
                 device,
                 mResourceUploadBatch,
                 fullName,
                 0u,
                 D3D12_RESOURCE_FLAG_NONE,
-                mForceSRGB,
-                mAutoGenMips,
+                loadFlags,
                 textureEntry.mResource.ReleaseAndGetAddressOf(),
                 nullptr,
                 &textureEntry.mIsCubeMap );
@@ -151,14 +160,14 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         else
         {
             textureEntry.mIsCubeMap = false;
+
             HRESULT hr = CreateWICTextureFromFileEx(
                 device,
                 mResourceUploadBatch,
                 fullName,
                 0u,
                 D3D12_RESOURCE_FLAG_NONE,
-                mForceSRGB,
-                mAutoGenMips,
+                loadFlags,
                 textureEntry.mResource.ReleaseAndGetAddressOf() );
             if ( FAILED(hr) )
             {

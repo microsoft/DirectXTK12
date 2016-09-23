@@ -43,6 +43,14 @@ namespace DirectX
         DDS_ALPHA_MODE_CUSTOM        = 4,
     };
 
+    enum DDS_LOADER_FLAGS
+    {
+        DDS_LOADER_DEFAULT      = 0,
+        DDS_LOADER_FORCE_SRGB   = 0x1,
+        DDS_LOADER_MIP_AUTOGEN  = 0x4,
+        DDS_LOADER_MIP_RESERVE  = 0x8,
+    };
+
     // Standard version
     HRESULT __cdecl LoadDDSTextureFromMemory(
         _In_ ID3D12Device* d3dDevice,
@@ -92,9 +100,8 @@ namespace DirectX
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         size_t ddsDataSize,
         size_t maxsize,
-        D3D12_RESOURCE_FLAGS flags,
-        bool forceSRGB,
-        bool reserveFullMipChain,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
@@ -104,9 +111,8 @@ namespace DirectX
         _In_ ID3D12Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
-        D3D12_RESOURCE_FLAGS flags,
-        bool forceSRGB,
-        bool reserveFullMipChain,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& ddsData,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
@@ -120,9 +126,8 @@ namespace DirectX
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         size_t ddsDataSize,
         size_t maxsize,
-        D3D12_RESOURCE_FLAGS flags,
-        bool forceSRGB,
-        bool generateMipsIfMissing,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
@@ -132,9 +137,8 @@ namespace DirectX
         ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
-        D3D12_RESOURCE_FLAGS flags,
-        bool forceSRGB,
-        bool generateMipsIfMissing,
+        D3D12_RESOURCE_FLAGS resFlags,
+        unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
