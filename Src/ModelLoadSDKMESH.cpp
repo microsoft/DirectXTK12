@@ -548,6 +548,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
             part->startIndex = static_cast<uint32_t>( subset.IndexStart );
             part->vertexOffset = static_cast<uint32_t>( subset.VertexStart );
             part->vertexStride = static_cast<uint32_t>( vh.StrideBytes );
+            part->vertexCount = static_cast<uint32_t>( subset.VertexCount );
             part->indexFormat = ( ibArray[ mh.IndexBuffer ].IndexType == DXUT::IT_32BIT ) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
             part->primitiveType = primType; 
 
