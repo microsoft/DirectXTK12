@@ -38,6 +38,7 @@ ModelMeshPart::ModelMeshPart(uint32_t partIndex) :
     startIndex(0),
     vertexOffset(0),
     vertexStride(0),
+    vertexCount(0),
     primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
     indexFormat(DXGI_FORMAT_R16_UINT)
 {

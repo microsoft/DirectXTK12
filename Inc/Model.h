@@ -55,11 +55,11 @@ namespace DirectX
         uint32_t                                                startIndex;
         uint32_t                                                vertexOffset;
         uint32_t                                                vertexStride;
+        uint32_t                                                vertexCount;
         D3D_PRIMITIVE_TOPOLOGY                                  primitiveType;
         DXGI_FORMAT                                             indexFormat;
         SharedGraphicsResource                                  indexBuffer;
         SharedGraphicsResource                                  vertexBuffer;
-        uint32_t                                                vertexCount;
         std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;

@@ -88,13 +88,13 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     memcpy(ib.Memory(), indices, indexSize);
 
     auto part = new ModelMeshPart(0);
+    part->materialIndex = 0;
     part->indexCount = header->numIndices;
     part->startIndex = 0;
     part->vertexStride = static_cast<UINT>( sizeof(VertexPositionNormalTexture) );
+    part->vertexCount = header->numVertices;
     part->indexBuffer = std::move(ib);
     part->vertexBuffer = std::move(vb);
-    part->vertexCount = header->numVertices;
-    part->materialIndex = 0;
     part->vbDecl = g_vbdecl;
 
     auto mesh = std::make_shared<ModelMesh>();
