@@ -210,14 +210,14 @@ namespace DirectX
         }
 
         // Load texture resources into an existing Effect Texture Factory
-        int __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0);
+        int __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0) const;
 
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
             _In_ ID3D12Device* device, 
             _Inout_ ResourceUploadBatch& resourceUploadBatch, 
             _In_opt_z_ const wchar_t* texturesPath = nullptr,
-            D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+            D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
 
         // Create effects using the default effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
@@ -226,7 +226,7 @@ namespace DirectX
             _In_ ID3D12DescriptorHeap* textureDescriptorHeap, 
             _In_ ID3D12DescriptorHeap* samplerDescriptorHeap, 
             int textureDescriptorOffset = 0,
-            int samplerDescriptorOffset = 0);
+            int samplerDescriptorOffset = 0) const;
 
         // Create effects using a custom effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
@@ -234,7 +234,7 @@ namespace DirectX
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState, 
             int textureDescriptorOffset = 0,
-            int samplerDescriptorOffset = 0);
+            int samplerDescriptorOffset = 0) const;
 
         // Loads a model from a DirectX SDK .SDKMESH file
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );

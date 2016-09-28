@@ -62,7 +62,7 @@ namespace DirectX
         static void __cdecl CreateTeapot(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size = 1, size_t tessellation = 8, bool rhcoords = true);
 
         // Draw the primitive.
-        void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList);
+        void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
     private:
         GeometricPrimitive();
