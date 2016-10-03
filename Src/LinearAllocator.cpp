@@ -77,10 +77,10 @@ LinearAllocator::LinearAllocator(
     _In_ ID3D12Device* pDevice,
     _In_ size_t pageSize,
     _In_ size_t preallocateBytes)
-    : m_device(pDevice) 
-    , m_pendingPages( nullptr )
-    , m_usedPages( nullptr )
-    , m_unusedPages( nullptr )
+    : m_device(pDevice)
+    , m_pendingPages(nullptr)
+    , m_usedPages(nullptr)
+    , m_unusedPages(nullptr)
     , m_increment(pageSize)
     , m_numPending(0)
     , m_totalPages(0)
@@ -89,10 +89,10 @@ LinearAllocator::LinearAllocator(
     m_debugName = L"LinearAllocator";
 #endif
 
-    size_t preallocatePageCount = ( ( preallocateBytes + pageSize - 1 ) / pageSize );
-    for (size_t preallocatePages = 0; preallocateBytes != 0 && preallocatePages < preallocatePageCount; ++preallocatePages )
+    size_t preallocatePageCount = ((preallocateBytes + pageSize - 1) / pageSize);
+    for (size_t preallocatePages = 0; preallocateBytes != 0 && preallocatePages < preallocatePageCount; ++preallocatePages)
     {
-        if ( GetNewPage() == nullptr )
+        if (GetNewPage() == nullptr)
         {
             throw std::exception("Out of memory.");
         }
@@ -102,16 +102,16 @@ LinearAllocator::LinearAllocator(
 LinearAllocator::~LinearAllocator()
 {
     // Must wait for all pending fences!
-    while ( m_pendingPages != nullptr )
+    while (m_pendingPages != nullptr)
     {
         RetirePendingPages();
     }
 
-    assert( m_pendingPages == nullptr );
+    assert(m_pendingPages == nullptr);
 
     // Return all the memory
-    FreePages( m_unusedPages );
-    FreePages( m_usedPages );
+    FreePages(m_unusedPages);
+    FreePages(m_usedPages);
 
     m_pendingPages = nullptr;
     m_usedPages = nullptr;
@@ -122,16 +122,16 @@ LinearAllocator::~LinearAllocator()
 LinearAllocatorPage* LinearAllocator::FindPageForAlloc(_In_ size_t size, _In_ size_t alignment)
 {
 #ifdef _DEBUG
-    if( size > m_increment )
+    if (size > m_increment)
         throw std::out_of_range(__FUNCTION__ " size must be less or equal to the allocator's increment");
-    if( alignment > m_increment )
+    if (alignment > m_increment)
         throw std::out_of_range(__FUNCTION__ " alignment must be less or equal to the allocator's increment");
-    if ( size == 0 )
+    if (size == 0)
         throw std::exception("Cannot honor zero size allocation request.");
 #endif
 
-    LinearAllocatorPage* page = GetPageForAlloc( size, alignment );
-    if ( page == nullptr )
+    LinearAllocatorPage* page = GetPageForAlloc(size, alignment);
+    if (page == nullptr)
     {
         throw std::exception("Out of memory.");
     }
@@ -163,8 +163,8 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
         {
             // Signal the fence
             numReady++;
-            commandQueue->Signal(page->mFence.Get(), ++page->mPendingFence);
-                
+            ThrowIfFailed(commandQueue->Signal(page->mFence.Get(), ++page->mPendingFence));
+
             // Link to the ready pages list
             page->pNextPage = readyPages;
             if (readyPages) readyPages->pPrevPage = page;
@@ -201,16 +201,16 @@ void LinearAllocator::RetirePendingPages()
     // For each page that we know has a fence pending, check it. If the fence has passed,
     // we can mark the page for re-use.
     LinearAllocatorPage* page = m_pendingPages;
-    while ( page != nullptr )
+    while (page != nullptr)
     {
         LinearAllocatorPage* nextPage = page->pNextPage;
 
-        assert( page->mPendingFence != 0 );
+        assert(page->mPendingFence != 0);
 
-        if ( page->mFence->GetCompletedValue() >= page->mPendingFence )
+        if (page->mFence->GetCompletedValue() >= page->mPendingFence)
         {
             // Fence has passed. It is safe to use this page again.
-            ReleasePage( page );
+            ReleasePage(page);
         }
 
         page = nextPage;
@@ -219,7 +219,7 @@ void LinearAllocator::RetirePendingPages()
 
 void LinearAllocator::Shrink()
 {
-    FreePages( m_unusedPages );
+    FreePages(m_unusedPages);
     m_unusedPages = nullptr;
 
 #if VALIDATE_LISTS
@@ -256,14 +256,14 @@ LinearAllocatorPage* LinearAllocator::GetPageForAlloc(
     size_t alignment)
 {
     // Fast path
-    if ( sizeBytes == m_increment && (alignment == 0 || alignment == m_increment) )
+    if (sizeBytes == m_increment && (alignment == 0 || alignment == m_increment))
     {
         return GetCleanPageForAlloc();
     }
 
     // Find a page in the pending pages list that has space.
-    LinearAllocatorPage* page = FindPageForAlloc( m_usedPages, sizeBytes, alignment );
-    if ( page == nullptr )
+    LinearAllocatorPage* page = FindPageForAlloc(m_usedPages, sizeBytes, alignment);
+    if (page == nullptr)
     {
         page = GetCleanPageForAlloc();
     }
@@ -276,10 +276,10 @@ LinearAllocatorPage* LinearAllocator::FindPageForAlloc(
     size_t sizeBytes,
     size_t alignment)
 {
-    for ( LinearAllocatorPage* page = list; page != nullptr; page = page->pNextPage )
+    for (LinearAllocatorPage* page = list; page != nullptr; page = page->pNextPage)
     {
         size_t offset = AlignOffset(page->mOffset, alignment);
-        if ( offset + sizeBytes <= m_increment )
+        if (offset + sizeBytes <= m_increment)
             return page;
     }
     return nullptr;
@@ -289,8 +289,8 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
 {
     ComPtr<ID3D12Resource> spResource;
 
-    CD3DX12_HEAP_PROPERTIES uploadHeapProperties( D3D12_HEAP_TYPE_UPLOAD );
-    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer( m_increment );
+    CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(m_increment);
 
     // Allocate the upload heap
     if (FAILED(m_device->CreateCommittedResource(
@@ -299,7 +299,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
         &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_GRAPHICS_PPV_ARGS(spResource.ReleaseAndGetAddressOf()) )))
+        IID_GRAPHICS_PPV_ARGS(spResource.ReleaseAndGetAddressOf()))))
     {
         return nullptr;
     }
@@ -313,7 +313,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
 
     // Get a pointer to the memory
     void* pMemory = nullptr;
-    ThrowIfFailed(spResource->Map( 0, nullptr, &pMemory ));
+    ThrowIfFailed(spResource->Map(0, nullptr, &pMemory));
     memset(pMemory, 0, m_increment);
 
     // Create a fence
@@ -321,7 +321,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     if (FAILED(m_device->CreateFence(
         0,
         D3D12_FENCE_FLAG_NONE,
-        IID_GRAPHICS_PPV_ARGS(spFence.ReleaseAndGetAddressOf()) )))
+        IID_GRAPHICS_PPV_ARGS(spFence.ReleaseAndGetAddressOf()))))
     {
         return nullptr;
     }
@@ -351,20 +351,20 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     return page;
 }
 
-void LinearAllocator::UnlinkPage( LinearAllocatorPage* page )
+void LinearAllocator::UnlinkPage(LinearAllocatorPage* page)
 {
-    if ( page->pPrevPage )
+    if (page->pPrevPage)
         page->pPrevPage->pNextPage = page->pNextPage;
 
     // Check that it isn't the head of any of our tracked lists
-    else if ( page == m_unusedPages )
+    else if (page == m_unusedPages)
         m_unusedPages = page->pNextPage;
-    else if ( page == m_usedPages )
+    else if (page == m_usedPages)
         m_usedPages = page->pNextPage;
-    else if ( page == m_pendingPages )
+    else if (page == m_pendingPages)
         m_pendingPages = page->pNextPage;
 
-    if ( page->pNextPage )
+    if (page->pNextPage)
         page->pNextPage->pPrevPage = page->pPrevPage;
 
     page->pNextPage = nullptr;
@@ -402,13 +402,13 @@ void LinearAllocator::LinkPageChain(LinearAllocatorPage* page, LinearAllocatorPa
 #endif
 }
 
-void LinearAllocator::LinkPage( LinearAllocatorPage* page, LinearAllocatorPage*& list )
+void LinearAllocator::LinkPage(LinearAllocatorPage* page, LinearAllocatorPage*& list)
 {
 #if VALIDATE_LISTS
     // Walk the chain and ensure it's not in the list twice
-    for ( LinearAllocatorPage* cur = list; cur != nullptr; cur = cur->pNextPage )
+    for (LinearAllocatorPage* cur = list; cur != nullptr; cur = cur->pNextPage)
     {
-        assert( cur != page );
+        assert(cur != page);
     }
 #endif
     assert(page->pNextPage == nullptr);
@@ -416,7 +416,7 @@ void LinearAllocator::LinkPage( LinearAllocatorPage* page, LinearAllocatorPage*&
     assert(list == nullptr || list->pPrevPage == nullptr);
 
     page->pNextPage = list;
-    if ( list )
+    if (list)
         list->pPrevPage = page;
 
     list = page;
@@ -426,19 +426,19 @@ void LinearAllocator::LinkPage( LinearAllocatorPage* page, LinearAllocatorPage*&
 #endif
 }
 
-void LinearAllocator::ReleasePage( LinearAllocatorPage* page )
+void LinearAllocator::ReleasePage(LinearAllocatorPage* page)
 {
-    assert( m_numPending > 0 );
+    assert(m_numPending > 0);
     m_numPending--;
 
-    UnlinkPage( page );
-    LinkPage( page, m_unusedPages );
+    UnlinkPage(page);
+    LinkPage(page, m_unusedPages);
 
     // Reset the page offset (effectively erasing the memory)
     page->mOffset = 0;
 
 #ifdef _DEBUG
-    memset( page->mMemory, 0, m_increment );
+    memset(page->mMemory, 0, m_increment);
 #endif
 
 #if VALIDATE_LISTS
@@ -446,9 +446,9 @@ void LinearAllocator::ReleasePage( LinearAllocatorPage* page )
 #endif
 }
 
-void LinearAllocator::FreePages( LinearAllocatorPage* page )
+void LinearAllocator::FreePages(LinearAllocatorPage* page)
 {
-    while ( page != nullptr )
+    while (page != nullptr)
     {
         LinearAllocatorPage* nextPage = page->pNextPage;
 
@@ -464,8 +464,8 @@ void LinearAllocator::FreePages( LinearAllocatorPage* page )
 void LinearAllocator::ValidateList(LinearAllocatorPage* list)
 {
     for (LinearAllocatorPage* page = list, *lastPage = nullptr;
-            page != nullptr;
-            lastPage = page, page = page->pNextPage)
+        page != nullptr;
+        lastPage = page, page = page->pNextPage)
     {
         if (page->pPrevPage != lastPage)
         {
@@ -487,7 +487,7 @@ void LinearAllocator::SetDebugName(const char* name)
 {
     wchar_t wname[MAX_PATH] = {};
     int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
-    if ( result > 0 )
+    if (result > 0)
     {
         SetDebugName(wname);
     }
@@ -505,7 +505,7 @@ void LinearAllocator::SetDebugName(const wchar_t* name)
 
 void LinearAllocator::SetPageDebugName(LinearAllocatorPage* list)
 {
-    for ( LinearAllocatorPage* page = list; page != nullptr; page = page->pNextPage )
+    for (LinearAllocatorPage* page = list; page != nullptr; page = page->pNextPage)
     {
         page->mUploadResource->SetName(m_debugName.c_str());
     }
