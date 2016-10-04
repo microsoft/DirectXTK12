@@ -218,65 +218,6 @@ VSOutputTx VSBasicVertexLightingTxVc(VSInputNmTxVc vin)
 }
 
 
-// Vertex shader: one light.
-[RootSignature(NoTextureRS)]
-VSOutput VSBasicOneLight(VSInputNm vin)
-{
-    VSOutput vout;
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    return vout;
-}
-
-
-// Vertex shader: one light + vertex color.
-[RootSignature(NoTextureRS)]
-VSOutput VSBasicOneLightVc(VSInputNmVc vin)
-{
-    VSOutput vout;
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.Diffuse *= vin.Color;
-
-    return vout;
-}
-
-
-// Vertex shader: one light + texture.
-[RootSignature(MainRS)]
-VSOutputTx VSBasicOneLightTx(VSInputNmTx vin)
-{
-    VSOutputTx vout;
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.TexCoord = vin.TexCoord;
-
-    return vout;
-}
-
-
-// Vertex shader: one light + texture + vertex color.
-[RootSignature(MainRS)]
-VSOutputTx VSBasicOneLightTxVc(VSInputNmTxVc vin)
-{
-    VSOutputTx vout;
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.TexCoord = vin.TexCoord;
-    vout.Diffuse *= vin.Color;
-
-    return vout;
-}
-
-
 // Vertex shader: pixel lighting.
 [RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSBasicPixelLighting(VSInputNm vin)

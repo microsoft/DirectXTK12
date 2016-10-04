@@ -129,22 +129,6 @@ VSOutputTxEnvMap VSEnvMapFresnel(VSInputNmTx vin)
 }
 
 
-// Vertex shader: one light.
-[RootSignature(DualTextureRS)]
-VSOutputTxEnvMap VSEnvMapOneLight(VSInputNmTx vin)
-{
-    return ComputeEnvMapVSOutput(vin, false, 1);
-}
-
-
-// Vertex shader: one light, fresnel.
-[RootSignature(DualTextureRS)]
-VSOutputTxEnvMap VSEnvMapOneLightFresnel(VSInputNmTx vin)
-{
-    return ComputeEnvMapVSOutput(vin, true, 1);
-}
-
-
 // Vertex shader: pixel lighting.
 [RootSignature(DualTextureRS)]
 VSOutputPixelLightingTx VSEnvMapPixelLighting(VSInputNmTx vin)

@@ -109,57 +109,6 @@ VSOutputTx VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
 }
 
 
-// Vertex shader: one light, one bone.
-[RootSignature(MainRS)]
-VSOutputTx VSSkinnedOneLightOneBone(VSInputNmTxWeights vin)
-{
-    VSOutputTx vout;
-
-    Skin(vin, 1);
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.TexCoord = vin.TexCoord;
-
-    return vout;
-}
-
-
-// Vertex shader: one light, two bones.
-[RootSignature(MainRS)]
-VSOutputTx VSSkinnedOneLightTwoBones(VSInputNmTxWeights vin)
-{
-    VSOutputTx vout;
-
-    Skin(vin, 2);
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.TexCoord = vin.TexCoord;
-
-    return vout;
-}
-
-
-// Vertex shader: one light, four bones.
-[RootSignature(MainRS)]
-VSOutputTx VSSkinnedOneLightFourBones(VSInputNmTxWeights vin)
-{
-    VSOutputTx vout;
-
-    Skin(vin, 4);
-
-    CommonVSOutput cout = ComputeCommonVSOutputWithLighting(vin.Position, vin.Normal, 1);
-    SetCommonVSOutputParams;
-
-    vout.TexCoord = vin.TexCoord;
-
-    return vout;
-}
-
-
 // Vertex shader: pixel lighting, one bone.
 [RootSignature(MainRS)]
 VSOutputPixelLightingTx VSSkinnedPixelLightingOneBone(VSInputNmTxWeights vin)
