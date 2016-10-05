@@ -30,6 +30,15 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
+    enum
+    {
+        PER_VERTEX_COLOR = 0x1,
+        SKINNING = 0x2,
+        DUAL_TEXTURE = 0x4,
+        NORMAL_MAPS = 0x8,
+        BIASED_VERTEX_NORMALS = 0x10,
+    };
+
     int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
     {
         if (textureName == nullptr || !textureName[0])
@@ -50,10 +59,7 @@ namespace
 
     void InitMaterial(
         const DXUT::SDKMESH_MATERIAL& mh,
-        bool perVertexColor,
-        bool enableSkinning,
-        bool enableDualTexture,
-        bool enableNormalMaps,
+        unsigned int flags,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
@@ -69,17 +75,17 @@ namespace
         wchar_t normalName[DXUT::MAX_TEXTURE_NAME];
         MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
 
-        if (enableDualTexture && !mh.SpecularTexture[0])
+        if ((flags & DUAL_TEXTURE) && !mh.SpecularTexture[0])
         {
             DebugTrace("WARNING: Material '%s' has multiple texture coords but not multiple textures\n", mh.Name);
-            enableDualTexture = false;
+            flags &= ~DUAL_TEXTURE;
         }
 
-        if (enableNormalMaps)
+        if (flags & NORMAL_MAPS)
         {
             if (!mh.NormalTexture[0])
             {
-                enableNormalMaps = false;
+                flags &= ~NORMAL_MAPS;
                 *normalName = 0;
             }
         }
@@ -91,10 +97,12 @@ namespace
 
         m = {};
         m.name = matName;
-        m.perVertexColor = perVertexColor;
-        m.enableSkinning = enableSkinning;
-        m.enableDualTexture = enableDualTexture;
-        m.enableNormalMaps = enableNormalMaps;
+        m.perVertexColor = (flags & PER_VERTEX_COLOR) != 0;
+        m.enableSkinning = (flags & SKINNING) != 0;
+        m.enableDualTexture = (flags & DUAL_TEXTURE) != 0;
+        m.enableNormalMaps = (flags & NORMAL_MAPS) != 0;
+        m.biasedVertexNormals = (flags & BIASED_VERTEX_NORMALS) != 0;
+
         m.ambientColor = XMFLOAT3(mh.Ambient.x, mh.Ambient.y, mh.Ambient.z);
         m.diffuseColor = XMFLOAT3(mh.Diffuse.x, mh.Diffuse.y, mh.Diffuse.z);
         m.emissiveColor = XMFLOAT3(mh.Emissive.x, mh.Emissive.y, mh.Emissive.z);
@@ -117,15 +125,16 @@ namespace
         m.normalTextureIndex = GetUniqueTextureIndex(normalName, textureDictionary);
 
         m.samplerIndex = (m.diffuseTextureIndex == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
-        m.samplerIndex2 = (enableDualTexture) ? static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap) : -1;
+        m.samplerIndex2 = (flags & DUAL_TEXTURE) ? static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap) : -1;
     }
 
 
     //--------------------------------------------------------------------------------------
     // Direct3D 9 Vertex Declaration to Direct3D 12 Input Layout mapping
 
-    void GetInputLayoutDesc(_In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[], std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc,
-        bool &perVertexColor, bool& enableSkinning, bool& dualTexture, bool& normalMaps)
+    unsigned int GetInputLayoutDesc(
+        _In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[],
+        std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc)
     {
         static const D3D12_INPUT_ELEMENT_DESC s_elements[] =
          {
@@ -143,6 +152,7 @@ namespace
 
         uint32_t offset = 0;
         uint32_t texcoords = 0;
+        unsigned int flags = 0;
 
         bool posfound = false;
 
@@ -183,11 +193,17 @@ namespace
                 bool unk = false;
                 switch (decl[index].Type)
                 {
-                case D3DDECLTYPE_FLOAT3:               assert(desc.Format == DXGI_FORMAT_R32G32B32_FLOAT); offset += 12; break;
-                case D3DDECLTYPE_UBYTE4N:              desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM /* Biased */; offset += 4; break;
-                case D3DDECLTYPE_SHORT4N:              desc.Format = DXGI_FORMAT_R16G16B16A16_SNORM; offset += 8; break;
-                case D3DDECLTYPE_FLOAT16_4:            desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
-                case D3DDECLTYPE_DXGI_R11G11B10_FLOAT: desc.Format = DXGI_FORMAT_R11G11B10_FLOAT /* Biased */; offset += 4; break;
+                case D3DDECLTYPE_FLOAT3:                 assert(desc.Format == DXGI_FORMAT_R32G32B32_FLOAT); offset += 12; break;
+                case D3DDECLTYPE_UBYTE4N:                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                case D3DDECLTYPE_SHORT4N:                desc.Format = DXGI_FORMAT_R16G16B16A16_SNORM; offset += 8; break;
+                case D3DDECLTYPE_FLOAT16_4:              desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
+                case D3DDECLTYPE_DXGI_R10G10B10A2_UNORM: desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                case D3DDECLTYPE_DXGI_R11G11B10_FLOAT:   desc.Format = DXGI_FORMAT_R11G11B10_FLOAT; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                case D3DDECLTYPE_DXGI_R8G8B8A8_SNORM:    desc.Format = DXGI_FORMAT_R8G8B8A8_SNORM; offset += 4; break;
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+                case (32 + DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM): desc.Format = DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM; offset += 4; break;
+#endif
 
                 default:
                     unk = true;
@@ -198,7 +214,9 @@ namespace
                     break;
 
                 if (decl[index].Usage == D3DDECLUSAGE_TANGENT)
-                    normalMaps = true;
+                {
+                    flags |= NORMAL_MAPS;
+                }
 
                 inputDesc.push_back(desc);
             }
@@ -224,7 +242,7 @@ namespace
                 if (unk)
                     break;
 
-                perVertexColor = true;
+                flags |= PER_VERTEX_COLOR;
 
                 inputDesc.push_back(desc);
             }
@@ -259,7 +277,7 @@ namespace
             {
                 if (decl[index].Type == D3DDECLTYPE_UBYTE4)
                 {
-                    enableSkinning = true;
+                    flags |= SKINNING;
                     inputDesc.push_back(s_elements[6]);
                     offset += 4;
                 }
@@ -270,7 +288,7 @@ namespace
             {
                 if (decl[index].Type == D3DDECLTYPE_UBYTE4N)
                 {
-                    enableSkinning = true;
+                    flags |= SKINNING;
                     inputDesc.push_back(s_elements[7]);
                     offset += 4;
                 }
@@ -286,8 +304,10 @@ namespace
 
         if (texcoords == 2)
         {
-            dualTexture = true;
+            flags |= DUAL_TEXTURE;
         }
+
+        return flags;
     }
 }
 
@@ -378,17 +398,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
     std::vector<std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>> vbDecls;
     vbDecls.resize( header->NumVertexBuffers );
 
-    std::vector<bool> perVertexColor;
-    perVertexColor.resize( header->NumVertexBuffers );
-
-    std::vector<bool> enableSkinning;
-    enableSkinning.resize( header->NumVertexBuffers );
-
-    std::vector<bool> enableDualTexture;
-    enableDualTexture.resize( header->NumVertexBuffers );
-
-    std::vector<bool> enableNormalMaps;
-    enableNormalMaps.resize(header->NumVertexBuffers);
+    std::vector<unsigned int> materialFlags;
+    materialFlags.resize(header->NumVertexBuffers);
 
     for( UINT j=0; j < header->NumVertexBuffers; ++j )
     {
@@ -399,15 +410,18 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
             throw std::exception("End of file");
 
         vbDecls[j] = std::make_shared<std::vector<D3D12_INPUT_ELEMENT_DESC>>();
-        bool vertColor = false;
-        bool skinning = false;
-        bool dualTexture = false;
-        bool normalMaps = false;
-        GetInputLayoutDesc( vh.Decl, *vbDecls[j].get(), vertColor, skinning, dualTexture, normalMaps );
-        perVertexColor[j] = vertColor;
-        enableSkinning[j] = skinning;
-        enableDualTexture[j] = !skinning && dualTexture;
-        enableNormalMaps[j] = !skinning && !dualTexture && normalMaps;
+        unsigned int flags = GetInputLayoutDesc(vh.Decl, *vbDecls[j].get());
+
+        if (flags & SKINNING)
+        {
+            flags &= ~(DUAL_TEXTURE | NORMAL_MAPS);
+        }
+        if (flags & DUAL_TEXTURE)
+        {
+            flags &= ~NORMAL_MAPS;
+        }
+
+        materialFlags[j] = flags;
     }
 
     // Validate index buffers
@@ -507,9 +521,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
             auto& mat = materials[ subset.MaterialID ];
 
             const size_t vi = mh.VertexBuffers[0];
-            InitMaterial(materialArray[subset.MaterialID],
-                perVertexColor[vi], enableSkinning[vi], enableDualTexture[vi], enableNormalMaps[vi],
-                mat, textureDictionary);
+            InitMaterial(
+                materialArray[subset.MaterialID],
+                materialFlags[vi],
+                mat,
+                textureDictionary);
 
             auto part = new ModelMeshPart(partCount++);
 

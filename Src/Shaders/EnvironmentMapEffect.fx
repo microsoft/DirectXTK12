@@ -59,13 +59,13 @@ float ComputeFresnelFactor(float3 eyeVector, float3 worldNormal)
 }
 
 
-VSOutputTxEnvMap ComputeEnvMapVSOutput(VSInputNmTx vin, uniform bool useFresnel, uniform int numLights)
+VSOutputTxEnvMap ComputeEnvMapVSOutput(VSInputNmTx vin, float3 normal, uniform bool useFresnel, uniform int numLights)
 {
     VSOutputTxEnvMap vout;
 
     float4 pos_ws = mul(vin.Position, World);
     float3 eyeVector = normalize(EyePosition - pos_ws.xyz);
-    float3 worldNormal = normalize(mul(vin.Normal, WorldInverseTranspose));
+    float3 worldNormal = normalize(mul(normal, WorldInverseTranspose));
 
     ColorPair lightResult = ComputeLights(eyeVector, worldNormal, numLights);
 
@@ -117,7 +117,15 @@ float4 ComputeEnvMapPSOutput(PSInputPixelLightingTx pin, uniform bool useFresnel
 [RootSignature(DualTextureRS)]
 VSOutputTxEnvMap VSEnvMap(VSInputNmTx vin)
 {
-    return ComputeEnvMapVSOutput(vin, false, 3);
+    return ComputeEnvMapVSOutput(vin, vin.Normal, false, 3);
+}
+
+[RootSignature(DualTextureRS)]
+VSOutputTxEnvMap VSEnvMapBn(VSInputNmTx vin)
+{
+    float3 normal = BiasX2(vin.Normal);
+
+    return ComputeEnvMapVSOutput(vin, normal, false, 3);
 }
 
 
@@ -125,7 +133,15 @@ VSOutputTxEnvMap VSEnvMap(VSInputNmTx vin)
 [RootSignature(DualTextureRS)]
 VSOutputTxEnvMap VSEnvMapFresnel(VSInputNmTx vin)
 {
-    return ComputeEnvMapVSOutput(vin, true, 3);
+    return ComputeEnvMapVSOutput(vin, vin.Normal, true, 3);
+}
+
+[RootSignature(DualTextureRS)]
+VSOutputTxEnvMap VSEnvMapFresnelBn(VSInputNmTx vin)
+{
+    float3 normal = BiasX2(vin.Normal);
+
+    return ComputeEnvMapVSOutput(vin, normal, true, 3);
 }
 
 
@@ -136,6 +152,22 @@ VSOutputPixelLightingTx VSEnvMapPixelLighting(VSInputNmTx vin)
     VSOutputPixelLightingTx vout;
 
     CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, vin.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(DualTextureRS)]
+VSOutputPixelLightingTx VSEnvMapPixelLightingBn(VSInputNmTx vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, normal);
     SetCommonVSOutputParamsPixelLighting;
 
     vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);

@@ -60,6 +60,27 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTx(VSInputNmTxTangent vin)
     return vout;
 }
 
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxBn(VSInputNmTxTangent vin)
+{
+    VSOutputPixelLightingTxTangent vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    // For normal mapping, we need tangent to form tangent space transform
+    float3 tangent = BiasX2(vin.Tangent.xyz);
+
+    vout.TangentWS = normalize(mul(tangent, WorldInverseTranspose));
+
+    return vout;
+}
+
 
 // Vertex shader: pixel lighting + texture + vertex color.
 [RootSignature(NormalMapRS)]
@@ -80,6 +101,29 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVc(VSInputNmTxVcTangent vi
     return vout;
 }
 
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVcBn(VSInputNmTxVcTangent vin)
+{
+    VSOutputPixelLightingTxTangent vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse.rgb = vin.Color.rgb;
+    vout.Diffuse.a = vin.Color.a * DiffuseColor.a;
+    vout.TexCoord = vin.TexCoord;
+
+    // For normal mapping, we need tangent to form tangent space transform
+    float3 tangent = BiasX2(vin.Tangent.xyz);
+
+    vout.TangentWS = normalize(mul(tangent, WorldInverseTranspose));
+
+    return vout;
+}
+
+
 // Pixel shader: pixel lighting + texture + no fog
 [RootSignature(NormalMapRS)]
 float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTxTangent pin) : SV_Target0
@@ -87,7 +131,7 @@ float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTxTangent pin) : SV_Targ
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
-    float3 localNormal = (NormalTexture.Sample(Sampler, pin.TexCoord).xyz * 2) - 1;
+    float3 localNormal = BiasX2(NormalTexture.Sample(Sampler, pin.TexCoord).xyz);
     float3 normal = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Do lighting
@@ -111,7 +155,7 @@ float4 PSNormalPixelLightingTx(PSInputPixelLightingTxTangent pin) : SV_Target0
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
  
     // Before lighting, peturb the surface's normal by the one given in normal map.
-    float3 localNormal = (NormalTexture.Sample(Sampler, pin.TexCoord).xyz * 2) - 1;
+    float3 localNormal = BiasX2(NormalTexture.Sample(Sampler, pin.TexCoord).xyz);
     float3 normal = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Do lighting
@@ -137,7 +181,7 @@ float4 PSNormalPixelLightingTxNoFogSpec(PSInputPixelLightingTxTangent pin) : SV_
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
-    float3 localNormal = (NormalTexture.Sample(Sampler, pin.TexCoord).xyz * 2) - 1;
+    float3 localNormal = BiasX2(NormalTexture.Sample(Sampler, pin.TexCoord).xyz);
     float3 normal = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Do lighting
@@ -160,7 +204,7 @@ float4 PSNormalPixelLightingTxNoSpec(PSInputPixelLightingTxTangent pin) : SV_Tar
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
-    float3 localNormal = (NormalTexture.Sample(Sampler, pin.TexCoord).xyz * 2) - 1;
+    float3 localNormal = BiasX2(NormalTexture.Sample(Sampler, pin.TexCoord).xyz);
     float3 normal = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Do lighting

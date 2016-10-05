@@ -45,10 +45,10 @@ public:
     }
 
     std::shared_ptr<IEffect> CreateEffect(
-        const EffectInfo& info, 
+        const EffectInfo& info,
         const EffectPipelineStateDescription& opaquePipelineState,
         const EffectPipelineStateDescription& alphaPipelineState,
-        const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+        const D3D12_INPUT_LAYOUT_DESC& inputLayout,
         int textureDescriptorOffset,
         int samplerDescriptorOffset);
 
@@ -79,10 +79,10 @@ private:
 
 
 std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
-    const EffectInfo& info, 
+    const EffectInfo& info,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
-    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc, 
+    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
     int textureDescriptorOffset,
     int samplerDescriptorOffset)
 {
@@ -125,7 +125,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     derivedPSD.inputLayout = inputLayoutDesc;
 
     std::wstring cacheName;
-    if ( info.enableSkinning )
+    if (info.enableSkinning)
     {
         // SkinnedEffect
         int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
@@ -135,44 +135,49 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::Fog;
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (info.biasedVertexNormals)
+        {
+            effectflags |= EffectFlags::BiasedVertexNormals;
+        }
+
+        if (mSharing && !info.name.empty())
         {
             uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-            auto it = mEffectCacheSkinning.find( cacheName );
-            if ( mSharing && it != mEffectCacheSkinning.end() )
+            auto it = mEffectCacheSkinning.find(cacheName);
+            if (mSharing && it != mEffectCacheSkinning.end())
             {
                 return it->second;
             }
         }
 
-        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, effectflags, derivedPSD );
+        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>(device, effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
-        effect->SetAlpha( info.alphaValue );
+        effect->SetAlpha(info.alphaValue);
 
         // Skinned Effect does not have an ambient material color, or per-vertex color support
 
-        XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
-        effect->SetDiffuseColor( color );
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
 
-        if ( info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0 )
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
         {
-            color = XMLoadFloat3( &info.specularColor );
-            effect->SetSpecularColor( color );
-            effect->SetSpecularPower( info.specularPower );
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
         }
         else
         {
             effect->DisableSpecular();
         }
 
-        if ( info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0 )
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
         {
-            color = XMLoadFloat3( &info.emissiveColor );
-            effect->SetEmissiveColor( color );
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
         }
 
         if (diffuseTextureIndex != -1)
@@ -182,15 +187,15 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheSkinning.insert( EffectCache::value_type( cacheName, effect ) );
+            mEffectCacheSkinning.insert(EffectCache::value_type(cacheName, effect));
         }
 
         return effect;
     }
-    else if ( info.enableDualTexture )
+    else if (info.enableDualTexture)
     {
         // DualTextureEffect
         int effectflags = EffectFlags::None;
@@ -200,13 +205,13 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::Fog;
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-            auto it = mEffectCacheDualTexture.find( cacheName );
-            if ( mSharing && it != mEffectCacheDualTexture.end() )
+            auto it = mEffectCacheDualTexture.find(cacheName);
+            if (mSharing && it != mEffectCacheDualTexture.end())
             {
                 return it->second;
             }
@@ -217,13 +222,13 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::VertexColor;
         }
 
-        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD );
+        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD);
 
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
-        effect->SetAlpha( info.alphaValue );
+        effect->SetAlpha(info.alphaValue);
 
-        XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
-        effect->SetDiffuseColor( color );
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
 
         if (diffuseTextureIndex != -1)
         {
@@ -245,10 +250,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
                 mSamplerDescriptors->GetGpuHandle(samplerIndex2));
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheDualTexture.insert( EffectCache::value_type( cacheName, effect ) );
+            mEffectCacheDualTexture.insert(EffectCache::value_type(cacheName, effect));
         }
 
         return effect;
@@ -266,6 +271,11 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (info.perVertexColor)
         {
             effectflags |= EffectFlags::VertexColor;
+        }
+
+        if (info.biasedVertexNormals)
+        {
+            effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
         if (mSharing && !info.name.empty())
@@ -286,7 +296,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         effect->EnableDefaultLighting();
 
-        effect->SetAlpha( info.alphaValue );
+        effect->SetAlpha(info.alphaValue);
 
         // NormalMap Effect does not have an ambient material color
 
@@ -327,7 +337,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(normalTextureIndex));
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
             mEffectCacheNormalMap.insert(EffectCache::value_type(cacheName, effect));
@@ -355,44 +365,49 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::Texture;
         }
 
+        if (info.biasedVertexNormals)
+        {
+            effectflags |= EffectFlags::BiasedVertexNormals;
+        }
+
         // BasicEffect
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-            auto it = mEffectCache.find( cacheName );
-            if ( mSharing && it != mEffectCache.end() )
+            auto it = mEffectCache.find(cacheName);
+            if (mSharing && it != mEffectCache.end())
             {
                 return it->second;
             }
         }
 
-        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, effectflags, derivedPSD );
+        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>(device, effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
-        
-        effect->SetAlpha( info.alphaValue );
+
+        effect->SetAlpha(info.alphaValue);
 
         // Basic Effect does not have an ambient material color
-        XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
-        effect->SetDiffuseColor( color );
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
 
-        if ( info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0 )
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
         {
-            color = XMLoadFloat3( &info.specularColor );
-            effect->SetSpecularColor( color );
-            effect->SetSpecularPower( info.specularPower );
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
         }
         else
         {
             effect->DisableSpecular();
         }
 
-        if ( info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0 )
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
         {
-            color = XMLoadFloat3( &info.emissiveColor );
-            effect->SetEmissiveColor( color );
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
         }
 
         if (diffuseTextureIndex != -1)
@@ -402,10 +417,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
-        if ( mSharing && !info.name.empty() )
+        if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCache.insert( EffectCache::value_type( cacheName, effect ) );
+            mEffectCache.insert(EffectCache::value_type(cacheName, effect));
         }
 
         return effect;

@@ -103,12 +103,14 @@ namespace DirectX
     //----------------------------------------------------------------------------------
     namespace EffectFlags
     {
-        const int None              = 0x00;
-        const int Fog               = 0x01;
-        const int Lighting          = 0x02;
-        const int PerPixelLighting  = 0x04 | Lighting; // per pixel lighting implies lighting enabled
-        const int VertexColor       = 0x08;
-        const int Texture           = 0x10;
+        const int None                = 0x00;
+        const int Fog                 = 0x01;
+        const int Lighting            = 0x02;
+        const int PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
+        const int VertexColor         = 0x08;
+        const int Texture             = 0x10;
+
+        const int BiasedVertexNormals = 0x10000; // compressed vertex normals/tangents/binormals need x2 bias
     }
 
 
@@ -524,6 +526,7 @@ namespace DirectX
             bool                enableSkinning;
             bool                enableDualTexture;
             bool                enableNormalMaps;
+            bool                biasedVertexNormals;
             float               specularPower;
             float               alphaValue;
             DirectX::XMFLOAT3   ambientColor;

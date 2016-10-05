@@ -46,9 +46,9 @@ struct NormalMapEffectTraits
 {
     typedef NormalMapEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 2;
+    static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 8;
+    static const int ShaderPermutationCount = 16;
     static const int RootSignatureCount = 1;
 };
 
@@ -70,6 +70,7 @@ public:
     };
 
     bool specularMap;
+    bool biasedVertexNormals;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE specular;
@@ -91,6 +92,9 @@ namespace
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc"
 
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+
     #include "Shaders/Compiled/XboxOneNormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
@@ -98,7 +102,10 @@ namespace
 #else    
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVc.inc"
-                                                 
+
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+
     #include "Shaders/Compiled/NormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/NormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
     #include "Shaders/Compiled/NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
@@ -109,8 +116,11 @@ namespace
 
 const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[] =
 {
-    { NormalMapEffect_VSNormalPixelLightingTx,    sizeof(NormalMapEffect_VSNormalPixelLightingTx)   },
-    { NormalMapEffect_VSNormalPixelLightingTxVc,  sizeof(NormalMapEffect_VSNormalPixelLightingTxVc) },
+    { NormalMapEffect_VSNormalPixelLightingTx,     sizeof(NormalMapEffect_VSNormalPixelLightingTx)     },
+    { NormalMapEffect_VSNormalPixelLightingTxVc,   sizeof(NormalMapEffect_VSNormalPixelLightingTxVc)   },
+
+    { NormalMapEffect_VSNormalPixelLightingTxBn,   sizeof(NormalMapEffect_VSNormalPixelLightingTxBn)   },
+    { NormalMapEffect_VSNormalPixelLightingTxVcBn, sizeof(NormalMapEffect_VSNormalPixelLightingTxVcBn) },
 };
 
 
@@ -125,6 +135,16 @@ const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
     0,     // pixel lighting + texture, no fog or specular
     1,     // pixel lighting + texture + vertex color, no specular
     1,     // pixel lighting + texture + vertex color, no fog or specular
+
+    2,     // pixel lighting (biased vertex normal/tangent) + texture
+    2,     // pixel lighting (biased vertex normal/tangent) + texture, no fog
+    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color
+    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog
+
+    2,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
+    2,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
+    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
+    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
 };
 
 
@@ -148,6 +168,16 @@ const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
     3,     // pixel lighting + texture, no fog or specular
     2,     // pixel lighting + texture + vertex color, no specular
     3,     // pixel lighting + texture + vertex color, no fog or specular
+
+    0,      // pixel lighting (biased vertex normal/tangent) + texture
+    1,      // pixel lighting (biased vertex normal/tangent) + texture, no fog
+    0,      // pixel lighting (biased vertex normal/tangent) + texture + vertex color
+    1,      // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog
+
+    2,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
+    3,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
+    2,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
+    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
 };
 
 // Global pool of per-device NormalMapEffect resources.
@@ -201,6 +231,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     // Create pipeline state
     int sp = GetPipelineStatePermutation(
@@ -243,6 +274,12 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) 
     if (specularMap)
     {
         permutation += 4;
+    }
+
+    if (biasedVertexNormals)
+    {
+        // Compressed normals & tangents need to be scaled and biased in the vertex shader.
+        permutation += 8;
     }
 
     return permutation;

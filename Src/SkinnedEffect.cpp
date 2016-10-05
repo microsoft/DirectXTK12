@@ -48,9 +48,9 @@ struct SkinnedEffectTraits
 {
     typedef SkinnedEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 6;
+    static const int VertexShaderCount = 12;
     static const int PixelShaderCount = 3;
-    static const int ShaderPermutationCount = 12;
+    static const int ShaderPermutationCount = 24;
     static const int RootSignatureCount = 1;
 };
 
@@ -70,6 +70,7 @@ public:
     };
 
     int weightsPerVertex;
+    bool biasedVertexNormals;
     
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE sampler;
@@ -94,6 +95,14 @@ namespace
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingTwoBones.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
 
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc"
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc"
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc"
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc"
+    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+
     #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
@@ -106,6 +115,14 @@ namespace
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc"
     #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
 
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc"
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc"
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc"
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc"
+    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+
     #include "Shaders/Compiled/SkinnedEffect_PSSkinnedVertexLighting.inc"
     #include "Shaders/Compiled/SkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
     #include "Shaders/Compiled/SkinnedEffect_PSSkinnedPixelLighting.inc"
@@ -115,13 +132,21 @@ namespace
 
 const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[] =
 {
-    { SkinnedEffect_VSSkinnedVertexLightingOneBone,   sizeof(SkinnedEffect_VSSkinnedVertexLightingOneBone)   },
-    { SkinnedEffect_VSSkinnedVertexLightingTwoBones,  sizeof(SkinnedEffect_VSSkinnedVertexLightingTwoBones)  },
-    { SkinnedEffect_VSSkinnedVertexLightingFourBones, sizeof(SkinnedEffect_VSSkinnedVertexLightingFourBones) },
+    { SkinnedEffect_VSSkinnedVertexLightingOneBone,     sizeof(SkinnedEffect_VSSkinnedVertexLightingOneBone)     },
+    { SkinnedEffect_VSSkinnedVertexLightingTwoBones,    sizeof(SkinnedEffect_VSSkinnedVertexLightingTwoBones)    },
+    { SkinnedEffect_VSSkinnedVertexLightingFourBones,   sizeof(SkinnedEffect_VSSkinnedVertexLightingFourBones)   },
 
-    { SkinnedEffect_VSSkinnedPixelLightingOneBone,    sizeof(SkinnedEffect_VSSkinnedPixelLightingOneBone)    },
-    { SkinnedEffect_VSSkinnedPixelLightingTwoBones,   sizeof(SkinnedEffect_VSSkinnedPixelLightingTwoBones)   },
-    { SkinnedEffect_VSSkinnedPixelLightingFourBones,  sizeof(SkinnedEffect_VSSkinnedPixelLightingFourBones)  },
+    { SkinnedEffect_VSSkinnedPixelLightingOneBone,      sizeof(SkinnedEffect_VSSkinnedPixelLightingOneBone)      },
+    { SkinnedEffect_VSSkinnedPixelLightingTwoBones,     sizeof(SkinnedEffect_VSSkinnedPixelLightingTwoBones)     },
+    { SkinnedEffect_VSSkinnedPixelLightingFourBones,    sizeof(SkinnedEffect_VSSkinnedPixelLightingFourBones)    },
+
+    { SkinnedEffect_VSSkinnedVertexLightingOneBoneBn,   sizeof(SkinnedEffect_VSSkinnedVertexLightingOneBoneBn)   },
+    { SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn,  sizeof(SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn)  },
+    { SkinnedEffect_VSSkinnedVertexLightingFourBonesBn, sizeof(SkinnedEffect_VSSkinnedVertexLightingFourBonesBn) },
+
+    { SkinnedEffect_VSSkinnedPixelLightingOneBoneBn,    sizeof(SkinnedEffect_VSSkinnedPixelLightingOneBoneBn)    },
+    { SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn,   sizeof(SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn)   },
+    { SkinnedEffect_VSSkinnedPixelLightingFourBonesBn,  sizeof(SkinnedEffect_VSSkinnedPixelLightingFourBonesBn)  },
 };
 
 
@@ -133,13 +158,27 @@ const int EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] =
     1,      // vertex lighting, two bones, no fog
     2,      // vertex lighting, four bones
     2,      // vertex lighting, four bones, no fog
-    
+
     3,      // pixel lighting, one bone
     3,      // pixel lighting, one bone, no fog
     4,      // pixel lighting, two bones
     4,      // pixel lighting, two bones, no fog
     5,      // pixel lighting, four bones
     5,      // pixel lighting, four bones, no fog
+
+    6,      // vertex lighting (biased vertex normals), one bone
+    6,      // vertex lighting (biased vertex normals), one bone, no fog
+    7,      // vertex lighting (biased vertex normals), two bones
+    7,      // vertex lighting (biased vertex normals), two bones, no fog
+    8,      // vertex lighting (biased vertex normals), four bones
+    8,      // vertex lighting (biased vertex normals), four bones, no fog
+
+    9,      // pixel lighting (biased vertex normals), one bone
+    9,      // pixel lighting (biased vertex normals), one bone, no fog
+    10,     // pixel lighting (biased vertex normals), two bones
+    10,     // pixel lighting (biased vertex normals), two bones, no fog
+    11,     // pixel lighting (biased vertex normals), four bones
+    11,     // pixel lighting (biased vertex normals), four bones, no fog
 };
 
 
@@ -159,13 +198,27 @@ const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] =
     1,      // vertex lighting, two bones, no fog
     0,      // vertex lighting, four bones
     1,      // vertex lighting, four bones, no fog
-    
+
     2,      // pixel lighting, one bone
     2,      // pixel lighting, one bone, no fog
     2,      // pixel lighting, two bones
     2,      // pixel lighting, two bones, no fog
     2,      // pixel lighting, four bones
     2,      // pixel lighting, four bones, no fog
+
+    0,      // vertex lighting (biased vertex normals), one bone
+    1,      // vertex lighting (biased vertex normals), one bone, no fog
+    0,      // vertex lighting (biased vertex normals), two bones
+    1,      // vertex lighting (biased vertex normals), two bones, no fog
+    0,      // vertex lighting (biased vertex normals), four bones
+    1,      // vertex lighting (biased vertex normals), four bones, no fog
+
+    2,      // pixel lighting (biased vertex normals), one bone
+    2,      // pixel lighting (biased vertex normals), one bone, no fog
+    2,      // pixel lighting (biased vertex normals), two bones
+    2,      // pixel lighting (biased vertex normals), two bones, no fog
+    2,      // pixel lighting (biased vertex normals), four bones
+    2,      // pixel lighting (biased vertex normals), four bones, no fog
 };
 
 
@@ -227,6 +280,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
     assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     if (effectFlags & EffectFlags::VertexColor)
     {
@@ -279,6 +333,12 @@ int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting
     {
         // Do lighting in the pixel shader.
         permutation += 6;
+    }
+
+    if (biasedVertexNormals)
+    {
+        // Compressed normals need to be scaled and biased in the vertex shader.
+        permutation += 12;
     }
 
     return permutation;
