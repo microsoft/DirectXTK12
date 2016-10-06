@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-September 15, 2016
+October 6, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -94,6 +94,14 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+October 6, 2016
+    SDKMESH loader and BasicEffects support for compressed vertex normals with biasing
+    *breaking change* 
+      DDSTextureLoader Ex bool forceSRGB and generateMipsIfMissing parmeters are now a DDS_LOADER flag
+      WICTextureLoader Ex bool forceSRGB and generateMips parameters are now a WIC_LOADER flag
+    Add vertexCount member to ModelMeshPart
+    Minor code cleanup
 
 September 15, 2016
     Rebuild shaders using 1.0 Root Signature for improved compatibility
