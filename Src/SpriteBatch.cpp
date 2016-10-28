@@ -346,6 +346,7 @@ _Use_decl_annotations_
 SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription& psoDesc, const D3D12_VIEWPORT* viewport)
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
     mSetViewport(false),
+    mViewPort{},
     mSpriteQueueCount(0),
     mSpriteQueueArraySize(0),
     mInBeginEndPair(false),

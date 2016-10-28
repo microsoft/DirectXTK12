@@ -42,7 +42,8 @@ public:
         _In_ ID3D12Device* device,
         _Inout_ ResourceUploadBatch& resourceUploadBatch,
         _In_ ID3D12DescriptorHeap* descriptorHeap)
-        : device(device)
+        : mPath{}
+        , device(device)
         , mTextureDescriptorHeap(descriptorHeap)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
@@ -57,14 +58,14 @@ public:
         _Inout_ ResourceUploadBatch& resourceUploadBatch,
         _In_ size_t numDescriptors,
         _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
-        : device(device)
+        : mPath{}
+        , device(device)
         , mTextureDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, descriptorHeapFlags, numDescriptors)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
         , mForceSRGB(false)
         , mAutoGenMips(false)
     { 
-        *mPath = 0; 
     }
 
     void CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);

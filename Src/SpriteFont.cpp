@@ -102,7 +102,8 @@ SpriteFont::Impl::Impl(
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
     D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
     bool forceSRGB) :
-    texture{}
+    texture{},
+    defaultGlyph(nullptr)
 {
     // Validate the header.
     for (char const* magic = spriteFontMagic; *magic; magic++)
@@ -163,8 +164,8 @@ SpriteFont::Impl::Impl(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize,
   : texture(texture),
     textureSize(textureSize),
     glyphs(glyphs, glyphs + glyphCount),
-    lineSpacing(lineSpacing),
-    defaultGlyph(nullptr)
+    defaultGlyph(nullptr),
+    lineSpacing(lineSpacing)
 {
     if (!std::is_sorted(glyphs, glyphs + glyphCount))
     {

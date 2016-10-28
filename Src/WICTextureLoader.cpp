@@ -350,7 +350,7 @@ namespace
                     }
 #endif
 
-                    PropVariantClear(&value);
+                    (void)PropVariantClear(&value);
 
                     if (sRGB)
                         format = LoaderHelpers::MakeSRGB(format);

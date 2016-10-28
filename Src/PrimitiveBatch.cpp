@@ -47,10 +47,9 @@ private:
     size_t mVertexSize;
     size_t mVertexPageSize;
     size_t mIndexPageSize;
-
-    bool mInBeginEndPair;
-    
+   
     D3D_PRIMITIVE_TOPOLOGY mCurrentTopology;
+    bool mInBeginEndPair;
     bool mCurrentlyIndexed;
     
     size_t mIndexCount;
@@ -70,8 +69,8 @@ PrimitiveBatchBase::Impl::Impl(_In_ ID3D12Device* device, size_t maxIndices, siz
     mVertexSize(vertexSize),
     mVertexPageSize(maxVertices * vertexSize),
     mIndexPageSize(maxIndices * sizeof(uint16_t)),
-    mInBeginEndPair(false),
     mCurrentTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED),
+    mInBeginEndPair(false),
     mCurrentlyIndexed(false),
     mIndexCount(0),
     mVertexCount(0)
