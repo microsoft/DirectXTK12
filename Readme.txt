@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-October 6, 2016
+December 5, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -94,6 +94,13 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+December 5, 2016
+    Mouse and Keyboard classes updated with IsConnected method
+    Windows10 project /ZW switch removed to support use in C++/WinRT projection apps
+    VS 2017 RC projects added
+    Updated D3DX12 internal copy to latest version
+    Minor code cleanup
 
 October 6, 2016
     SDKMESH loader and BasicEffects support for compressed vertex normals with biasing
