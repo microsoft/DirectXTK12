@@ -248,12 +248,12 @@ namespace
             if (width > height)
             {
                 twidth = static_cast<UINT>(maxsize);
-                theight = static_cast<UINT>(static_cast<float>(maxsize) * ar);
+                theight = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) * ar));
             }
             else
             {
                 theight = static_cast<UINT>(maxsize);
-                twidth = static_cast<UINT>(static_cast<float>(maxsize) / ar);
+                twidth = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) / ar));
             }
             assert(twidth <= maxsize && theight <= maxsize);
         }
