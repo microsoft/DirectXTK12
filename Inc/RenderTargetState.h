@@ -28,27 +28,27 @@ namespace DirectX
     class RenderTargetState
     {
     public:
-        RenderTargetState::RenderTargetState()
-            : sampleDesc{}
-            , rtvFormats{}
-            , sampleMask(~0U)
+        RenderTargetState()
+            : sampleMask(~0U)
             , numRenderTargets(0)
+            , rtvFormats{}
             , dsvFormat(DXGI_FORMAT_UNKNOWN)
+            , sampleDesc{}
             , nodeMask(0)
         {
         }
 
-        RenderTargetState::RenderTargetState(const RenderTargetState& o) = default;
+        RenderTargetState(const RenderTargetState&) = default;
 
         // Single render target convenience constructor
-        RenderTargetState::RenderTargetState(
+        RenderTargetState(
             _In_ DXGI_FORMAT rtFormat,
             _In_ DXGI_FORMAT dsFormat)
             : sampleMask(UINT_MAX)
-            , sampleDesc{}
-            , rtvFormats{}
             , numRenderTargets(1)
+            , rtvFormats{}
             , dsvFormat(dsFormat)
+            , sampleDesc{}
             , nodeMask(0)
         {
             sampleDesc.Count = 1;
@@ -56,14 +56,14 @@ namespace DirectX
         }
 
         // Convenience constructor converting from DXGI_SWAPCHAIN_DESC
-        RenderTargetState::RenderTargetState(
+        RenderTargetState(
             _In_ const DXGI_SWAP_CHAIN_DESC* desc,
             _In_ DXGI_FORMAT dsFormat)
             : sampleMask(UINT_MAX)
-            , sampleDesc{}
-            , rtvFormats{}
             , numRenderTargets(1)
+            , rtvFormats{}
             , dsvFormat(dsFormat)
+            , sampleDesc{}
             , nodeMask(0)
         {
             rtvFormats[0] = desc->BufferDesc.Format;
