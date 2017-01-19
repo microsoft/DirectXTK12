@@ -112,7 +112,7 @@ const D3D12_DEPTH_STENCIL_DESC CommonStates::DepthNone =
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
         D3D12_STENCIL_OP_KEEP, // StencilPassOp
         D3D12_COMPARISON_FUNC_ALWAYS // StencilFunc
-    }, // FrontFace,
+    }, // FrontFace
     {
         D3D12_STENCIL_OP_KEEP, // StencilFailOp
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
@@ -134,7 +134,7 @@ const D3D12_DEPTH_STENCIL_DESC CommonStates::DepthDefault =
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
         D3D12_STENCIL_OP_KEEP, // StencilPassOp
         D3D12_COMPARISON_FUNC_ALWAYS // StencilFunc
-    }, // FrontFace,
+    }, // FrontFace
     {
         D3D12_STENCIL_OP_KEEP, // StencilFailOp
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
@@ -156,7 +156,7 @@ const D3D12_DEPTH_STENCIL_DESC CommonStates::DepthRead =
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
         D3D12_STENCIL_OP_KEEP, // StencilPassOp
         D3D12_COMPARISON_FUNC_ALWAYS // StencilFunc
-    }, // FrontFace,
+    }, // FrontFace
     {
         D3D12_STENCIL_OP_KEEP, // StencilFailOp
         D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp

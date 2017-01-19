@@ -225,9 +225,63 @@ const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeHeap 
 
 const D3D12_INPUT_LAYOUT_DESC SpriteBatch::Impl::s_DefaultInputLayoutDesc = VertexPositionColorTexture::InputLayout;
 
-const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc = {FALSE, FALSE, {TRUE, FALSE, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_LOGIC_OP_CLEAR, D3D12_COLOR_WRITE_ENABLE_ALL}};
-const D3D12_RASTERIZER_DESC SpriteBatchPipelineStateDescription::s_DefaultRasterizerDesc = {D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_NONE, FALSE, 0, 0, 0, FALSE, FALSE, FALSE, 0, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF};
-const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDepthStencilDesc = {FALSE, D3D12_DEPTH_WRITE_MASK_ALL, D3D12_COMPARISON_FUNC_ALWAYS, FALSE, 0, 0};
+// Matches CommonStates::AlphaBlend
+const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc =
+{
+    FALSE, // AlphaToCoverageEnable
+    FALSE, // IndependentBlendEnable
+    {
+        TRUE, // BlendEnable
+        FALSE, // LogicOpEnable
+        D3D12_BLEND_ONE, // SrcBlend
+        D3D12_BLEND_INV_SRC_ALPHA, // DestBlend
+        D3D12_BLEND_OP_ADD, // BlendOp
+        D3D12_BLEND_ONE, // SrcBlendAlpha
+        D3D12_BLEND_INV_SRC_ALPHA, // DestBlendAlpha
+        D3D12_BLEND_OP_ADD, // BlendOpAlpha
+        D3D12_LOGIC_OP_NOOP,
+        D3D12_COLOR_WRITE_ENABLE_ALL
+    }
+};
+
+// Same to CommonStates::CullCounterClockwise
+const D3D12_RASTERIZER_DESC SpriteBatchPipelineStateDescription::s_DefaultRasterizerDesc =
+{
+    D3D12_FILL_MODE_SOLID,
+    D3D12_CULL_MODE_BACK,
+    FALSE, // FrontCounterClockwise
+    D3D12_DEFAULT_DEPTH_BIAS,
+    D3D12_DEFAULT_DEPTH_BIAS_CLAMP,
+    D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS,
+    TRUE, // DepthClipEnable
+    TRUE, // MultisampleEnable
+    FALSE, // AntialiasedLineEnable
+    0, // ForcedSampleCount
+    D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF
+};
+
+// Same as CommonStates::DepthNone
+const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDepthStencilDesc =
+{
+    FALSE, // DepthEnable
+    D3D12_DEPTH_WRITE_MASK_ZERO,
+    D3D12_COMPARISON_FUNC_LESS_EQUAL, // DepthFunc
+    FALSE, // StencilEnable
+    D3D12_DEFAULT_STENCIL_READ_MASK,
+    D3D12_DEFAULT_STENCIL_WRITE_MASK,
+    {
+        D3D12_STENCIL_OP_KEEP, // StencilFailOp
+        D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
+        D3D12_STENCIL_OP_KEEP, // StencilPassOp
+        D3D12_COMPARISON_FUNC_ALWAYS // StencilFunc
+    }, // FrontFace
+    {
+        D3D12_STENCIL_OP_KEEP, // StencilFailOp
+        D3D12_STENCIL_OP_KEEP, // StencilDepthFailOp
+        D3D12_STENCIL_OP_KEEP, // StencilPassOp
+        D3D12_COMPARISON_FUNC_ALWAYS // StencilFunc
+    } // BackFace
+};
 
 // Per-device constructor.
 SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
@@ -284,6 +338,7 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
     CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
     {
+        // Same as CommonStates::StaticLinearClamp
         CD3DX12_STATIC_SAMPLER_DESC sampler(
             0, // register
             D3D12_FILTER_MIN_MAG_MIP_LINEAR,
