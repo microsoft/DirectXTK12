@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-December 5, 2016
+February 10, 2017
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -94,6 +94,15 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+February 10, 2017
+    SpriteBatch default rasterizer state now matches DirectX 11 version
+    DDSTextureLoader now supports loading planar video format textures
+    GamePad now supports special value of -1 for 'most recently connected controller'
+    WIC format 40bppCMYKAlpha should be converted to RGBA8 rather than RGBA16
+    DDS support for L8A8 with bitcount 8 rather than 16
+    Updated D3DX12 internal copy to latest version
+    Minor code cleanup
 
 December 5, 2016
     Mouse and Keyboard classes updated with IsConnected method
