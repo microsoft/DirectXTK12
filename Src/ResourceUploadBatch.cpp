@@ -74,7 +74,7 @@ namespace
         }
     }
 
-    bool FormatRequiresSwizzle(DXGI_FORMAT format)
+    bool FormatIsBGR(DXGI_FORMAT format)
     {
         switch (format)
         {
@@ -329,7 +329,7 @@ public:
         {
             throw std::exception("GenerateMips only supports 2D textures of array size 1");
         }
-        if (!FormatIsUAVCompatible(desc.Format) && !FormatIsSRGB(desc.Format) && !FormatRequiresSwizzle(desc.Format))
+        if (!FormatIsUAVCompatible(desc.Format) && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
         {
             throw std::exception("GenerateMips doesn't support this texture format");
         }
@@ -341,10 +341,14 @@ public:
         }
 
         // If the texture's format doesn't support UAVs we'll have to copy it to a texture that does first.
-        // This is true of BGRA (which need swizzling) or sRGB textures (which need de-gamma), for example. 
+        // This is true of BGRA or sRGB textures, for example. 
         if (FormatIsUAVCompatible(desc.Format))
         {
             GenerateMips_UnorderedAccessPath(resource);
+        }
+        else if (FormatIsBGR(desc.Format))
+        {
+            GenerateMips_TexturePathBGR(resource);
         }
         else
         {
@@ -430,8 +434,7 @@ private:
         _In_ ID3D12Resource* resource)
     {
         const auto& desc = resource->GetDesc();
-
-        assert(!FormatRequiresSwizzle(desc.Format) && !FormatIsSRGB(desc.Format));
+        assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
 
         CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -604,7 +607,7 @@ private:
         _In_ ID3D12Resource* resource)
     {
         const auto& resourceDesc = resource->GetDesc();
-        assert(FormatRequiresSwizzle(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
+        assert(!FormatIsBGR(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
 
         auto copyDesc = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -640,6 +643,77 @@ private:
 
         // Track these object lifetimes on the GPU
         mTrackedObjects.push_back(resourceCopy);
+        mTrackedObjects.push_back(resource);
+    }
+
+    // Resource is not UAV compatible (copy via alias to avoid validation failure)
+    void GenerateMips_TexturePathBGR(
+        _In_ ID3D12Resource* resource)
+    {
+        const auto& resourceDesc = resource->GetDesc();
+        assert(FormatIsBGR(resourceDesc.Format));
+
+        // Create a resource with the same description, but without SRGB, and with UAV flags
+        auto copyDesc = resourceDesc;
+        copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+        D3D12_HEAP_DESC heapDesc = {};
+        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
+        heapDesc.SizeInBytes = allocInfo.SizeInBytes;
+        heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
+        heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+        heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+        heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+        ComPtr<ID3D12Heap> heap;
+        ThrowIfFailed(mDevice->CreateHeap(&heapDesc, IID_GRAPHICS_PPV_ARGS(heap.GetAddressOf())));
+
+        ComPtr<ID3D12Resource> resourceCopy;
+        ThrowIfFailed(mDevice->CreatePlacedResource(
+            heap.Get(),
+            0,
+            &copyDesc,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(resourceCopy.GetAddressOf())));
+
+        SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
+
+        // Create a BGRA alias
+        auto aliasDesc = resourceDesc;
+        aliasDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+        ComPtr<ID3D12Resource> aliasCopy;
+        ThrowIfFailed(mDevice->CreatePlacedResource(
+            heap.Get(),
+            0,
+            &aliasDesc,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(aliasCopy.GetAddressOf())));
+
+        // Copy the resource data
+        AliasBarrier(nullptr, aliasCopy.Get());
+        Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        mList->CopyResource(aliasCopy.Get(), resource);
+
+        // Generate the mips
+        AliasBarrier(aliasCopy.Get(), resourceCopy.Get());
+        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+        GenerateMips_UnorderedAccessPath(resourceCopy.Get());
+
+        // Direct copy back
+        AliasBarrier(resourceCopy.Get(), aliasCopy.Get());
+        Transition(aliasCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+        mList->CopyResource(resource, aliasCopy.Get());
+        Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+        // Track these object lifetimes on the GPU
+        mTrackedObjects.push_back(heap);
+        mTrackedObjects.push_back(resourceCopy);
+        mTrackedObjects.push_back(aliasCopy);
         mTrackedObjects.push_back(resource);
     }
 
