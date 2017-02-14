@@ -36,7 +36,7 @@ namespace
     //--------------------------------------------------------------------------------------
     // Default XMemAlloc attributes for texture loading
     //--------------------------------------------------------------------------------------
-    static const uint64_t c_XMemAllocAttributes = MAKE_XALLOC_ATTRIBUTES(
+    const uint64_t c_XMemAllocAttributes = MAKE_XALLOC_ATTRIBUTES(
         eXALLOCAllocatorId_MiddlewareReservedMin,
         0,
         XALLOC_MEMTYPE_GRAPHICS_WRITECOMBINE_GPU_READONLY,
@@ -238,11 +238,11 @@ namespace
         desc.Flags = D3D12_RESOURCE_FLAG_NONE;
         desc.SampleDesc.Count = 1;
         desc.SampleDesc.Quality = 0;
-        desc.Dimension = (D3D12_RESOURCE_DIMENSION)xboxext->resourceDimension;
-        desc.Layout = (D3D12_TEXTURE_LAYOUT)(0x100 | xboxext->tileMode);
+        desc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(xboxext->resourceDimension);
+        desc.Layout = static_cast<D3D12_TEXTURE_LAYOUT>(0x100 | xboxext->tileMode);
 
         hr = d3dDevice->CreatePlacedResourceX(
-            (D3D12_GPU_VIRTUAL_ADDRESS)grfxMemory,
+            reinterpret_cast<D3D12_GPU_VIRTUAL_ADDRESS>(grfxMemory),
             &desc,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
             nullptr,
@@ -399,9 +399,8 @@ namespace
         }
 
         // Allocate graphics memory. Depending on the data size it uses 4MB or 64K pages.
-        static const uint32_t FOUR_MB = 4 * 1024 * 1024;
         *grfxMemory = XMemAlloc(xboxext->dataSize, c_XMemAllocAttributes);
-        if (*grfxMemory == nullptr)
+        if (!*grfxMemory)
             return E_OUTOFMEMORY;
 
         // Copy tiled data into graphics memory
@@ -614,10 +613,10 @@ HRESULT Xbox::CreateDDSTextureFromFile(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-void Xbox::FreeDDSTextureMemory(void* memory)
+void Xbox::FreeDDSTextureMemory(void* grfxMemory)
 {
-    if (memory != nullptr)
+    if (grfxMemory)
     {
-        XMemFree(memory, c_XMemAllocAttributes);
+        XMemFree(grfxMemory, c_XMemAllocAttributes);
     }
 }

@@ -65,7 +65,7 @@ namespace Xbox
         _In_ ID3D12Device* d3dDevice,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         _In_ size_t ddsDataSize,
-        _Outptr_ ID3D12Resource** texture,
+        _Outptr_opt_ ID3D12Resource** texture,
         _Outptr_ void** grfxMemory,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr, 
         _In_ bool forceSRGB = false,
@@ -74,11 +74,11 @@ namespace Xbox
     HRESULT __cdecl CreateDDSTextureFromFile( 
         _In_ ID3D12Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
-        _Outptr_ ID3D12Resource** texture,
+        _Outptr_opt_ ID3D12Resource** texture,
         _Outptr_ void** grfxMemory,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _In_ bool forceSRGB = false,
         _Out_opt_ bool* isCubeMap = nullptr);
 
-    void FreeDDSTextureMemory(_In_opt_ void* ddsTextureMemory);
+    void FreeDDSTextureMemory(_In_opt_ void* grfxMemory);
 }
