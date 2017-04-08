@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-February 10, 2017
+April 7, 2017
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -94,6 +94,10 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+April 7, 2017
+    VS 2017 updated for Windows Creators Update SDK (15063)
+    XboxDDSTextureLoader updates
 
 February 10, 2017
     SpriteBatch default rasterizer state now matches DirectX 11 version
