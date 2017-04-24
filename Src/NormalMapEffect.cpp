@@ -319,6 +319,11 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         }
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSpecularSRV, specular);
     }
+    else
+    {
+        // Set unused texture slot to void validation warning on Tier 1 hardware
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSpecularSRV, texture);
+    }
 
     // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
