@@ -46,10 +46,10 @@ struct NormalMapEffectTraits
 {
     typedef NormalMapEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 4;
+    static const int VertexShaderCount = 8;
     static const int PixelShaderCount = 4;
     static const int ShaderPermutationCount = 16;
-    static const int RootSignatureCount = 1;
+    static const int RootSignatureCount = 2;
 };
 
 
@@ -62,10 +62,10 @@ public:
     enum RootParameterIndex
     {
         TextureSRV,
-        TextureSpecularSRV,
         TextureNormalSRV,
         TextureSampler,
         ConstantBuffer,
+        TextureSpecularSRV,
         RootParameterCount
     };
 
@@ -91,9 +91,13 @@ namespace
 #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc"
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc"
 
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxBn.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc"
+    #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc"
 
     #include "Shaders/Compiled/XboxOneNormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
@@ -102,9 +106,13 @@ namespace
 #else    
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVc.inc"
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc"
 
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxBn.inc"
     #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc"
+    #include "Shaders/Compiled/NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc"
 
     #include "Shaders/Compiled/NormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/NormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
@@ -116,11 +124,17 @@ namespace
 
 const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[] =
 {
-    { NormalMapEffect_VSNormalPixelLightingTx,     sizeof(NormalMapEffect_VSNormalPixelLightingTx)     },
-    { NormalMapEffect_VSNormalPixelLightingTxVc,   sizeof(NormalMapEffect_VSNormalPixelLightingTxVc)   },
+    { NormalMapEffect_VSNormalPixelLightingTx,           sizeof(NormalMapEffect_VSNormalPixelLightingTx)           },
+    { NormalMapEffect_VSNormalPixelLightingTxVc,         sizeof(NormalMapEffect_VSNormalPixelLightingTxVc)         },
 
-    { NormalMapEffect_VSNormalPixelLightingTxBn,   sizeof(NormalMapEffect_VSNormalPixelLightingTxBn)   },
-    { NormalMapEffect_VSNormalPixelLightingTxVcBn, sizeof(NormalMapEffect_VSNormalPixelLightingTxVcBn) },
+    { NormalMapEffect_VSNormalPixelLightingTxBn,         sizeof(NormalMapEffect_VSNormalPixelLightingTxBn)         },
+    { NormalMapEffect_VSNormalPixelLightingTxVcBn,       sizeof(NormalMapEffect_VSNormalPixelLightingTxVcBn)       },
+
+    { NormalMapEffect_VSNormalPixelLightingTxNoSpec,     sizeof(NormalMapEffect_VSNormalPixelLightingTxNoSpec)     },
+    { NormalMapEffect_VSNormalPixelLightingTxVcNoSpec,   sizeof(NormalMapEffect_VSNormalPixelLightingTxVcNoSpec)   },
+
+    { NormalMapEffect_VSNormalPixelLightingTxNoSpecBn,   sizeof(NormalMapEffect_VSNormalPixelLightingTxNoSpecBn)   },
+    { NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn, sizeof(NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn) },
 };
 
 
@@ -131,20 +145,20 @@ const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
     1,     // pixel lighting + texture + vertex color
     1,     // pixel lighting + texture + vertex color, no fog
 
-    0,     // pixel lighting + texture, no specular
-    0,     // pixel lighting + texture, no fog or specular
-    1,     // pixel lighting + texture + vertex color, no specular
-    1,     // pixel lighting + texture + vertex color, no fog or specular
+    4,     // pixel lighting + texture, no specular
+    4,     // pixel lighting + texture, no fog or specular
+    5,     // pixel lighting + texture + vertex color, no specular
+    5,     // pixel lighting + texture + vertex color, no fog or specular
 
     2,     // pixel lighting (biased vertex normal/tangent) + texture
     2,     // pixel lighting (biased vertex normal/tangent) + texture, no fog
     3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color
     3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog
 
-    2,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
-    2,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
-    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
-    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
+    6,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
+    6,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
+    7,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
+    7,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
 };
 
 
@@ -213,19 +227,29 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
 
         CD3DX12_DESCRIPTOR_RANGE textureSRV2(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        rootParameters[RootParameterIndex::TextureSpecularSRV].InitAsDescriptorTable(1, &textureSRV2);
-
-        CD3DX12_DESCRIPTOR_RANGE textureSRV3(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
-        rootParameters[RootParameterIndex::TextureNormalSRV].InitAsDescriptorTable(1, &textureSRV3);
+        rootParameters[RootParameterIndex::TextureNormalSRV].InitAsDescriptorTable(1, &textureSRV2);
 
         CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
         rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-        mRootSignature = GetRootSignature(0, rsigDesc);
+        if (specularMap)
+        {
+            CD3DX12_DESCRIPTOR_RANGE textureSRV3(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
+            rootParameters[RootParameterIndex::TextureSpecularSRV].InitAsDescriptorTable(1, &textureSRV3);
+
+            rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(1, rsigDesc);
+        }
+        else
+        {
+            rsigDesc.Init(_countof(rootParameters) - 1, rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(0, rsigDesc);
+        }
     }
 
     assert(mRootSignature != 0);
@@ -271,7 +295,7 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) 
     }
 
     // Specular map?
-    if (specularMap)
+    if (!specularMap)
     {
         permutation += 4;
     }
@@ -318,11 +342,6 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
             throw std::exception("NormalMapEffect");
         }
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSpecularSRV, specular);
-    }
-    else
-    {
-        // Set unused texture slot to void validation warning on Tier 1 hardware
-        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSpecularSRV, texture);
     }
 
     // Set constants

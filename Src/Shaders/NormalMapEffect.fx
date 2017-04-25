@@ -10,8 +10,8 @@
 
 
 Texture2D<float4> Texture : register(t0);
-Texture2D<float3> SpecularTexture : register(t1);
-Texture2D<float3> NormalTexture : register(t2);
+Texture2D<float3> NormalTexture : register(t1);
+Texture2D<float3> SpecularTexture : register(t2);
 
 sampler Sampler : register(s0);
 
@@ -60,6 +60,14 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTx(VSInputNmTxTangent vin)
     return vout;
 }
 
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxNoSpec(VSInputNmTxTangent vin)
+{
+    return VSNormalPixelLightingTx(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture (biased normal).
 [RootSignature(NormalMapRS)]
 VSOutputPixelLightingTxTangent VSNormalPixelLightingTxBn(VSInputNmTxTangent vin)
 {
@@ -81,6 +89,11 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTxBn(VSInputNmTxTangent vin)
     return vout;
 }
 
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxNoSpecBn(VSInputNmTxTangent vin)
+{
+    return VSNormalPixelLightingTxBn(vin);
+}
 
 // Vertex shader: pixel lighting + texture + vertex color.
 [RootSignature(NormalMapRS)]
@@ -101,6 +114,13 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVc(VSInputNmTxVcTangent vi
     return vout;
 }
 
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVcNoSpec(VSInputNmTxVcTangent vin)
+{
+    return VSNormalPixelLightingTxVc(vin);
+}
+
+// Vertex shader: pixel lighting + texture + vertex color (biased normal).
 [RootSignature(NormalMapRS)]
 VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVcBn(VSInputNmTxVcTangent vin)
 {
@@ -123,6 +143,11 @@ VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVcBn(VSInputNmTxVcTangent 
     return vout;
 }
 
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTxTangent VSNormalPixelLightingTxVcNoSpecBn(VSInputNmTxVcTangent vin)
+{
+    return VSNormalPixelLightingTxVcBn(vin);
+}
 
 // Pixel shader: pixel lighting + texture + no fog
 [RootSignature(NormalMapRS)]
@@ -175,7 +200,7 @@ float4 PSNormalPixelLightingTx(PSInputPixelLightingTxTangent pin) : SV_Target0
 
 
 // Pixel shader: pixel lighting + texture + no fog + no specular
-[RootSignature(NormalMapRS)]
+[RootSignature(NormalMapRSNoSpec)]
 float4 PSNormalPixelLightingTxNoFogSpec(PSInputPixelLightingTxTangent pin) : SV_Target0
 {
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
@@ -198,7 +223,7 @@ float4 PSNormalPixelLightingTxNoFogSpec(PSInputPixelLightingTxTangent pin) : SV_
 }
 
 // Pixel shader: pixel lighting + texture + no specular
-[RootSignature(NormalMapRS)]
+[RootSignature(NormalMapRSNoSpec)]
 float4 PSNormalPixelLightingTxNoSpec(PSInputPixelLightingTxTangent pin) : SV_Target0
 {
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);

@@ -25,7 +25,7 @@ dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB0[14], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
-dcl_resource_texture2d (float,float,float,float) t2
+dcl_resource_texture2d (float,float,float,float) t1
 dcl_input_ps linear v0.xy
 dcl_input_ps linear v1.xyzw
 dcl_input_ps linear v2.xyz
@@ -41,7 +41,7 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.wwww, v3.xyzx
 mul r2.xyz, r0.zxyz, r1.yzxy
 mad r2.xyz, r0.yzxy, r1.zxyz, -r2.xyzx
-sample_indexable(texture2d)(float,float,float,float) r3.xyz, v0.xyxx, t2.xyzw, s0
+sample_indexable(texture2d)(float,float,float,float) r3.xyz, v0.xyxx, t1.xyzw, s0
 mad r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000), l(-1.000000, -1.000000, -1.000000, 0.000000)
 mul r2.xyz, r2.xyzx, r3.yyyy
 mad r1.xyz, r3.xxxx, r1.xyzx, r2.xyzx
@@ -97,11 +97,11 @@ ret
 
 const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
 {
-     68,  88,  66,  67, 245, 245, 
-    193,   7, 155, 184,  12,  59, 
-     56, 221, 121,  38, 203,  79, 
-    137,  46,   1,   0,   0,   0, 
-    196,   9,   0,   0,   4,   0, 
+     68,  88,  66,  67, 121, 116, 
+    186,  89, 234, 243, 112,  23, 
+    156, 158,  87,   3,   9, 208, 
+     64,   3,   1,   0,   0,   0, 
+    156,   9,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     200,   0,   0,   0, 252,   0, 
       0,   0, 240,   8,   0,   0, 
@@ -151,7 +151,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
      16,   0,   0,   0,   0,   0, 
      85,  85,   0,   0,  88,  24, 
       0,   4,   0, 112,  16,   0, 
-      2,   0,   0,   0,  85,  85, 
+      1,   0,   0,   0,  85,  85, 
       0,   0,  98,  16,   0,   3, 
      50,  16,  16,   0,   0,   0, 
       0,   0,  98,  16,   0,   3, 
@@ -207,7 +207,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
      21,   0, 114,   0,  16,   0, 
       3,   0,   0,   0,  70,  16, 
      16,   0,   0,   0,   0,   0, 
-     70, 126,  16,   0,   2,   0, 
+     70, 126,  16,   0,   1,   0, 
       0,   0,   0,  96,  16,   0, 
       0,   0,   0,   0,  50,   0, 
       0,  15, 114,   0,  16,   0, 
@@ -479,39 +479,32 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
       0,   0,  58,   0,  16,   0, 
       2,   0,   0,   0,  62,   0, 
       0,   1,  82,  84,  83,  48, 
-    204,   0,   0,   0,   1,   0, 
-      0,   0,   5,   0,   0,   0, 
+    164,   0,   0,   0,   1,   0, 
+      0,   0,   4,   0,   0,   0, 
      24,   0,   0,   0,   0,   0, 
-      0,   0, 204,   0,   0,   0, 
+      0,   0, 164,   0,   0,   0, 
      29,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-     84,   0,   0,   0,   0,   0, 
+     72,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-    112,   0,   0,   0,   0,   0, 
+    100,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-    140,   0,   0,   0,   0,   0, 
+    128,   0,   0,   0,   2,   0, 
       0,   0,   0,   0,   0,   0, 
-    168,   0,   0,   0,   2,   0, 
-      0,   0,   0,   0,   0,   0, 
-    196,   0,   0,   0,   1,   0, 
-      0,   0,  92,   0,   0,   0, 
+    156,   0,   0,   0,   1,   0, 
+      0,   0,  80,   0,   0,   0, 
       0,   0,   0,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0, 255, 255, 
     255, 255,   1,   0,   0,   0, 
-    120,   0,   0,   0,   0,   0, 
+    108,   0,   0,   0,   0,   0, 
       0,   0,   1,   0,   0,   0, 
       1,   0,   0,   0,   0,   0, 
       0,   0, 255, 255, 255, 255, 
-      1,   0,   0,   0, 148,   0, 
+      1,   0,   0,   0, 136,   0, 
+      0,   0,   3,   0,   0,   0, 
+      1,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      1,   0,   0,   0,   2,   0, 
-      0,   0,   0,   0,   0,   0, 
-    255, 255, 255, 255,   1,   0, 
-      0,   0, 176,   0,   0,   0, 
-      3,   0,   0,   0,   1,   0, 
-      0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0, 255, 255, 
-    255, 255,   0,   0,   0,   0, 
-      0,   0,   0,   0
+    255, 255, 255, 255,   0,   0, 
+      0,   0,   0,   0,   0,   0
 };

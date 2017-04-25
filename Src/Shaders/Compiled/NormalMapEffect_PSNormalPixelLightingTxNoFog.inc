@@ -42,7 +42,7 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.wwww, v3.xyzx
 mul r2.xyz, r0.zxyz, r1.yzxy
 mad r2.xyz, r0.yzxy, r1.zxyz, -r2.xyzx
-sample_indexable(texture2d)(float,float,float,float) r3.xyz, v0.xyxx, t2.xyzw, s0
+sample_indexable(texture2d)(float,float,float,float) r3.xyz, v0.xyxx, t1.xyzw, s0
 mad r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000), l(-1.000000, -1.000000, -1.000000, 0.000000)
 mul r2.xyz, r2.xyzx, r3.yyyy
 mad r1.xyz, r3.xxxx, r1.xyzx, r2.xyzx
@@ -81,7 +81,7 @@ mul r2.xyz, r1.yyyy, cb0[10].xyzx
 mad r1.xyw, r1.xxxx, cb0[9].xyxz, r2.xyxz
 mad r1.xyz, r1.zzzz, cb0[11].xyzx, r1.xywx
 mul r1.xyz, r1.xyzx, cb0[2].xyzx
-sample_indexable(texture2d)(float,float,float,float) r2.xyz, v0.xyxx, t1.xyzw, s0
+sample_indexable(texture2d)(float,float,float,float) r2.xyz, v0.xyxx, t2.xyzw, s0
 mul r1.xyz, r1.xyzx, r2.xyzx
 sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v0.xyxx, t0.xyzw, s0
 mul r2.xyzw, r2.xyzw, v4.xyzw
@@ -98,10 +98,10 @@ ret
 
 const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
 {
-     68,  88,  66,  67, 155, 144, 
-     30, 193, 114, 126, 148, 168, 
-    172, 171,  87,  43,  94,  51, 
-    202,  17,   1,   0,   0,   0, 
+     68,  88,  66,  67,  42, 169, 
+    244,  57, 144,  69,  29,  18, 
+    186,  46, 253,  17,  81, 255, 
+    230, 210,   1,   0,   0,   0, 
     204,   9,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     200,   0,   0,   0, 252,   0, 
@@ -211,7 +211,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
     114,   0,  16,   0,   3,   0, 
       0,   0,  70,  16,  16,   0, 
       0,   0,   0,   0,  70, 126, 
-     16,   0,   2,   0,   0,   0, 
+     16,   0,   1,   0,   0,   0, 
       0,  96,  16,   0,   0,   0, 
       0,   0,  50,   0,   0,  15, 
     114,   0,  16,   0,   3,   0, 
@@ -421,7 +421,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
     114,   0,  16,   0,   2,   0, 
       0,   0,  70,  16,  16,   0, 
       0,   0,   0,   0,  70, 126, 
-     16,   0,   1,   0,   0,   0, 
+     16,   0,   2,   0,   0,   0, 
       0,  96,  16,   0,   0,   0, 
       0,   0,  56,   0,   0,   7, 
     114,   0,  16,   0,   1,   0, 
@@ -492,10 +492,10 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
       0,   0, 112,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0, 140,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
-      0,   0, 168,   0,   0,   0, 
       2,   0,   0,   0,   0,   0, 
-      0,   0, 196,   0,   0,   0, 
+      0,   0, 168,   0,   0,   0, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0, 176,   0,   0,   0, 
       1,   0,   0,   0,  92,   0, 
       0,   0,   0,   0,   0,   0, 
       1,   0,   0,   0,   0,   0, 
@@ -506,14 +506,14 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
       0,   0,   1,   0,   0,   0, 
       0,   0,   0,   0, 255, 255, 
     255, 255,   1,   0,   0,   0, 
-    148,   0,   0,   0,   0,   0, 
+    148,   0,   0,   0,   3,   0, 
+      0,   0,   1,   0,   0,   0, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0, 255, 255, 255, 255, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0,   1,   0,   0,   0, 
+    184,   0,   0,   0,   0,   0, 
       0,   0,   1,   0,   0,   0, 
       2,   0,   0,   0,   0,   0, 
-      0,   0, 255, 255, 255, 255, 
-      1,   0,   0,   0, 176,   0, 
-      0,   0,   3,   0,   0,   0, 
-      1,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
-    255, 255, 255, 255,   0,   0, 
-      0,   0,   0,   0,   0,   0
+      0,   0, 255, 255, 255, 255
 };

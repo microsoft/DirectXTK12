@@ -247,10 +247,18 @@
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTx.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxBn.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxBn.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcBn.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcBn.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedPixelLighting.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc" />
@@ -482,8 +490,6 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="ATGEnsureShaders" BeforeTargets="PrepareForBuild">
-    <Exec Condition="!Exists('src/Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShader.inc')"
-        WorkingDirectory="$(ProjectDir)src/Shaders"
-        Command="CompileShaders xbox" />
+    <Exec Condition="!Exists('src/Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders xbox" />
   </Target>
 </Project>
