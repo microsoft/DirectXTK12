@@ -137,7 +137,20 @@ call :CompileShader%1 SpriteEffect ps SpritePixelShader
 call :CompileShader%1 SpriteEffect vs SpriteVertexShaderHeap
 call :CompileShader%1 SpriteEffect ps SpritePixelShaderHeap
 
+call :CompileShader%1 PostProcess vs VSQuad
+call :CompileShader%1 PostProcess ps PSCopy
+call :CompileShader%1 PostProcess ps PSMonochrome
+call :CompileShader%1 PostProcess ps PSSepia
+call :CompileShader%1 PostProcess ps PSDownScale2x2
+call :CompileShader%1 PostProcess ps PSDownScale4x4
+call :CompileShader%1 PostProcess ps PSGaussianBlur5x5
+call :CompileShader%1 PostProcess ps PSBloomExtract
+call :CompileShader%1 PostProcess ps PSBloomBlur
+call :CompileShader%1 PostProcess ps PSMerge
+call :CompileShader%1 PostProcess ps PSBloomCombine
+
 call :CompileComputeShader%1 GenerateMips main
+
 echo.
 
 if %error% == 0 (
