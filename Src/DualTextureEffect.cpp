@@ -147,10 +147,10 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderBytecode) == DualTextureEffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     
-    // Create root signature
+    // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -179,7 +179,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
 
     assert(mRootSignature != 0);
 
-    // Validate flags & state
+    // Validate flags & state.
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
     if (effectFlags & EffectFlags::PerPixelLightingBit)
@@ -193,7 +193,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         throw std::invalid_argument("DualTextureEffect");
     }
 
-    // Create pipeline state
+    // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
@@ -208,7 +208,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         mRootSignature,
         EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
-        mPipelineState.ReleaseAndGetAddressOf());
+        mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"DualTextureEffect");
 }

@@ -121,8 +121,7 @@ namespace DirectX
         static void EnableDefaultLighting(_In_ IEffectLights* effect);
     };
 
-    // Factory for lazily instantiating shaders. BasicEffect supports many different
-    // shader permutations, so we only bother creating the ones that are actually used.
+    // Factory for lazily instantiating shared root signatures.
     class EffectDeviceResources
     {
     public:

@@ -255,10 +255,10 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         constants.bones[i][2] = g_XMIdentityR2;
     }
 
-    // Create root signature
+    // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -288,7 +288,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         throw std::invalid_argument("SkinnedEffect");
     }
 
-    // Create pipeline state
+    // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
@@ -303,7 +303,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         mRootSignature,
         EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<SkinnedEffectTraits>::PixelShaderBytecode[pi],
-        mPipelineState.ReleaseAndGetAddressOf());
+        mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"SkinnedEffect");
 }

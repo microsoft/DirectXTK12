@@ -160,10 +160,10 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
 
-    // Create root signature
+    // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -197,7 +197,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         throw std::invalid_argument("AlphaTestEffect");
     }
 
-    // Create pipeline state
+    // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
@@ -212,7 +212,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         mRootSignature,
         EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
-        mPipelineState.ReleaseAndGetAddressOf());
+        mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"AlphaTestEffect");
 }

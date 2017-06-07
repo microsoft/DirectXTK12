@@ -214,10 +214,10 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
 
     lights.InitializeConstants(constants.specularColorAndPower, constants.lightDirection, constants.lightDiffuseColor, constants.lightSpecularColor);
 
-    // Create root signature
+    // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -257,7 +257,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
     biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
-    // Create pipeline state
+    // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
@@ -272,7 +272,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
         mRootSignature,
         EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[pi],
-        mPipelineState.ReleaseAndGetAddressOf());
+        mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"NormalMapEffect");
 }

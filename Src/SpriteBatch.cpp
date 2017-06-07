@@ -330,7 +330,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
 void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device* device)
 {
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -469,7 +469,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
 
     ThrowIfFailed(device->CreateGraphicsPipelineState(
         &d3dDesc,
-        IID_GRAPHICS_PPV_ARGS(mPSO.ReleaseAndGetAddressOf())));
+        IID_GRAPHICS_PPV_ARGS(mPSO.GetAddressOf())));
 
     SetDebugObjectName(mPSO.Get(), L"SpriteBatch");
 }
