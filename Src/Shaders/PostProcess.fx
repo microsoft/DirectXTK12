@@ -22,9 +22,11 @@ cbuffer Parameters : register(b0)
 
 
 #include "Structures.fxh"
+#include "RootSig.fxh"
 
 
 // Vertex shader: self-created quad.
+[RootSignature(PostProcessRS)]
 VSInputTx VSQuad(uint vI : SV_VertexId)
 {
     VSInputTx vout;
@@ -36,9 +38,22 @@ VSInputTx VSQuad(uint vI : SV_VertexId)
     return vout;
 }
 
+[RootSignature(PostProcessRSNoCB)]
+VSInputTx VSQuadNoCB(uint vI : SV_VertexId)
+{
+    return VSQuad(vI);
+}
+
+[RootSignature(DualPostProcessRS)]
+VSInputTx VSQuadDual(uint vI : SV_VertexId)
+{
+    return VSQuad(vI);
+}
+
 
 //--------------------------------------------------------------------------------------
 // Pixel shader: copy.
+[RootSignature(PostProcessRSNoCB)]
 float4 PSCopy(VSInputTx pin) : SV_Target0
 {
     float4 color = Texture.Sample(Sampler, pin.TexCoord);
@@ -47,6 +62,7 @@ float4 PSCopy(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: monochrome.
+[RootSignature(PostProcessRSNoCB)]
 float4 PSMonochrome(VSInputTx pin) : SV_Target0
 {
     float4 color = Texture.Sample(Sampler, pin.TexCoord);
@@ -57,6 +73,7 @@ float4 PSMonochrome(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: sepia.
+[RootSignature(PostProcessRSNoCB)]
 float4 PSSepia(VSInputTx pin) : SV_Target0
 {
     float4 color = Texture.Sample(Sampler, pin.TexCoord);
@@ -74,6 +91,7 @@ float4 PSSepia(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: down-sample 2x2.
+[RootSignature(PostProcessRS)]
 float4 PSDownScale2x2(VSInputTx pin) : SV_Target0
 {
     const int NUM_SAMPLES = 4;
@@ -89,6 +107,7 @@ float4 PSDownScale2x2(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: down-sample 4x4.
+[RootSignature(PostProcessRS)]
 float4 PSDownScale4x4(VSInputTx pin) : SV_Target0
 {
     const int NUM_SAMPLES = 16;
@@ -104,6 +123,7 @@ float4 PSDownScale4x4(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: gaussian blur 5x5.
+[RootSignature(PostProcessRS)]
 float4 PSGaussianBlur5x5(VSInputTx pin) : SV_Target0
 {
     float4 vColor = 0.0f;
@@ -118,6 +138,7 @@ float4 PSGaussianBlur5x5(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: bloom (extract)
+[RootSignature(PostProcessRS)]
 float4 PSBloomExtract(VSInputTx pin) : SV_Target0
 {
     // Uses sampleWeights[0] as 'bloom threshold'
@@ -127,6 +148,7 @@ float4 PSBloomExtract(VSInputTx pin) : SV_Target0
 
 
 // Pixel shader: bloom (blur)
+[RootSignature(PostProcessRS)]
 float4 PSBloomBlur(VSInputTx pin) : SV_Target0
 {
     float4 vColor = 0.0f;
@@ -145,6 +167,7 @@ float4 PSBloomBlur(VSInputTx pin) : SV_Target0
 Texture2D<float4> Texture2 : register(t1);
 
 // Pixel shader: merge
+[RootSignature(DualPostProcessRS)]
 float4 PSMerge(VSInputTx pin) : SV_Target0
 {
     float4 vColor = sampleWeights[0] * Texture.Sample(Sampler, pin.TexCoord);
@@ -161,6 +184,7 @@ float4 AdjustSaturation(float4 color, float saturation)
     return lerp(gray, color, saturation);
 }
 
+[RootSignature(DualPostProcessRS)]
 float4 PSBloomCombine(VSInputTx pin) : SV_Target0
 {
     // Uses sampleWeights[0].x as base saturation, sampleWeights[0].y as bloom saturation

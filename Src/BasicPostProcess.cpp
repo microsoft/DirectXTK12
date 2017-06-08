@@ -56,6 +56,7 @@ namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
+    #include "Shaders/Compiled/XboxOnePostProcess_VSQuadNoCB.inc"
 
     #include "Shaders/Compiled/XboxOnePostProcess_PSCopy.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_PSMonochrome.inc"
@@ -66,6 +67,7 @@ namespace
     #include "Shaders/Compiled/XboxOnePostProcess_PSBloomExtract.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_PSBloomBlur.inc"
 #else
+    #include "Shaders/Compiled/PostProcess_VSQuadNoCB.inc"
     #include "Shaders/Compiled/PostProcess_VSQuad.inc"
 
     #include "Shaders/Compiled/PostProcess_PSCopy.inc"
@@ -81,7 +83,11 @@ namespace
 
 namespace
 {
-    const D3D12_SHADER_BYTECODE vertexShader = { PostProcess_VSQuad, sizeof(PostProcess_VSQuad) };
+    const D3D12_SHADER_BYTECODE vertexShader[] =
+    {
+        { PostProcess_VSQuadNoCB,               sizeof(PostProcess_VSQuadNoCB) },
+        { PostProcess_VSQuad,                   sizeof(PostProcess_VSQuad) },
+    };
 
     const D3D12_SHADER_BYTECODE pixelShaders[] =
     {
@@ -270,7 +276,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     psd.CreatePipelineState(
         device,
         mRootSignature,
-        vertexShader,
+        vertexShader[mUseConstants ? 1 : 0],
         pixelShaders[ifx],
         mPipelineState.GetAddressOf());
 

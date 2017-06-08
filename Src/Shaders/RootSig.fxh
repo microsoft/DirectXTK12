@@ -93,3 +93,41 @@
 "CBV(b0), " \
 "DescriptorTable ( Sampler(s0) )"
 
+#define PostProcessRS \
+"RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) ),"\
+"CBV(b0), " \
+"StaticSampler(s0,"\
+"           filter =   FILTER_MIN_MAG_MIP_LINEAR,"\
+"           addressU = TEXTURE_ADDRESS_CLAMP,"\
+"           addressV = TEXTURE_ADDRESS_CLAMP,"\
+"           addressW = TEXTURE_ADDRESS_CLAMP )"
+
+#define PostProcessRSNoCB \
+"RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) ),"\
+"StaticSampler(s0,"\
+"           filter =   FILTER_MIN_MAG_MIP_LINEAR,"\
+"           addressU = TEXTURE_ADDRESS_CLAMP,"\
+"           addressV = TEXTURE_ADDRESS_CLAMP,"\
+"           addressW = TEXTURE_ADDRESS_CLAMP )"
+
+#define DualPostProcessRS \
+"RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"DescriptorTable ( SRV(t0) ),"\
+"DescriptorTable ( SRV(t1) ),"\
+"CBV(b0), " \
+"StaticSampler(s0,"\
+"           filter =   FILTER_MIN_MAG_MIP_LINEAR,"\
+"           addressU = TEXTURE_ADDRESS_CLAMP,"\
+"           addressV = TEXTURE_ADDRESS_CLAMP,"\
+"           addressW = TEXTURE_ADDRESS_CLAMP )"

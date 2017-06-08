@@ -962,10 +962,18 @@
     <None Include="Src\Shaders\Compiled\PostProcess_VSQuad.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Src\Shaders\PostProcess.fx">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
+    <None Include="Src\Shaders\PostProcess.fx" />
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
   </ItemGroup>
 </Project>

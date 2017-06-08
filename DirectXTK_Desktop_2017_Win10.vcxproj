@@ -287,6 +287,10 @@
     <None Include="Src\Shaders\Compiled\PostProcess_PSSepia.pdb" />
     <None Include="Src\Shaders\Compiled\PostProcess_VSQuad.inc" />
     <None Include="Src\Shaders\Compiled\PostProcess_VSQuad.pdb" />
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.inc" />
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.pdb" />
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.inc" />
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.pdb" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedPixelLighting.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedPixelLighting.pdb" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLighting.inc" />

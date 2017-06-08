@@ -138,6 +138,8 @@ call :CompileShader%1 SpriteEffect vs SpriteVertexShaderHeap
 call :CompileShader%1 SpriteEffect ps SpritePixelShaderHeap
 
 call :CompileShader%1 PostProcess vs VSQuad
+call :CompileShader%1 PostProcess vs VSQuadNoCB
+call :CompileShader%1 PostProcess vs VSQuadDual
 call :CompileShader%1 PostProcess ps PSCopy
 call :CompileShader%1 PostProcess ps PSMonochrome
 call :CompileShader%1 PostProcess ps PSSepia
