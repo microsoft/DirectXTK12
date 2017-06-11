@@ -206,6 +206,9 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     constants{},
     texture{}
 {
+    if (ifx < 0 || ifx >= Effect_Max)
+        throw std::out_of_range("Effect not defined");
+   
     switch (ifx)
     {
     case Copy:
@@ -532,7 +535,7 @@ BasicPostProcess::~BasicPostProcess()
 }
 
 
-// IEffect methods.
+// IPostProcess methods.
 void BasicPostProcess::Process(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Process(commandList);
