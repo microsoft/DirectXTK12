@@ -354,7 +354,7 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-        // Root paramteer descriptor - conditionally initialized
+        // Root parameter descriptor - conditionally initialized
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
 
         if (textureEnabled)

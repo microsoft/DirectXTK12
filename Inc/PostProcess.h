@@ -8,7 +8,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248929
+// http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
 #pragma once
@@ -140,19 +140,30 @@ namespace DirectX
     class ToneMapPostProcess : public IPostProcess
     {
     public:
-        enum Effect
+        enum Operator           // Tone-mapping operator
         {
-            Saturate,
-            Reinhard,
-            Filmic,
-            HDR10,
-            HDR10_Saturate,
-            HDR10_Reinhard,
-            HDR10_Filmic,
-            Effect_Max
+            None,               // Pass-through
+            Saturate,           // Clamp [0,1]
+            Reinhard,           // x/(1+x)
+            ACESFilmic,
+            Operator_Max
         };
 
-        explicit ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+        enum TransferFunction   // Electro-Optical Transfer Function (EOTF)
+        {
+            Linear,             // Pass-through
+            SRGB,               // sRGB (Rec.709 and approximate sRGB display curve)
+            ST2084,             // HDR10 (Rec.2020 color primaries and ST.2084 display curve)
+            TransferFunction_Max
+        };
+
+        explicit ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
+            Operator op, TransferFunction func
+    #if defined(_XBOX_ONE) && defined(_TITLE)
+            , bool mrt = false
+    #endif
+        );
+
         ToneMapPostProcess(ToneMapPostProcess&& moveFrom);
         ToneMapPostProcess& operator= (ToneMapPostProcess&& moveFrom);
 
@@ -167,8 +178,11 @@ namespace DirectX
         // Properties
         void __cdecl SetHDRSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
-        // Sets HDR10 display mapping parameter
-        void SetHDR10Parameter(float paperWhiteNits);
+        // Sets exposure value for LDR tonemap operators
+        void SetExposure(float exposureValue);
+
+        // Sets ST.2084 parameter for how bright white should be in nits
+        void SetST2084Parameter(float paperWhiteNits);
 
     private:
         // Private implementation.

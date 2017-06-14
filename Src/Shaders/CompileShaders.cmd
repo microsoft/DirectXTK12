@@ -153,6 +153,28 @@ call :CompileShader%1 PostProcess ps PSBloomCombine
 
 call :CompileComputeShader%1 GenerateMips main
 
+call :CompileShader%1 ToneMap vs VSQuad
+call :CompileShader%1 ToneMap ps PSCopy
+call :CompileShader%1 ToneMap ps PSSaturate
+call :CompileShader%1 ToneMap ps PSReinhard
+call :CompileShader%1 ToneMap ps PSACESFilmic
+call :CompileShader%1 ToneMap ps PS_SRGB
+call :CompileShader%1 ToneMap ps PSSaturate_SRGB
+call :CompileShader%1 ToneMap ps PSReinhard_SRGB
+call :CompileShader%1 ToneMap ps PSACESFilmic_SRGB
+call :CompileShader%1 ToneMap ps PSHDR10
+
+if NOT %1.==xbox. goto skipxboxonly
+
+call :CompileShaderxbox ToneMap ps PSHDR10_Saturate
+call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard
+call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic
+call :CompileShaderxbox ToneMap ps PSHDR10_Saturate_SRGB
+call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard_SRGB
+call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic_SRGB
+
+:skipxboxonly
+
 echo.
 
 if %error% == 0 (

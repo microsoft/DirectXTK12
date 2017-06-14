@@ -8,7 +8,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248929
+// http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
@@ -55,8 +55,8 @@ namespace
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_VSQuadNoCB.inc"
+    #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
 
     #include "Shaders/Compiled/XboxOnePostProcess_PSCopy.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_PSMonochrome.inc"
@@ -239,12 +239,19 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
             D3D12_FILTER_MIN_MAG_MIP_LINEAR,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-            D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
+            D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+            0.f,
+            16,
+            D3D12_COMPARISON_FUNC_LESS_EQUAL,
+            D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE,
+            0.f,
+            D3D12_FLOAT32_MAX,
+            D3D12_SHADER_VISIBILITY_PIXEL);
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        // Root paramteer descriptor - conditionally initialized
+        // Root parameter descriptor - conditionally initialized
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
 
         if (mUseConstants)
@@ -283,7 +290,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
         pixelShaders[ifx],
         mPipelineState.GetAddressOf());
 
-    SetDebugObjectName(mPipelineState.Get(), L"BasicEffect");
+    SetDebugObjectName(mPipelineState.Get(), L"BasicPostProcess");
 }
 
 

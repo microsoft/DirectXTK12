@@ -6,7 +6,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
-// http://create.msdn.com/en-US/education/catalog/sample/stock_effects
 
 #include "Structures.fxh"
 #include "RootSig.fxh"
