@@ -84,7 +84,7 @@ float4 PSACESFilmic(VSInputTx pin) : SV_Target0
 float4 PS_SRGB(VSInputTx pin) : SV_Target0
 {
     float4 hdr = HDRTexture.Sample(Sampler, pin.TexCoord);
-    float3 srgb = LinearToSRGB(hdr.xyz);
+    float3 srgb = LinearToSRGBEst(hdr.xyz);
     return float4(srgb, hdr.a);
 }
 
@@ -95,7 +95,7 @@ float4 PSSaturate_SRGB(VSInputTx pin) : SV_Target0
 {
     float4 hdr = HDRTexture.Sample(Sampler, pin.TexCoord);
     float3 sdr = saturate(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     return float4(srgb, hdr.a);
 }
 
@@ -106,7 +106,7 @@ float4 PSReinhard_SRGB(VSInputTx pin) : SV_Target0
 {
     float4 hdr = HDRTexture.Sample(Sampler, pin.TexCoord);
     float3 sdr = ToneMapReinhard(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     return float4(srgb, hdr.a);
 }
 
@@ -117,7 +117,7 @@ float4 PSACESFilmic_SRGB(VSInputTx pin) : SV_Target0
 {
     float4 hdr = HDRTexture.Sample(Sampler, pin.TexCoord);
     float3 sdr = ToneMapACESFilmic(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     return float4(srgb, hdr.a);
 }
 
@@ -208,7 +208,7 @@ MRTOut PSHDR10_Saturate_SRGB(VSInputTx pin)
     output.hdr = float4(rgb, hdr.a);
 
     float3 sdr = saturate(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     output.sdr = float4(srgb, hdr.a);
 
     return output;
@@ -224,7 +224,7 @@ MRTOut PSHDR10_Reinhard_SRGB(VSInputTx pin)
     output.hdr = float4(rgb, hdr.a);
 
     float3 sdr = ToneMapReinhard(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     output.sdr = float4(srgb, hdr.a);
 
     return output;
@@ -240,7 +240,7 @@ MRTOut PSHDR10_ACESFilmic_SRGB(VSInputTx pin)
     output.hdr = float4(rgb, hdr.a);
 
     float3 sdr = ToneMapACESFilmic(hdr.xyz * linearExposure);
-    float3 srgb = LinearToSRGB(sdr);
+    float3 srgb = LinearToSRGBEst(sdr);
     output.sdr = float4(srgb, hdr.a);
 
     return output;
