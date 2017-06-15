@@ -908,6 +908,9 @@
     <None Include="Src\Shaders\Compiled\ToneMap_VSQuad.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
+    <None Include="Src\Shaders\ToneMap.fx">
+      <Filter>Src\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AlphaTestEffect.cpp">
@@ -1048,10 +1051,5 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Src\Shaders\ToneMap.fx">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

@@ -47,12 +47,12 @@ namespace
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
+    #include "Shaders/Compiled/XboxOnePostProcess_VSQuadDual.inc"
 
     #include "Shaders/Compiled/XboxOnePostProcess_PSMerge.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_PSBloomCombine.inc"
 #else
-    #include "Shaders/Compiled/PostProcess_VSQuad.inc"
+    #include "Shaders/Compiled/PostProcess_VSQuadDual.inc"
 
     #include "Shaders/Compiled/PostProcess_PSMerge.inc"
     #include "Shaders/Compiled/PostProcess_PSBloomCombine.inc"
@@ -62,12 +62,12 @@ namespace
 namespace
 {
     const D3D12_SHADER_BYTECODE vertexShader =
-        { PostProcess_VSQuad,               sizeof(PostProcess_VSQuad) };
+        { PostProcess_VSQuadDual,       sizeof(PostProcess_VSQuadDual) };
 
     const D3D12_SHADER_BYTECODE pixelShaders[] =
     {
-        { PostProcess_PSMerge,              sizeof(PostProcess_PSMerge) },
-        { PostProcess_PSBloomCombine,       sizeof(PostProcess_PSBloomCombine) },
+        { PostProcess_PSMerge,          sizeof(PostProcess_PSMerge) },
+        { PostProcess_PSBloomCombine,   sizeof(PostProcess_PSBloomCombine) },
     };
 
     static_assert(_countof(pixelShaders) == DualPostProcess::Effect_Max, "array/max mismatch");
