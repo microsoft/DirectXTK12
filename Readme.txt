@@ -102,6 +102,7 @@ June x, 2017
     Post-processing support
     SDKMESH loader fix when loading legacy files with all zero materials
     DirectXTK for Audio: Minor fixes for environmental audio
+    Optimized root signatures for Effects shaders
     Minor code cleanup
 
 April 24, 2017
