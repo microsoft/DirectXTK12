@@ -137,7 +137,44 @@ call :CompileShader%1 SpriteEffect ps SpritePixelShader
 call :CompileShader%1 SpriteEffect vs SpriteVertexShaderHeap
 call :CompileShader%1 SpriteEffect ps SpritePixelShaderHeap
 
+call :CompileShader%1 PostProcess vs VSQuad
+call :CompileShader%1 PostProcess vs VSQuadNoCB
+call :CompileShader%1 PostProcess vs VSQuadDual
+call :CompileShader%1 PostProcess ps PSCopy
+call :CompileShader%1 PostProcess ps PSMonochrome
+call :CompileShader%1 PostProcess ps PSSepia
+call :CompileShader%1 PostProcess ps PSDownScale2x2
+call :CompileShader%1 PostProcess ps PSDownScale4x4
+call :CompileShader%1 PostProcess ps PSGaussianBlur5x5
+call :CompileShader%1 PostProcess ps PSBloomExtract
+call :CompileShader%1 PostProcess ps PSBloomBlur
+call :CompileShader%1 PostProcess ps PSMerge
+call :CompileShader%1 PostProcess ps PSBloomCombine
+
 call :CompileComputeShader%1 GenerateMips main
+
+call :CompileShader%1 ToneMap vs VSQuad
+call :CompileShader%1 ToneMap ps PSCopy
+call :CompileShader%1 ToneMap ps PSSaturate
+call :CompileShader%1 ToneMap ps PSReinhard
+call :CompileShader%1 ToneMap ps PSACESFilmic
+call :CompileShader%1 ToneMap ps PS_SRGB
+call :CompileShader%1 ToneMap ps PSSaturate_SRGB
+call :CompileShader%1 ToneMap ps PSReinhard_SRGB
+call :CompileShader%1 ToneMap ps PSACESFilmic_SRGB
+call :CompileShader%1 ToneMap ps PSHDR10
+
+if NOT %1.==xbox. goto skipxboxonly
+
+call :CompileShaderxbox ToneMap ps PSHDR10_Saturate
+call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard
+call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic
+call :CompileShaderxbox ToneMap ps PSHDR10_Saturate_SRGB
+call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard_SRGB
+call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic_SRGB
+
+:skipxboxonly
+
 echo.
 
 if %error% == 0 (

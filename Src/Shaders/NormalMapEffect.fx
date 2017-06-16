@@ -5,8 +5,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// http://go.microsoft.com/fwlink/?LinkId=248929
-// http://create.msdn.com/en-US/education/catalog/sample/stock_effects
+// http://go.microsoft.com/fwlink/?LinkID=615561
 
 
 Texture2D<float4> Texture : register(t0);
