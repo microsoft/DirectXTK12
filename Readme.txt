@@ -4,15 +4,16 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-April 24, 2017
+June x, 2017
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
 applications for Windows 10, and Xbox One exclusive apps.
 
-This code is designed to build with Visual Studio 2015. It is recommended that you
-make use of VS 2015 Update 3, Windows Tools 1.4.1, and the
-Windows 10 Anniversary Update SDK (14393).
+This code is designed to build with Visual Studio 2015 Update 3 or Visual Studio 2017.
+It is recommended that you make use of VS 2015 Update 3, Windows Tools 1.4.1, and the
+Windows 10 Anniversary Update SDK (14393) or VS 2017 with the Windows 10
+Creators Update SDK (15063).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -22,14 +23,15 @@ Inc\
     DDSTextureLoader.h - light-weight DDS file texture loader
     DescriptorHeap.h - helper for managing DX12 descriptor heaps
     DirectXHelpers.h - misc C++ helpers for D3D programming
-    Effects.h - set of built-in shaders for common rendering tasks
     EffectPipelineStateDescription.h - helper for creating PSOs
+    Effects.h - set of built-in shaders for common rendering tasks
     GamePad.h - gamepad controller helper using XInput
     GeometricPrimitive.h - draws basic shapes such as cubes and spheres
     GraphicsMemory.h - helper for managing dynamic graphics memory allocation
     Keyboard.h - keyboard state tracking helper
     Model.h - draws meshes loaded from .SDKMESH or .VBO files
     Mouse.h - mouse helper
+    PostProcess.h - set of built-in shaders for common post-processing operations
     PrimitiveBatch.h - simple and efficient way to draw user primitives
     RenderTargetState.h - helper for communicating render target requirements when creating PSOs
     ResourceUploadBatch.h - helper for managing texture resource upload to the GPU
@@ -78,7 +80,8 @@ COMPARISONS TO DIRECTX 11 VERSION
 * No support for loading .CMO models or DGSL effect shaders (i.e. DGSLEffect)
 
 * VertexTypes does not include VertexPositionNormalTangentColorTexture or
-  VertexPositionNormalTangentColorTextureSkinning
+  VertexPositionNormalTangentColorTextureSkinning which were intended for use with
+  the DGSL pipeline.
 
 * DirectX Tool Kit for DirectX 11 supports Feature Level 9.x, while DirectX 12 requires
   Direct3D Feature Level 11.0. There are no expected DirectX 12 drivers for
@@ -94,6 +97,12 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+June x, 2017
+    Post-processing support
+    SDKMESH loader fix when loading legacy files with all zero materials
+    DirectXTK for Audio: Minor fixes for environmental audio
+    Minor code cleanup
 
 April 24, 2017
     Regenerated shaders using Windows 10 Creators Update SDK (15063)
