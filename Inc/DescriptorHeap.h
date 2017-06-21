@@ -164,9 +164,9 @@ namespace DirectX
             _In_ ID3D12Device* device,
             D3D12_DESCRIPTOR_HEAP_TYPE type,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-            size_t initialSize,
+            size_t capacity,
             size_t reserve = 0)
-            : DescriptorHeap(device, type, flags, initialSize),
+            : DescriptorHeap(device, type, flags, capacity),
             m_top(reserve)
         {
             if (reserve > 0 && m_top >= Count())

@@ -100,6 +100,7 @@ RELEASE HISTORY
 
 June x, 2017
     Post-processing support
+    Added DescriptorPile utility
     SDKMESH loader fix when loading legacy files with all zero materials
     DirectXTK for Audio: Minor fixes for environmental audio
     Optimized root signatures for Effects shaders
