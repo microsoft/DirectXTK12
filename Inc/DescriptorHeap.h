@@ -18,7 +18,7 @@
 #include <d3dx12_x.h>
 #else
 #include <d3d12.h>
-#include <d3dx12.h>
+#include "d3dx12.h"
 #endif
 
 #include <stdexcept>
