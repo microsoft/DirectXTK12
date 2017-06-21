@@ -15,8 +15,10 @@
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
 #include <d3d12_x.h>
+#include <d3dx12_x.h>
 #else
 #include <d3d12.h>
+#include <d3dx12.h>
 #endif
 
 #include <stdexcept>
@@ -39,9 +41,9 @@ namespace DirectX
             _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc);
         DescriptorHeap(
             _In_ ID3D12Device* device,
-            _In_ D3D12_DESCRIPTOR_HEAP_TYPE type,
-            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-            _In_ size_t count);
+            D3D12_DESCRIPTOR_HEAP_TYPE type,
+            D3D12_DESCRIPTOR_HEAP_FLAGS flags,
+            size_t count);
 
         DescriptorHeap(DescriptorHeap&&) = default;
         DescriptorHeap& operator=(DescriptorHeap&&) = default;
@@ -51,24 +53,24 @@ namespace DirectX
 
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(
             _In_ ID3D12Device* device,
-            _In_ uint32_t offsetIntoHeap,
-            _In_ uint32_t totalDescriptorCount,
+            uint32_t offsetIntoHeap,
+            uint32_t totalDescriptorCount,
             _In_reads_(descriptorRangeCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptorRangeStarts,
             _In_reads_(descriptorRangeCount) const uint32_t* pDescriptorRangeSizes,
-            _In_ uint32_t descriptorRangeCount);
+            uint32_t descriptorRangeCount);
 
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(
             _In_ ID3D12Device* device,
-            _In_ uint32_t offsetIntoHeap,
+            uint32_t offsetIntoHeap,
             _In_reads_(descriptorRangeCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptorRangeStarts,
             _In_reads_(descriptorRangeCount) const uint32_t* pDescriptorRangeSizes,
-            _In_ uint32_t descriptorRangeCount);
+            uint32_t descriptorRangeCount);
 
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(
             _In_ ID3D12Device* device,
-            _In_ uint32_t offsetIntoHeap,
+            uint32_t offsetIntoHeap,
             _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptors,
-            _In_ uint32_t descriptorCount);
+            uint32_t descriptorCount);
 
         D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const
         {
@@ -88,7 +90,7 @@ namespace DirectX
             assert(m_pHeap != 0);
             if (index >= m_desc.NumDescriptors)
             {
-                throw std::out_of_range("CD3DX12_CPU_DESCRIPTOR_HANDLE");
+                throw std::out_of_range("D3DX12_GPU_DESCRIPTOR_HANDLE");
             }
             assert(m_desc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
             return CD3DX12_GPU_DESCRIPTOR_HANDLE(m_hGPU, static_cast<INT>(index), m_increment);
@@ -99,7 +101,7 @@ namespace DirectX
             assert(m_pHeap != 0);
             if (index >= m_desc.NumDescriptors)
             {
-                throw std::out_of_range("CD3DX12_CPU_DESCRIPTOR_HANDLE");
+                throw std::out_of_range("D3DX12_CPU_DESCRIPTOR_HANDLE");
             }
             return CD3DX12_CPU_DESCRIPTOR_HANDLE(m_hCPU, static_cast<INT>(index), m_increment);
         }
@@ -122,5 +124,94 @@ namespace DirectX
         CD3DX12_CPU_DESCRIPTOR_HANDLE                   m_hCPU;
         CD3DX12_GPU_DESCRIPTOR_HANDLE                   m_hGPU;
         uint32_t                                        m_increment;
+    };
+
+
+    // Helper class for dynamically allocating descriptor indices.
+    // The pile is statically sized and will throw an exception if it becomes full.
+    class DescriptorPile : public DescriptorHeap
+    {
+    public:
+        using IndexType = size_t;
+        static const IndexType INVALID_INDEX = size_t(-1);
+
+        DescriptorPile(
+            _In_ ID3D12DescriptorHeap* pExistingHeap,
+            size_t reserve = 0)
+            : DescriptorHeap(pExistingHeap),
+            m_top(reserve)
+        {
+            if (reserve > 0 && m_top >= Count())
+            {
+                throw std::out_of_range("Reserve descriptor range is too large");
+            }
+        }
+
+        DescriptorPile(
+            _In_ ID3D12Device* device,
+            _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc,
+            size_t reserve = 0)
+            : DescriptorHeap(device, pDesc),
+            m_top(reserve)
+        {
+            if (reserve > 0 && m_top >= Count())
+            {
+                throw std::out_of_range("Reserve descriptor range is too large");
+            }
+        }
+
+        DescriptorPile(
+            _In_ ID3D12Device* device,
+            D3D12_DESCRIPTOR_HEAP_TYPE type,
+            D3D12_DESCRIPTOR_HEAP_FLAGS flags,
+            size_t initialSize,
+            size_t reserve = 0)
+            : DescriptorHeap(device, type, flags, initialSize),
+            m_top(reserve)
+        {
+            if (reserve > 0 && m_top >= Count())
+            {
+                throw std::out_of_range("Reserve descriptor range is too large");
+            }
+        }
+
+        DescriptorPile(const DescriptorPile&) = delete;
+        DescriptorPile& operator=(const DescriptorPile&) = delete;
+
+        DescriptorPile(DescriptorPile&&) = default;
+        DescriptorPile& operator=(DescriptorPile&&) = default;
+
+        IndexType Allocate()
+        {
+            IndexType start, end;
+            AllocateRange(1, start, end);
+
+            return start;
+        }
+
+        void AllocateRange(size_t numDescriptors, _Out_ IndexType& start, _Out_ IndexType& end)
+        {
+            // make sure we didn't allocate zero
+            if (numDescriptors == 0)
+            {
+                throw std::out_of_range("Can't allocate zero descriptors");
+            }
+
+            // get the current top
+            start = m_top;
+
+            // increment top with new request
+            m_top += numDescriptors;
+            end = m_top;
+
+            // make sure we have enough room
+            if (m_top >= Count())
+            {
+                throw std::exception("Can't allocate more descriptors");
+            }
+        }
+
+    private:
+        IndexType m_top;
     };
 }
