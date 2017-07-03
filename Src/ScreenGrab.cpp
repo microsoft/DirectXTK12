@@ -713,7 +713,7 @@ HRESULT DirectX::SaveWICTextureToFile(
             return E_UNEXPECTED;
         }
 
-        hr = FC->Initialize(source.Get(), targetGuid, WICBitmapDitherTypeNone, 0, 0, WICBitmapPaletteTypeCustom);
+        hr = FC->Initialize(source.Get(), targetGuid, WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeMedianCut);
         if (FAILED(hr))
         {
             pStaging->Unmap(0, &writeRange);
