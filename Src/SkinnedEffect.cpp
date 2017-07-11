@@ -130,6 +130,7 @@ namespace
 }
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::VertexShaderBytecode[] =
 {
     { SkinnedEffect_VSSkinnedVertexLightingOneBone,     sizeof(SkinnedEffect_VSSkinnedVertexLightingOneBone)     },
@@ -150,6 +151,7 @@ const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::VertexShaderBytecod
 };
 
 
+template<>
 const int EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] =
 {
     0,      // vertex lighting, one bone
@@ -182,6 +184,7 @@ const int EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] =
 };
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::PixelShaderBytecode[] =
 {
     { SkinnedEffect_PSSkinnedVertexLighting,      sizeof(SkinnedEffect_PSSkinnedVertexLighting)      },
@@ -190,6 +193,7 @@ const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::PixelShaderBytecode
 };
 
 
+template<>
 const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] =
 {
     0,      // vertex lighting, one bone
@@ -223,6 +227,7 @@ const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] =
 
 
 // Global pool of per-device SkinnedEffect resources.
+template<>
 SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResources> EffectBase<SkinnedEffectTraits>::deviceResourcesPool;
 
 
@@ -609,8 +614,6 @@ void SkinnedEffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, s
 void SkinnedEffect::ResetBoneTransforms()
 {
     auto boneConstant = pImpl->constants.bones;
-
-    XMMATRIX id = XMMatrixIdentity();
 
     for(size_t i = 0; i < MaxBones; ++i)
     {

@@ -43,8 +43,8 @@ public:
         _Inout_ ResourceUploadBatch& resourceUploadBatch,
         _In_ ID3D12DescriptorHeap* descriptorHeap)
         : mPath{}
-        , device(device)
         , mTextureDescriptorHeap(descriptorHeap)
+        , device(device)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
         , mForceSRGB(false)
@@ -59,8 +59,8 @@ public:
         _In_ size_t numDescriptors,
         _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
         : mPath{}
-        , device(device)
         , mTextureDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, descriptorHeapFlags, numDescriptors)
+        , device(device)
         , mResourceUploadBatch(resourceUploadBatch)
         , mSharing(true)
         , mForceSRGB(false)
@@ -135,10 +135,10 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         if (mAutoGenMips)
             loadFlags |= DDS_LOADER_MIP_AUTOGEN;
 
-        static_assert(DDS_LOADER_DEFAULT == WIC_LOADER_DEFAULT, "DDS/WIC Load flags mismatch");
-        static_assert(DDS_LOADER_FORCE_SRGB == WIC_LOADER_FORCE_SRGB, "DDS/WIC Load flags mismatch");
-        static_assert(DDS_LOADER_MIP_AUTOGEN == WIC_LOADER_MIP_AUTOGEN, "DDS/WIC Load flags mismatch");
-        static_assert(DDS_LOADER_MIP_RESERVE == WIC_LOADER_MIP_RESERVE, "DDS/WIC Load flags mismatch");
+        static_assert(static_cast<int>(DDS_LOADER_DEFAULT) == static_cast<int>(WIC_LOADER_DEFAULT), "DDS/WIC Load flags mismatch");
+        static_assert(static_cast<int>(DDS_LOADER_FORCE_SRGB) == static_cast<int>(WIC_LOADER_FORCE_SRGB), "DDS/WIC Load flags mismatch");
+        static_assert(static_cast<int>(DDS_LOADER_MIP_AUTOGEN) == static_cast<int>(WIC_LOADER_MIP_AUTOGEN), "DDS/WIC Load flags mismatch");
+        static_assert(static_cast<int>(DDS_LOADER_MIP_RESERVE) == static_cast<int>(WIC_LOADER_MIP_RESERVE), "DDS/WIC Load flags mismatch");
 
         if ( _wcsicmp( ext, L".dds" ) == 0 )
         {

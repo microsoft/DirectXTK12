@@ -146,10 +146,10 @@ namespace DirectX
 
         // Constructor.
         EffectBase(_In_ ID3D12Device* device)
-          : dirtyFlags(INT_MAX),
-            mDeviceResources(deviceResourcesPool.DemandCreate(device)),
-            constants{},
-            mRootSignature(nullptr)
+          : constants{},
+            dirtyFlags(INT_MAX),
+            mRootSignature(nullptr),
+            mDeviceResources(deviceResourcesPool.DemandCreate(device))
         {
             // Initialize the constant buffer data
             mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);

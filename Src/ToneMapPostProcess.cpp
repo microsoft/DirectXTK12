@@ -234,12 +234,12 @@ SharedResourcePool<ID3D12Device*, DeviceResources> ToneMapPostProcess::Impl::dev
 
 // Constructor.
 ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func, bool mrt)
-    : mDeviceResources(deviceResourcesPool.DemandCreate(device)),
+    : constants{},
+    texture{},
     linearExposure(1.f),
     paperWhiteNits(200.f),
     mDirtyFlags(INT_MAX),
-    constants{},
-    texture{}
+    mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (op < 0 || op >= Operator_Max)
         throw std::out_of_range("Tonemap operator not defined");

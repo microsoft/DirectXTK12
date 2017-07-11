@@ -230,7 +230,7 @@ const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc =
 {
     FALSE, // AlphaToCoverageEnable
     FALSE, // IndependentBlendEnable
-    {
+    { {
         TRUE, // BlendEnable
         FALSE, // LogicOpEnable
         D3D12_BLEND_ONE, // SrcBlend
@@ -241,7 +241,7 @@ const D3D12_BLEND_DESC SpriteBatchPipelineStateDescription::s_DefaultBlendDesc =
         D3D12_BLEND_OP_ADD, // BlendOpAlpha
         D3D12_LOGIC_OP_NOOP,
         D3D12_COLOR_WRITE_ENABLE_ALL
-    }
+    } }
 };
 
 // Same to CommonStates::CullCounterClockwise
@@ -568,7 +568,7 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     else
     {
         // No explicit source region, so use the entire texture.
-        static const XMVECTORF32 wholeTexture = {0, 0, 1, 1};
+        static const XMVECTORF32 wholeTexture = { { {0, 0, 1, 1} } };
 
         XMStoreFloat4A(&sprite->source, wholeTexture);
     }
@@ -895,10 +895,10 @@ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, Verte
     // The four corner vertices are computed by transforming these unit-square positions.
     static XMVECTORF32 cornerOffsets[VerticesPerSprite] =
     {
-        { 0, 0 },
-        { 1, 0 },
-        { 0, 1 },
-        { 1, 1 },
+        { { { 0, 0, 0, 0 } } },
+        { { { 1, 0, 0, 0 } } },
+        { { { 0, 1, 0, 0 } } },
+        { { { 1, 1, 0, 0 } } },
     };
 
     // Tricksy alert! Texture coordinates are computed from the same cornerOffsets

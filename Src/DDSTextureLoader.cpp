@@ -35,9 +35,9 @@ namespace DirectX
 using namespace DirectX;
 using namespace DirectX::LoaderHelpers;
 
-static_assert(DDS_DIMENSION_TEXTURE1D == D3D12_RESOURCE_DIMENSION_TEXTURE1D, "dds mismatch");
-static_assert(DDS_DIMENSION_TEXTURE2D == D3D12_RESOURCE_DIMENSION_TEXTURE2D, "dds mismatch");
-static_assert(DDS_DIMENSION_TEXTURE3D == D3D12_RESOURCE_DIMENSION_TEXTURE3D, "dds mismatch");
+static_assert(static_cast<int>(DDS_DIMENSION_TEXTURE1D) == static_cast<int>(D3D12_RESOURCE_DIMENSION_TEXTURE1D), "dds mismatch");
+static_assert(static_cast<int>(DDS_DIMENSION_TEXTURE2D) == static_cast<int>(D3D12_RESOURCE_DIMENSION_TEXTURE2D), "dds mismatch");
+static_assert(static_cast<int>(DDS_DIMENSION_TEXTURE3D) == static_cast<int>(D3D12_RESOURCE_DIMENSION_TEXTURE3D), "dds mismatch");
 
 namespace
 {
@@ -112,6 +112,9 @@ namespace
                 res.RowPitch = (res.RowPitch >> 1);
                 res.SlicePitch = res.RowPitch * height;
             }
+            break;
+
+        default:
             break;
         }
     }

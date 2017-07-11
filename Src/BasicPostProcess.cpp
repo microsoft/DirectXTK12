@@ -193,8 +193,9 @@ SharedResourcePool<ID3D12Device*, DeviceResources> BasicPostProcess::Impl::devic
 
 // Constructor.
 BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx)
-    : mDeviceResources(deviceResourcesPool.DemandCreate(device)),
-    fx(ifx),
+    : fx(ifx),
+    constants{},
+    texture{},
     texWidth(0),
     texHeight(0),
     guassianMultiplier(1.f),
@@ -203,8 +204,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     bloomThreshold(0.25f),
     bloomHorizontal(true),
     mDirtyFlags(INT_MAX),
-    constants{},
-    texture{}
+    mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx < 0 || ifx >= Effect_Max)
         throw std::out_of_range("Effect not defined");
@@ -336,6 +336,9 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
 
             case BloomBlur:
                 Bloom(bloomHorizontal, bloomSize, bloomBrightness);
+                break;
+
+            default:
                 break;
             }
         }

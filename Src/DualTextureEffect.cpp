@@ -94,6 +94,7 @@ namespace
 }
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[] =
 {
     { DualTextureEffect_VSDualTexture,        sizeof(DualTextureEffect_VSDualTexture)        },
@@ -104,6 +105,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::VertexShaderByt
 };
 
 
+template<>
 const int EffectBase<DualTextureEffectTraits>::VertexShaderIndices[] =
 {
     0,      // basic
@@ -113,6 +115,7 @@ const int EffectBase<DualTextureEffectTraits>::VertexShaderIndices[] =
 };
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[] =
 {
     { DualTextureEffect_PSDualTexture,        sizeof(DualTextureEffect_PSDualTexture)        },
@@ -121,6 +124,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::PixelShaderByte
 };
 
 
+template<>
 const int EffectBase<DualTextureEffectTraits>::PixelShaderIndices[] =
 {
     0,      // basic
@@ -131,6 +135,7 @@ const int EffectBase<DualTextureEffectTraits>::PixelShaderIndices[] =
 
 
 // Global pool of per-device DualTextureEffect resources.
+template<>
 SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceResources> EffectBase<DualTextureEffectTraits>::deviceResourcesPool;
 
 

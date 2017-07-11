@@ -122,6 +122,7 @@ namespace
 }
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytecode[] =
 {
     { NormalMapEffect_VSNormalPixelLightingTx,           sizeof(NormalMapEffect_VSNormalPixelLightingTx)           },
@@ -138,6 +139,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytec
 };
 
 
+template<>
 const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
 {
     0,     // pixel lighting + texture
@@ -162,6 +164,7 @@ const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
 };
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[] =
 {
     { NormalMapEffect_PSNormalPixelLightingTx,          sizeof(NormalMapEffect_PSNormalPixelLightingTx)          },
@@ -171,6 +174,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::PixelShaderByteco
 };
 
 
+template<>
 const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
 {
     0,      // pixel lighting + texture
@@ -195,6 +199,7 @@ const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
 };
 
 // Global pool of per-device NormalMapEffect resources.
+template<>
 SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResources> EffectBase<NormalMapEffectTraits>::deviceResourcesPool;
 
 

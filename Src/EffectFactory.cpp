@@ -30,12 +30,12 @@ class EffectFactory::Impl
 {
 public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
-        : device(device)
-        , mTextureDescriptors(nullptr)
+        : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
         , mUseNormalMapEffect(true)
         , mEnablePerPixelLighting(true)
         , mEnableFog(false)
+        , device(device)
         , mSharing(true)
     { 
         if (textureDescriptors)

@@ -173,6 +173,7 @@ namespace
 }
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::VertexShaderBytecode[] =
 {
     { BasicEffect_VSBasic,                     sizeof(BasicEffect_VSBasic)                     },
@@ -206,6 +207,7 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::VertexShaderBytecode[
 };
 
 
+template<>
 const int EffectBase<BasicEffectTraits>::VertexShaderIndices[] =
 {
     0,      // basic
@@ -255,6 +257,7 @@ const int EffectBase<BasicEffectTraits>::VertexShaderIndices[] =
 };
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::PixelShaderBytecode[] =
 {
     { BasicEffect_PSBasic,                      sizeof(BasicEffect_PSBasic)                      },
@@ -272,6 +275,7 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::PixelShaderBytecode[]
 };
 
 
+template<>
 const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] =
 {
     0,      // basic
@@ -321,6 +325,7 @@ const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] =
 };
 
 // Global pool of per-device BasicEffect resources.
+template<>
 SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources> EffectBase<BasicEffectTraits>::deviceResourcesPool;
 
 

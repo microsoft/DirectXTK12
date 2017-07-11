@@ -208,7 +208,7 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
 
     LoadTextures(*texFactory);
 
-    return std::move(texFactory);
+    return texFactory;
 }
 
 
@@ -239,7 +239,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     }
 
     if (partCount == 0)
-        return std::move(effects);
+        return effects;
 
     // Create an array of effects for each part. We need to have an effect per part because the part's vertex layout
     // combines with the material spec to create a unique effect. We rely on the EffectFactory to de-duplicate if it
@@ -254,30 +254,30 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
         {
             assert(part != nullptr);
 
-            if (part->materialIndex == ~0ull)
+            if (part->materialIndex == uint32_t(-1))
                 continue;
 
             // If this fires, you have multiple parts with the same unique ID
             assert(effects[part->partIndex] == nullptr);
 
-            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
+            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get());
         }
 
         for (const auto& part : mesh->alphaMeshParts)
         {
             assert(part != nullptr);
 
-            if (part->materialIndex == ~0ull)
+            if (part->materialIndex == uint32_t(-1))
                 continue;
 
             // If this fires, you have multiple parts with the same unique ID
             assert(effects[part->partIndex] == nullptr);
 
-            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
+            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get());
         }
     }
 
-    return std::move(effects);
+    return effects;
 }
 
 // Creates an effect for a mesh part

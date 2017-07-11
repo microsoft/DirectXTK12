@@ -128,13 +128,13 @@ namespace
             size_t offset = page->Suballocate(size, alignment);
 
             // Return the information to the user
-            return std::move(GraphicsResource(
+            return GraphicsResource(
                 page,
                 page->GpuAddress() + offset,
                 page->UploadResource(),
                 reinterpret_cast<BYTE*>(page->BaseMemory()) + offset,
                 offset,
-                size));
+                size);
         }
 
         // Submit page fences to the command queue
@@ -204,7 +204,7 @@ public:
 
     GraphicsResource Allocate(size_t size, size_t alignment)
     {
-        return std::move(mDeviceAllocator->Alloc(size, alignment));
+        return mDeviceAllocator->Alloc(size, alignment);
     }
 
     void Commit(_In_ ID3D12CommandQueue* commandQueue)
@@ -265,7 +265,7 @@ GraphicsMemory::~GraphicsMemory()
 GraphicsResource GraphicsMemory::Allocate(size_t size, size_t alignment)
 {
     assert(alignment >= 4); // Should use at least DWORD alignment
-    return std::move(pImpl->Allocate(size, alignment));
+    return pImpl->Allocate(size, alignment);
 }
 
 

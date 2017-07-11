@@ -62,8 +62,8 @@ private:
 
 // Constructor.
 PrimitiveBatchBase::Impl::Impl(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize)
-  : mCommandList(nullptr),
-    mDevice(device),
+  : mDevice(device),
+    mCommandList(nullptr),
     mMaxIndices(maxIndices),
     mMaxVertices(maxVertices),
     mVertexSize(vertexSize),

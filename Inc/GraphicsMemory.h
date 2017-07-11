@@ -129,13 +129,13 @@ namespace DirectX
         {
             const size_t alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
             const size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
-            return std::move(Allocate(alignedSize, alignment));
+            return Allocate(alignedSize, alignment);
         }
         template<typename T> GraphicsResource AllocateConstant(const T& setData)
         {
             GraphicsResource alloc = AllocateConstant<T>();
             memcpy(alloc.Memory(), &setData, sizeof(T));
-            return std::move(alloc);
+            return alloc;
         }
 
         // Submits all the pending one-shot memory to the GPU. 

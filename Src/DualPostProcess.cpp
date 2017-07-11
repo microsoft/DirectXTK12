@@ -154,8 +154,10 @@ SharedResourcePool<ID3D12Device*, DeviceResources> DualPostProcess::Impl::device
 
 // Constructor.
 DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx)
-    : mDeviceResources(deviceResourcesPool.DemandCreate(device)),
-    fx(ifx),
+    : fx(ifx),
+    constants{},
+    texture{},
+    texture2{},
     mergeWeight1(0.5f),
     mergeWeight2(0.5f),
     bloomIntensity(1.25f),
@@ -163,9 +165,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     bloomSaturation(1.f),
     bloomBaseSaturation(1.f),
     mDirtyFlags(INT_MAX),
-    constants{},
-    texture{},
-    texture2{}
+    mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx < 0 || ifx >= Effect_Max)
         throw std::out_of_range("Effect not defined");
@@ -265,6 +265,9 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
             constants.sampleWeights[0] = XMVectorSet(bloomBaseSaturation, bloomSaturation, 0.f, 0.f);
             constants.sampleWeights[1] = XMVectorReplicate(bloomBaseIntensity);
             constants.sampleWeights[2] = XMVectorReplicate(bloomIntensity);
+            break;
+
+        default:
             break;
         }
     }

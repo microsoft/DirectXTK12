@@ -26,7 +26,7 @@ const D3D12_BLEND_DESC CommonStates::Opaque =
 {
     FALSE, // AlphaToCoverageEnable
     FALSE, // IndependentBlendEnable
-    {
+    { {
         FALSE, // BlendEnable
         FALSE, // LogicOpEnable
         D3D12_BLEND_ONE, // SrcBlend
@@ -37,14 +37,14 @@ const D3D12_BLEND_DESC CommonStates::Opaque =
         D3D12_BLEND_OP_ADD, // BlendOpAlpha
         D3D12_LOGIC_OP_NOOP,
         D3D12_COLOR_WRITE_ENABLE_ALL
-    }
+    } }
 };
 
 const D3D12_BLEND_DESC CommonStates::AlphaBlend =
 {
     FALSE, // AlphaToCoverageEnable
     FALSE, // IndependentBlendEnable
-    {
+    { {
         TRUE, // BlendEnable
         FALSE, // LogicOpEnable
         D3D12_BLEND_ONE, // SrcBlend
@@ -55,14 +55,14 @@ const D3D12_BLEND_DESC CommonStates::AlphaBlend =
         D3D12_BLEND_OP_ADD, // BlendOpAlpha
         D3D12_LOGIC_OP_NOOP,
         D3D12_COLOR_WRITE_ENABLE_ALL
-    }
+    } }
 };
 
 const D3D12_BLEND_DESC CommonStates::Additive =
 {
     FALSE, // AlphaToCoverageEnable
     FALSE, // IndependentBlendEnable
-    {
+    { {
         TRUE, // BlendEnable
         FALSE, // LogicOpEnable
         D3D12_BLEND_SRC_ALPHA, // SrcBlend
@@ -73,14 +73,14 @@ const D3D12_BLEND_DESC CommonStates::Additive =
         D3D12_BLEND_OP_ADD, // BlendOpAlpha
         D3D12_LOGIC_OP_NOOP,
         D3D12_COLOR_WRITE_ENABLE_ALL
-    }
+    } }
 };
 
 const D3D12_BLEND_DESC CommonStates::NonPremultiplied =
 {
     FALSE, // AlphaToCoverageEnable
     FALSE, // IndependentBlendEnable
-    {
+    { {
         TRUE, // BlendEnable
         FALSE, // LogicOpEnable
         D3D12_BLEND_SRC_ALPHA, // SrcBlend
@@ -91,7 +91,7 @@ const D3D12_BLEND_DESC CommonStates::NonPremultiplied =
         D3D12_BLEND_OP_ADD, // BlendOpAlpha
         D3D12_LOGIC_OP_NOOP,
         D3D12_COLOR_WRITE_ENABLE_ALL
-    }
+    } }
 };
 
 

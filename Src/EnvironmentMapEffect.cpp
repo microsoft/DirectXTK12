@@ -133,6 +133,7 @@ namespace
 }
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[] =
 {
     { EnvironmentMapEffect_VSEnvMap,                sizeof(EnvironmentMapEffect_VSEnvMap)                },
@@ -145,6 +146,7 @@ const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::VertexShader
 };
 
 
+template<>
 const int EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] =
 {
     0,      // basic
@@ -177,6 +179,7 @@ const int EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] =
 };
 
 
+template<>
 const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[] =
 {
     { EnvironmentMapEffect_PSEnvMap,                          sizeof(EnvironmentMapEffect_PSEnvMap)                          },
@@ -190,6 +193,7 @@ const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::PixelShaderB
 };
 
 
+template<>
 const int EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] =
 {
     0,      // basic
@@ -223,6 +227,7 @@ const int EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] =
 
 
 // Global pool of per-device EnvironmentMapEffect resources.
+template<>
 SharedResourcePool<ID3D12Device*, EffectBase<EnvironmentMapEffectTraits>::DeviceResources> EffectBase<EnvironmentMapEffectTraits>::deviceResourcesPool;
 
 
