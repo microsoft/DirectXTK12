@@ -409,9 +409,18 @@ public:
         std::future<void> future = std::async(std::launch::async, [uploadBatch]()
         {
             // Wait on the GPU-complete notification
-            auto wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent, INFINITE);
-            assert(wr == WAIT_OBJECT_0);
-            wr;
+            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent, INFINITE);
+            if (wr != WAIT_OBJECT_0)
+            {
+                if (wr == WAIT_FAILED)
+                {
+                    ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+                }
+                else
+                {
+                    throw std::exception("WaitForSingleObject");
+                }
+            }
 
             // Delete the batch
             // Because the vector contains ComPtrs, their destructors will fire and the
