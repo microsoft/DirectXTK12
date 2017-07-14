@@ -730,6 +730,9 @@ void SpriteBatch::Impl::SortSprites()
             return x->originRotationDepth.w < y->originRotationDepth.w;
         });
         break;
+
+	default:
+		break;
     }
 }
 
