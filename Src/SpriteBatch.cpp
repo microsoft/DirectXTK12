@@ -415,10 +415,10 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     mSortMode(SpriteSortMode_Deferred),
     mSampler{},
     mTransformMatrix(MatrixIdentity),
-    mDeviceResources(deviceResourcesPool.DemandCreate(device, upload)),
+    mVertexSegment{},
     mVertexPageSize(sizeof(VertexPositionColorTexture) * MaxBatchSize * VerticesPerSprite),
-    mVertexSegment {},
-    mSpriteCount(0)
+    mSpriteCount(0),
+    mDeviceResources(deviceResourcesPool.DemandCreate(device, upload))
 {
     if (viewport != nullptr)
     {
