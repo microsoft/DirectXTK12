@@ -90,7 +90,6 @@
 #include <array>
 #include <exception>
 #include <list>
-#include <malloc.h>
 #include <map>
 #include <memory>
 #include <set>
@@ -98,6 +97,12 @@
 #include <utility>
 #include <vector>
 
+#pragma warning(push)
+#pragma warning(disable : 4702)
+#include <functional>
+#pragma warning(pop)
+
+#include <malloc.h>
 #include <stdint.h>
 
 #pragma warning(push)
