@@ -10,7 +10,7 @@ setlocal
 set error=0
 
 if %1.==xbox. goto continuexbox
-if %1.==. goto continue
+if %1.==. goto continuepc
 echo usage: CompileShaders [xbox]
 exit /b
 
@@ -28,6 +28,15 @@ set XBOXFXC="%XboxOneXDKBuild%xdk\FXC\amd64\FXC.exe"
 if exist %XBOXFXC% goto continue
 set XBOXFXC="%DurangoXDK%xdk\FXC\amd64\FXC.exe"
 if not exist %XBOXFXC% goto needxdk
+goto continue
+
+:continuepc
+set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
+if exist %PCFXC% goto continue
+set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\x86\fxc.exe"
+if exist %PCFXC% goto continue
+
+set PCFXC=fxc.exe
 
 :continue
 
@@ -194,21 +203,21 @@ endlocal
 exit /b
 
 :CompileShader
-set fxc=fxc /nologo %1.fx /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% /nologo %1.fx /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderHLSL
-set fxc=fxc /nologo %1.hlsl /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% /nologo %1.hlsl /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=fxc /nologo %1.hlsl /Tcs_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+set fxc=%PCFXC% /nologo %1.hlsl /Tcs_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
