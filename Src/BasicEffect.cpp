@@ -468,7 +468,6 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (textureEnabled)
     {
         if (!texture.ptr || !sampler.ptr)
@@ -476,6 +475,8 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
             DebugTrace("ERROR: Missing texture or sampler for BasicEffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
             throw std::exception("BasicEffect");
         }
+
+        // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
     }
