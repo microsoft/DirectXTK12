@@ -93,6 +93,7 @@
     <ClCompile Include="Src\ModelLoadVBO.cpp" />
     <ClCompile Include="Src\Mouse.cpp" />
     <ClCompile Include="Src\NormalMapEffect.cpp" />
+    <ClCompile Include="Src\PBREffect.cpp" />
     <ClCompile Include="Src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Create</PrecompiledHeader>
@@ -263,6 +264,16 @@
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSConstant.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSConstant.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSTextured.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSTextured.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSTexturedVelocity.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_PSTexturedVelocity.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_VSConstant.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_VSConstant.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_VSConstantVelocity.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOnePBREffect_VSConstantVelocity.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOnePostProcess_PSBloomBlur.inc" />
     <None Include="Src\Shaders\Compiled\XboxOnePostProcess_PSBloomBlur.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOnePostProcess_PSBloomCombine.inc" />
@@ -361,6 +372,8 @@
     <None Include="Src\Shaders\Compiled\XboxOneToneMap_VSQuad.pdb" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />
+    <None Include="Src\Shaders\PBRCommon.fxh" />
+    <None Include="Src\Shaders\PixelPacking_Velocity.hlsli" />
     <None Include="Src\Shaders\RootSig.fxh" />
     <None Include="Src\Shaders\Structures.fxh" />
     <None Include="Src\Shaders\Utilities.fxh" />
@@ -406,6 +419,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\ToneMap.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\PBREffect.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

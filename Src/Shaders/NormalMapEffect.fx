@@ -40,6 +40,7 @@ cbuffer Parameters : register(b0)
 #include "Common.fxh"
 #include "RootSig.fxh"
 #include "Lighting.fxh"
+#include "Utilities.fxh"
 
 // Vertex shader: pixel lighting + texture.
 [RootSignature(NormalMapRS)]

@@ -447,6 +447,72 @@ namespace DirectX
 
 
     //----------------------------------------------------------------------------------
+    // Built-in shader for Physically-Based Rendering (Roughness/Metalness) with Image-based lighting
+    class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
+    {
+    public:
+        explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity = false);
+        PBREffect(PBREffect&& moveFrom);
+        PBREffect& operator= (PBREffect&& moveFrom);
+
+        PBREffect(PBREffect const&) = delete;
+        PBREffect& operator= (PBREffect const&) = delete;
+
+        virtual ~PBREffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
+
+        // Light settings.
+        void __cdecl SetLightEnabled(int whichLight, bool value) override;
+        void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
+        void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
+
+        void __cdecl EnableDefaultLighting() override;
+
+        // PBR Settings.
+        void XM_CALLCONV SetConstantAlbedo(FXMVECTOR value);
+        void __cdecl     SetConstantMetallic(float value);
+        void __cdecl     SetConstantRoughness(float value);
+#ifdef DEBUG
+        void __cdecl     SetDebugFlags(bool diffuse, bool D, bool F, bool G);
+#endif
+
+        // Texture settings.
+        void __cdecl SetSurfaceTextures(
+            D3D12_GPU_DESCRIPTOR_HANDLE albedo,
+            D3D12_GPU_DESCRIPTOR_HANDLE normal,
+            D3D12_GPU_DESCRIPTOR_HANDLE roughnessMetallicAmbientOcclusion,
+            D3D12_GPU_DESCRIPTOR_HANDLE sampler);
+
+        void __cdecl SetIBLTextures(
+            D3D12_GPU_DESCRIPTOR_HANDLE radiance,
+            int numRadianceMips,
+            D3D12_GPU_DESCRIPTOR_HANDLE irradiance,
+            D3D12_GPU_DESCRIPTOR_HANDLE sampler);
+
+        // Render target size, required for velocity buffer output.
+        void __cdecl SetRenderTargetSizeInPixels(int width, int height);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+
+        // Unsupported interface methods.
+        void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
+        void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+    };
+
+
+    //----------------------------------------------------------------------------------
     // Abstract interface to factory texture resources
     class IEffectTextureFactory
     {
@@ -529,10 +595,10 @@ namespace DirectX
             bool                biasedVertexNormals;
             float               specularPower;
             float               alphaValue;
-            DirectX::XMFLOAT3   ambientColor;
-            DirectX::XMFLOAT3   diffuseColor;
-            DirectX::XMFLOAT3   specularColor;
-            DirectX::XMFLOAT3   emissiveColor;
+            XMFLOAT3            ambientColor;
+            XMFLOAT3            diffuseColor;
+            XMFLOAT3            specularColor;
+            XMFLOAT3            emissiveColor;
             int                 diffuseTextureIndex;
             int                 specularTextureIndex;
             int                 normalTextureIndex;
