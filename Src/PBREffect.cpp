@@ -48,9 +48,9 @@ struct PBREffectTraits
 {
     typedef PBREffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 2;
-    static const int PixelShaderCount = 3;
-    static const int ShaderPermutationCount = 3;
+    static const int VertexShaderCount = 4;
+    static const int PixelShaderCount = 5;
+    static const int ShaderPermutationCount = 10;
     static const int RootSignatureCount = 1;
 };
 
@@ -62,24 +62,25 @@ public:
     Impl(_In_ ID3D12Device* device, 
         int effectFlags, 
         const EffectPipelineStateDescription& pipelineDescription,
+        bool emissive,
         bool generateVelocity);
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
-    int GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const;
+    int GetPipelineStatePermutation(bool velocityEnabled) const;
 
     static const int MaxDirectionalLights = 3;
     
-    int flags;
-
-    // When PBR moves into DirectXTK, this could become an effect flag.
-    bool doGenerateVelocity;
+    bool textureEnabled;
+    bool biasedVertexNormals;
+    bool emissiveMap;
 
     enum RootParameterIndex
     {
         AlbedoTexture,
         NormalTexture,
         RMATexture,
+        EmissiveTexture,
         RadianceTexture,
         IrradianceTexture,
         SurfaceSampler,
@@ -100,17 +101,25 @@ namespace
 #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstant.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocity.inc"
+    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantBn.inc"
+    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocityBn.inc"
 
     #include "Shaders/Compiled/XboxOnePBREffect_PSConstant.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTextured.inc"
+    #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissive.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedVelocity.inc"
+    #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
 #else    
     #include "Shaders/Compiled/PBREffect_VSConstant.inc"
     #include "Shaders/Compiled/PBREffect_VSConstantVelocity.inc"
+    #include "Shaders/Compiled/PBREffect_VSConstantBn.inc"
+    #include "Shaders/Compiled/PBREffect_VSConstantVelocityBn.inc"
 
     #include "Shaders/Compiled/PBREffect_PSConstant.inc"
     #include "Shaders/Compiled/PBREffect_PSTextured.inc"
+    #include "Shaders/Compiled/PBREffect_PSTexturedEmissive.inc"
     #include "Shaders/Compiled/PBREffect_PSTexturedVelocity.inc"
+    #include "Shaders/Compiled/PBREffect_PSTexturedEmissiveVelocity.inc"
 #endif
 }
 
@@ -120,15 +129,25 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::VertexShaderBytecode[] 
 {
     { PBREffect_VSConstant, sizeof(PBREffect_VSConstant) },
     { PBREffect_VSConstantVelocity, sizeof(PBREffect_VSConstantVelocity) },
+    { PBREffect_VSConstantBn, sizeof(PBREffect_VSConstantBn) },
+    { PBREffect_VSConstantVelocityBn, sizeof(PBREffect_VSConstantVelocityBn) },
 };
 
 
 template<>
 const int EffectBase<PBREffectTraits>::VertexShaderIndices[] =
 {
-    0,      // basic
+    0,      // constant
     0,      // textured
+    0,      // textured + emissive
     1,      // textured + velocity
+    1,      // textured + emissive + velocity
+
+    2,      // constant (biased vertex normals)
+    2,      // textured (biased vertex normals)
+    2,      // textured + emissive (biased vertex normals)
+    3,      // textured + velocity (biased vertex normals)
+    3,      // textured + emissive + velocity (biasoed vertex normals)
 };
 
 
@@ -137,16 +156,26 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::PixelShaderBytecode[] =
 {
     { PBREffect_PSConstant, sizeof(PBREffect_PSConstant) },
     { PBREffect_PSTextured, sizeof(PBREffect_PSTextured) },
-    { PBREffect_PSTexturedVelocity, sizeof(PBREffect_PSTexturedVelocity) }
+    { PBREffect_PSTexturedEmissive, sizeof(PBREffect_PSTexturedEmissive) },
+    { PBREffect_PSTexturedVelocity, sizeof(PBREffect_PSTexturedVelocity) },
+    { PBREffect_PSTexturedEmissiveVelocity, sizeof(PBREffect_PSTexturedEmissiveVelocity) }
 };
 
 
 template<>
 const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 {
-    0,      // basic
+    0,      // constant
     1,      // textured
-    2,      // textured + velocity
+    2,      // textured + emissive
+    3,      // textured + velocity
+    4,      // textured + emissive + velocity
+
+    0,      // constant (biased vertex normals)
+    1,      // textured (biased vertex normals)
+    2,      // textured + emissive (biased vertex normals)
+    3,      // textured + velocity (biased vertex normals)
+    4,      // textured + emissive + velocity (biased vertex normals)
 };
 
 // Global pool of per-device PBREffect resources. Required by EffectBase<>, but not used.
@@ -157,10 +186,10 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         int effectFlags,
         const EffectPipelineStateDescription& pipelineDescription,
+        bool emissive,
         bool generateVelocity)
     : EffectBase(device),
-    flags(effectFlags),
-    doGenerateVelocity(generateVelocity),
+    emissiveMap(emissive),
     descriptors{},
     lightColor{}
 {
@@ -178,6 +207,23 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         constants.lightDiffuseColor[i] = g_XMZero;
     }
 
+    if (effectFlags & EffectFlags::Texture)
+    {
+        textureEnabled = true;
+    }
+    else
+    {
+        textureEnabled = false;
+
+        if (emissive || generateVelocity)
+        {
+            DebugTrace("ERROR: PBREffect does not support emissive or velocity without surface textures\n");
+            throw std::invalid_argument("PBREffect");
+        }
+    }
+
+    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
+
     // Default PBR values
     constants.Albedo = g_XMOne;
     constants.Metallic = 0.5f;
@@ -193,12 +239,13 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParametersCount];
-        CD3DX12_DESCRIPTOR_RANGE textureSRV[5] = {
+        CD3DX12_DESCRIPTOR_RANGE textureSRV[6] = {
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0),
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1),
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2),
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3),
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 4),
+            CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 5),
         };
 
         CD3DX12_DESCRIPTOR_RANGE textureSampler[2] = {
@@ -237,10 +284,8 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         throw std::invalid_argument("PBREffect");
     }
 
-    // TODO - EffectFlags::BiasedVertexNormals
-
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation((effectFlags & EffectFlags::Texture) != 0, doGenerateVelocity);
+    int sp = GetPipelineStatePermutation(generateVelocity);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
@@ -259,19 +304,27 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const
+int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled) const
 {
     int permutation = 0;
 
-    if (textureEnabled)
+    if (velocityEnabled)
+    {
+        permutation = 3;
+    }
+    else if (textureEnabled)
+    {
+        permutation = 1;
+    }
+
+    if (emissiveMap)
     {
         permutation += 1;
     }
 
-    if (velocityEnabled)
+    if (biasedVertexNormals)
     {
-        // only textured velocity is supported
-        permutation = 2; 
+        permutation += 5;
     }
 
     return permutation;
@@ -332,7 +385,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set the root parameters
-    if ((flags & EffectFlags::Texture) == 0)
+    if (!textureEnabled)
     {
         // only update radiance/irradiance texture and samplers
 
@@ -340,6 +393,13 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         commandList->SetGraphicsRootDescriptorTable(RadianceTexture, descriptors[RadianceTexture]);
         commandList->SetGraphicsRootDescriptorTable(IrradianceTexture, descriptors[IrradianceTexture]);
         commandList->SetGraphicsRootDescriptorTable(RadianceSampler, descriptors[RadianceSampler]);
+
+        // Bind 'empty' textures to avoid warnings on PC
+        commandList->SetGraphicsRootDescriptorTable(AlbedoTexture, descriptors[RadianceTexture]);
+        commandList->SetGraphicsRootDescriptorTable(NormalTexture, descriptors[RadianceTexture]);
+        commandList->SetGraphicsRootDescriptorTable(RMATexture, descriptors[RadianceTexture]);
+        commandList->SetGraphicsRootDescriptorTable(EmissiveTexture, descriptors[RadianceTexture]);
+        commandList->SetGraphicsRootDescriptorTable(SurfaceSampler, descriptors[RadianceSampler]);
     }
     else
     {
@@ -363,9 +423,29 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
         for (int i = 0; i < ConstantBuffer; i++)
         {
+            if (i == EmissiveTexture)
+                continue;
+
             // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
             commandList->SetGraphicsRootDescriptorTable(i, descriptors[i]);
         }
+
+        if (emissiveMap)
+        {
+            if (!descriptors[EmissiveTexture].ptr)
+            {
+                DebugTrace("ERROR: Missing emissive map texture for PBREffect (texture %llu)\n", descriptors[NormalTexture].ptr);
+                throw std::exception("PBREffect");
+            }
+
+            commandList->SetGraphicsRootDescriptorTable(EmissiveTexture, descriptors[EmissiveTexture]);
+        }
+        else
+        {
+            // Bind 'empty' textures to avoid warnings on PC
+            commandList->SetGraphicsRootDescriptorTable(EmissiveTexture, descriptors[AlbedoTexture]);
+        }
+
     }
 
     // Set constants
@@ -379,8 +459,9 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 PBREffect::PBREffect(_In_ ID3D12Device* device, 
                      int effectFlags, 
                     const EffectPipelineStateDescription& pipelineDescription, 
+                    bool emissive,
                     bool generateVelocity)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription, generateVelocity))
+    : pImpl(new Impl(device, effectFlags, pipelineDescription, emissive, generateVelocity))
 {
 }
 
@@ -562,6 +643,12 @@ void PBREffect::SetIBLTextures(
     pImpl->descriptors[Impl::RootParameterIndex::IrradianceTexture] = irradiance;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+
+void PBREffect::SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::EmissiveTexture] = emissive;
 }
 
 

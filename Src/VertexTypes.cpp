@@ -175,7 +175,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTextureTangent::InputElements
     { "TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert(sizeof(VertexPositionNormalTextureTangent) == 48, "Vertex struct/layout mismatch");
+static_assert(sizeof(VertexPositionNormalTextureTangent) == 44, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTextureTangent::InputLayout =
 {

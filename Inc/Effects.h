@@ -451,7 +451,7 @@ namespace DirectX
     class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
     {
     public:
-        explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity = false);
+        explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool emissive = false, bool generateVelocity = false);
         PBREffect(PBREffect&& moveFrom);
         PBREffect& operator= (PBREffect&& moveFrom);
 
@@ -496,6 +496,8 @@ namespace DirectX
             int numRadianceMips,
             D3D12_GPU_DESCRIPTOR_HANDLE irradiance,
             D3D12_GPU_DESCRIPTOR_HANDLE sampler);
+
+        void __cdecl SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive);
 
         // Render target size, required for velocity buffer output.
         void __cdecl SetRenderTargetSizeInPixels(int width, int height);

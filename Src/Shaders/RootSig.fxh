@@ -160,6 +160,7 @@
 "DescriptorTable ( SRV(t2) ),"\
 "DescriptorTable ( SRV(t3) ),"\
 "DescriptorTable ( SRV(t4) ),"\
+"DescriptorTable ( SRV(t5) ),"\
 "DescriptorTable ( Sampler(s0) ),"\
 "DescriptorTable ( Sampler(s1) ),"\
 "CBV(b0)"
