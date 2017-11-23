@@ -145,11 +145,11 @@ float4 PSConstant(PSInputPixelLightingTxTangent pin) : SV_Target0
     const float3 N = normalize(pin.NormalWS);                       // surface normal
     const float AO = 1;                                             // ambient term
 
-    float3 output = LightSurface(V, N, 3,
+    float3 color = LightSurface(V, N, 3,
         LightColor, LightDirection,
         ConstantAlbedo, ConstantRoughness, ConstantMetallic, AO);
 
-    return float4(output,1);
+    return float4(color, 1);
 }
 
 
@@ -173,9 +173,9 @@ float4 PSTextured(PSInputPixelLightingTxTangent pin) : SV_Target0
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 output = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
 
-    return float4(output, 1);
+    return float4(color, 1);
 }
 
 
@@ -199,11 +199,11 @@ float4 PSTexturedEmissive(PSInputPixelLightingTxTangent pin) : SV_Target0
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 output = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
 
-    output += EmissiveTexture.Sample(SurfaceSampler, pin.TexCoord).rgb;
+    color += EmissiveTexture.Sample(SurfaceSampler, pin.TexCoord).rgb;
 
-    return float4(output, 1);
+    return float4(color, 1);
 }
 
 
@@ -212,7 +212,7 @@ float4 PSTexturedEmissive(PSInputPixelLightingTxTangent pin) : SV_Target0
 
 struct PSOut_Velocity
 {
-    float3 color : SV_Target0;
+    float4 color : SV_Target0;
     packed_velocity_t velocity : SV_Target1;
 };
 
@@ -237,7 +237,9 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    output.color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+
+    output.color = float4(color, 1);
 
     // Calculate velocity of this point
     float4 prevPos = pin.prevPosition;
@@ -272,9 +274,11 @@ PSOut_Velocity PSTexturedEmissiveVelocity(VSOut_Velocity pin)
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    output.color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
 
-    output.color += EmissiveTexture.Sample(SurfaceSampler, pin.current.TexCoord).rgb;
+    color += EmissiveTexture.Sample(SurfaceSampler, pin.current.TexCoord).rgb;
+
+    output.color = float4(color, 1);
 
     // Calculate velocity of this point
     float4 prevPos = pin.prevPosition;
