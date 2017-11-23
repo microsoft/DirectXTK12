@@ -32,6 +32,7 @@ cbuffer Constants : register(b0)
     float3 LightColor[3]            : packoffset(c19);   // "Specular and diffuse light" in PBR
  
     float3 ConstantAlbedo           : packoffset(c22);   // Constant values if not a textured effect
+    float  Alpha                    : packoffset(c22.w);
     float  ConstantMetallic         : packoffset(c23.x);
     float  ConstantRoughness        : packoffset(c23.y);
 
@@ -60,7 +61,7 @@ VSOutputPixelLightingTxTangent VSConstant(VSInputNmTxTangent vin)
     vout.PositionPS = cout.Pos_ps;
     vout.PositionWS = float4(cout.Pos_ws, 1);
     vout.NormalWS = cout.Normal_ws;
-    vout.Diffuse = float4(ConstantAlbedo,1);
+    vout.Diffuse = float4(ConstantAlbedo, Alpha);
     vout.TexCoord = vin.TexCoord;
     vout.TangentWS = normalize(mul(vin.Tangent.xyz, WorldInverseTranspose));
 
@@ -79,7 +80,7 @@ VSOut_Velocity VSConstantVelocity(VSInputNmTxTangent vin)
     vout.current.PositionPS = cout.Pos_ps;
     vout.current.PositionWS = float4(cout.Pos_ws, 1);
     vout.current.NormalWS = cout.Normal_ws;
-    vout.current.Diffuse = float4(ConstantAlbedo,1);
+    vout.current.Diffuse = float4(ConstantAlbedo, Alpha);
     vout.current.TexCoord = vin.TexCoord;
     vout.current.TangentWS = normalize(mul(vin.Tangent.xyz, WorldInverseTranspose));
     vout.prevPosition = mul(vin.Position, PrevWorldViewProj);
@@ -101,7 +102,7 @@ VSOutputPixelLightingTxTangent VSConstantBn(VSInputNmTxTangent vin)
     vout.PositionPS = cout.Pos_ps;
     vout.PositionWS = float4(cout.Pos_ws, 1);
     vout.NormalWS = cout.Normal_ws;
-    vout.Diffuse = float4(ConstantAlbedo, 1);
+    vout.Diffuse = float4(ConstantAlbedo, Alpha);
     vout.TexCoord = vin.TexCoord;
 
     float3 tangent = BiasX2(vin.Tangent.xyz);
@@ -124,7 +125,7 @@ VSOut_Velocity VSConstantVelocityBn(VSInputNmTxTangent vin)
     vout.current.PositionPS = cout.Pos_ps;
     vout.current.PositionWS = float4(cout.Pos_ws, 1);
     vout.current.NormalWS = cout.Normal_ws;
-    vout.current.Diffuse = float4(ConstantAlbedo, 1);
+    vout.current.Diffuse = float4(ConstantAlbedo, Alpha);
     vout.current.TexCoord = vin.TexCoord;
 
     float3 tangent = BiasX2(vin.Tangent.xyz);
@@ -149,7 +150,7 @@ float4 PSConstant(PSInputPixelLightingTxTangent pin) : SV_Target0
         LightColor, LightDirection,
         ConstantAlbedo, ConstantRoughness, ConstantMetallic, AO);
 
-    return float4(color, 1);
+    return float4(color, Alpha);
 }
 
 
@@ -165,7 +166,7 @@ float4 PSTextured(PSInputPixelLightingTxTangent pin) : SV_Target0
     float3 N = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Get albedo
-    float3 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.TexCoord).rgb;
+    float4 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.TexCoord);
 
     // Get roughness, metalness, and ambient occlusion
     float3 RMA = RMATexture.Sample(SurfaceSampler, pin.TexCoord);
@@ -173,9 +174,9 @@ float4 PSTextured(PSInputPixelLightingTxTangent pin) : SV_Target0
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
-    return float4(color, 1);
+    return float4(color, albedo.w * Alpha);
 }
 
 
@@ -191,7 +192,7 @@ float4 PSTexturedEmissive(PSInputPixelLightingTxTangent pin) : SV_Target0
     float3 N = PeturbNormal(localNormal, pin.NormalWS, pin.TangentWS);
 
     // Get albedo
-    float3 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.TexCoord).rgb;
+    float4 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.TexCoord);
 
     // Get roughness, metalness, and ambient occlusion
     float3 RMA = RMATexture.Sample(SurfaceSampler, pin.TexCoord);
@@ -199,11 +200,11 @@ float4 PSTexturedEmissive(PSInputPixelLightingTxTangent pin) : SV_Target0
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
     color += EmissiveTexture.Sample(SurfaceSampler, pin.TexCoord).rgb;
 
-    return float4(color, 1);
+    return float4(color, albedo.w * Alpha);
 }
 
 
@@ -229,7 +230,7 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
     float3 N = PeturbNormal(localNormal, pin.current.NormalWS, pin.current.TangentWS);
 
     // Get albedo
-    float3 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.current.TexCoord).rgb;
+    float4 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.current.TexCoord);
 
     // Get roughness, metalness, and ambient occlusion
     float3 RMA = RMATexture.Sample(SurfaceSampler, pin.current.TexCoord);
@@ -237,9 +238,9 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
-    output.color = float4(color, 1);
+    output.color = float4(color, albedo.w * Alpha);
 
     // Calculate velocity of this point
     float4 prevPos = pin.prevPosition;
@@ -266,7 +267,7 @@ PSOut_Velocity PSTexturedEmissiveVelocity(VSOut_Velocity pin)
     float3 N = PeturbNormal(localNormal, pin.current.NormalWS, pin.current.TangentWS);
 
     // Get albedo
-    float3 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.current.TexCoord).rgb;
+    float4 albedo = AlbedoTexture.Sample(SurfaceSampler, pin.current.TexCoord);
 
     // Get roughness, metalness, and ambient occlusion
     float3 RMA = RMATexture.Sample(SurfaceSampler, pin.current.TexCoord);
@@ -274,11 +275,11 @@ PSOut_Velocity PSTexturedEmissiveVelocity(VSOut_Velocity pin)
     // glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
 
     // Shade surface
-    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo, RMA.g, RMA.b, RMA.r);
+    float3 color = LightSurface(V, N, 3, LightColor, LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
     color += EmissiveTexture.Sample(SurfaceSampler, pin.current.TexCoord).rgb;
 
-    output.color = float4(color, 1);
+    output.color = float4(color, albedo.w * Alpha);
 
     // Calculate velocity of this point
     float4 prevPos = pin.prevPosition;

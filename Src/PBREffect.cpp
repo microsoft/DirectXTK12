@@ -405,7 +405,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         if (!descriptors[AlbedoTexture].ptr || !descriptors[SurfaceSampler].ptr)
         {
-            DebugTrace("ERROR: Missing albeto texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[AlbedoTexture].ptr, descriptors[SurfaceSampler].ptr);
+            DebugTrace("ERROR: Missing albedo texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[AlbedoTexture].ptr, descriptors[SurfaceSampler].ptr);
             throw std::exception("PBREffect");
         }
 
@@ -579,9 +579,19 @@ void PBREffect::EnableDefaultLighting()
 
 
 // PBR Settings
+void PBREffect::SetAlpha(float value)
+{
+    // Set w to new value, but preserve existing xyz (constant albedo).
+    pImpl->constants.Albedo = XMVectorSetW(pImpl->constants.Albedo, value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+
 void PBREffect::SetConstantAlbedo(FXMVECTOR value)
 {
-    pImpl->constants.Albedo = value;
+    // Set xyz to new value, but preserve existing w (alpha).
+    pImpl->constants.Albedo = XMVectorSelect(pImpl->constants.Albedo, value, g_XMSelect1110);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
@@ -657,5 +667,6 @@ void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
 {
     pImpl->constants.targetWidth = static_cast<float>(width);
     pImpl->constants.targetHeight = static_cast<float>(height);
+
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
