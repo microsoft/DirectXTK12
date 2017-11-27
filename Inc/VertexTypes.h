@@ -282,43 +282,4 @@ namespace DirectX
         static const int InputElementCount = 4;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
-
-
-    // Vertex struct holding position, normal vector, texture mapping, and tangent information.
-    struct VertexPositionNormalTextureTangent
-    {
-        VertexPositionNormalTextureTangent() = default;
-
-        VertexPositionNormalTextureTangent(XMFLOAT3 const& position,
-            XMFLOAT3 const& normal,
-            XMFLOAT2 const& textureCoordinate,
-            XMFLOAT3 const& tangent)
-            : position(position),
-            normal(normal),
-            textureCoordinate(textureCoordinate),
-            tangent(tangent)
-        { }
-
-        VertexPositionNormalTextureTangent(FXMVECTOR position,
-            FXMVECTOR normal,
-            CXMVECTOR textureCoordinate,
-            FXMVECTOR tangent)
-        {
-            XMStoreFloat3(&this->position, position);
-            XMStoreFloat3(&this->normal, normal);
-            XMStoreFloat2(&this->textureCoordinate, textureCoordinate);
-            XMStoreFloat3(&this->tangent, tangent);
-        }
-
-        XMFLOAT3 position;
-        XMFLOAT3 normal;
-        XMFLOAT2 textureCoordinate;
-        XMFLOAT3 tangent;
-
-        static const D3D12_INPUT_LAYOUT_DESC InputLayout;
-
-    private:
-        static const int InputElementCount = 4;
-        static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
-    };
 }

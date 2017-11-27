@@ -163,22 +163,4 @@ const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalColorTexture::InputLayout =
 
 //--------------------------------------------------------------------------------------
 // VertexPositionNormalTangentColorTexture, VertexPositionNormalTangentColorTextureSkinning are not
-// supported for DirectX 12 since they were only present for DGSL.
-
-//--------------------------------------------------------------------------------------
-// Vertex struct holding position, normal vector, texture mapping, and tangent information.
-const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTextureTangent::InputElements[] =
-{
-    { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-    { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-    { "TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-};
-
-static_assert(sizeof(VertexPositionNormalTextureTangent) == 44, "Vertex struct/layout mismatch");
-
-const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTextureTangent::InputLayout =
-{
-    VertexPositionNormalTextureTangent::InputElements,
-    VertexPositionNormalTextureTangent::InputElementCount
-};
+// supported for DirectX 12 since they were only present for DGSL
