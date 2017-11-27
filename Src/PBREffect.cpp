@@ -69,8 +69,6 @@ public:
 
     int GetPipelineStatePermutation(bool velocityEnabled) const;
 
-    static const int MaxDirectionalLights = 3;
-    
     bool textureEnabled;
     bool biasedVertexNormals;
     bool emissiveMap;
