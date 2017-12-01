@@ -41,6 +41,7 @@ cbuffer Parameters : register(b0)
 #include "Common.fxh"
 #include "RootSig.fxh"
 #include "Lighting.fxh"
+#include "Utilities.fxh"
 
 [RootSignature(MainRS)]
 float3 Skin(inout VSInputNmTxWeights vin, float3 normal, uniform int boneCount)

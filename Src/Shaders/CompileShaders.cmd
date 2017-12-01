@@ -151,6 +151,17 @@ call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFog
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoSpec
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFogSpec
 
+call :CompileShader%1 PBREffect vs VSConstant
+call :CompileShader%1 PBREffect vs VSConstantVelocity
+call :CompileShader%1 PBREffect vs VSConstantBn
+call :CompileShader%1 PBREffect vs VSConstantVelocityBn
+
+call :CompileShader%1 PBREffect ps PSConstant
+call :CompileShader%1 PBREffect ps PSTextured
+call :CompileShader%1 PBREffect ps PSTexturedEmissive
+call :CompileShader%1 PBREffect ps PSTexturedVelocity
+call :CompileShader%1 PBREffect ps PSTexturedEmissiveVelocity
+
 call :CompileShader%1 SpriteEffect vs SpriteVertexShader
 call :CompileShader%1 SpriteEffect ps SpritePixelShader
 
