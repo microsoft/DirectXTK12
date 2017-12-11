@@ -37,10 +37,11 @@
 // C5039 pointer or reference to potentially throwing function passed to extern C function under - EHc
 
 // XBox One XDK related Off by default warnings
-#pragma warning(disable : 4471 4917 4986)
+#pragma warning(disable : 4471 4917 4986 5043)
 // C4471 forward declaration of an unscoped enumeration must have an underlying type
 // C4917 a GUID can only be associated with a class, interface or namespace
 // C4986 exception specification does not match previous declaration
+// C5043 exception specification does not match previous declaration
 
 #pragma warning(push)
 #pragma warning(disable : 4005)
