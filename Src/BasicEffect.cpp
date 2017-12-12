@@ -69,14 +69,13 @@ public:
 
     bool lightingEnabled;
     bool textureEnabled;
-    bool biasedVertexNormals;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE sampler;
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const;
+    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled, bool biasedVertexNormals) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -345,7 +344,6 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
     lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     // Create root signature.
     {
@@ -390,7 +388,8 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
-        (effectFlags & EffectFlags::VertexColor) != 0);
+        (effectFlags & EffectFlags::VertexColor) != 0,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
@@ -409,7 +408,7 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 }
 
 
-int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const
+int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled, bool biasedVertexNormals) const
 {
     int permutation = 0;
 

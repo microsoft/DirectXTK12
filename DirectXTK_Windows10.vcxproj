@@ -156,6 +156,22 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVc.pdb" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVcBn.inc" />
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVcBn.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSHemiAmbient.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSHemiAmbient.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBBiTangents.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBBiTangents.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBNormals.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBNormals.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBTangents.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_PSRGBTangents.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebug.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebug.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBn.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBn.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVc.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVc.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.pdb" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.inc" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.pdb" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTextureNoFog.inc" />
@@ -348,6 +364,7 @@
     <ClCompile Include="Src\BinaryReader.cpp" />
     <ClCompile Include="Src\CommonStates.cpp" />
     <ClCompile Include="Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="Src\DebugEffect.cpp" />
     <ClCompile Include="Src\DescriptorHeap.cpp" />
     <ClCompile Include="Src\DirectXHelpers.cpp" />
     <ClCompile Include="Src\DualPostProcess.cpp" />
@@ -433,6 +450,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\PBREffect.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\DebugEffect.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

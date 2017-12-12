@@ -513,6 +513,49 @@ namespace DirectX
 
 
     //----------------------------------------------------------------------------------
+    // Built-in shader for debug visualization of normals, tangents, etc.
+    class DebugEffect : public IEffect, public IEffectMatrices
+    {
+    public:
+        enum Mode
+        {
+            Mode_Default = 0,   // Hemispherical ambient lighting
+            Mode_Normals,       // RGB normals
+            Mode_Tangents,      // RGB tangents
+            Mode_BiTangents,    // RGB bi-tangents
+        };
+
+        explicit DebugEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, Mode debugMode = Mode_Default);
+        DebugEffect(DebugEffect&& moveFrom);
+        DebugEffect& operator= (DebugEffect&& moveFrom);
+
+        DebugEffect(DebugEffect const&) = delete;
+        DebugEffect& operator= (DebugEffect const&) = delete;
+
+        virtual ~DebugEffect();
+
+        // IEffect methods.
+        void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
+
+        // Camera settings.
+        void XM_CALLCONV SetWorld(FXMMATRIX value) override;
+        void XM_CALLCONV SetView(FXMMATRIX value) override;
+        void XM_CALLCONV SetProjection(FXMMATRIX value) override;
+        void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
+
+        // Debug Settings.
+        void XM_CALLCONV SetHemisphericalAmbientColor(FXMVECTOR upper, FXMVECTOR lower);
+        void __cdecl SetAlpha(float value);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::unique_ptr<Impl> pImpl;
+    };
+
+
+    //----------------------------------------------------------------------------------
     // Abstract interface to factory texture resources
     class IEffectTextureFactory
     {

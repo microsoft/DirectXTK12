@@ -69,15 +69,12 @@ public:
         RootParameterCount
     };
 
-    int weightsPerVertex;
-    bool biasedVertexNormals;
-    
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE sampler;
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool preferPerPixelLighting) const;
+    int GetPipelineStatePermutation(bool preferPerPixelLighting, int weightsPerVertex, bool biasedVertexNormals) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -234,7 +231,6 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 // Constructor.
 SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
   : EffectBase(device),
-    weightsPerVertex(weightsPerVertex),
     texture{},
     sampler{}
 {
@@ -285,7 +281,6 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
     assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     if (effectFlags & EffectFlags::VertexColor)
     {
@@ -295,7 +290,9 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
 
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
+        weightsPerVertex,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
@@ -314,7 +311,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
 }
 
 
-int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting) const
+int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, int weightsPerVertex, bool biasedVertexNormals) const
 {
     int permutation = 0;
 

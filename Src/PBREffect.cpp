@@ -67,10 +67,9 @@ public:
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
-    int GetPipelineStatePermutation(bool velocityEnabled) const;
+    int GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const;
 
     bool textureEnabled;
-    bool biasedVertexNormals;
     bool emissiveMap;
 
     enum RootParameterIndex
@@ -220,8 +219,6 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         }
     }
 
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
-
     // Default PBR values
     constants.Albedo = g_XMOne;
     constants.Metallic = 0.5f;
@@ -283,7 +280,8 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(generateVelocity);
+    int sp = GetPipelineStatePermutation(generateVelocity,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
@@ -302,7 +300,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled) const
+int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const
 {
     int permutation = 0;
 
