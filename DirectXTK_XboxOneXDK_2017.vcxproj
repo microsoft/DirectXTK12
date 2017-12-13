@@ -73,6 +73,7 @@
     <ClCompile Include="Src\BinaryReader.cpp" />
     <ClCompile Include="Src\CommonStates.cpp" />
     <ClCompile Include="Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="Src\DebugEffect.cpp" />
     <ClCompile Include="Src\DescriptorHeap.cpp" />
     <ClCompile Include="Src\DirectXHelpers.cpp" />
     <ClCompile Include="Src\DualPostProcess.cpp" />
@@ -198,6 +199,22 @@
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicVertexLightingVc.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicVertexLightingVcBn.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneBasicEffect_VSBasicVertexLightingVcBn.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSHemiAmbient.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSHemiAmbient.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBBiTangents.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBBiTangents.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBNormals.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBNormals.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBTangents.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_PSRGBTangents.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebug.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebug.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugBn.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugBn.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugVc.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugVc.pdb" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugVcBn.inc" />
+    <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugVcBn.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneDualTextureEffect_PSDualTexture.inc" />
     <None Include="Src\Shaders\Compiled\XboxOneDualTextureEffect_PSDualTexture.pdb" />
     <None Include="Src\Shaders\Compiled\XboxOneDualTextureEffect_PSDualTextureNoFog.inc" />
@@ -432,6 +449,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\PBREffect.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\DebugEffect.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
