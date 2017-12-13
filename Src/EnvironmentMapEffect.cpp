@@ -77,8 +77,6 @@ public:
         RootParameterCount
     };
 
-    bool biasedVertexNormals;
-
     EffectLights lights;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -86,7 +84,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMap;
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMapSampler;
 
-    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const;
+    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting, bool biasedVertexNormals) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -283,8 +281,6 @@ EnvironmentMapEffect::Impl::Impl(
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
-
     if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
@@ -302,7 +298,8 @@ EnvironmentMapEffect::Impl::Impl(
     int sp = GetPipelineStatePermutation(
         fresnelEnabled,
         specularEnabled,
-        (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
 
     assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
@@ -321,7 +318,9 @@ EnvironmentMapEffect::Impl::Impl(
 }
 
 
-int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const
+int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(
+    bool fresnelEnabled, bool specularEnabled,
+    bool preferPerPixelLighting, bool biasedVertexNormals) const
 {
     int permutation = 0;
 
