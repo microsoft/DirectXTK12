@@ -114,15 +114,15 @@ const int EffectBase<DebugEffectTraits>::VertexShaderIndices[] =
     1,      // vertex color + tangents
     1,      // vertex color + bitangents
 
-    2,      // default (biased vertex normal/tangent) 
-    2,      // normals (biased vertex normal/tangent)
-    2,      // tangents (biased vertex normal/tangent)
-    2,      // bitangents (biased vertex normal/tangent)
+    2,      // default (biased vertex normal)
+    2,      // normals (biased vertex normal)
+    2,      // tangents (biased vertex normal)
+    2,      // bitangents (biased vertex normal)
 
-    3,      // vertex color (biased vertex normal/tangent)
-    3,      // vertex color (biased vertex normal/tangent) + normals
-    3,      // vertex color (biased vertex normal/tangent) + tangents
-    3,      // vertex color (biased vertex normal/tangent) + bitangents
+    3,      // vertex color (biased vertex normal)
+    3,      // vertex color (biased vertex normal) + normals
+    3,      // vertex color (biased vertex normal) + tangents
+    3,      // vertex color (biased vertex normal) + bitangents
 };
 
 
@@ -149,15 +149,15 @@ const int EffectBase<DebugEffectTraits>::PixelShaderIndices[] =
     2,      // vertex color + tangents
     3,      // vertex color + bitangents
 
-    0,      // default (biased vertex normal/tangent) 
-    1,      // normals (biased vertex normal/tangent)
-    2,      // tangents (biased vertex normal/tangent)
-    3,      // bitangents (biased vertex normal/tangent)
+    0,      // default (biased vertex normal)
+    1,      // normals (biased vertex normal)
+    2,      // tangents (biased vertex normal)
+    3,      // bitangents (biased vertex normal)
 
-    0,      // vertex color (biased vertex normal/tangent)
-    1,      // vertex color (biased vertex normal/tangent) + normals
-    2,      // vertex color (biased vertex normal/tangent) + tangents
-    3,      // vertex color (biased vertex normal/tangent) + bitangents
+    0,      // vertex color (biased vertex normal)
+    1,      // vertex color (biased vertex normal) + normals
+    2,      // vertex color (biased vertex normal) + tangents
+    3,      // vertex color (biased vertex normal) + bitangents
 };
 
 
@@ -237,7 +237,7 @@ int DebugEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, Debu
 
     if (biasedVertexNormals)
     {
-        // Compressed normals & tangents need to be scaled and biased in the vertex shader.
+        // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 8;
     }
 

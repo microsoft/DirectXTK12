@@ -110,7 +110,7 @@ namespace DirectX
         const int VertexColor         = 0x08;
         const int Texture             = 0x10;
 
-        const int BiasedVertexNormals = 0x10000; // compressed vertex normals/tangents/binormals need x2 bias
+        const int BiasedVertexNormals = 0x10000; // compressed vertex normals need x2 bias
     }
 
 

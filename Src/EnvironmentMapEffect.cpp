@@ -342,7 +342,7 @@ int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(
     }
     else
     {
-        // Supporte specular?
+        // Support specular?
         if (specularEnabled)
         {
             permutation += 4;

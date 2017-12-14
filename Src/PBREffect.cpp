@@ -304,8 +304,10 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool bias
 {
     int permutation = 0;
 
+    // Textured RMA vs. constant albedo/roughness/metalness?
     if (velocityEnabled)
     {
+        // Optional velocity buffer (implies textured RMA)?
         permutation = 3;
     }
     else if (textureEnabled)
@@ -313,6 +315,7 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool bias
         permutation = 1;
     }
 
+    // Using an emissive texture?
     if (emissiveMap)
     {
         permutation += 1;
@@ -320,6 +323,7 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool bias
 
     if (biasedVertexNormals)
     {
+        // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 5;
     }
 
