@@ -678,6 +678,8 @@ private:
         ComPtr<ID3D12Heap> heap;
         ThrowIfFailed(mDevice->CreateHeap(&heapDesc, IID_GRAPHICS_PPV_ARGS(heap.GetAddressOf())));
 
+        SetDebugObjectName(heap.Get(), L"ResourceUploadBatch");
+
         ComPtr<ID3D12Resource> resourceCopy;
         ThrowIfFailed(mDevice->CreatePlacedResource(
             heap.Get(),

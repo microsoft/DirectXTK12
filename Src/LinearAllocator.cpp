@@ -305,10 +305,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     }
 
 #if defined(_DEBUG) || defined(PROFILE)
-    if (!m_debugName.empty())
-    {
-        spResource->SetName(m_debugName.c_str());
-    }
+    spResource->SetName(m_debugName.empty() ? L"LinearAllocator" : m_debugName.c_str());
 #endif
 
     // Get a pointer to the memory

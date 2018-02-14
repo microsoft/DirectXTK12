@@ -397,6 +397,8 @@ public:
     Impl(_In_ ID3D12Device* device)
         : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, (int) SamplerIndex::Count)
     {
+        SetDebugObjectName(mDescriptors.Heap(), L"CommonStates");
+
         for (int i = 0; i < static_cast<int>(SamplerIndex::Count); ++i)
         {
             device->CreateSampler(&SamplerDescs[i], mDescriptors.GetCpuHandle(i));

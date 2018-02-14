@@ -391,7 +391,7 @@ ID3D12RootSignature* EffectDeviceResources::DemandCreateRootSig(_Inout_ Microsof
         HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
         if (SUCCEEDED(hr))
-            SetDebugObjectName(*pResult, "DirectXTK:Effect");
+            SetDebugObjectName(*pResult, L"DirectXTK:Effect");
 
         return hr;
     });

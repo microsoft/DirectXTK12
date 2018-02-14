@@ -65,7 +65,8 @@ public:
         , mSharing(true)
         , mForceSRGB(false)
         , mAutoGenMips(false)
-    { 
+    {
+        SetDebugObjectName(mTextureDescriptorHeap.Heap(), L"EffectTextureFactory");
     }
 
     void CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
