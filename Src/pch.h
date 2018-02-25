@@ -88,11 +88,15 @@
 #include <algorithm>
 #include <array>
 #include <exception>
+#include <future>
+#include <initializer_list>
+#include <iterator>
 #include <list>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
