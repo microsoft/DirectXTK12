@@ -17,7 +17,6 @@
 
 #include <DirectXMath.h>
 #include <memory>
-#include <functional>
 
 #include "RenderTargetState.h"
 

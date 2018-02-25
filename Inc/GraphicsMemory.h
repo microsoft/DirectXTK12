@@ -15,7 +15,7 @@
 #include <d3d12.h>
 #endif
 
-#include <utility>
+#include <memory>
 
 
 namespace DirectX

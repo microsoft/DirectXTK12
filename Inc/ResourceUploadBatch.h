@@ -15,11 +15,7 @@
 #include <d3d12.h>
 #endif
 
-#pragma warning(push)
-#pragma warning(disable : 4619 5038)
 #include <future>
-#pragma warning(pop)
-
 #include <memory>
 
 
