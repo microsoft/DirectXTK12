@@ -352,8 +352,8 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
     commandList->SetPipelineState(mPipelineState.Get());
 
     // Draw quad.
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    commandList->DrawInstanced(4, 1, 0, 0);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    commandList->DrawInstanced(3, 1, 0, 0);
 }
 
 
