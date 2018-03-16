@@ -46,19 +46,19 @@ namespace DirectX
 
 
     // Helper for output debug tracing
-    inline void DebugTrace( _In_z_ _Printf_format_string_ const char* format, ... )
+    inline void DebugTrace(_In_z_ _Printf_format_string_ const char* format, ...)
     {
-#ifdef _DEBUG
+    #ifdef _DEBUG
         va_list args;
-        va_start( args, format );
+        va_start(args, format);
 
         char buff[1024] = {};
-        vsprintf_s( buff, format, args );
-        OutputDebugStringA( buff );
-        va_end( args );
-#else
-        UNREFERENCED_PARAMETER( format );
-#endif
+        vsprintf_s(buff, format, args);
+        OutputDebugStringA(buff);
+        va_end(args);
+    #else
+        UNREFERENCED_PARAMETER(format);
+    #endif
     }
 
 
@@ -73,7 +73,7 @@ namespace DirectX
 
     typedef std::unique_ptr<void, handle_closer> ScopedHandle;
 
-    inline HANDLE safe_handle( HANDLE h ) { return (h == INVALID_HANDLE_VALUE) ? 0 : h; }
+    inline HANDLE safe_handle(HANDLE h) { return (h == INVALID_HANDLE_VALUE) ? 0 : h; }
 }
 
 
@@ -85,11 +85,11 @@ namespace std
     class mutex
     {
     public:
-        mutex()         { InitializeCriticalSection(&mCriticalSection); }
-        ~mutex()        { DeleteCriticalSection(&mCriticalSection); }
+        mutex() { InitializeCriticalSection(&mCriticalSection); }
+        ~mutex() { DeleteCriticalSection(&mCriticalSection); }
 
-        void lock()     { EnterCriticalSection(&mCriticalSection); }
-        void unlock()   { LeaveCriticalSection(&mCriticalSection); }
+        void lock() { EnterCriticalSection(&mCriticalSection); }
+        void unlock() { LeaveCriticalSection(&mCriticalSection); }
         bool try_lock() { return TryEnterCriticalSection(&mCriticalSection) != 0; }
 
     private:
@@ -107,7 +107,7 @@ namespace std
         typedef Mutex mutex_type;
 
         explicit lock_guard(mutex_type& mutex)
-          : mMutex(mutex)
+            : mMutex(mutex)
         {
             mMutex.lock();
         }
@@ -118,7 +118,7 @@ namespace std
         }
 
     private:
-        mutex_type& mMutex;
+        mutex_type & mMutex;
 
         lock_guard(lock_guard const&);
         lock_guard& operator= (lock_guard const&);

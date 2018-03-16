@@ -95,7 +95,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
 
     return gpuHandle;
 }
-    
+
 _Use_decl_annotations_
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
     ID3D12Device* device,
@@ -136,12 +136,12 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
 _Use_decl_annotations_
 void DescriptorHeap::Create(
     ID3D12Device* pDevice,
-    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc )
+    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc)
 {
-    assert( pDesc != 0 );
+    assert(pDesc != 0);
 
     m_desc = *pDesc;
-    m_increment = pDevice->GetDescriptorHandleIncrementSize( pDesc->Type );
+    m_increment = pDevice->GetDescriptorHandleIncrementSize(pDesc->Type);
 
     if (pDesc->NumDescriptors == 0)
     {
@@ -151,15 +151,15 @@ void DescriptorHeap::Create(
     }
     else
     {
-        ThrowIfFailed( pDevice->CreateDescriptorHeap(
+        ThrowIfFailed(pDevice->CreateDescriptorHeap(
             pDesc,
-            IID_GRAPHICS_PPV_ARGS( m_pHeap.ReleaseAndGetAddressOf() ) ) );
+            IID_GRAPHICS_PPV_ARGS(m_pHeap.ReleaseAndGetAddressOf())));
 
         SetDebugObjectName(m_pHeap.Get(), L"DescriptorHeap");
 
         m_hCPU = m_pHeap->GetCPUDescriptorHandleForHeapStart();
 
-        if ( pDesc->Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE )
+        if (pDesc->Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE)
             m_hGPU = m_pHeap->GetGPUDescriptorHandleForHeapStart();
 
     }

@@ -42,7 +42,7 @@ namespace DirectX
         void __cdecl Upload(
             _In_ ID3D12Resource* resource,
             _In_ uint32_t subresourceIndexStart,
-            _In_reads_( numSubresources ) D3D12_SUBRESOURCE_DATA* subRes,
+            _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
             _In_ uint32_t numSubresources);
 
         // Asynchronously generate mips from a resource.
@@ -59,7 +59,7 @@ namespace DirectX
         // No more uploads can happen after this call until Begin is called again.
         // This returns a handle to an event that can be waited on.
         std::future<void> __cdecl End(
-            _In_ ID3D12CommandQueue* commandQueue );
+            _In_ ID3D12CommandQueue* commandQueue);
 
     private:
         // Private implementation.

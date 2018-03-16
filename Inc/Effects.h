@@ -115,7 +115,7 @@ namespace DirectX
     class BasicEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        BasicEffect( _In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription );
+        BasicEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         BasicEffect(BasicEffect&& moveFrom);
         BasicEffect& operator= (BasicEffect&& moveFrom);
 
@@ -141,7 +141,7 @@ namespace DirectX
         void __cdecl DisableSpecular();
         void __cdecl SetAlpha(float value);
         void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
-        
+
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
@@ -602,10 +602,10 @@ namespace DirectX
         // Settings.
         void __cdecl ReleaseCache();
 
-        void __cdecl SetSharing( bool enabled );
+        void __cdecl SetSharing(bool enabled);
 
-        void __cdecl EnableForceSRGB( bool forceSRGB ); 
-        void __cdecl EnableAutoGenMips( bool generateMips );
+        void __cdecl EnableForceSRGB(bool forceSRGB);
+        void __cdecl EnableAutoGenMips(bool generateMips);
 
         void __cdecl SetDirectory(_In_opt_z_ const wchar_t* path);
 
@@ -680,7 +680,7 @@ namespace DirectX
     public:
         EffectFactory(_In_ ID3D12Device* device);
         EffectFactory(
-            _In_ ID3D12DescriptorHeap* textureDescriptors, 
+            _In_ ID3D12DescriptorHeap* textureDescriptors,
             _In_ ID3D12DescriptorHeap* samplerDescriptors);
 
         EffectFactory(EffectFactory&& moveFrom);
@@ -693,17 +693,17 @@ namespace DirectX
 
         // IEffectFactory methods.
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
-            const EffectInfo& info, 
+            const EffectInfo& info,
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             const D3D12_INPUT_LAYOUT_DESC& inputLayout,
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) override;
-        
+
         // Settings.
         void __cdecl ReleaseCache();
 
-        void __cdecl SetSharing( bool enabled );
+        void __cdecl SetSharing(bool enabled);
 
         void __cdecl EnablePerPixelLighting(bool enabled);
 

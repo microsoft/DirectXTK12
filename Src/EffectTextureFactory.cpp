@@ -68,9 +68,9 @@ public:
     void CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
 
     void ReleaseCache();
-    void SetSharing( bool enabled ) { mSharing = enabled; }
-    void EnableForceSRGB( bool forceSRGB ) { mForceSRGB = forceSRGB; } 
-    void EnableAutoGenMips( bool generateMips ) { mAutoGenMips = generateMips; }
+    void SetSharing(bool enabled) { mSharing = enabled; }
+    void EnableForceSRGB(bool forceSRGB) { mForceSRGB = forceSRGB; }
+    void EnableAutoGenMips(bool generateMips) { mAutoGenMips = generateMips; }
 
     wchar_t mPath[MAX_PATH];
 
@@ -94,37 +94,37 @@ private:
 _Use_decl_annotations_
 void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot)
 {
-   if ( !name )
+    if (!name)
         throw std::exception("invalid arguments");
 
-    auto it = mTextureCache.find( name );
+    auto it = mTextureCache.find(name);
 
     TextureCacheEntry textureEntry = {};
 
-    if ( mSharing && it != mTextureCache.end() )
+    if (mSharing && it != mTextureCache.end())
     {
         textureEntry = it->second;
     }
     else
     {
         wchar_t fullName[MAX_PATH] = {};
-        wcscpy_s( fullName, mPath );
-        wcscat_s( fullName, name );
+        wcscpy_s(fullName, mPath);
+        wcscat_s(fullName, name);
 
         WIN32_FILE_ATTRIBUTE_DATA fileAttr = {};
-        if ( !GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr) )
+        if (!GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr))
         {
             // Try Current Working Directory (CWD)
-            wcscpy_s( fullName, name );
-            if ( !GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr) )
+            wcscpy_s(fullName, name);
+            if (!GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr))
             {
-                DebugTrace( "EffectTextureFactory could not find texture file '%ls'\n", name );
-                throw std::exception( "CreateTexture" );
+                DebugTrace("EffectTextureFactory could not find texture file '%ls'\n", name);
+                throw std::exception("CreateTexture");
             }
         }
 
         wchar_t ext[_MAX_EXT];
-        _wsplitpath_s( name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT );
+        _wsplitpath_s(name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
 
         unsigned int loadFlags = DDS_LOADER_DEFAULT;
         if (mForceSRGB)
@@ -137,7 +137,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         static_assert(static_cast<int>(DDS_LOADER_MIP_AUTOGEN) == static_cast<int>(WIC_LOADER_MIP_AUTOGEN), "DDS/WIC Load flags mismatch");
         static_assert(static_cast<int>(DDS_LOADER_MIP_RESERVE) == static_cast<int>(WIC_LOADER_MIP_RESERVE), "DDS/WIC Load flags mismatch");
 
-        if ( _wcsicmp( ext, L".dds" ) == 0 )
+        if (_wcsicmp(ext, L".dds") == 0)
         {
             HRESULT hr = CreateDDSTextureFromFileEx(
                 device,
@@ -148,11 +148,11 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
                 loadFlags,
                 textureEntry.mResource.ReleaseAndGetAddressOf(),
                 nullptr,
-                &textureEntry.mIsCubeMap );
-            if ( FAILED(hr) )
+                &textureEntry.mIsCubeMap);
+            if (FAILED(hr))
             {
-                DebugTrace( "CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName );
-                throw std::exception( "CreateDDSTextureFromFile" );
+                DebugTrace("CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                throw std::exception("CreateDDSTextureFromFile");
             }
         }
         else
@@ -166,18 +166,18 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
                 0u,
                 D3D12_RESOURCE_FLAG_NONE,
                 loadFlags,
-                textureEntry.mResource.ReleaseAndGetAddressOf() );
-            if ( FAILED(hr) )
+                textureEntry.mResource.ReleaseAndGetAddressOf());
+            if (FAILED(hr))
             {
-                DebugTrace( "CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName );
-                throw std::exception( "CreateWICTextureFromFile" );
+                DebugTrace("CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                throw std::exception("CreateWICTextureFromFile");
             }
         }
 
         std::lock_guard<std::mutex> lock(mutex);
         if (mSharing)
         {
-            mTextureCache.insert( TextureCache::value_type( name, textureEntry ) );
+            mTextureCache.insert(TextureCache::value_type(name, textureEntry));
         }
         mResources.push_back(textureEntry);
     }
@@ -245,34 +245,34 @@ void EffectTextureFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void EffectTextureFactory::SetSharing( bool enabled )
+void EffectTextureFactory::SetSharing(bool enabled)
 {
-    pImpl->SetSharing( enabled );
+    pImpl->SetSharing(enabled);
 }
 
 void EffectTextureFactory::EnableForceSRGB(bool forceSRGB)
 {
-    pImpl->EnableForceSRGB( forceSRGB ); 
+    pImpl->EnableForceSRGB(forceSRGB);
 }
 
 void EffectTextureFactory::EnableAutoGenMips(bool generateMips)
 {
-    pImpl->EnableAutoGenMips( generateMips );
+    pImpl->EnableAutoGenMips(generateMips);
 }
 
-void EffectTextureFactory::SetDirectory( _In_opt_z_ const wchar_t* path )
+void EffectTextureFactory::SetDirectory(_In_opt_z_ const wchar_t* path)
 {
-    if ( path && *path != 0 )
+    if (path && *path != 0)
     {
-        wcscpy_s( pImpl->mPath, path );
-        size_t len = wcsnlen( pImpl->mPath, MAX_PATH );
-        if ( len > 0 && len < (MAX_PATH-1) )
+        wcscpy_s(pImpl->mPath, path);
+        size_t len = wcsnlen(pImpl->mPath, MAX_PATH);
+        if (len > 0 && len < (MAX_PATH - 1))
         {
             // Ensure it has a trailing slash
-            if ( pImpl->mPath[len-1] != L'\\' )
+            if (pImpl->mPath[len - 1] != L'\\')
             {
                 pImpl->mPath[len] = L'\\';
-                pImpl->mPath[len+1] = 0;
+                pImpl->mPath[len + 1] = 0;
             }
         }
     }

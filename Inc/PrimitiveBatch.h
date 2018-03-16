@@ -40,7 +40,7 @@ namespace DirectX
 
         public:
             // Begin/End a batch of primitive drawing operations.
-            void __cdecl Begin( _In_ ID3D12GraphicsCommandList* cmdList );
+            void __cdecl Begin(_In_ ID3D12GraphicsCommandList* cmdList);
             void __cdecl End();
 
         protected:
@@ -64,11 +64,11 @@ namespace DirectX
 
     public:
         explicit PrimitiveBatch(_In_ ID3D12Device* device, size_t maxIndices = DefaultBatchSize * 3, size_t maxVertices = DefaultBatchSize)
-          : PrimitiveBatchBase(device, maxIndices, maxVertices, sizeof(TVertex))
+            : PrimitiveBatchBase(device, maxIndices, maxVertices, sizeof(TVertex))
         { }
 
         PrimitiveBatch(PrimitiveBatch&& moveFrom)
-          : PrimitiveBatchBase(std::move(moveFrom))
+            : PrimitiveBatchBase(std::move(moveFrom))
         { }
 
         PrimitiveBatch& operator= (PrimitiveBatch&& moveFrom)

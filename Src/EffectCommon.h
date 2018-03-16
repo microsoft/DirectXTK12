@@ -122,7 +122,7 @@ namespace DirectX
     {
     public:
         EffectDeviceResources(_In_ ID3D12Device* device)
-          : mDevice(device)
+            : mDevice(device)
         { }
 
         ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
@@ -138,11 +138,11 @@ namespace DirectX
     class EffectBase : public AlignedNew<typename Traits::ConstantBufferType>
     {
     public:
-         typename Traits::ConstantBufferType constants;
+        typename Traits::ConstantBufferType constants;
 
-        // Constructor.
+       // Constructor.
         EffectBase(_In_ ID3D12Device* device)
-          : constants{},
+            : constants{},
             dirtyFlags(INT_MAX),
             mRootSignature(nullptr),
             mDeviceResources(deviceResourcesPool.DemandCreate(device))
@@ -203,14 +203,14 @@ namespace DirectX
         {
         public:
             DeviceResources(_In_ ID3D12Device* device)
-              : EffectDeviceResources(device)
+                : EffectDeviceResources(device)
             { }
 
             // Gets or lazily creates the specified root signature
             ID3D12RootSignature* GetRootSignature(int slot, D3D12_ROOT_SIGNATURE_DESC const& desc)
             {
-                assert(slot >= 0 && slot< Traits::RootSignatureCount);
-                _Analysis_assume_(slot >= 0 && slot< Traits::RootSignatureCount);
+                assert(slot >= 0 && slot < Traits::RootSignatureCount);
+                _Analysis_assume_(slot >= 0 && slot < Traits::RootSignatureCount);
 
                 return DemandCreateRootSig(mRootSignature[slot], desc);
             }

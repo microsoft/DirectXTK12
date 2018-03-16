@@ -23,7 +23,7 @@ struct AlphaTestEffectConstants
     XMMATRIX worldViewProj;
 };
 
-static_assert( ( sizeof(AlphaTestEffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(AlphaTestEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -148,7 +148,7 @@ template<>
 SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResources> EffectBase<AlphaTestEffectTraits>::deviceResourcesPool;
 
 // Constructor.
-AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device, 
+AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
     : EffectBase(device),
     mAlphaFunction(alphaFunction),
@@ -156,10 +156,10 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     texture{},
     textureSampler{}
 {
-    static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Create root signature.
     {
@@ -207,7 +207,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
-  
+
     pipelineDescription.CreatePipelineState(
         device,
         mRootSignature,

@@ -36,7 +36,7 @@ struct PBREffectConstants
     float   targetHeight;
 };
 
-static_assert( ( sizeof(PBREffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -177,19 +177,19 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
-        int effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
-        bool emissive,
-        bool generateVelocity)
+    int effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool emissive,
+    bool generateVelocity)
     : EffectBase(device),
     emissiveMap(emissive),
     descriptors{},
     lightColor{}
 {
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { 0, -1, 0, 0 };
@@ -284,7 +284,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     assert(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
-   
+
     pipelineDescription.CreatePipelineState(
         device,
         mRootSignature,

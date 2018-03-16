@@ -361,7 +361,7 @@ void BasicPostProcess::Impl::DownScale2x2()
 {
     mUseConstants = true;
 
-    if ( !texWidth || !texHeight)
+    if (!texWidth || !texHeight)
     {
         throw std::exception("Call SetSourceTexture before setting post-process effect");
     }
@@ -381,7 +381,6 @@ void BasicPostProcess::Impl::DownScale2x2()
             ++ptr;
         }
     }
-
 }
 
 

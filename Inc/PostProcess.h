@@ -150,9 +150,9 @@ namespace DirectX
 
         explicit ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
             Operator op, TransferFunction func
-    #if defined(_XBOX_ONE) && defined(_TITLE)
+        #if defined(_XBOX_ONE) && defined(_TITLE)
             , bool mrt = false
-    #endif
+        #endif
         );
 
         ToneMapPostProcess(ToneMapPostProcess&& moveFrom);

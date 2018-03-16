@@ -143,15 +143,15 @@ namespace
         std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc)
     {
         static const D3D12_INPUT_ELEMENT_DESC s_elements[] =
-         {
-            { "SV_Position",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "COLOR",        0, DXGI_FORMAT_B8G8R8A8_UNORM,  0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "TANGENT",      0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "BINORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "BLENDINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT,   0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "BLENDWEIGHT",  0, DXGI_FORMAT_R8G8B8A8_UNORM,  0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        {
+           { "SV_Position",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "COLOR",        0, DXGI_FORMAT_B8G8R8A8_UNORM,  0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "TANGENT",      0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "BINORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "BLENDINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT,   0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+           { "BLENDWEIGHT",  0, DXGI_FORMAT_R8G8B8A8_UNORM,  0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
         };
 
         using namespace DXUT;
@@ -199,21 +199,21 @@ namespace
                 bool unk = false;
                 switch (decl[index].Type)
                 {
-                case D3DDECLTYPE_FLOAT3:                 assert(desc.Format == DXGI_FORMAT_R32G32B32_FLOAT); offset += 12; break;
-                case D3DDECLTYPE_UBYTE4N:                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
-                case D3DDECLTYPE_SHORT4N:                desc.Format = DXGI_FORMAT_R16G16B16A16_SNORM; offset += 8; break;
-                case D3DDECLTYPE_FLOAT16_4:              desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
-                case D3DDECLTYPE_DXGI_R10G10B10A2_UNORM: desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
-                case D3DDECLTYPE_DXGI_R11G11B10_FLOAT:   desc.Format = DXGI_FORMAT_R11G11B10_FLOAT; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
-                case D3DDECLTYPE_DXGI_R8G8B8A8_SNORM:    desc.Format = DXGI_FORMAT_R8G8B8A8_SNORM; offset += 4; break;
+                    case D3DDECLTYPE_FLOAT3:                 assert(desc.Format == DXGI_FORMAT_R32G32B32_FLOAT); offset += 12; break;
+                    case D3DDECLTYPE_UBYTE4N:                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                    case D3DDECLTYPE_SHORT4N:                desc.Format = DXGI_FORMAT_R16G16B16A16_SNORM; offset += 8; break;
+                    case D3DDECLTYPE_FLOAT16_4:              desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
+                    case D3DDECLTYPE_DXGI_R10G10B10A2_UNORM: desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                    case D3DDECLTYPE_DXGI_R11G11B10_FLOAT:   desc.Format = DXGI_FORMAT_R11G11B10_FLOAT; flags |= BIASED_VERTEX_NORMALS; offset += 4; break;
+                    case D3DDECLTYPE_DXGI_R8G8B8A8_SNORM:    desc.Format = DXGI_FORMAT_R8G8B8A8_SNORM; offset += 4; break;
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
-                case (32 + DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM): desc.Format = DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM; offset += 4; break;
-#endif
+                    #if defined(_XBOX_ONE) && defined(_TITLE)
+                    case (32 + DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM): desc.Format = DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM; offset += 4; break;
+                    #endif
 
-                default:
-                    unk = true;
-                    break;
+                    default:
+                        unk = true;
+                        break;
                 }
 
                 if (unk)
@@ -233,16 +233,16 @@ namespace
                 bool unk = false;
                 switch (decl[index].Type)
                 {
-                case D3DDECLTYPE_FLOAT4:                 desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; offset += 16; break;
-                case D3DDECLTYPE_D3DCOLOR:               assert(desc.Format == DXGI_FORMAT_B8G8R8A8_UNORM); offset += 4; break;
-                case D3DDECLTYPE_UBYTE4N:                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; offset += 4; break;
-                case D3DDECLTYPE_FLOAT16_4:              desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
-                case D3DDECLTYPE_DXGI_R10G10B10A2_UNORM: desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; offset += 4; break;
-                case D3DDECLTYPE_DXGI_R11G11B10_FLOAT:   desc.Format = DXGI_FORMAT_R11G11B10_FLOAT; offset += 4; break;
+                    case D3DDECLTYPE_FLOAT4:                 desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; offset += 16; break;
+                    case D3DDECLTYPE_D3DCOLOR:               assert(desc.Format == DXGI_FORMAT_B8G8R8A8_UNORM); offset += 4; break;
+                    case D3DDECLTYPE_UBYTE4N:                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; offset += 4; break;
+                    case D3DDECLTYPE_FLOAT16_4:              desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
+                    case D3DDECLTYPE_DXGI_R10G10B10A2_UNORM: desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; offset += 4; break;
+                    case D3DDECLTYPE_DXGI_R11G11B10_FLOAT:   desc.Format = DXGI_FORMAT_R11G11B10_FLOAT; offset += 4; break;
 
-                default:
-                    unk = true;
-                    break;
+                    default:
+                        unk = true;
+                        break;
                 }
 
                 if (unk)
@@ -260,16 +260,16 @@ namespace
                 bool unk = false;
                 switch (decl[index].Type)
                 {
-                case D3DDECLTYPE_FLOAT1:    desc.Format = DXGI_FORMAT_R32_FLOAT; offset += 4; break;
-                case D3DDECLTYPE_FLOAT2:    assert(desc.Format == DXGI_FORMAT_R32G32_FLOAT); offset += 8; break;
-                case D3DDECLTYPE_FLOAT3:    desc.Format = DXGI_FORMAT_R32G32B32_FLOAT; offset += 12; break;
-                case D3DDECLTYPE_FLOAT4:    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; offset += 16; break;
-                case D3DDECLTYPE_FLOAT16_2: desc.Format = DXGI_FORMAT_R16G16_FLOAT; offset += 4; break;
-                case D3DDECLTYPE_FLOAT16_4: desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
+                    case D3DDECLTYPE_FLOAT1:    desc.Format = DXGI_FORMAT_R32_FLOAT; offset += 4; break;
+                    case D3DDECLTYPE_FLOAT2:    assert(desc.Format == DXGI_FORMAT_R32G32_FLOAT); offset += 8; break;
+                    case D3DDECLTYPE_FLOAT3:    desc.Format = DXGI_FORMAT_R32G32B32_FLOAT; offset += 12; break;
+                    case D3DDECLTYPE_FLOAT4:    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; offset += 16; break;
+                    case D3DDECLTYPE_FLOAT16_2: desc.Format = DXGI_FORMAT_R16G16_FLOAT; offset += 4; break;
+                    case D3DDECLTYPE_FLOAT16_4: desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; offset += 8; break;
 
-                default:
-                    unk = true;
-                    break;
+                    default:
+                        unk = true;
+                        break;
                 }
 
                 if (unk)
@@ -322,97 +322,97 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshData, size_t dataSize )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t dataSize)
 {
-    if ( !meshData )
+    if (!meshData)
         throw std::exception("meshData cannot be null");
 
     // File Headers
-    if ( dataSize < sizeof(DXUT::SDKMESH_HEADER) )
+    if (dataSize < sizeof(DXUT::SDKMESH_HEADER))
         throw std::exception("End of file");
-    auto header = reinterpret_cast<const DXUT::SDKMESH_HEADER*>( meshData );
+    auto header = reinterpret_cast<const DXUT::SDKMESH_HEADER*>(meshData);
 
-    size_t headerSize = sizeof( DXUT::SDKMESH_HEADER )
-                        + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER)
-                        + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER);
-    if ( header->HeaderSize != headerSize )
+    size_t headerSize = sizeof(DXUT::SDKMESH_HEADER)
+        + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER)
+        + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER);
+    if (header->HeaderSize != headerSize)
         throw std::exception("Not a valid SDKMESH file");
 
-    if ( dataSize < header->HeaderSize )
+    if (dataSize < header->HeaderSize)
         throw std::exception("End of file");
 
-    if( header->Version != DXUT::SDKMESH_FILE_VERSION )
+    if (header->Version != DXUT::SDKMESH_FILE_VERSION)
         throw std::exception("Not a supported SDKMESH version");
-                          
-    if ( header->IsBigEndian )
+
+    if (header->IsBigEndian)
         throw std::exception("Loading BigEndian SDKMESH files not supported");
 
-    if ( !header->NumMeshes )
+    if (!header->NumMeshes)
         throw std::exception("No meshes found");
 
-    if ( !header->NumVertexBuffers )
+    if (!header->NumVertexBuffers)
         throw std::exception("No vertex buffers found");
 
-    if ( !header->NumIndexBuffers )
+    if (!header->NumIndexBuffers)
         throw std::exception("No index buffers found");
 
-    if ( !header->NumTotalSubsets )
+    if (!header->NumTotalSubsets)
         throw std::exception("No subsets found");
 
-    if ( !header->NumMaterials )
+    if (!header->NumMaterials)
         throw std::exception("No materials found");
 
     // Sub-headers
-    if ( dataSize < header->VertexStreamHeadersOffset
-         || ( dataSize < (header->VertexStreamHeadersOffset + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER) ) ) )
+    if (dataSize < header->VertexStreamHeadersOffset
+        || (dataSize < (header->VertexStreamHeadersOffset + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER))))
         throw std::exception("End of file");
-    auto vbArray = reinterpret_cast<const DXUT::SDKMESH_VERTEX_BUFFER_HEADER*>( meshData + header->VertexStreamHeadersOffset );
-    
-    if ( dataSize < header->IndexStreamHeadersOffset
-         || ( dataSize < (header->IndexStreamHeadersOffset + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER) ) ) )
-        throw std::exception("End of file");
-    auto ibArray = reinterpret_cast<const DXUT::SDKMESH_INDEX_BUFFER_HEADER*>( meshData + header->IndexStreamHeadersOffset );
+    auto vbArray = reinterpret_cast<const DXUT::SDKMESH_VERTEX_BUFFER_HEADER*>(meshData + header->VertexStreamHeadersOffset);
 
-    if ( dataSize < header->MeshDataOffset
-         || ( dataSize < (header->MeshDataOffset + header->NumMeshes * sizeof(DXUT::SDKMESH_MESH) ) ) )
+    if (dataSize < header->IndexStreamHeadersOffset
+        || (dataSize < (header->IndexStreamHeadersOffset + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER))))
         throw std::exception("End of file");
-    auto meshArray = reinterpret_cast<const DXUT::SDKMESH_MESH*>( meshData + header->MeshDataOffset );
+    auto ibArray = reinterpret_cast<const DXUT::SDKMESH_INDEX_BUFFER_HEADER*>(meshData + header->IndexStreamHeadersOffset);
 
-    if ( dataSize < header->SubsetDataOffset
-         || ( dataSize < (header->SubsetDataOffset + header->NumTotalSubsets * sizeof(DXUT::SDKMESH_SUBSET) ) ) )
+    if (dataSize < header->MeshDataOffset
+        || (dataSize < (header->MeshDataOffset + header->NumMeshes * sizeof(DXUT::SDKMESH_MESH))))
         throw std::exception("End of file");
-    auto subsetArray = reinterpret_cast<const DXUT::SDKMESH_SUBSET*>( meshData + header->SubsetDataOffset );
+    auto meshArray = reinterpret_cast<const DXUT::SDKMESH_MESH*>(meshData + header->MeshDataOffset);
 
-    if ( dataSize < header->FrameDataOffset
-         || (dataSize < (header->FrameDataOffset + header->NumFrames * sizeof(DXUT::SDKMESH_FRAME) ) ) )
+    if (dataSize < header->SubsetDataOffset
+        || (dataSize < (header->SubsetDataOffset + header->NumTotalSubsets * sizeof(DXUT::SDKMESH_SUBSET))))
+        throw std::exception("End of file");
+    auto subsetArray = reinterpret_cast<const DXUT::SDKMESH_SUBSET*>(meshData + header->SubsetDataOffset);
+
+    if (dataSize < header->FrameDataOffset
+        || (dataSize < (header->FrameDataOffset + header->NumFrames * sizeof(DXUT::SDKMESH_FRAME))))
         throw std::exception("End of file");
     // TODO - auto frameArray = reinterpret_cast<const DXUT::SDKMESH_FRAME*>( meshData + header->FrameDataOffset );
 
-    if ( dataSize < header->MaterialDataOffset
-         || (dataSize < (header->MaterialDataOffset + header->NumMaterials * sizeof(DXUT::SDKMESH_MATERIAL) ) ) )
+    if (dataSize < header->MaterialDataOffset
+        || (dataSize < (header->MaterialDataOffset + header->NumMaterials * sizeof(DXUT::SDKMESH_MATERIAL))))
         throw std::exception("End of file");
-    auto materialArray = reinterpret_cast<const DXUT::SDKMESH_MATERIAL*>( meshData + header->MaterialDataOffset );
+    auto materialArray = reinterpret_cast<const DXUT::SDKMESH_MATERIAL*>(meshData + header->MaterialDataOffset);
 
     // Buffer data
     uint64_t bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
-    if ( ( dataSize < bufferDataOffset )
-         || ( dataSize < bufferDataOffset + header->BufferDataSize ) )
+    if ((dataSize < bufferDataOffset)
+        || (dataSize < bufferDataOffset + header->BufferDataSize))
         throw std::exception("End of file");
-    const uint8_t* bufferData = meshData + bufferDataOffset; 
+    const uint8_t* bufferData = meshData + bufferDataOffset;
 
     // Create vertex buffers
     std::vector<std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>> vbDecls;
-    vbDecls.resize( header->NumVertexBuffers );
+    vbDecls.resize(header->NumVertexBuffers);
 
     std::vector<unsigned int> materialFlags;
     materialFlags.resize(header->NumVertexBuffers);
 
-    for( UINT j=0; j < header->NumVertexBuffers; ++j )
+    for (UINT j = 0; j < header->NumVertexBuffers; ++j)
     {
         auto& vh = vbArray[j];
 
-        if ( dataSize < vh.DataOffset
-             || ( dataSize < vh.DataOffset + vh.SizeBytes ) )
+        if (dataSize < vh.DataOffset
+            || (dataSize < vh.DataOffset + vh.SizeBytes))
             throw std::exception("End of file");
 
         vbDecls[j] = std::make_shared<std::vector<D3D12_INPUT_ELEMENT_DESC>>();
@@ -445,86 +445,86 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
 
     // Create meshes
     std::vector<ModelMaterialInfo> materials;
-    materials.resize( header->NumMaterials );
+    materials.resize(header->NumMaterials);
 
     std::map<std::wstring, int> textureDictionary;
 
     std::unique_ptr<Model> model(new Model);
-    model->meshes.reserve( header->NumMeshes );
+    model->meshes.reserve(header->NumMeshes);
 
     uint32_t partCount = 0;
 
-    for( UINT meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex )
+    for (UINT meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex)
     {
-        auto& mh = meshArray[ meshIndex ];
+        auto& mh = meshArray[meshIndex];
 
-        if ( !mh.NumSubsets
-             || !mh.NumVertexBuffers
-             || mh.IndexBuffer >= header->NumIndexBuffers
-             || mh.VertexBuffers[0] >= header->NumVertexBuffers )
+        if (!mh.NumSubsets
+            || !mh.NumVertexBuffers
+            || mh.IndexBuffer >= header->NumIndexBuffers
+            || mh.VertexBuffers[0] >= header->NumVertexBuffers)
             throw std::exception("Invalid mesh found");
 
         // mh.NumVertexBuffers is sometimes not what you'd expect, so we skip validating it
 
-        if ( dataSize < mh.SubsetOffset
-             || (dataSize < mh.SubsetOffset + mh.NumSubsets*sizeof(UINT) ) )
+        if (dataSize < mh.SubsetOffset
+            || (dataSize < mh.SubsetOffset + mh.NumSubsets * sizeof(UINT)))
             throw std::exception("End of file");
 
-        auto subsets = reinterpret_cast<const UINT*>( meshData + mh.SubsetOffset );
+        auto subsets = reinterpret_cast<const UINT*>(meshData + mh.SubsetOffset);
 
-        if ( mh.NumFrameInfluences > 0 )
+        if (mh.NumFrameInfluences > 0)
         {
-            if ( dataSize < mh.FrameInfluenceOffset
-                 || (dataSize < mh.FrameInfluenceOffset + mh.NumFrameInfluences*sizeof(UINT) ) )
+            if (dataSize < mh.FrameInfluenceOffset
+                || (dataSize < mh.FrameInfluenceOffset + mh.NumFrameInfluences * sizeof(UINT)))
                 throw std::exception("End of file");
 
             // TODO - auto influences = reinterpret_cast<const UINT*>( meshData + mh.FrameInfluenceOffset );
         }
 
         auto mesh = std::make_shared<ModelMesh>();
-        wchar_t meshName[ DXUT::MAX_MESH_NAME ];
-        MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME );
+        wchar_t meshName[DXUT::MAX_MESH_NAME];
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME);
         mesh->name = meshName;
 
         // Extents
         mesh->boundingBox.Center = mh.BoundingBoxCenter;
         mesh->boundingBox.Extents = mh.BoundingBoxExtents;
-        BoundingSphere::CreateFromBoundingBox( mesh->boundingSphere, mesh->boundingBox );
-       
+        BoundingSphere::CreateFromBoundingBox(mesh->boundingSphere, mesh->boundingBox);
+
         // Create subsets
-        for( UINT j = 0; j < mh.NumSubsets; ++j )
+        for (UINT j = 0; j < mh.NumSubsets; ++j)
         {
-            auto sIndex = subsets[ j ];
-            if ( sIndex >= header->NumTotalSubsets )
+            auto sIndex = subsets[j];
+            if (sIndex >= header->NumTotalSubsets)
                 throw std::exception("Invalid mesh found");
 
-            auto& subset = subsetArray[ sIndex ];
+            auto& subset = subsetArray[sIndex];
 
             D3D_PRIMITIVE_TOPOLOGY primType;
-            switch( subset.PrimitiveType )
+            switch (subset.PrimitiveType)
             {
-            case DXUT::PT_TRIANGLE_LIST:        primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;       break;
-            case DXUT::PT_TRIANGLE_STRIP:       primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;      break;
-            case DXUT::PT_LINE_LIST:            primType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;           break;
-            case DXUT::PT_LINE_STRIP:           primType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;          break;
-            case DXUT::PT_POINT_LIST:           primType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;          break;
-            case DXUT::PT_TRIANGLE_LIST_ADJ:    primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ;   break;
-            case DXUT::PT_TRIANGLE_STRIP_ADJ:   primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ;  break;
-            case DXUT::PT_LINE_LIST_ADJ:        primType = D3D_PRIMITIVE_TOPOLOGY_LINELIST_ADJ;       break;
-            case DXUT::PT_LINE_STRIP_ADJ:       primType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ;      break;
+                case DXUT::PT_TRIANGLE_LIST:        primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;       break;
+                case DXUT::PT_TRIANGLE_STRIP:       primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;      break;
+                case DXUT::PT_LINE_LIST:            primType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;           break;
+                case DXUT::PT_LINE_STRIP:           primType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;          break;
+                case DXUT::PT_POINT_LIST:           primType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;          break;
+                case DXUT::PT_TRIANGLE_LIST_ADJ:    primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ;   break;
+                case DXUT::PT_TRIANGLE_STRIP_ADJ:   primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ;  break;
+                case DXUT::PT_LINE_LIST_ADJ:        primType = D3D_PRIMITIVE_TOPOLOGY_LINELIST_ADJ;       break;
+                case DXUT::PT_LINE_STRIP_ADJ:       primType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ;      break;
 
-            case DXUT::PT_QUAD_PATCH_LIST:
-            case DXUT::PT_TRIANGLE_PATCH_LIST:
-                throw std::exception("Direct3D9 era tessellation not supported");
+                case DXUT::PT_QUAD_PATCH_LIST:
+                case DXUT::PT_TRIANGLE_PATCH_LIST:
+                    throw std::exception("Direct3D9 era tessellation not supported");
 
-            default:
-                throw std::exception("Unknown primitive type");
+                default:
+                    throw std::exception("Unknown primitive type");
             }
 
-            if ( subset.MaterialID >= header->NumMaterials )
+            if (subset.MaterialID >= header->NumMaterials)
                 throw std::exception("Invalid mesh found");
 
-            auto& mat = materials[ subset.MaterialID ];
+            auto& mat = materials[subset.MaterialID];
 
             const size_t vi = mh.VertexBuffers[0];
             InitMaterial(
@@ -538,34 +538,34 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
             const auto& vh = vbArray[mh.VertexBuffers[0]];
             const auto& ih = ibArray[mh.IndexBuffer];
 
-            part->indexCount = static_cast<uint32_t>( subset.IndexCount );
-            part->startIndex = static_cast<uint32_t>( subset.IndexStart );
-            part->vertexOffset = static_cast<uint32_t>( subset.VertexStart );
-            part->vertexStride = static_cast<uint32_t>( vh.StrideBytes );
-            part->vertexCount = static_cast<uint32_t>( subset.VertexCount );
+            part->indexCount = static_cast<uint32_t>(subset.IndexCount);
+            part->startIndex = static_cast<uint32_t>(subset.IndexStart);
+            part->vertexOffset = static_cast<uint32_t>(subset.VertexStart);
+            part->vertexStride = static_cast<uint32_t>(vh.StrideBytes);
+            part->vertexCount = static_cast<uint32_t>(subset.VertexCount);
             part->primitiveType = primType;
-            part->indexFormat = ( ibArray[ mh.IndexBuffer ].IndexType == DXUT::IT_32BIT ) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
+            part->indexFormat = (ibArray[mh.IndexBuffer].IndexType == DXUT::IT_32BIT) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 
             // Vertex data
             auto verts = reinterpret_cast<const uint8_t*>(bufferData + (vh.DataOffset - bufferDataOffset));
-            part->vertexBuffer = GraphicsMemory::Get().Allocate((size_t) vh.SizeBytes);
-            memcpy(part->vertexBuffer.Memory(), verts, (size_t) vh.SizeBytes);
+            part->vertexBuffer = GraphicsMemory::Get().Allocate((size_t)vh.SizeBytes);
+            memcpy(part->vertexBuffer.Memory(), verts, (size_t)vh.SizeBytes);
 
             // Index data
             auto indices = reinterpret_cast<const uint8_t*>(bufferData + (ih.DataOffset - bufferDataOffset));
-            part->indexBuffer = GraphicsMemory::Get().Allocate((size_t) ih.SizeBytes);
-            memcpy(part->indexBuffer.Memory(), indices, (size_t) ih.SizeBytes);
+            part->indexBuffer = GraphicsMemory::Get().Allocate((size_t)ih.SizeBytes);
+            memcpy(part->indexBuffer.Memory(), indices, (size_t)ih.SizeBytes);
 
             part->materialIndex = subset.MaterialID;
-            part->vbDecl = vbDecls[ mh.VertexBuffers[0] ];
+            part->vbDecl = vbDecls[mh.VertexBuffers[0]];
 
             if (mat.alphaValue < 1.0f)
-                mesh->alphaMeshParts.emplace_back( part );
+                mesh->alphaMeshParts.emplace_back(part);
             else
-                mesh->opaqueMeshParts.emplace_back( part );
+                mesh->opaqueMeshParts.emplace_back(part);
         }
 
-        model->meshes.emplace_back( mesh );
+        model->meshes.emplace_back(mesh);
     }
 
     // Copy the materials and texture names into contiguous arrays
@@ -582,18 +582,18 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const uint8_t* meshDat
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH( const wchar_t* szFileName )
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileName)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
-    HRESULT hr = BinaryReader::ReadEntireFile( szFileName, data, &dataSize );
-    if ( FAILED(hr) )
+    HRESULT hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
+    if (FAILED(hr))
     {
-        DebugTrace( "CreateFromSDKMESH failed (%08X) loading '%ls'\n", hr, szFileName );
-        throw std::exception( "CreateFromSDKMESH" );
+        DebugTrace("CreateFromSDKMESH failed (%08X) loading '%ls'\n", hr, szFileName);
+        throw std::exception("CreateFromSDKMESH");
     }
 
-    auto model = CreateFromSDKMESH( data.get(), dataSize );
+    auto model = CreateFromSDKMESH(data.get(), dataSize);
 
     model->name = szFileName;
 

@@ -60,7 +60,7 @@ namespace DirectX
         std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
-        using DrawCallback = std::function<void (_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;
+        using DrawCallback = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;
 
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
@@ -83,7 +83,7 @@ namespace DirectX
         // The iterator passed to this method should have random access capabilities for best performance.
         template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
         static void DrawMeshParts(
-            _In_ ID3D12GraphicsCommandList* commandList, 
+            _In_ ID3D12GraphicsCommandList* commandList,
             _In_ const ModelMeshPart::Collection& meshParts,
             TEffectIterator partEffects)
         {
@@ -92,7 +92,7 @@ namespace DirectX
                 std::is_base_of<std::random_access_iterator_tag, TEffectIteratorCategory>::value,
                 "Providing an iterator without random access capabilities -- such as from std::list -- is not supported.");
 
-            for ( auto it = std::begin(meshParts); it != std::end(meshParts); ++it )
+            for (auto it = std::begin(meshParts); it != std::end(meshParts); ++it)
             {
                 auto part = it->get();
                 assert(part != nullptr);
@@ -177,10 +177,10 @@ namespace DirectX
         template<typename... TForwardArgs> void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
             // Draw opaque parts
-            for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
+            for (auto it = std::begin(meshes); it != std::end(meshes); ++it)
             {
                 auto mesh = it->get();
-                assert( mesh != nullptr );
+                assert(mesh != nullptr);
 
                 mesh->DrawOpaque(commandList, std::forward<TForwardArgs>(args)...);
             }
@@ -190,10 +190,10 @@ namespace DirectX
         template<typename... TForwardArgs> void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
             // Draw opaque parts
-            for ( auto it = std::begin(meshes); it != std::end(meshes); ++it )
+            for (auto it = std::begin(meshes); it != std::end(meshes); ++it)
             {
                 auto mesh = it->get();
-                assert( mesh != nullptr );
+                assert(mesh != nullptr);
 
                 mesh->DrawAlpha(commandList, std::forward<TForwardArgs>(args)...);
             }
@@ -211,8 +211,8 @@ namespace DirectX
 
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
-            _In_ ID3D12Device* device, 
-            _Inout_ ResourceUploadBatch& resourceUploadBatch, 
+            _In_ ID3D12Device* device,
+            _Inout_ ResourceUploadBatch& resourceUploadBatch,
             _In_opt_z_ const wchar_t* texturesPath = nullptr,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
 
@@ -220,33 +220,33 @@ namespace DirectX
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
-            _In_ ID3D12DescriptorHeap* textureDescriptorHeap, 
-            _In_ ID3D12DescriptorHeap* samplerDescriptorHeap, 
+            _In_ ID3D12DescriptorHeap* textureDescriptorHeap,
+            _In_ ID3D12DescriptorHeap* samplerDescriptorHeap,
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) const;
 
         // Create effects using a custom effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
-            IEffectFactory& fxFactory, 
+            IEffectFactory& fxFactory,
             const EffectPipelineStateDescription& opaquePipelineState,
-            const EffectPipelineStateDescription& alphaPipelineState, 
+            const EffectPipelineStateDescription& alphaPipelineState,
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) const;
 
         // Loads a model from a DirectX SDK .SDKMESH file
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH( _In_z_ const wchar_t* szFileName );
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize);
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_z_ const wchar_t* szFileName);
 
         // Loads a model from a .VBO file
-        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize );
-        static std::unique_ptr<Model> __cdecl CreateFromVBO( _In_z_ const wchar_t* szFileName );
+        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize);
+        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_z_ const wchar_t* szFileName);
 
         // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
         // descriptor will be zero.
         D3D12_GPU_DESCRIPTOR_HANDLE GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
         {
             D3D12_GPU_DESCRIPTOR_HANDLE handle = {};
-            
+
             if (materialIndex >= materials.size())
                 return handle;
 
@@ -255,7 +255,7 @@ namespace DirectX
                 return handle;
 
             handle = heap->GetGPUDescriptorHandleForHeapStart();
-            handle.ptr += descriptorSize * ((size_t) textureIndex + descriptorOffset);
+            handle.ptr += descriptorSize * ((size_t)textureIndex + descriptorOffset);
 
             return handle;
         }
@@ -275,11 +275,11 @@ namespace DirectX
 
     private:
         std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(
-            IEffectFactory& fxFactory, 
+            IEffectFactory& fxFactory,
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             int textureDescriptorOffset,
             int samplerDescriptorOffset,
             _In_ const ModelMeshPart* part) const;
     };
- }
+}

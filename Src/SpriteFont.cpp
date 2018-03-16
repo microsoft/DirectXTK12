@@ -49,10 +49,10 @@ public:
     void CreateTextureResource(_In_ ID3D12Device* device,
         ResourceUploadBatch& upload,
         uint32_t width, uint32_t height,
-        DXGI_FORMAT format, 
-        uint32_t stride, uint32_t rows, 
+        DXGI_FORMAT format,
+        uint32_t stride, uint32_t rows,
         _In_reads_(stride * rows) const uint8_t* data);
-    
+
     // Fields.
     ComPtr<ID3D12Resource> textureResource;
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -106,7 +106,7 @@ SpriteFont::Impl::Impl(
     {
         if (reader->Read<uint8_t>() != *magic)
         {
-            DebugTrace( "SpriteFont provided with an invalid .spritefont file\n" );
+            DebugTrace("SpriteFont provided with an invalid .spritefont file\n");
             throw std::exception("Not a MakeSpriteFont output binary");
         }
     }
@@ -137,17 +137,17 @@ SpriteFont::Impl::Impl(
 
     // Create the D3D texture object.
     CreateTextureResource(
-        device, upload, 
+        device, upload,
         textureWidth, textureHeight,
         textureFormat,
         textureStride, textureRows,
-        textureData );
+        textureData);
 
     // Create the shader resource view
     CreateShaderResourceView(
         device, textureResource.Get(),
         cpuDesc, false);
-    
+
     // Save off the GPU descriptor pointer and size.
     texture = gpuDesc;
     textureSize = XMUINT2(textureWidth, textureHeight);
@@ -157,7 +157,7 @@ SpriteFont::Impl::Impl(
 // Constructs a SpriteFont from arbitrary user specified glyph data.
 _Use_decl_annotations_
 SpriteFont::Impl::Impl(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
-  : texture(texture),
+    : texture(texture),
     textureSize(textureSize),
     glyphs(glyphs, glyphs + glyphCount),
     defaultGlyph(nullptr),
@@ -185,7 +185,7 @@ SpriteFont::Glyph const* SpriteFont::Impl::FindGlyph(wchar_t character) const
         return defaultGlyph;
     }
 
-    DebugTrace( "SpriteFont encountered a character not in the font (%u, %C), and no default glyph was provided\n", character, character );
+    DebugTrace("SpriteFont encountered a character not in the font (%u, %C), and no default glyph was provided\n", character, character);
     throw std::exception("Character not in font");
 }
 
@@ -236,9 +236,9 @@ void SpriteFont::Impl::ForEachGlyph(_In_z_ wchar_t const* text, TAction action) 
 
                 float advance = glyph->Subrect.right - glyph->Subrect.left + glyph->XAdvance;
 
-                if ( !iswspace(character)
-                     || ( ( glyph->Subrect.right - glyph->Subrect.left ) > 1 )
-                     || ( ( glyph->Subrect.bottom - glyph->Subrect.top ) > 1 ) )
+                if (!iswspace(character)
+                    || ((glyph->Subrect.right - glyph->Subrect.left) > 1)
+                    || ((glyph->Subrect.bottom - glyph->Subrect.top) > 1))
                 {
                     action(glyph, x, y, advance);
                 }
@@ -255,8 +255,8 @@ void SpriteFont::Impl::CreateTextureResource(
     ID3D12Device* device,
     ResourceUploadBatch& upload,
     uint32_t width, uint32_t height,
-    DXGI_FORMAT format, 
-    uint32_t stride, uint32_t rows, 
+    DXGI_FORMAT format,
+    uint32_t stride, uint32_t rows,
     const uint8_t* data)
 {
     D3D12_RESOURCE_DESC desc = {};
@@ -288,9 +288,9 @@ void SpriteFont::Impl::CreateTextureResource(
     subres.SlicePitch = stride * rows;
 
     upload.Upload(
-        textureResource.Get(), 
-        0, 
-        &subres, 
+        textureResource.Get(),
+        0,
+        &subres,
         1);
 
     upload.Transition(
@@ -323,14 +323,14 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_
 // Construct from arbitrary user specified glyph data (for those not using the MakeSpriteFont utility).
 _Use_decl_annotations_
 SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
-  : pImpl(new Impl(texture, textureSize, glyphs, glyphCount, lineSpacing))
+    : pImpl(new Impl(texture, textureSize, glyphs, glyphCount, lineSpacing))
 {
 }
 
 
 // Move constructor.
 SpriteFont::SpriteFont(SpriteFont&& moveFrom)
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
@@ -370,9 +370,9 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
 void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wchar_t const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects, float layerDepth) const
 {
     static_assert(SpriteEffects_FlipHorizontally == 1 &&
-                  SpriteEffects_FlipVertically == 2, "If you change these enum values, the following tables must be updated to match");
+        SpriteEffects_FlipVertically == 2, "If you change these enum values, the following tables must be updated to match");
 
-    // Lookup table indicates which way to move along each axis per SpriteEffects enum value.
+// Lookup table indicates which way to move along each axis per SpriteEffects enum value.
     static XMVECTORF32 axisDirectionTable[4] =
     {
         { { { -1, -1, 0, 0 } } },
@@ -404,7 +404,7 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
         UNREFERENCED_PARAMETER(advance);
 
         XMVECTOR offset = XMVectorMultiplyAdd(XMVectorSet(x, y + glyph->YOffset, 0, 0), axisDirectionTable[effects & 3], baseOffset);
-        
+
         if (effects)
         {
             // For mirrored characters, specify bottom and/or right instead of top left.

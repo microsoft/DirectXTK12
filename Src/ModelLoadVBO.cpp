@@ -52,33 +52,33 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
 
-    if ( !meshData )
+    if (!meshData)
         throw std::exception("meshData cannot be null");
 
     // File Header
-    if ( dataSize < sizeof(VBO::header_t) )
+    if (dataSize < sizeof(VBO::header_t))
         throw std::exception("End of file");
-    auto header = reinterpret_cast<const VBO::header_t*>( meshData );
+    auto header = reinterpret_cast<const VBO::header_t*>(meshData);
 
-    if ( !header->numVertices || !header->numIndices )
+    if (!header->numVertices || !header->numIndices)
         throw std::exception("No vertices or indices found");
 
     size_t vertSize = sizeof(VertexPositionNormalTexture) * header->numVertices;
 
     if (dataSize < (vertSize + sizeof(VBO::header_t)))
         throw std::exception("End of file");
-    auto verts = reinterpret_cast<const VertexPositionNormalTexture*>( meshData + sizeof(VBO::header_t) );
+    auto verts = reinterpret_cast<const VertexPositionNormalTexture*>(meshData + sizeof(VBO::header_t));
 
     size_t indexSize = sizeof(uint16_t) * header->numIndices;
 
     if (dataSize < (sizeof(VBO::header_t) + vertSize + indexSize))
         throw std::exception("End of file");
-    auto indices = reinterpret_cast<const uint16_t*>( meshData + sizeof(VBO::header_t) + vertSize );
+    auto indices = reinterpret_cast<const uint16_t*>(meshData + sizeof(VBO::header_t) + vertSize);
 
     // Create vertex buffer
     auto vb = GraphicsMemory::Get().Allocate(vertSize);
     memcpy(vb.Memory(), verts, vertSize);
-    
+
     // Create index buffer
     auto ib = GraphicsMemory::Get().Allocate(indexSize);
     memcpy(ib.Memory(), indices, indexSize);
@@ -87,7 +87,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     part->materialIndex = 0;
     part->indexCount = header->numIndices;
     part->startIndex = 0;
-    part->vertexStride = static_cast<UINT>( sizeof(VertexPositionNormalTexture) );
+    part->vertexStride = static_cast<UINT>(sizeof(VertexPositionNormalTexture));
     part->vertexCount = header->numVertices;
     part->indexBuffer = std::move(ib);
     part->vertexBuffer = std::move(vb);
@@ -100,7 +100,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
 
     std::unique_ptr<Model> model(new Model());
     model->meshes.emplace_back(mesh);
- 
+
     return model;
 }
 
@@ -111,14 +111,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
-    HRESULT hr = BinaryReader::ReadEntireFile( szFileName, data, &dataSize );
-    if ( FAILED(hr) )
+    HRESULT hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
+    if (FAILED(hr))
     {
-        DebugTrace( "CreateFromVBO failed (%08X) loading '%ls'\n", hr, szFileName );
-        throw std::exception( "CreateFromVBO" );
+        DebugTrace("CreateFromVBO failed (%08X) loading '%ls'\n", hr, szFileName);
+        throw std::exception("CreateFromVBO");
     }
 
-    auto model = CreateFromVBO( data.get(), dataSize );
+    auto model = CreateFromVBO(data.get(), dataSize);
 
     model->name = szFileName;
 

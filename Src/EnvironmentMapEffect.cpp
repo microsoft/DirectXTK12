@@ -38,7 +38,7 @@ struct EnvironmentMapEffectConstants
     XMMATRIX worldViewProj;
 };
 
-static_assert( ( sizeof(EnvironmentMapEffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(EnvironmentMapEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -226,11 +226,11 @@ SharedResourcePool<ID3D12Device*, EffectBase<EnvironmentMapEffectTraits>::Device
 
 
 // Constructor.
-EnvironmentMapEffect::Impl::Impl(    
-    _In_ ID3D12Device* device, 
-    int effectFlags, 
-    const EffectPipelineStateDescription& pipelineDescription, 
-    bool fresnelEnabled, 
+EnvironmentMapEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    int effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool fresnelEnabled,
     bool specularEnabled)
     : EffectBase(device),
     texture{},
@@ -238,10 +238,10 @@ EnvironmentMapEffect::Impl::Impl(
     environmentMap{},
     environmentMapSampler{}
 {
-    static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Create root signature.
     {

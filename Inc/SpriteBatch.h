@@ -26,7 +26,7 @@
 namespace DirectX
 {
     class ResourceUploadBatch;
-    
+
     enum SpriteSortMode
     {
         SpriteSortMode_Deferred,
@@ -35,7 +35,7 @@ namespace DirectX
         SpriteSortMode_BackToFront,
         SpriteSortMode_FrontToBack,
     };
-    
+
     enum SpriteEffects
     {
         SpriteEffects_None = 0,
@@ -81,7 +81,7 @@ namespace DirectX
         static const D3D12_RASTERIZER_DESC      s_DefaultRasterizerDesc;
         static const D3D12_DEPTH_STENCIL_DESC   s_DefaultDepthStencilDesc;
     };
-    
+
     class SpriteBatch
     {
     public:
@@ -116,11 +116,11 @@ namespace DirectX
         void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
         // Rotation mode to be applied to the sprite transformation
-        void __cdecl SetRotation( DXGI_MODE_ROTATION mode );
+        void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
         DXGI_MODE_ROTATION __cdecl GetRotation() const;
 
         // Set viewport for sprite transformation
-        void __cdecl SetViewport( const D3D12_VIEWPORT& viewPort );
+        void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);
 
     private:
         // Private implementation.

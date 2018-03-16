@@ -24,7 +24,7 @@ struct DebugEffectConstants
     XMMATRIX worldViewProj;
 };
 
-static_assert( ( sizeof(DebugEffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(DebugEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -164,12 +164,12 @@ SharedResourcePool<ID3D12Device*, EffectBase<DebugEffectTraits>::DeviceResources
 
 // Constructor.
 DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, DebugEffect::Mode debugMode)
-  : EffectBase(device)
+    : EffectBase(device)
 {
-    static_assert( _countof(EffectBase<DebugEffectTraits>::VertexShaderIndices) ==DebugEffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<DebugEffectTraits>::VertexShaderBytecode) ==DebugEffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<DebugEffectTraits>::PixelShaderBytecode) ==DebugEffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<DebugEffectTraits>::PixelShaderIndices) ==DebugEffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<DebugEffectTraits>::VertexShaderIndices) == DebugEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<DebugEffectTraits>::VertexShaderBytecode) == DebugEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<DebugEffectTraits>::PixelShaderBytecode) == DebugEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<DebugEffectTraits>::PixelShaderIndices) == DebugEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     static const XMVECTORF32 s_lower = { 0.f, 0.f, 0.f, 1.f };
 

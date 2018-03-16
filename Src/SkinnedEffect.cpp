@@ -36,7 +36,7 @@ struct SkinnedEffectConstants
     XMVECTOR bones[SkinnedEffect::MaxBones][3];
 };
 
-static_assert( ( sizeof(SkinnedEffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(SkinnedEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -226,14 +226,14 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 
 // Constructor.
 SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
-  : EffectBase(device),
+    : EffectBase(device),
     texture{},
     sampler{}
 {
-    static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<SkinnedEffectTraits>::PixelShaderBytecode) == SkinnedEffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<SkinnedEffectTraits>::PixelShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<SkinnedEffectTraits>::PixelShaderBytecode) == SkinnedEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<SkinnedEffectTraits>::PixelShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     if ((weightsPerVertex != 1) &&
         (weightsPerVertex != 2) &&

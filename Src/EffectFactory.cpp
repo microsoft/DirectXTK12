@@ -49,7 +49,7 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing( bool enabled ) { mSharing = enabled; }
+    void SetSharing(bool enabled) { mSharing = enabled; }
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
@@ -509,9 +509,9 @@ void EffectFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void EffectFactory::SetSharing( bool enabled )
+void EffectFactory::SetSharing(bool enabled)
 {
-    pImpl->SetSharing( enabled );
+    pImpl->SetSharing(enabled);
 }
 
 void EffectFactory::EnablePerPixelLighting(bool enabled)

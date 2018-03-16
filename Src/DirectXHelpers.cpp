@@ -27,58 +27,58 @@ void DirectX::CreateShaderResourceView(
 
     switch (desc.Dimension)
     {
-    case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
-        if (desc.DepthOrArraySize > 1)
-        {
-            SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE1DARRAY;
-            SRVDesc.Texture1DArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-            SRVDesc.Texture1DArray.ArraySize = static_cast<UINT>(desc.DepthOrArraySize);
-        }
-        else
-        {
-            SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE1D;
-            SRVDesc.Texture1D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-        }
-        break;
-
-    case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
-        if (isCubeMap)
-        {
-            if (desc.DepthOrArraySize > 6)
+        case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
+            if (desc.DepthOrArraySize > 1)
             {
-                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBEARRAY;
-                SRVDesc.TextureCubeArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-                SRVDesc.TextureCubeArray.NumCubes = static_cast<UINT>(desc.DepthOrArraySize / 6);
+                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE1DARRAY;
+                SRVDesc.Texture1DArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+                SRVDesc.Texture1DArray.ArraySize = static_cast<UINT>(desc.DepthOrArraySize);
             }
             else
             {
-                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-                SRVDesc.TextureCube.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE1D;
+                SRVDesc.Texture1D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
             }
-        }
-        else if (desc.DepthOrArraySize > 1)
-        {
-            SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
-            SRVDesc.Texture2DArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-            SRVDesc.Texture2DArray.ArraySize = static_cast<UINT>(desc.DepthOrArraySize);
-        }
-        else
-        {
-            SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-            SRVDesc.Texture2D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-        }
-        break;
+            break;
 
-    case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
-        SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE3D;
-        SRVDesc.Texture3D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-        break;
+        case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
+            if (isCubeMap)
+            {
+                if (desc.DepthOrArraySize > 6)
+                {
+                    SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBEARRAY;
+                    SRVDesc.TextureCubeArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+                    SRVDesc.TextureCubeArray.NumCubes = static_cast<UINT>(desc.DepthOrArraySize / 6);
+                }
+                else
+                {
+                    SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+                    SRVDesc.TextureCube.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+                }
+            }
+            else if (desc.DepthOrArraySize > 1)
+            {
+                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
+                SRVDesc.Texture2DArray.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+                SRVDesc.Texture2DArray.ArraySize = static_cast<UINT>(desc.DepthOrArraySize);
+            }
+            else
+            {
+                SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+                SRVDesc.Texture2D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+            }
+            break;
 
-    case D3D12_RESOURCE_DIMENSION_BUFFER:
-        throw std::exception("CreateShaderResourceView cannot be used with DIMENSION_BUFFER.");
+        case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
+            SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE3D;
+            SRVDesc.Texture3D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
+            break;
 
-    default:
-        throw std::exception("CreateShaderResourceView cannot be used with DIMENSION_UNKNOWN.");
+        case D3D12_RESOURCE_DIMENSION_BUFFER:
+            throw std::exception("CreateShaderResourceView cannot be used with DIMENSION_BUFFER.");
+
+        default:
+            throw std::exception("CreateShaderResourceView cannot be used with DIMENSION_UNKNOWN.");
     }
 
     d3dDevice->CreateShaderResourceView(tex, &SRVDesc, srvDescriptor);
