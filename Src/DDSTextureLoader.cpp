@@ -90,7 +90,7 @@ namespace
                 else
                 {
                     // Plane 1
-                    res.pData = reinterpret_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
+                    res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
                     res.SlicePitch = res.RowPitch * ((height + 1) >> 1);
                 }
                 break;
@@ -104,7 +104,7 @@ namespace
                 else
                 {
                     // Plane 1
-                    res.pData = reinterpret_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
+                    res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
                     res.RowPitch = (res.RowPitch >> 1);
                     res.SlicePitch = res.RowPitch * height;
                 }
@@ -178,7 +178,7 @@ namespace
 
                         D3D12_SUBRESOURCE_DATA res =
                         {
-                            reinterpret_cast<const void*>(pSrcBits),
+                            pSrcBits,
                             static_cast<LONG_PTR>(RowBytes),
                             static_cast<LONG_PTR>(NumBytes)
                         };

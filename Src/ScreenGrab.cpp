@@ -328,7 +328,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
             memcpy_s(&header->ddspf, sizeof(header->ddspf), &DDSPF_DX10, sizeof(DDS_PIXELFORMAT));
 
             headerSize += sizeof(DDS_HEADER_DXT10);
-            extHeader = reinterpret_cast<DDS_HEADER_DXT10*>(reinterpret_cast<uint8_t*>(&fileHeader[0]) + sizeof(uint32_t) + sizeof(DDS_HEADER));
+            extHeader = reinterpret_cast<DDS_HEADER_DXT10*>(fileHeader + sizeof(uint32_t) + sizeof(DDS_HEADER));
             memset(extHeader, 0, sizeof(DDS_HEADER_DXT10));
             extHeader->dxgiFormat = desc.Format;
             extHeader->resourceDimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -358,14 +358,14 @@ HRESULT DirectX::SaveDDSTextureToFile(
     assert(fpRowCount == rowCount);
     assert(fpRowPitch == rowPitch);
 
-    void* pMappedMemory;
+    void* pMappedMemory = nullptr;
     D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(dstRowPitch * rowCount) };
     D3D12_RANGE writeRange = { 0, 0 };
     hr = pStaging->Map(0, &readRange, &pMappedMemory);
     if (FAILED(hr))
         return hr;
 
-    auto sptr = reinterpret_cast<const uint8_t*>(pMappedMemory);
+    auto sptr = static_cast<const uint8_t*>(pMappedMemory);
     if (!sptr)
     {
         pStaging->Unmap(0, &writeRange);
@@ -684,7 +684,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     #endif
     }
 
-    void* pMappedMemory;
+    void* pMappedMemory = nullptr;
     D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(dstRowPitch * desc.Height) };
     D3D12_RANGE writeRange = { 0, 0 };
     hr = pStaging->Map(0, &readRange, &pMappedMemory);
@@ -697,7 +697,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         ComPtr<IWICBitmap> source;
         hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height, pfGuid,
             static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height),
-            reinterpret_cast<BYTE*>(pMappedMemory), source.GetAddressOf());
+            static_cast<BYTE*>(pMappedMemory), source.GetAddressOf());
         if (FAILED(hr))
         {
             pStaging->Unmap(0, &writeRange);
@@ -737,7 +737,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     else
     {
         // No conversion required
-        hr = frame->WritePixels(desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height), reinterpret_cast<BYTE*>(pMappedMemory));
+        hr = frame->WritePixels(desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height), static_cast<BYTE*>(pMappedMemory));
         if (FAILED(hr))
             return hr;
     }

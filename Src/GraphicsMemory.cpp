@@ -128,7 +128,7 @@ namespace
                 page,
                 page->GpuAddress() + offset,
                 page->UploadResource(),
-                reinterpret_cast<BYTE*>(page->BaseMemory()) + offset,
+                static_cast<BYTE*>(page->BaseMemory()) + offset,
                 offset,
                 size);
         }

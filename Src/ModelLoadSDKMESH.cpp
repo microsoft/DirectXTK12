@@ -547,12 +547,12 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
             part->indexFormat = (ibArray[mh.IndexBuffer].IndexType == DXUT::IT_32BIT) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 
             // Vertex data
-            auto verts = reinterpret_cast<const uint8_t*>(bufferData + (vh.DataOffset - bufferDataOffset));
+            auto verts = bufferData + (vh.DataOffset - bufferDataOffset);
             part->vertexBuffer = GraphicsMemory::Get().Allocate((size_t)vh.SizeBytes);
             memcpy(part->vertexBuffer.Memory(), verts, (size_t)vh.SizeBytes);
 
             // Index data
-            auto indices = reinterpret_cast<const uint8_t*>(bufferData + (ih.DataOffset - bufferDataOffset));
+            auto indices = bufferData + (ih.DataOffset - bufferDataOffset);
             part->indexBuffer = GraphicsMemory::Get().Allocate((size_t)ih.SizeBytes);
             memcpy(part->indexBuffer.Memory(), indices, (size_t)ih.SizeBytes);
 
