@@ -114,7 +114,7 @@ namespace DirectX
     class ModelMesh
     {
     public:
-        ModelMesh();
+        ModelMesh() noexcept;
         virtual ~ModelMesh();
 
         BoundingSphere              boundingSphere;
@@ -157,7 +157,7 @@ namespace DirectX
     class Model
     {
     public:
-        Model();
+        Model() noexcept;
         virtual ~Model();
 
         using ModelMaterialInfo = IEffectFactory::EffectInfo;

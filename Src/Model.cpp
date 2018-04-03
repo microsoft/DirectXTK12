@@ -111,7 +111,7 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
 // ModelMesh
 //--------------------------------------------------------------------------------------
 
-ModelMesh::ModelMesh()
+ModelMesh::ModelMesh() noexcept
 {
 }
 
@@ -159,7 +159,7 @@ void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, M
 //--------------------------------------------------------------------------------------
 // Model
 //--------------------------------------------------------------------------------------
-Model::Model()
+Model::Model() noexcept
 {
 }
 

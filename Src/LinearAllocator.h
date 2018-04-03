@@ -50,7 +50,7 @@ namespace DirectX
     class LinearAllocatorPage
     {
     public:
-        LinearAllocatorPage();
+        LinearAllocatorPage() noexcept;
 
         size_t Suballocate(_In_ size_t size, _In_ size_t alignment);
 

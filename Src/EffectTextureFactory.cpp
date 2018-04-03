@@ -223,12 +223,12 @@ EffectTextureFactory::~EffectTextureFactory()
 }
 
 
-EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&& moveFrom)
+EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
-EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&& moveFrom)
+EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

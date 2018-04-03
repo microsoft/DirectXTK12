@@ -128,7 +128,7 @@ SpriteFont::Impl::Impl(
     auto textureFormat = reader->Read<DXGI_FORMAT>();
     auto textureStride = reader->Read<uint32_t>();
     auto textureRows = reader->Read<uint32_t>();
-    auto textureData = reader->ReadArray<uint8_t>(textureStride * textureRows);
+    auto textureData = reader->ReadArray<uint8_t>(size_t(textureStride) * size_t(textureRows));
 
     if (forceSRGB)
     {
@@ -285,7 +285,7 @@ void SpriteFont::Impl::CreateTextureResource(
     D3D12_SUBRESOURCE_DATA subres = {};
     subres.pData = data;
     subres.RowPitch = stride;
-    subres.SlicePitch = stride * rows;
+    subres.SlicePitch = ptrdiff_t(stride) * ptrdiff_t(rows);
 
     upload.Upload(
         textureResource.Get(),
@@ -329,14 +329,14 @@ SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize,
 
 
 // Move constructor.
-SpriteFont::SpriteFont(SpriteFont&& moveFrom)
+SpriteFont::SpriteFont(SpriteFont&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-SpriteFont& SpriteFont::operator= (SpriteFont&& moveFrom)
+SpriteFont& SpriteFont::operator= (SpriteFont&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

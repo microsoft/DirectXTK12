@@ -23,8 +23,8 @@ namespace DirectX
         SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, _In_reads_bytes_(dataSize) uint8_t const* dataBlob, size_t dataSize, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor, bool forceSRGB = false);
         SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, _In_reads_(glyphCount) Glyph const* glyphs, size_t glyphCount, float lineSpacing);
 
-        SpriteFont(SpriteFont&& moveFrom);
-        SpriteFont& operator= (SpriteFont&& moveFrom);
+        SpriteFont(SpriteFont&& moveFrom) noexcept;
+        SpriteFont& operator= (SpriteFont&& moveFrom) noexcept;
 
         SpriteFont(SpriteFont const&) = delete;
         SpriteFont& operator= (SpriteFont const&) = delete;

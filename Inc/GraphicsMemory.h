@@ -27,7 +27,7 @@ namespace DirectX
     class GraphicsResource
     {
     public:
-        GraphicsResource();
+        GraphicsResource() noexcept;
         GraphicsResource(
             _In_ LinearAllocatorPage* page,
             _In_ D3D12_GPU_VIRTUAL_ADDRESS gpuAddress,
@@ -36,8 +36,8 @@ namespace DirectX
             _In_ size_t offset,
             _In_ size_t size);
 
-        GraphicsResource(GraphicsResource&& other);
-        GraphicsResource&& operator= (GraphicsResource&&);
+        GraphicsResource(GraphicsResource&& other) noexcept;
+        GraphicsResource&& operator= (GraphicsResource&&) noexcept;
 
         GraphicsResource(const GraphicsResource&) = delete;
         GraphicsResource& operator= (const GraphicsResource&) = delete;
@@ -68,10 +68,10 @@ namespace DirectX
     class SharedGraphicsResource
     {
     public:
-        SharedGraphicsResource();
+        SharedGraphicsResource() noexcept;
 
-        SharedGraphicsResource(SharedGraphicsResource&&);
-        SharedGraphicsResource&& operator= (SharedGraphicsResource&&);
+        SharedGraphicsResource(SharedGraphicsResource&&) noexcept;
+        SharedGraphicsResource&& operator= (SharedGraphicsResource&&) noexcept;
 
         SharedGraphicsResource(GraphicsResource&&);
         SharedGraphicsResource&& operator= (GraphicsResource&&);
@@ -107,8 +107,8 @@ namespace DirectX
     public:
         explicit GraphicsMemory(_In_ ID3D12Device* device);
 
-        GraphicsMemory(GraphicsMemory&& moveFrom);
-        GraphicsMemory& operator= (GraphicsMemory&& moveFrom);
+        GraphicsMemory(GraphicsMemory&& moveFrom) noexcept;
+        GraphicsMemory& operator= (GraphicsMemory&& moveFrom) noexcept;
 
         GraphicsMemory(GraphicsMemory const&) = delete;
         GraphicsMemory& operator=(GraphicsMemory const&) = delete;

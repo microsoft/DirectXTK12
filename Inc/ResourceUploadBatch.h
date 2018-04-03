@@ -26,8 +26,8 @@ namespace DirectX
     {
     public:
         explicit ResourceUploadBatch(_In_ ID3D12Device* device);
-        ResourceUploadBatch(ResourceUploadBatch&& moveFrom);
-        ResourceUploadBatch& operator= (ResourceUploadBatch&& moveFrom);
+        ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept;
+        ResourceUploadBatch& operator= (ResourceUploadBatch&& moveFrom) noexcept;
 
         ResourceUploadBatch(ResourceUploadBatch const&) = delete;
         ResourceUploadBatch& operator= (ResourceUploadBatch const&) = delete;

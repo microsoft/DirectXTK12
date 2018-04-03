@@ -463,14 +463,14 @@ PBREffect::PBREffect(_In_ ID3D12Device* device,
 
 
 // Move constructor.
-PBREffect::PBREffect(PBREffect&& moveFrom)
+PBREffect::PBREffect(PBREffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-PBREffect& PBREffect::operator= (PBREffect&& moveFrom)
+PBREffect& PBREffect::operator= (PBREffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

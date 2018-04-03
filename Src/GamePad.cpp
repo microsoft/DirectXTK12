@@ -1282,7 +1282,7 @@ GamePad::GamePad()
 
 
 // Move constructor.
-GamePad::GamePad(GamePad&& moveFrom)
+GamePad::GamePad(GamePad&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
     pImpl->mOwner = this;
@@ -1290,7 +1290,7 @@ GamePad::GamePad(GamePad&& moveFrom)
 
 
 // Move assignment.
-GamePad& GamePad::operator= (GamePad&& moveFrom)
+GamePad& GamePad::operator= (GamePad&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     pImpl->mOwner = this;

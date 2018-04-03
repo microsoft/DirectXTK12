@@ -86,8 +86,8 @@ namespace DirectX
     {
     public:
         SpriteBatch(_In_ ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription& psoDesc, _In_opt_ const D3D12_VIEWPORT* viewport = nullptr);
-        SpriteBatch(SpriteBatch&& moveFrom);
-        SpriteBatch& operator= (SpriteBatch&& moveFrom);
+        SpriteBatch(SpriteBatch&& moveFrom) noexcept;
+        SpriteBatch& operator= (SpriteBatch&& moveFrom) noexcept;
 
         SpriteBatch(SpriteBatch const&) = delete;
         SpriteBatch& operator= (SpriteBatch const&) = delete;

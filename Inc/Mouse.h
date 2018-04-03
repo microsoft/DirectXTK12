@@ -23,8 +23,8 @@ namespace DirectX
     {
     public:
         Mouse();
-        Mouse(Mouse&& moveFrom);
-        Mouse& operator= (Mouse&& moveFrom);
+        Mouse(Mouse&& moveFrom) noexcept;
+        Mouse& operator= (Mouse&& moveFrom) noexcept;
 
         Mouse(Mouse const&) = delete;
         Mouse& operator=(Mouse const&) = delete;
@@ -67,7 +67,7 @@ namespace DirectX
             ButtonState xButton1;
             ButtonState xButton2;
 
-            ButtonStateTracker() { Reset(); }
+            ButtonStateTracker() noexcept { Reset(); }
 
             void __cdecl Update(const State& state);
 

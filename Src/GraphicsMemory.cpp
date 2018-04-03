@@ -236,7 +236,7 @@ GraphicsMemory::GraphicsMemory(_In_ ID3D12Device* device)
 
 
 // Move constructor.
-GraphicsMemory::GraphicsMemory(GraphicsMemory&& moveFrom)
+GraphicsMemory::GraphicsMemory(GraphicsMemory&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
     pImpl->mOwner = this;
@@ -244,8 +244,8 @@ GraphicsMemory::GraphicsMemory(GraphicsMemory&& moveFrom)
 
 
 // Move assignment.
-GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom)
-{
+GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
+{ 
     pImpl = std::move(moveFrom.pImpl);
     pImpl->mOwner = this;
     return *this;
@@ -290,7 +290,7 @@ GraphicsMemory& GraphicsMemory::Get()
 // GraphicsResource smart-pointer interface
 //--------------------------------------------------------------------------------------
 
-GraphicsResource::GraphicsResource()
+GraphicsResource::GraphicsResource() noexcept
     : mPage(nullptr)
     , mGpuAddress {}
     , mResource(nullptr)
@@ -317,8 +317,13 @@ GraphicsResource::GraphicsResource(
     mPage->AddRef();
 }
 
-GraphicsResource::GraphicsResource(GraphicsResource&& other)
+GraphicsResource::GraphicsResource(GraphicsResource&& other) noexcept
     : mPage(nullptr)
+    , mGpuAddress{}
+    , mResource(nullptr)
+    , mMemory(nullptr)
+    , mBufferOffset(0)
+    , mSize(0)
 {
     Reset(std::move(other));
 }
@@ -331,7 +336,7 @@ GraphicsResource::~GraphicsResource()
     }
 }
 
-GraphicsResource&& GraphicsResource::operator= (GraphicsResource&& other)
+GraphicsResource&& GraphicsResource::operator= (GraphicsResource&& other) noexcept
 {
     Reset(std::move(other));
     return std::move(*this);
@@ -379,7 +384,7 @@ void GraphicsResource::Reset(GraphicsResource&& alloc)
 // SharedGraphicsResource
 //--------------------------------------------------------------------------------------
 
-SharedGraphicsResource::SharedGraphicsResource()
+SharedGraphicsResource::SharedGraphicsResource() noexcept
     : mSharedResource(nullptr)
 {
 }
@@ -389,7 +394,7 @@ SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource)
 {
 }
 
-SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource)
+SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource) noexcept
     : mSharedResource(std::move(resource.mSharedResource))
 {
 }
@@ -403,7 +408,7 @@ SharedGraphicsResource::~SharedGraphicsResource()
 {
 }
 
-SharedGraphicsResource&& SharedGraphicsResource::operator= (SharedGraphicsResource&& resource)
+SharedGraphicsResource&& SharedGraphicsResource::operator= (SharedGraphicsResource&& resource) noexcept
 {
     mSharedResource = std::move(resource.mSharedResource);
     return std::move(*this);

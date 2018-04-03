@@ -116,8 +116,8 @@ namespace DirectX
     {
     public:
         BasicEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        BasicEffect(BasicEffect&& moveFrom);
-        BasicEffect& operator= (BasicEffect&& moveFrom);
+        BasicEffect(BasicEffect&& moveFrom) noexcept;
+        BasicEffect& operator= (BasicEffect&& moveFrom) noexcept;
 
         BasicEffect(BasicEffect const&) = delete;
         BasicEffect& operator= (BasicEffect const&) = delete;
@@ -174,8 +174,8 @@ namespace DirectX
     public:
         AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription,
                         D3D12_COMPARISON_FUNC alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
-        AlphaTestEffect(AlphaTestEffect&& moveFrom);
-        AlphaTestEffect& operator= (AlphaTestEffect&& moveFrom);
+        AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept;
+        AlphaTestEffect& operator= (AlphaTestEffect&& moveFrom) noexcept;
 
         AlphaTestEffect(AlphaTestEffect const&) = delete;
         AlphaTestEffect& operator= (AlphaTestEffect const&) = delete;
@@ -220,8 +220,8 @@ namespace DirectX
     {
     public:
         DualTextureEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        DualTextureEffect(DualTextureEffect&& moveFrom);
-        DualTextureEffect& operator= (DualTextureEffect&& moveFrom);
+        DualTextureEffect(DualTextureEffect&& moveFrom) noexcept;
+        DualTextureEffect& operator= (DualTextureEffect&& moveFrom) noexcept;
 
         DualTextureEffect(DualTextureEffect const&) = delete;
         DualTextureEffect& operator= (DualTextureEffect const&) = delete;
@@ -264,8 +264,8 @@ namespace DirectX
     {
     public:
         EnvironmentMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool fresnelEnabled = true, bool specularEnabled = false);
-        EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom);
-        EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom);
+        EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept;
+        EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom) noexcept;
 
         EnvironmentMapEffect(EnvironmentMapEffect const&) = delete;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect const&) = delete;
@@ -326,8 +326,8 @@ namespace DirectX
     {
     public:
         SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex = 4);
-        SkinnedEffect(SkinnedEffect&& moveFrom);
-        SkinnedEffect& operator= (SkinnedEffect&& moveFrom);
+        SkinnedEffect(SkinnedEffect&& moveFrom) noexcept;
+        SkinnedEffect& operator= (SkinnedEffect&& moveFrom) noexcept;
 
         SkinnedEffect(SkinnedEffect const&) = delete;
         SkinnedEffect& operator= (SkinnedEffect const&) = delete;
@@ -388,8 +388,8 @@ namespace DirectX
     {
     public:
         NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap = true);
-        NormalMapEffect(NormalMapEffect&& moveFrom);
-        NormalMapEffect& operator= (NormalMapEffect&& moveFrom);
+        NormalMapEffect(NormalMapEffect&& moveFrom) noexcept;
+        NormalMapEffect& operator= (NormalMapEffect&& moveFrom) noexcept;
 
         NormalMapEffect(NormalMapEffect const&) = delete;
         NormalMapEffect& operator= (NormalMapEffect const&) = delete;
@@ -448,8 +448,8 @@ namespace DirectX
     {
     public:
         explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool emissive = false, bool generateVelocity = false);
-        PBREffect(PBREffect&& moveFrom);
-        PBREffect& operator= (PBREffect&& moveFrom);
+        PBREffect(PBREffect&& moveFrom) noexcept;
+        PBREffect& operator= (PBREffect&& moveFrom) noexcept;
 
         PBREffect(PBREffect const&) = delete;
         PBREffect& operator= (PBREffect const&) = delete;
@@ -522,8 +522,8 @@ namespace DirectX
         };
 
         explicit DebugEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, Mode debugMode = Mode_Default);
-        DebugEffect(DebugEffect&& moveFrom);
-        DebugEffect& operator= (DebugEffect&& moveFrom);
+        DebugEffect(DebugEffect&& moveFrom) noexcept;
+        DebugEffect& operator= (DebugEffect&& moveFrom) noexcept;
 
         DebugEffect(DebugEffect const&) = delete;
         DebugEffect& operator= (DebugEffect const&) = delete;
@@ -577,8 +577,8 @@ namespace DirectX
             _In_ size_t numDescriptors,
             _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags);
 
-        EffectTextureFactory(EffectTextureFactory&& moveFrom);
-        EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom);
+        EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept;
+        EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom) noexcept;
 
         EffectTextureFactory(EffectTextureFactory const&) = delete;
         EffectTextureFactory& operator= (EffectTextureFactory const&) = delete;
@@ -644,11 +644,12 @@ namespace DirectX
             int                 samplerIndex;
             int                 samplerIndex2;
 
-            EffectInfo()
+            EffectInfo() noexcept
                 : perVertexColor(false)
                 , enableSkinning(false)
                 , enableDualTexture(false)
                 , enableNormalMaps(false)
+                , biasedVertexNormals(false)
                 , specularPower(0)
                 , alphaValue(0)
                 , ambientColor(0, 0, 0)
@@ -683,8 +684,8 @@ namespace DirectX
             _In_ ID3D12DescriptorHeap* textureDescriptors,
             _In_ ID3D12DescriptorHeap* samplerDescriptors);
 
-        EffectFactory(EffectFactory&& moveFrom);
-        EffectFactory& operator= (EffectFactory&& moveFrom);
+        EffectFactory(EffectFactory&& moveFrom) noexcept;
+        EffectFactory& operator= (EffectFactory&& moveFrom) noexcept;
 
         EffectFactory(EffectFactory const&) = delete;
         EffectFactory& operator= (EffectFactory const&) = delete;

@@ -743,6 +743,8 @@ private:
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
         ComPtr<ID3D12Fence>  			        Fence;
         HANDLE                                  GpuCompleteEvent;
+
+        UploadBatch() noexcept : GpuCompleteEvent(nullptr) {}
     };
 
     ComPtr<ID3D12Device>                        mDevice;
@@ -770,14 +772,14 @@ ResourceUploadBatch::~ResourceUploadBatch()
 
 
 // Move constructor.
-ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&& moveFrom)
+ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&& moveFrom)
+ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

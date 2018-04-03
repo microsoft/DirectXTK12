@@ -280,7 +280,8 @@ const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDep
 };
 
 // Per-device constructor.
-SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
+SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload) :
+    indexBufferView{}
 {
     CreateIndexBuffer(device, upload);
     CreateRootSignatures(device);
@@ -1004,14 +1005,14 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
 
 
 // Move constructor.
-SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom)
+SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom)
+SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

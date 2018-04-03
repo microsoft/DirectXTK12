@@ -24,7 +24,7 @@ namespace DirectX
     class RenderTargetState
     {
     public:
-        RenderTargetState()
+        RenderTargetState() noexcept
             : sampleMask(~0U)
             , numRenderTargets(0)
             , rtvFormats{}
@@ -35,6 +35,10 @@ namespace DirectX
         }
 
         RenderTargetState(const RenderTargetState&) = default;
+        RenderTargetState& operator=(const RenderTargetState&) = default;
+
+        RenderTargetState(RenderTargetState&&) = default;
+        RenderTargetState& operator=(RenderTargetState&&) = default;
 
         // Single render target convenience constructor
         RenderTargetState(

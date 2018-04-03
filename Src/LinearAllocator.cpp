@@ -21,7 +21,7 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-LinearAllocatorPage::LinearAllocatorPage()
+LinearAllocatorPage::LinearAllocatorPage() noexcept
     : pPrevPage(nullptr)
     , pNextPage(nullptr)
     , mMemory(nullptr)

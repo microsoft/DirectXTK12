@@ -23,6 +23,8 @@ using Microsoft::WRL::ComPtr;
 class GeometricPrimitive::Impl
 {
 public:
+    Impl() noexcept : mIndexCount(0), mVertexBufferView{}, mIndexBufferView{} {}
+
     void Initialize(const VertexCollection& vertices, const IndexCollection& indices);
 
     void Draw(_In_ ID3D12GraphicsCommandList* commandList) const;

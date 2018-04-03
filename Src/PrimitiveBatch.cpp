@@ -69,7 +69,9 @@ PrimitiveBatchBase::Impl::Impl(_In_ ID3D12Device* device, size_t maxIndices, siz
     mInBeginEndPair(false),
     mCurrentlyIndexed(false),
     mIndexCount(0),
-    mVertexCount(0)
+    mVertexCount(0),
+    mBaseIndex(0),
+    mBaseVertex(0)
 {
     if (maxVertices == 0)
         throw std::exception("maxVertices must be greater than 0");
@@ -238,14 +240,14 @@ PrimitiveBatchBase::PrimitiveBatchBase(_In_ ID3D12Device* device, size_t maxIndi
 
 
 // Move constructor.
-PrimitiveBatchBase::PrimitiveBatchBase(PrimitiveBatchBase&& moveFrom)
+PrimitiveBatchBase::PrimitiveBatchBase(PrimitiveBatchBase&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-PrimitiveBatchBase& PrimitiveBatchBase::operator= (PrimitiveBatchBase&& moveFrom)
+PrimitiveBatchBase& PrimitiveBatchBase::operator= (PrimitiveBatchBase&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

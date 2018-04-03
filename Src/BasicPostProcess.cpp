@@ -520,14 +520,14 @@ BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTarget
 
 
 // Move constructor.
-BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom)
+BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom)
+BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

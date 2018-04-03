@@ -50,7 +50,9 @@ DescriptorHeap::DescriptorHeap(
 _Use_decl_annotations_
 DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
-    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc)
+    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) :
+    m_desc{},
+    m_increment(0)
 {
     Create(device, pDesc);
 }
@@ -60,7 +62,9 @@ DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
     D3D12_DESCRIPTOR_HEAP_TYPE type,
     D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-    size_t count)
+    size_t count) :
+    m_desc{},
+    m_increment(0)
 {
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
     desc.Flags = flags;
@@ -78,7 +82,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
     const uint32_t* pDescriptorRangeSizes,
     uint32_t descriptorRangeCount)
 {
-    assert(size_t(offsetIntoHeap + totalDescriptorCount) <= size_t(m_desc.NumDescriptors));
+    assert((size_t(offsetIntoHeap) + size_t(totalDescriptorCount)) <= size_t(m_desc.NumDescriptors));
 
     D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(offsetIntoHeap);
 

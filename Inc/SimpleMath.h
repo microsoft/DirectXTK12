@@ -47,7 +47,7 @@ namespace DirectX
             long height;
 
             // Creators
-            Rectangle() : x(0), y(0), width(0), height(0) {}
+            Rectangle() noexcept : x(0), y(0), width(0), height(0) {}
             Rectangle(long ix, long iy, long iw, long ih) : x(ix), y(iy), width(iw), height(ih) {}
             explicit Rectangle(const RECT& rct) : x(rct.left), y(rct.top), width(rct.right - rct.left), height(rct.bottom - rct.top) {}
 
@@ -102,7 +102,7 @@ namespace DirectX
         // 2D vector
         struct Vector2 : public XMFLOAT2
         {
-            Vector2() : XMFLOAT2(0.f, 0.f) {}
+            Vector2() noexcept : XMFLOAT2(0.f, 0.f) {}
             explicit Vector2(float x) : XMFLOAT2(x, x) {}
             Vector2(float _x, float _y) : XMFLOAT2(_x, _y) {}
             explicit Vector2(_In_reads_(2) const float *pArray) : XMFLOAT2(pArray) {}
@@ -215,7 +215,7 @@ namespace DirectX
         // 3D vector
         struct Vector3 : public XMFLOAT3
         {
-            Vector3() : XMFLOAT3(0.f, 0.f, 0.f) {}
+            Vector3() noexcept : XMFLOAT3(0.f, 0.f, 0.f) {}
             explicit Vector3(float x) : XMFLOAT3(x, x, x) {}
             Vector3(float _x, float _y, float _z) : XMFLOAT3(_x, _y, _z) {}
             explicit Vector3(_In_reads_(3) const float *pArray) : XMFLOAT3(pArray) {}
@@ -335,7 +335,7 @@ namespace DirectX
         // 4D vector
         struct Vector4 : public XMFLOAT4
         {
-            Vector4() : XMFLOAT4(0.f, 0.f, 0.f, 0.f) {}
+            Vector4() noexcept : XMFLOAT4(0.f, 0.f, 0.f, 0.f) {}
             explicit Vector4(float x) : XMFLOAT4(x, x, x, x) {}
             Vector4(float _x, float _y, float _z, float _w) : XMFLOAT4(_x, _y, _z, _w) {}
             explicit Vector4(_In_reads_(4) const float *pArray) : XMFLOAT4(pArray) {}
@@ -449,7 +449,7 @@ namespace DirectX
         // 4x4 Matrix (assumes right-handed cooordinates)
         struct Matrix : public XMFLOAT4X4
         {
-            Matrix()
+            Matrix() noexcept
                 : XMFLOAT4X4(1.f, 0, 0, 0,
                             0, 1.f, 0, 0,
                             0, 0, 1.f, 0,
@@ -599,7 +599,7 @@ namespace DirectX
         // Plane
         struct Plane : public XMFLOAT4
         {
-            Plane() : XMFLOAT4(0.f, 1.f, 0.f, 0.f) {}
+            Plane() noexcept : XMFLOAT4(0.f, 1.f, 0.f, 0.f) {}
             Plane(float _x, float _y, float _z, float _w) : XMFLOAT4(_x, _y, _z, _w) {}
             Plane(const Vector3& normal, float d) : XMFLOAT4(normal.x, normal.y, normal.z, d) {}
             Plane(const Vector3& point1, const Vector3& point2, const Vector3& point3);
@@ -654,7 +654,7 @@ namespace DirectX
         // Quaternion
         struct Quaternion : public XMFLOAT4
         {
-            Quaternion() : XMFLOAT4(0, 0, 0, 1.f) {}
+            Quaternion() noexcept : XMFLOAT4(0, 0, 0, 1.f) {}
             Quaternion(float _x, float _y, float _z, float _w) : XMFLOAT4(_x, _y, _z, _w) {}
             Quaternion(const Vector3& v, float scalar) : XMFLOAT4(v.x, v.y, v.z, scalar) {}
             explicit Quaternion(const Vector4& v) : XMFLOAT4(v.x, v.y, v.z, v.w) {}
@@ -668,6 +668,7 @@ namespace DirectX
 
             Quaternion(Quaternion&&) = default;
             Quaternion& operator=(Quaternion&&) = default;
+
             operator XMVECTOR() const { return XMLoadFloat4(this); }
 
             // Comparison operators
@@ -731,7 +732,7 @@ namespace DirectX
         // Color
         struct Color : public XMFLOAT4
         {
-            Color() : XMFLOAT4(0, 0, 0, 1.f) {}
+            Color() noexcept : XMFLOAT4(0, 0, 0, 1.f) {}
             Color(float _r, float _g, float _b) : XMFLOAT4(_r, _g, _b, 1.f) {}
             Color(float _r, float _g, float _b, float _a) : XMFLOAT4(_r, _g, _b, _a) {}
             explicit Color(const Vector3& clr) : XMFLOAT4(clr.x, clr.y, clr.z, 1.f) {}
@@ -834,7 +835,7 @@ namespace DirectX
             Vector3 position;
             Vector3 direction;
 
-            Ray() : position(0, 0, 0), direction(0, 0, 1) {}
+            Ray() noexcept : position(0, 0, 0), direction(0, 0, 1) {}
             Ray(const Vector3& pos, const Vector3& dir) : position(pos), direction(dir) {}
 
             Ray(const Ray&) = default;
@@ -866,7 +867,7 @@ namespace DirectX
             float minDepth;
             float maxDepth;
 
-            Viewport() :
+            Viewport() noexcept :
                 x(0.f), y(0.f), width(0.f), height(0.f), minDepth(0.f), maxDepth(1.f) {}
             Viewport(float ix, float iy, float iw, float ih, float iminz = 0.f, float imaxz = 1.f) :
                 x(ix), y(iy), width(iw), height(ih), minDepth(iminz), maxDepth(imaxz) {}
