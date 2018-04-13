@@ -486,7 +486,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 BasicEffect::BasicEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription))
+  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
 

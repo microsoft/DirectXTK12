@@ -89,7 +89,7 @@ void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList) cons
 
 // Constructor.
 GeometricPrimitive::GeometricPrimitive()
-    : pImpl(new Impl())
+    : pImpl(std::make_unique<Impl>())
 {
 }
 

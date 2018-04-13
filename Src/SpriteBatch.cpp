@@ -999,7 +999,7 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
     ResourceUploadBatch& upload,
     const SpriteBatchPipelineStateDescription& psoDesc,
     const D3D12_VIEWPORT* viewport)
-    : pImpl(new Impl(device, upload, psoDesc, viewport))
+    : pImpl(std::make_unique<Impl>(device, upload, psoDesc, viewport))
 {
 }
 

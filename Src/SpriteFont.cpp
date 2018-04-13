@@ -323,7 +323,7 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_
 // Construct from arbitrary user specified glyph data (for those not using the MakeSpriteFont utility).
 _Use_decl_annotations_
 SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
-    : pImpl(new Impl(texture, textureSize, glyphs, glyphCount, lineSpacing))
+    : pImpl(std::make_unique<Impl>(texture, textureSize, glyphs, glyphCount, lineSpacing))
 {
 }
 

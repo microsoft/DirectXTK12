@@ -457,7 +457,7 @@ PBREffect::PBREffect(_In_ ID3D12Device* device,
                     const EffectPipelineStateDescription& pipelineDescription, 
                     bool emissive,
                     bool generateVelocity)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription, emissive, generateVelocity))
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, emissive, generateVelocity))
 {
 }
 

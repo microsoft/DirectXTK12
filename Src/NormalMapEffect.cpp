@@ -355,7 +355,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 NormalMapEffect::NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription, specularMap))
+  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, specularMap))
 {
 }
 

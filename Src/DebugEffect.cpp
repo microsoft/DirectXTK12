@@ -277,7 +277,7 @@ void DebugEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 DebugEffect::DebugEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, Mode debugMode)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription, debugMode))
+  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, debugMode))
 {
 }
 

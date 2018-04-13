@@ -364,10 +364,10 @@ void ToneMapPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandLi
 // Public constructor.
 #if defined(_XBOX_ONE) && defined(_TITLE)
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func, bool mrt)
-  : pImpl(new Impl(device, rtState, op, func, mrt))
+  : pImpl(std::make_unique<Impl>(device, rtState, op, func, mrt))
 #else
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func)
-    : pImpl(new Impl(device, rtState, op, func))
+    : pImpl(std::make_unique<Impl>(device, rtState, op, func))
 #endif
 {
 }

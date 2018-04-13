@@ -287,7 +287,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
-  : pImpl(new Impl(device, rtState, fx))
+  : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {
 }
 

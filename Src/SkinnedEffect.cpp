@@ -377,7 +377,7 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription, weightsPerVertex))
+  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, weightsPerVertex))
 {
 }
 

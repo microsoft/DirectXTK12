@@ -229,7 +229,7 @@ GraphicsMemory::Impl* GraphicsMemory::Impl::s_graphicsMemory = nullptr;
 
 // Public constructor.
 GraphicsMemory::GraphicsMemory(_In_ ID3D12Device* device)
-    : pImpl(new Impl(this))
+    : pImpl(std::make_unique<Impl>(this))
 {
     pImpl->Initialize(device);
 }

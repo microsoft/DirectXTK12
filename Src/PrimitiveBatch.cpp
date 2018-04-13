@@ -234,7 +234,7 @@ void PrimitiveBatchBase::Impl::FlushBatch()
 
 // Public constructor.
 PrimitiveBatchBase::PrimitiveBatchBase(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize)
-    : pImpl(new Impl(device, maxIndices, maxVertices, vertexSize))
+    : pImpl(std::make_unique<Impl>(device, maxIndices, maxVertices, vertexSize))
 {
 }
 

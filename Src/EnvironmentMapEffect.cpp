@@ -403,7 +403,7 @@ EnvironmentMapEffect::EnvironmentMapEffect(
     const EffectPipelineStateDescription& pipelineDescription, 
     bool fresnelEnabled, 
     bool specularEnabled)
-  : pImpl(new Impl(device, effectFlags, pipelineDescription, fresnelEnabled, specularEnabled))
+  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, fresnelEnabled, specularEnabled))
 {
 }
 

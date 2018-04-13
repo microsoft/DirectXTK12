@@ -514,7 +514,7 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
 
 // Public constructor.
 BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
-  : pImpl(new Impl(device, rtState, fx))
+  : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {
 }
 

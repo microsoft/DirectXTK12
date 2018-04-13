@@ -358,7 +358,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 // Public constructor.
 AlphaTestEffect::AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription, alphaFunction))
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, alphaFunction))
 {
 }
 
