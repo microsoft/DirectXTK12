@@ -234,12 +234,12 @@ namespace DirectX
             int samplerDescriptorOffset = 0) const;
 
         // Loads a model from a DirectX SDK .SDKMESH file
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize);
-        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_z_ const wchar_t* szFileName);
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize, _In_opt_ ID3D12Device* device = nullptr);
+        static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_z_ const wchar_t* szFileName, _In_opt_ ID3D12Device* device = nullptr);
 
         // Loads a model from a .VBO file
-        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize);
-        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_z_ const wchar_t* szFileName);
+        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize, _In_opt_ ID3D12Device* device = nullptr);
+        static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_z_ const wchar_t* szFileName, _In_opt_ ID3D12Device* device = nullptr);
 
         // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
         // descriptor will be zero.

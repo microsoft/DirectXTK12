@@ -148,7 +148,7 @@ namespace DirectX
             mDeviceResources(deviceResourcesPool.DemandCreate(device))
         {
             // Initialize the constant buffer data
-            mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+            mConstantBuffer = GraphicsMemory::Get(device).AllocateConstant(constants);
         }
 
         // Commits constants to the constant buffer memory
@@ -157,7 +157,7 @@ namespace DirectX
             // Make sure the constant buffer is up to date.
             if (dirtyFlags & EffectDirtyFlags::ConstantBuffer)
             {
-                mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+                mConstantBuffer = GraphicsMemory::Get(mDeviceResources->GetDevice()).AllocateConstant(constants);
 
                 dirtyFlags &= ~EffectDirtyFlags::ConstantBuffer;
             }
@@ -214,6 +214,8 @@ namespace DirectX
 
                 return DemandCreateRootSig(mRootSignature[slot], desc);
             }
+
+            ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
         private:
             Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature[Traits::RootSignatureCount];

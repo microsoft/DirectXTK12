@@ -80,9 +80,12 @@ namespace
     class DeviceAllocator
     {
     public:
-        DeviceAllocator(_In_ ComPtr<ID3D12Device> device)
+        DeviceAllocator(_In_ ID3D12Device* device)
             : mDevice(device)
         {
+            if (!device)
+                throw std::invalid_argument("Invalid device parameter");
+
             for (size_t i = 0; i < mPools.size(); ++i)
             {
                 size_t pageSize = GetPageSizeFromPoolIndex(i);
@@ -161,6 +164,8 @@ namespace
             }
         }
 
+        ID3D12Device* GetDevice() const { return mDevice.Get(); }
+
     private:
         ComPtr<ID3D12Device> mDevice;
         std::array<std::unique_ptr<LinearAllocator>, AllocatorPoolCount> mPools;
@@ -179,23 +184,40 @@ public:
     Impl(GraphicsMemory* owner)
         : mOwner(owner)
     {
+    #if defined(_XBOX_ONE) && defined(_TITLE)
         if (s_graphicsMemory)
         {
             throw std::exception("GraphicsMemory is a singleton");
         }
 
         s_graphicsMemory = this;
+    #endif
     }
 
     ~Impl()
     {
         mDeviceAllocator.reset();
+    #if defined(_XBOX_ONE) && defined(_TITLE)
         s_graphicsMemory = nullptr;
+    #else
+        if (mDeviceAllocator && mDeviceAllocator->GetDevice())
+        {
+            s_graphicsMemory.erase(mDeviceAllocator->GetDevice());
+        }
+    #endif
     }
 
     void Initialize(_In_ ID3D12Device* device)
     {
         mDeviceAllocator = std::make_unique<DeviceAllocator>(device);
+
+    #if !defined(_XBOX_ONE) || !defined(_TITLE)
+        if (s_graphicsMemory.find(device) != s_graphicsMemory.cend())
+        {
+            throw std::exception("GraphicsMemory is a per-device singleton");
+        }
+        s_graphicsMemory[device] = this;
+    #endif
     }
 
     GraphicsResource Allocate(size_t size, size_t alignment)
@@ -214,13 +236,21 @@ public:
     }
 
     GraphicsMemory* mOwner;
+#if defined(_XBOX_ONE) && defined(_TITLE)
     static GraphicsMemory::Impl* s_graphicsMemory;
+#else
+    static std::map<ID3D12Device*, GraphicsMemory::Impl*> s_graphicsMemory;
+#endif
 
 private:
     std::unique_ptr<DeviceAllocator> mDeviceAllocator;
 };
 
+#if defined(_XBOX_ONE) && defined(_TITLE)
 GraphicsMemory::Impl* GraphicsMemory::Impl::s_graphicsMemory = nullptr;
+#else
+std::map<ID3D12Device*, GraphicsMemory::Impl*> GraphicsMemory::Impl::s_graphicsMemory;
+#endif
 
 
 //--------------------------------------------------------------------------------------
@@ -277,13 +307,39 @@ void GraphicsMemory::GarbageCollect()
 }
 
 
-GraphicsMemory& GraphicsMemory::Get()
+#if defined(_XBOX_ONE) && defined(_TITLE)
+GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
 {
     if (!Impl::s_graphicsMemory || !Impl::s_graphicsMemory->mOwner)
         throw std::exception("GraphicsMemory singleton not created");
 
     return *Impl::s_graphicsMemory->mOwner;
 }
+#else
+GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device* device)
+{
+    if (Impl::s_graphicsMemory.empty())
+        throw std::exception("GraphicsMemory singleton not created");
+
+    std::map<ID3D12Device*, GraphicsMemory::Impl*>::const_iterator it;
+    if (!device)
+    {
+        // Should only use nullptr for device for single GPU usage
+        assert(Impl::s_graphicsMemory.size() == 1);
+
+        it = Impl::s_graphicsMemory.cbegin();
+    }
+    else
+    {
+        it = Impl::s_graphicsMemory.find(device);
+    }
+
+    if (it == Impl::s_graphicsMemory.cend() || !it->second->mOwner)
+        throw std::exception("GraphicsMemory per-device singleton not created");
+
+    return *it->second->mOwner;
+}
+#endif
 
 
 //--------------------------------------------------------------------------------------
