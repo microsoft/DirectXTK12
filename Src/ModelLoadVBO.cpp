@@ -47,7 +47,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize, ID3D12Device* device)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
@@ -76,11 +76,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     auto indices = reinterpret_cast<const uint16_t*>(meshData + sizeof(VBO::header_t) + vertSize);
 
     // Create vertex buffer
-    auto vb = GraphicsMemory::Get().Allocate(vertSize);
+    auto vb = GraphicsMemory::Get(device).Allocate(vertSize);
     memcpy(vb.Memory(), verts, vertSize);
 
     // Create index buffer
-    auto ib = GraphicsMemory::Get().Allocate(indexSize);
+    auto ib = GraphicsMemory::Get(device).Allocate(indexSize);
     memcpy(ib.Memory(), indices, indexSize);
 
     auto part = new ModelMeshPart(0);
@@ -107,7 +107,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName, ID3D12Device* device)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -118,7 +118,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName)
         throw std::exception("CreateFromVBO");
     }
 
-    auto model = CreateFromVBO(data.get(), dataSize);
+    auto model = CreateFromVBO(data.get(), dataSize, device);
 
     model->name = szFileName;
 

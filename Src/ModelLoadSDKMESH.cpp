@@ -322,7 +322,7 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t dataSize)
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t dataSize, ID3D12Device* device)
 {
     if (!meshData)
         throw std::exception("meshData cannot be null");
@@ -548,13 +548,15 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
             // Vertex data
             auto verts = bufferData + (vh.DataOffset - bufferDataOffset);
-            part->vertexBuffer = GraphicsMemory::Get().Allocate((size_t)vh.SizeBytes);
-            memcpy(part->vertexBuffer.Memory(), verts, (size_t)vh.SizeBytes);
+            auto vbytes = static_cast<size_t>(vh.SizeBytes);
+            part->vertexBuffer = GraphicsMemory::Get(device).Allocate(vbytes);
+            memcpy(part->vertexBuffer.Memory(), verts, vbytes);
 
             // Index data
             auto indices = bufferData + (ih.DataOffset - bufferDataOffset);
-            part->indexBuffer = GraphicsMemory::Get().Allocate((size_t)ih.SizeBytes);
-            memcpy(part->indexBuffer.Memory(), indices, (size_t)ih.SizeBytes);
+            auto ibytes = static_cast<size_t>(ih.SizeBytes);
+            part->indexBuffer = GraphicsMemory::Get(device).Allocate(ibytes);
+            memcpy(part->indexBuffer.Memory(), indices, ibytes);
 
             part->materialIndex = subset.MaterialID;
             part->vbDecl = vbDecls[mh.VertexBuffers[0]];
@@ -582,7 +584,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileName)
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileName, ID3D12Device* device)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -593,7 +595,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileNa
         throw std::exception("CreateFromSDKMESH");
     }
 
-    auto model = CreateFromSDKMESH(data.get(), dataSize);
+    auto model = CreateFromSDKMESH(data.get(), dataSize, device);
 
     model->name = szFileName;
 

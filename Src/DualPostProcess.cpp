@@ -89,6 +89,8 @@ namespace
             });
         }
 
+        ID3D12Device* GetDevice() const { return mDevice.Get(); }
+
     protected:
         ComPtr<ID3D12Device>                        mDevice;
         Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
@@ -271,7 +273,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     if (mDirtyFlags & Dirty_ConstantBuffer)
     {
         mDirtyFlags &= ~Dirty_ConstantBuffer;
-        mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+        mConstantBuffer = GraphicsMemory::Get(mDeviceResources->GetDevice()).AllocateConstant(constants);
     }
 
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());

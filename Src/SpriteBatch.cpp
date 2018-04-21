@@ -190,7 +190,8 @@ private:
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignatureStatic;
-        ComPtr<ID3D12RootSignature> rootSignatureHeap;
+        ComPtr<ID3D12RootSignature> rootSignatureHeap; 
+        ID3D12Device* mDevice;
 
     private:
         void CreateIndexBuffer(_In_ ID3D12Device* device, ResourceUploadBatch& upload);
@@ -281,7 +282,8 @@ const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDep
 
 // Per-device constructor.
 SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload) :
-    indexBufferView{}
+    indexBufferView{},
+    mDevice(device)
 {
     CreateIndexBuffer(device, upload);
     CreateRootSignatures(device);
@@ -627,9 +629,9 @@ void SpriteBatch::Impl::PrepareForRendering()
     // Set root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	// Set render state
+    // Set render state
     commandList->SetPipelineState(mPSO.Get());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Set the index buffer.
     commandList->IASetIndexBuffer(&mDeviceResources->indexBufferView);
@@ -639,7 +641,7 @@ void SpriteBatch::Impl::PrepareForRendering()
         ? mTransformMatrix
         : (mTransformMatrix * GetViewportTransform(mRotation));
 
-    mConstantBuffer = GraphicsMemory::Get().AllocateConstant(transformMatrix);
+    mConstantBuffer = GraphicsMemory::Get(mDeviceResources->mDevice).AllocateConstant(transformMatrix);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
 }
 
@@ -728,8 +730,8 @@ void SpriteBatch::Impl::SortSprites()
         });
         break;
 
-	default:
-		break;
+    default:
+        break;
     }
 }
 
@@ -793,7 +795,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
         // Allocate a new page of vertex memory if we're starting the batch
         if (mSpriteCount == 0)
         {
-            mVertexSegment = GraphicsMemory::Get().Allocate(mVertexPageSize);
+            mVertexSegment = GraphicsMemory::Get(mDeviceResources->mDevice).Allocate(mVertexPageSize);
         }
 
         auto vertices = static_cast<VertexPositionColorTexture*>(mVertexSegment.Memory()) + mSpriteCount * VerticesPerSprite;

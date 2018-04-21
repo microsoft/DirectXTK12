@@ -169,9 +169,9 @@ void PrimitiveBatchBase::Impl::Draw(D3D_PRIMITIVE_TOPOLOGY topology, bool isInde
 
         // Allocate a page for the primitive data
         if (isIndexed)
-            mIndexSegment = GraphicsMemory::Get().Allocate(mIndexPageSize);
+            mIndexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mIndexPageSize);
 
-        mVertexSegment = GraphicsMemory::Get().Allocate(mVertexPageSize);
+        mVertexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mVertexPageSize);
     }
 
     // Copy over the index data.
