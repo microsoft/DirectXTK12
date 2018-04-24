@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-February 7, 2018
+April 23, 2018
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -107,6 +107,17 @@ RELEASE NOTES
 ---------------
 RELEASE HISTORY
 ---------------
+
+April 23, 2018
+    AlignUp, AlignDown template functions in DirectXHelpers.h
+    ScopedBarrier added to DirectXHelpers.h
+    Mouse support for cursor visibility
+    SimpleMath and VertexTypes updated with default copy and move ctors
+    SimpleMath updates to use constexpr
+    Basic multi-GPU support added
+    More debug object naming for PIX
+    PostProcess updated with 'big triangle' optimization
+    Code and project file cleanup
 
 February 7, 2018
     Mouse fix for cursor behavior when using Remote Desktop for Win32
