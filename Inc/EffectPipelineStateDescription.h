@@ -46,12 +46,36 @@ namespace DirectX
                 this->inputLayout = *inputLayout;
         }
 
+        EffectPipelineStateDescription(const EffectPipelineStateDescription&) = default;
+        EffectPipelineStateDescription& operator=(const EffectPipelineStateDescription&) = default;
+
+        EffectPipelineStateDescription(EffectPipelineStateDescription&&) = default;
+        EffectPipelineStateDescription& operator=(EffectPipelineStateDescription&&) = default;
+
         void CreatePipelineState(
             _In_ ID3D12Device* device,
             _In_ ID3D12RootSignature* rootSignature,
             const D3D12_SHADER_BYTECODE& vertexShader,
             const D3D12_SHADER_BYTECODE& pixelShader,
             _Outptr_ ID3D12PipelineState** pPipelineState) const;
+
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDesc() const
+        {
+            D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+            psoDesc.BlendState = blendDesc;
+            psoDesc.SampleMask = renderTargetState.sampleMask;
+            psoDesc.RasterizerState = rasterizerDesc;
+            psoDesc.DepthStencilState = depthStencilDesc;
+            psoDesc.InputLayout = inputLayout;
+            psoDesc.IBStripCutValue = stripCutValue;
+            psoDesc.PrimitiveTopologyType = primitiveTopology;
+            psoDesc.NumRenderTargets = renderTargetState.numRenderTargets;
+            memcpy(psoDesc.RTVFormats, renderTargetState.rtvFormats, sizeof(psoDesc.RTVFormats));
+            psoDesc.DSVFormat = renderTargetState.dsvFormat;
+            psoDesc.SampleDesc = renderTargetState.sampleDesc;
+            psoDesc.NodeMask = renderTargetState.nodeMask;
+            return psoDesc;
+        }
 
         uint32_t ComputeHash() const;
 

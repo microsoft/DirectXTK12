@@ -91,22 +91,8 @@ void EffectPipelineStateDescription::CreatePipelineState(
     const D3D12_SHADER_BYTECODE& pixelShader,
     _Outptr_ ID3D12PipelineState** pPipelineState) const
 {
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+    auto psoDesc = GetDesc();
     psoDesc.pRootSignature = rootSignature;
-    psoDesc.BlendState = blendDesc;
-    psoDesc.DepthStencilState = depthStencilDesc;
-    psoDesc.RasterizerState = rasterizerDesc;
-    psoDesc.DSVFormat = renderTargetState.dsvFormat;
-    psoDesc.NodeMask = renderTargetState.nodeMask;
-    psoDesc.NumRenderTargets = renderTargetState.numRenderTargets;
-    memcpy(psoDesc.RTVFormats, renderTargetState.rtvFormats, sizeof(psoDesc.RTVFormats));
-    psoDesc.SampleDesc = renderTargetState.sampleDesc;
-    psoDesc.SampleMask = renderTargetState.sampleMask;
-    psoDesc.InputLayout = inputLayout;
-    psoDesc.IBStripCutValue = stripCutValue;
-    psoDesc.PrimitiveTopologyType = primitiveTopology;
-    psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-
     psoDesc.VS = vertexShader;
     psoDesc.PS = pixelShader;
 
