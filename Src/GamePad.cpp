@@ -91,16 +91,14 @@ public:
         mOwner(owner),
         mCtrlChanged(INVALID_HANDLE_VALUE),
         mUserChanged(INVALID_HANDLE_VALUE),
-        mMostRecentGamepad(0)
+        mMostRecentGamepad(0),
+        mUserChangeToken{},
+        mAddedToken{},
+        mRemovedToken{}
     {
         using namespace Microsoft::WRL;
         using namespace Microsoft::WRL::Wrappers;
         using namespace ABI::Windows::Foundation;
-
-        mAddedToken.value = 0;
-        mRemovedToken.value = 0;
-
-        memset(&mUserChangeToken, 0, sizeof(mUserChangeToken));
 
         if (s_gamePad)
         {
@@ -544,15 +542,14 @@ public:
         mOwner(owner),
         mCtrlChanged(INVALID_HANDLE_VALUE),
         mUserChanged(INVALID_HANDLE_VALUE),
-        mMostRecentGamepad(0)
+        mMostRecentGamepad(0),
+        mAddedToken{},
+        mRemovedToken{},
+        mUserParingToken{}
     {
         using namespace Microsoft::WRL;
         using namespace Microsoft::WRL::Wrappers;
         using namespace ABI::Windows::Foundation;
-
-        mAddedToken.value = 0;
-        mRemovedToken.value = 0;
-        mUserParingToken.value = 0;
 
         if (s_gamePad)
         {

@@ -58,6 +58,7 @@ class Mouse::Impl
 {
 public:
     Impl(Mouse* owner) :
+        mState{},
         mOwner(owner),
         mWindow(nullptr),
         mMode(MODE_ABSOLUTE),
@@ -73,8 +74,6 @@ public:
         }
 
         s_mouse = this;
-
-        memset(&mState, 0, sizeof(State));
 
         mScrollWheelValue.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mRelativeRead.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
@@ -568,24 +567,22 @@ class Mouse::Impl
 {
 public:
     Impl(Mouse* owner) :
+        mState{},
         mOwner(owner),
         mDPI(96.f),
-        mMode(MODE_ABSOLUTE)
+        mMode(MODE_ABSOLUTE),
+        mPointerPressedToken{},
+        mPointerReleasedToken{},
+        mPointerMovedToken{},
+        mPointerWheelToken{},
+        mPointerMouseMovedToken{}
     {
-        mPointerPressedToken.value = 0;
-        mPointerReleasedToken.value = 0;
-        mPointerMovedToken.value = 0;
-        mPointerWheelToken.value = 0;
-        mPointerMouseMovedToken.value = 0;
-
         if (s_mouse)
         {
             throw std::exception("Mouse is a singleton");
         }
 
         s_mouse = this;
-
-        memset(&mState, 0, sizeof(State));
 
         mScrollWheelValue.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mRelativeRead.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));

@@ -428,14 +428,14 @@ class WaveBankReader::Impl
 public:
     Impl() noexcept :
         m_async(INVALID_HANDLE_VALUE),
-        m_prepared(false)
+        m_request{},
+        m_prepared(false),
+        m_header{},
+        m_data{}
     #if defined(_XBOX_ONE) && defined(_TITLE)
         , m_xmaMemory(nullptr)
     #endif
     {
-        memset(&m_header, 0, sizeof(HEADER));
-        memset(&m_data, 0, sizeof(BANKDATA));
-        memset(&m_request, 0, sizeof(OVERLAPPED));
     }
 
     ~Impl() { Close(); }
