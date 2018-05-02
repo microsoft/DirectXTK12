@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata minClientVersion="2.8.6">
-        <id>directxtk12_uwp</id>
+        <id>directxtk12_desktop_2015</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
-        <title>DirectX Tool Kit for DirectX 12 (UWP)</title>
+        <title>DirectX Tool Kit for DirectX 12 (VS 2015/VS 2017 Win32)</title>
         <authors>Microsoft</authors>
         <owners>microsoft,directxtk</owners>
         <summary>The DirectX Tool Kit (aka DirectXTK) is a collection of helper classes for writing Direct3D 12 code in C++.</summary>
-        <description>This version is for universal Windows apps on Windows 10 using Visual Studio 2015 Update 3 or Visual Studio 2017.
+        <description>This version is for Windows desktop applications using Visual Studio 2015 Update 3 or Visual Studio 2017.
 
 Features:
 Audio - low-level audio API using XAudio2
@@ -48,25 +48,19 @@ WICTextureLoader - WIC-based image file texture loader</description>
 
         <file target="include" src="Inc\*" exclude="Inc\XboxDDSTextureLoader.h" />
 
-        <file target="lib\ARM\Debug" src="Bin\Windows10\ARM\Debug\*.lib" />
-        <file target="lib\ARM\Debug" src="Bin\Windows10\ARM\Debug\*.pdb" />
+        <file target="lib\Win32\Debug" src="Bin\Desktop_2015_Win10\Win32\Debug\*.lib" />
+        <file target="lib\Win32\Debug" src="Bin\Desktop_2015_Win10\Win32\Debug\*.pdb" />
 
-        <file target="lib\ARM\Release" src="Bin\Windows10\ARM\Release\*.lib" />
-        <file target="lib\ARM\Release" src="Bin\Windows10\ARM\Release\*.pdb" />
-      
-        <file target="lib\Win32\Debug" src="Bin\Windows10\Win32\Debug\*.lib" />
-        <file target="lib\Win32\Debug" src="Bin\Windows10\Win32\Debug\*.pdb" />
+        <file target="lib\Win32\Release" src="Bin\Desktop_2015_Win10\Win32\Release\*.lib" />
+        <file target="lib\Win32\Release" src="Bin\Desktop_2015_Win10\Win32\Release\*.pdb" />
 
-        <file target="lib\Win32\Release" src="Bin\Windows10\Win32\Release\*.lib" />
-        <file target="lib\Win32\Release" src="Bin\Windows10\Win32\Release\*.pdb" />
+        <file target="lib\x64\Debug" src="Bin\Desktop_2015_Win10\x64\Debug\*.lib" />
+        <file target="lib\x64\Debug" src="Bin\Desktop_2015_Win10\x64\Debug\*.pdb" />
 
-        <file target="lib\x64\Debug" src="Bin\Windows10\x64\Debug\*.lib" />
-        <file target="lib\x64\Debug" src="Bin\Windows10\x64\Debug\*.pdb" />
+        <file target="lib\x64\Release" src="Bin\Desktop_2015_Win10\x64\Release\*.lib" />
+        <file target="lib\x64\Release" src="Bin\Desktop_2015_Win10\x64\Release\*.pdb" />
 
-        <file target="lib\x64\Release" src="Bin\Windows10\x64\Release\*.lib" />
-        <file target="lib\x64\Release" src="Bin\Windows10\x64\Release\*.pdb" />
-
-        <file src="nuget/directxtk12_uwp.targets" target="build\native" />
+        <file src=".nuget/directxtk12_desktop_2015.targets" target="build\native" />
       
     </files>
 </package>
