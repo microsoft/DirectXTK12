@@ -28,9 +28,18 @@ namespace DirectX
     class IPostProcess
     {
     public:
-        virtual ~IPostProcess() { }
+        virtual ~IPostProcess() = default;
+
+        IPostProcess(const IPostProcess&) = delete;
+        IPostProcess& operator=(const IPostProcess&) = delete;
+
+        IPostProcess(IPostProcess&&) = delete;
+        IPostProcess& operator=(IPostProcess&&) = delete;
 
         virtual void __cdecl Process(_In_ ID3D12GraphicsCommandList* commandList) = 0;
+
+    protected:
+        IPostProcess() = default;
     };
 
 

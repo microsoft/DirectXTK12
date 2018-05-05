@@ -33,9 +33,18 @@ namespace DirectX
     class IEffect
     {
     public:
-        virtual ~IEffect() { }
+        virtual ~IEffect() = default;
+
+        IEffect(const IEffect&) = delete;
+        IEffect& operator=(const IEffect&) = delete;
+
+        IEffect(IEffect&&) = delete;
+        IEffect& operator=(IEffect&&) = delete;
 
         virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
+
+    protected:
+        IEffect() = default;
     };
 
 
@@ -43,12 +52,21 @@ namespace DirectX
     class IEffectMatrices
     {
     public:
-        virtual ~IEffectMatrices() { }
+        virtual ~IEffectMatrices() = default;
+
+        IEffectMatrices(const IEffectMatrices&) = delete;
+        IEffectMatrices& operator=(const IEffectMatrices&) = delete;
+
+        IEffectMatrices(IEffectMatrices&&) = delete;
+        IEffectMatrices& operator=(IEffectMatrices&&) = delete;
 
         virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection);
+
+    protected:
+        IEffectMatrices() = default;
     };
 
 
@@ -56,7 +74,13 @@ namespace DirectX
     class IEffectLights
     {
     public:
-        virtual ~IEffectLights() { }
+        virtual ~IEffectLights() = default;
+
+        IEffectLights(const IEffectLights&) = delete;
+        IEffectLights& operator=(const IEffectLights&) = delete;
+
+        IEffectLights(IEffectLights&&) = delete;
+        IEffectLights& operator=(IEffectLights&&) = delete;
 
         virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
 
@@ -68,6 +92,9 @@ namespace DirectX
         virtual void __cdecl EnableDefaultLighting() = 0;
 
         static const int MaxDirectionalLights = 3;
+
+    protected:
+        IEffectLights() = default;
     };
 
 
@@ -75,11 +102,20 @@ namespace DirectX
     class IEffectFog
     {
     public:
-        virtual ~IEffectFog() { }
+        virtual ~IEffectFog() = default;
+
+        IEffectFog(const IEffectFog&) = delete;
+        IEffectFog& operator=(const IEffectFog&) = delete;
+
+        IEffectFog(IEffectFog&&) = delete;
+        IEffectFog& operator=(IEffectFog&&) = delete;
 
         virtual void __cdecl SetFogStart(float value) = 0;
         virtual void __cdecl SetFogEnd(float value) = 0;
         virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
+
+    protected:
+        IEffectFog() = default;
     };
 
 
@@ -87,12 +123,21 @@ namespace DirectX
     class IEffectSkinning
     {
     public:
-        virtual ~IEffectSkinning() { } 
+        virtual ~IEffectSkinning() = default;
+
+        IEffectSkinning(const IEffectSkinning&) = delete;
+        IEffectSkinning& operator=(const IEffectSkinning&) = delete;
+
+        IEffectSkinning(IEffectSkinning&&) = delete;
+        IEffectSkinning& operator=(IEffectSkinning&&) = delete;
 
         virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
         virtual void __cdecl ResetBoneTransforms() = 0;
 
         static const int MaxBones = 72;
+
+    protected:
+        IEffectSkinning() = default;
     };
 
 
@@ -556,9 +601,18 @@ namespace DirectX
     class IEffectTextureFactory
     {
     public:
-        virtual ~IEffectTextureFactory() {}
+        virtual ~IEffectTextureFactory() = default;
+
+        IEffectTextureFactory(const IEffectTextureFactory&) = delete;
+        IEffectTextureFactory& operator=(const IEffectTextureFactory&) = delete;
+
+        IEffectTextureFactory(IEffectTextureFactory&&) = delete;
+        IEffectTextureFactory& operator=(IEffectTextureFactory&&) = delete;
 
         virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
+
+    protected:
+        IEffectTextureFactory() = default;
     };
 
 
@@ -622,7 +676,13 @@ namespace DirectX
     class IEffectFactory
     {
     public:
-        virtual ~IEffectFactory() {}
+        virtual ~IEffectFactory() = default;
+
+        IEffectFactory(const IEffectFactory&) = delete;
+        IEffectFactory& operator=(const IEffectFactory&) = delete;
+
+        IEffectFactory(IEffectFactory&&) = delete;
+        IEffectFactory& operator=(IEffectFactory&&) = delete;
 
         struct EffectInfo
         {
@@ -672,6 +732,9 @@ namespace DirectX
             const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) = 0;
+
+    protected:
+        IEffectFactory() = default;
     };
 
 

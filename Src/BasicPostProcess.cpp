@@ -104,7 +104,9 @@ namespace
     {
     public:
         DeviceResources(_In_ ID3D12Device* device)
-            : mDevice(device)
+            : mDevice(device),
+            mRootSignature{},
+            mMutex{}
         { }
 
         ID3D12RootSignature* GetRootSignature(int slot, const D3D12_ROOT_SIGNATURE_DESC& desc)

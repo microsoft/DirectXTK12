@@ -28,10 +28,11 @@ void XM_CALLCONV IEffectMatrices::SetMatrices(FXMMATRIX world, CXMMATRIX view, C
 // Constructor initializes default matrix values.
 EffectMatrices::EffectMatrices() noexcept
 {
-    world = XMMatrixIdentity();
-    view = XMMatrixIdentity();
-    projection = XMMatrixIdentity();
-    worldView = XMMatrixIdentity();
+    XMMATRIX id = XMMatrixIdentity();
+    world = id;
+    view = id;
+    projection = id;
+    worldView = id;
 }
 
 
@@ -111,9 +112,9 @@ void XM_CALLCONV EffectFog::SetConstants(int& dirtyFlags, FXMMATRIX worldView, X
 
 // Constructor initializes default material color settings.
 EffectColor::EffectColor() noexcept :
+    diffuseColor(g_XMOne),
     alpha(1.f)
 {
-    diffuseColor = g_XMOne;
 }
 
 
@@ -134,16 +135,17 @@ void EffectColor::SetConstants(_Inout_ int& dirtyFlags, _Inout_ XMVECTOR& diffus
 
 
 // Constructor initializes default light settings.
-EffectLights::EffectLights() noexcept
+EffectLights::EffectLights() noexcept :
+    emissiveColor{},
+    ambientLightColor{},
+    lightEnabled{},
+    lightDiffuseColor{},
+    lightSpecularColor{}
 {
-    emissiveColor = g_XMZero;
-    ambientLightColor = g_XMZero;
-
     for (int i = 0; i < MaxDirectionalLights; i++)
     {
         lightEnabled[i] = (i == 0);
         lightDiffuseColor[i] = g_XMOne;
-        lightSpecularColor[i] = g_XMZero;
     }
 }
 
@@ -176,7 +178,8 @@ _Use_decl_annotations_ void EffectLights::InitializeConstants(XMVECTOR& specular
 
 
 // Lazily recomputes derived parameter values used by shader lighting calculations.
-_Use_decl_annotations_ void EffectLights::SetConstants(int& dirtyFlags, EffectMatrices const& matrices, XMMATRIX& worldConstant, XMVECTOR worldInverseTransposeConstant[3], XMVECTOR& eyePositionConstant, XMVECTOR& diffuseColorConstant, XMVECTOR& emissiveColorConstant, bool lightingEnabled)
+_Use_decl_annotations_
+void EffectLights::SetConstants(int& dirtyFlags, EffectMatrices const& matrices, XMMATRIX& worldConstant, XMVECTOR worldInverseTransposeConstant[3], XMVECTOR& eyePositionConstant, XMVECTOR& diffuseColorConstant, XMVECTOR& emissiveColorConstant, bool lightingEnabled)
 {
     if (lightingEnabled)
     {
