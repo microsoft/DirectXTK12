@@ -186,7 +186,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheSkinning.insert(EffectCache::value_type(cacheName, effect));
+            EffectCache::value_type v(cacheName, effect);
+            mEffectCacheSkinning.insert(v);
         }
 
         return effect;
@@ -249,7 +250,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheDualTexture.insert(EffectCache::value_type(cacheName, effect));
+            EffectCache::value_type v(cacheName, effect);
+            mEffectCacheDualTexture.insert(v);
         }
 
         return effect;
@@ -336,7 +338,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheNormalMap.insert(EffectCache::value_type(cacheName, effect));
+            EffectCache::value_type v(cacheName, effect);
+            mEffectCacheNormalMap.insert(v);
         }
 
         return effect;
@@ -416,7 +419,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCache.insert(EffectCache::value_type(cacheName, effect));
+            EffectCache::value_type v(cacheName, effect);
+            mEffectCache.insert(v);
         }
 
         return effect;

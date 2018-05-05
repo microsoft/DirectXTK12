@@ -61,7 +61,7 @@ namespace DirectX
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
     private:
-        GeometricPrimitive();
+        GeometricPrimitive() noexcept(false);
 
         // Private implementation.
         class Impl;

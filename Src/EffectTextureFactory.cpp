@@ -177,7 +177,8 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         std::lock_guard<std::mutex> lock(mutex);
         if (mSharing)
         {
-            mTextureCache.insert(TextureCache::value_type(name, textureEntry));
+            TextureCache::value_type v(name, textureEntry);
+            mTextureCache.insert(v);
         }
         mResources.push_back(textureEntry);
     }

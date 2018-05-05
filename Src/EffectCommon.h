@@ -203,7 +203,8 @@ namespace DirectX
         {
         public:
             DeviceResources(_In_ ID3D12Device* device)
-                : EffectDeviceResources(device)
+                : EffectDeviceResources(device),
+                mRootSignature{}
             { }
 
             // Gets or lazily creates the specified root signature
