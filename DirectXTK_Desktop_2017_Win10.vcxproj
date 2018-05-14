@@ -430,8 +430,6 @@
     <None Include="Src\Shaders\PostProcess.fx">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Src\Shaders\ToneMap.fx">
       <FileType>Document</FileType>
     </None>
