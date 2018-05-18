@@ -20,7 +20,7 @@ void DirectX::CreateShaderResourceView(
     D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
     bool isCubeMap)
 {
-    D3D12_RESOURCE_DESC desc = tex->GetDesc();
+    const auto desc = tex->GetDesc();
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = desc.Format;
     SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
