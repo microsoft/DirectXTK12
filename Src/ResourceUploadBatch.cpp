@@ -306,7 +306,7 @@ public:
 
         ScopedPixEvent pix(mList.Get(), 0, __FUNCTIONW__);
 
-        auto desc = resource->GetDesc();
+        const auto desc = resource->GetDesc();
 
         if (desc.MipLevels == 1)
         {
@@ -438,7 +438,7 @@ private:
     void GenerateMips_UnorderedAccessPath(
         _In_ ID3D12Resource* resource)
     {
-        const auto& desc = resource->GetDesc();
+        const auto desc = resource->GetDesc();
         assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
 
         CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
@@ -611,7 +611,7 @@ private:
     void GenerateMips_TexturePath(
         _In_ ID3D12Resource* resource)
     {
-        const auto& resourceDesc = resource->GetDesc();
+        const auto resourceDesc = resource->GetDesc();
         assert(!FormatIsBGR(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
 
         auto copyDesc = resourceDesc;
@@ -655,7 +655,7 @@ private:
     void GenerateMips_TexturePathBGR(
         _In_ ID3D12Resource* resource)
     {
-        const auto& resourceDesc = resource->GetDesc();
+        const auto resourceDesc = resource->GetDesc();
         assert(FormatIsBGR(resourceDesc.Format));
 
         // Create a resource with the same description, but without SRGB, and with UAV flags

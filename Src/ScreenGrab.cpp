@@ -228,7 +228,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     pCommandQ->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
 
     // Get the size of the image
-    D3D12_RESOURCE_DESC desc = pSource->GetDesc();
+    const auto desc = pSource->GetDesc();
     UINT64 totalResourceSize = 0;
     UINT64 fpRowPitch = 0;
     UINT fpRowCount = 0;
@@ -427,7 +427,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     pCommandQ->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
 
     // Get the size of the image
-    D3D12_RESOURCE_DESC desc = pSource->GetDesc();
+    const auto desc = pSource->GetDesc();
     UINT64 totalResourceSize = 0;
     UINT64 fpRowPitch = 0;
     UINT fpRowCount = 0;
