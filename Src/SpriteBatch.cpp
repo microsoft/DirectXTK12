@@ -36,10 +36,6 @@ namespace
     #include "Shaders/Compiled/SpriteEffect_SpritePixelShaderHeap.inc"
     #endif
 
-    inline bool operator ! (D3D12_GPU_DESCRIPTOR_HANDLE h)
-    {
-        return h.ptr == 0;
-    }
     inline bool operator != (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b)
     {
         return a.ptr != b.ptr;
@@ -57,7 +53,7 @@ namespace
         v = XMConvertVectorIntToFloat(v, 0);
 
         // Convert right/bottom to width/height.
-        v -= XMVectorPermute<0, 1, 4, 5>(XMVectorZero(), v);
+        v = XMVectorSubtract(v, XMVectorPermute<0, 1, 4, 5>(g_XMZero, v));
 
         return v;
     }
@@ -561,7 +557,7 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
         // If the destination size is relative to the source region, convert it to pixels.
         if (!(flags & SpriteInfo::DestSizeInPixels))
         {
-            dest = XMVectorPermute<0, 1, 6, 7>(dest, dest * source); // dest.zw *= source.zw
+            dest = XMVectorPermute<0, 1, 6, 7>(dest, XMVectorMultiply(dest, source)); // dest.zw *= source.zw
         }
 
         flags |= SpriteInfo::SourceInTexels | SpriteInfo::DestSizeInPixels;
@@ -860,18 +856,18 @@ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, Verte
     // Convert the source region from texels to mod-1 texture coordinate format.
     if (flags & SpriteInfo::SourceInTexels)
     {
-        source *= inverseTextureSize;
-        sourceSize *= inverseTextureSize;
+        source = XMVectorMultiply(source, inverseTextureSize);
+        sourceSize = XMVectorMultiply(sourceSize, inverseTextureSize);
     }
     else
     {
-        origin *= inverseTextureSize;
+        origin = XMVectorMultiply(origin, inverseTextureSize);
     }
 
     // If the destination size is relative to the source region, convert it to pixels.
     if (!(flags & SpriteInfo::DestSizeInPixels))
     {
-        destinationSize *= textureSize;
+        destinationSize = XMVectorMultiply(destinationSize, textureSize);
     }
 
     // Compute a 2x2 rotation matrix.
@@ -888,7 +884,7 @@ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, Verte
         XMVECTOR cosV = XMLoadFloat(&cos);
 
         rotationMatrix1 = XMVectorMergeXY(cosV, sinV);
-        rotationMatrix2 = XMVectorMergeXY(-sinV, cosV);
+        rotationMatrix2 = XMVectorMergeXY(XMVectorNegate(sinV), cosV);
     }
     else
     {
@@ -921,7 +917,7 @@ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, Verte
     for (size_t i = 0; i < VerticesPerSprite; i++)
     {
         // Calculate position.
-        XMVECTOR cornerOffset = (cornerOffsets[i] - origin) * destinationSize;
+        XMVECTOR cornerOffset = XMVectorMultiply(XMVectorSubtract(cornerOffsets[i], origin), destinationSize);
 
         // Apply 2x2 rotation matrix.
         XMVECTOR position1 = XMVectorMultiplyAdd(XMVectorSplatX(cornerOffset), rotationMatrix1, destination);
