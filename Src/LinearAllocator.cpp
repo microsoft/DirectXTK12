@@ -105,9 +105,9 @@ LinearAllocatorPage* LinearAllocator::FindPageForAlloc(_In_ size_t size, _In_ si
 {
 #ifdef _DEBUG
     if (size > m_increment)
-        throw std::out_of_range(__FUNCTION__ " size must be less or equal to the allocator's increment");
+        throw std::out_of_range("Size must be less or equal to the allocator's increment");
     if (alignment > m_increment)
-        throw std::out_of_range(__FUNCTION__ " alignment must be less or equal to the allocator's increment");
+        throw std::out_of_range("Alignment must be less or equal to the allocator's increment");
     if (size == 0)
         throw std::exception("Cannot honor zero size allocation request.");
 #endif

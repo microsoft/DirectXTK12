@@ -274,7 +274,7 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 

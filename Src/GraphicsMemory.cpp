@@ -31,11 +31,6 @@ namespace
     static_assert((MinAllocSize & (MinAllocSize - 1)) == 0, "MinAllocSize size must be a power of 2");
     static_assert(MinAllocSize >= (4 * 1024), "MinAllocSize size must be greater than 4K");
 
-    inline constexpr bool WordSize64()
-    {
-        return sizeof(size_t) == 8;
-    }
-
     inline size_t NextPow2(size_t x)
     {
         x--;

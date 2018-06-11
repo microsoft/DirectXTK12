@@ -160,8 +160,8 @@ namespace DirectX
         D3D12_RESOURCE_STATES stateBefore,
         D3D12_RESOURCE_STATES stateAfter)
     {
-        assert(commandList != 0);
-        assert(resource != 0);
+        assert(commandList != nullptr);
+        assert(resource != nullptr);
 
         if (stateBefore == stateAfter)
             return;

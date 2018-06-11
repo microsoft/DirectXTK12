@@ -273,7 +273,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
         }
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     // Create pipeline state.
     EffectPipelineStateDescription psd(nullptr,

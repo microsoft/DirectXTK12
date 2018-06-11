@@ -73,7 +73,7 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const 
     for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
     {
         auto part = (*it).get();
-        assert(part != 0);
+        assert(part != nullptr);
 
         part->Draw(commandList);
     }
@@ -89,7 +89,7 @@ void ModelMeshPart::DrawMeshParts(
     for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
     {
         auto part = (*it).get();
-        assert(part != 0);
+        assert(part != nullptr);
 
         callback(commandList, *part);
         part->Draw(commandList);

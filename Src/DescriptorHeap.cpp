@@ -142,7 +142,7 @@ void DescriptorHeap::Create(
     ID3D12Device* pDevice,
     const D3D12_DESCRIPTOR_HEAP_DESC* pDesc)
 {
-    assert(pDesc != 0);
+    assert(pDesc != nullptr);
 
     m_desc = *pDesc;
     m_increment = pDevice->GetDescriptorHandleIncrementSize(pDesc->Type);

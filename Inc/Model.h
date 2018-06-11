@@ -81,7 +81,7 @@ namespace DirectX
         // Draw the mesh with a range of effects that mesh parts will index into. 
         // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         // The iterator passed to this method should have random access capabilities for best performance.
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         static void DrawMeshParts(
             _In_ ID3D12GraphicsCommandList* commandList,
             _In_ const ModelMeshPart::Collection& meshParts,
@@ -139,12 +139,12 @@ namespace DirectX
 
         // Draw the mesh with a range of effects that mesh parts will index into. 
         // TEffectPtr can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, opaqueMeshParts, effects);
         }
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, effects);

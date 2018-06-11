@@ -71,19 +71,19 @@ namespace DirectX
         D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const
         {
             assert(m_desc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-            assert(m_pHeap != 0);
+            assert(m_pHeap != nullptr);
             return m_hGPU;
         }
 
         D3D12_CPU_DESCRIPTOR_HANDLE GetFirstCpuHandle() const
         {
-            assert(m_pHeap != 0);
+            assert(m_pHeap != nullptr);
             return m_hCPU;
         }
 
         D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandle(_In_ size_t index) const
         {
-            assert(m_pHeap != 0);
+            assert(m_pHeap != nullptr);
             if (index >= m_desc.NumDescriptors)
             {
                 throw std::out_of_range("D3DX12_GPU_DESCRIPTOR_HANDLE");
@@ -94,7 +94,7 @@ namespace DirectX
 
         D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(_In_ size_t index) const
         {
-            assert(m_pHeap != 0);
+            assert(m_pHeap != nullptr);
             if (index >= m_desc.NumDescriptors)
             {
                 throw std::out_of_range("D3DX12_CPU_DESCRIPTOR_HANDLE");

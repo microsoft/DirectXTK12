@@ -192,7 +192,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
-    static const XMVECTORF32 defaultLightDirection = { 0, -1, 0, 0 };
+    static const XMVECTORF32 defaultLightDirection = { { { 0, -1, 0, 0 } } };
     for (int i = 0; i < MaxDirectionalLights; i++)
     {
         lightColor[i] = g_XMOne;
@@ -244,12 +244,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1)
         };
 
-        for (int i = 0; i < _countof(textureSRV); i++)
+        for (size_t i = 0; i < _countof(textureSRV); i++)
         {
             rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i]);
         }
 
-        for (int i = 0; i < _countof(textureSampler); i++)
+        for (size_t i = 0; i < _countof(textureSampler); i++)
         {
             rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i]);
         }
@@ -262,7 +262,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     if (effectFlags & EffectFlags::Fog)
     {

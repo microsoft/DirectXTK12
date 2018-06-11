@@ -286,7 +286,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
         mRootSignature = mDeviceResources->GetRootSignature(rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     // Determine shader permutation.
 #if defined(_XBOX_ONE) && defined(_TITLE)

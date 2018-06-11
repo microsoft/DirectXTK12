@@ -745,7 +745,7 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
             pstrName++;
         }
 
-        if (texture != 0 && *texture != 0)
+        if (texture && *texture)
         {
             (*texture)->SetName(pstrName);
         }

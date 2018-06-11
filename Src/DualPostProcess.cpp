@@ -210,7 +210,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
         mRootSignature = mDeviceResources->GetRootSignature(rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     // Create pipeline state.
     EffectPipelineStateDescription psd(nullptr,

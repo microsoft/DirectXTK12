@@ -430,7 +430,7 @@ public:
         mList.Reset();
         mCmdAlloc.Reset();
 
-        return std::move(future);
+        return future;
     }
 
 private:
@@ -819,6 +819,6 @@ void ResourceUploadBatch::Transition(
 
 std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue)
 {
-    return std::move(pImpl->End(commandQueue));
+    return pImpl->End(commandQueue);
 }
 

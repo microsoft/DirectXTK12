@@ -171,7 +171,7 @@ DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     static_assert(_countof(EffectBase<DebugEffectTraits>::PixelShaderBytecode) == DebugEffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DebugEffectTraits>::PixelShaderIndices) == DebugEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
-    static const XMVECTORF32 s_lower = { 0.f, 0.f, 0.f, 1.f };
+    static const XMVECTORF32 s_lower = { { { 0.f, 0.f, 0.f, 1.f } } };
 
     constants.ambientDownAndAlpha = s_lower;
     constants.ambientRange = g_XMOne;
@@ -196,7 +196,7 @@ DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(

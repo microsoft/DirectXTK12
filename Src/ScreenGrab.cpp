@@ -136,7 +136,7 @@ namespace
 
             DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
 
-            D3D12_FEATURE_DATA_FORMAT_SUPPORT formatInfo = { fmt };
+            D3D12_FEATURE_DATA_FORMAT_SUPPORT formatInfo = { fmt, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE };
             hr = device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatInfo, sizeof(formatInfo));
             if (FAILED(hr))
                 return hr;

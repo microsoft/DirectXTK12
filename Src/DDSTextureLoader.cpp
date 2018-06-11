@@ -595,7 +595,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
         return E_FAIL;
     }
 
-    uint32_t dwMagicNumber = *(const uint32_t*)(ddsData);
+    const uint32_t dwMagicNumber = *reinterpret_cast<const uint32_t*>(ddsData);
     if (dwMagicNumber != DDS_MAGIC)
     {
         return E_FAIL;
@@ -634,7 +634,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
         texture, subresources, isCubeMap);
     if (SUCCEEDED(hr))
     {
-        if (texture != 0 && *texture != 0)
+        if (texture && *texture)
         {
             SetDebugObjectName(*texture, L"DDSTextureLoader");
         }
@@ -732,7 +732,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
             (*texture)->SetName(fileName);
         }
     #else
-        if (texture != 0)
+        if (texture)
         {
             CHAR strFileA[MAX_PATH];
             int result = WideCharToMultiByte(CP_ACP,
@@ -756,7 +756,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
                     pstrName++;
                 }
 
-                if (texture != 0 && *texture != 0)
+                if (texture && *texture)
                 {
                     (*texture)->SetName(pstrName);
                 }

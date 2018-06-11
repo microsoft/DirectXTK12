@@ -115,6 +115,7 @@
 #pragma warning(pop)
 
 #include <malloc.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #pragma warning(push)
