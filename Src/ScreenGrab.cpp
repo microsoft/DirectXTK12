@@ -275,7 +275,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     header->size = sizeof(DDS_HEADER);
     header->flags = DDS_HEADER_FLAGS_TEXTURE | DDS_HEADER_FLAGS_MIPMAP;
     header->height = desc.Height;
-    header->width = (uint32_t)desc.Width;
+    header->width = static_cast<uint32_t>(desc.Width);
     header->mipMapCount = 1;
     header->caps = DDS_SURFACE_FLAGS_TEXTURE;
 
@@ -337,7 +337,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     }
 
     size_t rowPitch, slicePitch, rowCount;
-    GetSurfaceInfo((size_t)desc.Width, desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
+    GetSurfaceInfo(static_cast<size_t>(desc.Width), desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
 
     if (IsCompressed(desc.Format))
     {

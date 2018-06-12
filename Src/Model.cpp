@@ -291,7 +291,7 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     const auto& m = materials[part->materialIndex];
 
     D3D12_INPUT_LAYOUT_DESC il = {};
-    il.NumElements = (uint32_t)part->vbDecl->size();
+    il.NumElements = static_cast<UINT>(part->vbDecl->size());
     il.pInputElementDescs = part->vbDecl->data();
 
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);

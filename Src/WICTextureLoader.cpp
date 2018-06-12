@@ -463,7 +463,7 @@ namespace
         D3D12_RESOURCE_DESC desc = {};
         desc.Width = twidth;
         desc.Height = theight;
-        desc.MipLevels = (uint16_t)mipCount;
+        desc.MipLevels = static_cast<UINT16>(mipCount);
         desc.DepthOrArraySize = 1;
         desc.Format = format;
         desc.SampleDesc.Count = 1;
