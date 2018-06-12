@@ -17,9 +17,9 @@
 
 #include "DDSTextureLoader.h"
 
+#include "PlatformHelpers.h"
 #include "dds.h"
 #include "DirectXHelpers.h"
-#include "PlatformHelpers.h"
 #include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
 

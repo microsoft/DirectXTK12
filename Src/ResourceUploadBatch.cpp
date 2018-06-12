@@ -378,7 +378,7 @@ public:
         ThrowIfFailed(mList->Close());
 
         // Submit the job to the GPU
-        commandQueue->ExecuteCommandLists(1, (ID3D12CommandList**)mList.GetAddressOf());
+        commandQueue->ExecuteCommandLists(1, CommandListCast(mList.GetAddressOf()));
 
         // Set an event so we get notified when the GPU has completed all its work
         ComPtr<ID3D12Fence> fence;

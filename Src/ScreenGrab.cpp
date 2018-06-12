@@ -25,8 +25,8 @@
 #include "ScreenGrab.h"
 #include "DirectXHelpers.h"
 
-#include "dds.h"
 #include "PlatformHelpers.h"
+#include "dds.h"
 #include "LoaderHelpers.h"
 
 using Microsoft::WRL::ComPtr;
@@ -196,7 +196,7 @@ namespace
             return hr;
 
         // Execute the command list
-        pCommandQ->ExecuteCommandLists(1, (ID3D12CommandList**)commandList.GetAddressOf());
+        pCommandQ->ExecuteCommandLists(1, CommandListCast(commandList.GetAddressOf()));
 
         // Signal the fence
         hr = pCommandQ->Signal(fence.Get(), 1);
