@@ -145,7 +145,7 @@ namespace
         // We don't support n-channel formats
     };
 
-    BOOL WINAPI InitializeWICFactory(PINIT_ONCE, PVOID, PVOID *ifactory)
+    BOOL WINAPI InitializeWICFactory(PINIT_ONCE, PVOID, PVOID *ifactory) noexcept
     {
         return SUCCEEDED(CoCreateInstance(
             CLSID_WICImagingFactory2,
