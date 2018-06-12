@@ -320,7 +320,7 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
 {
     for (auto& fx : effectList)
     {
-        IEffectMatrices* matFx = dynamic_cast<IEffectMatrices*>(fx.get());
+        auto matFx = dynamic_cast<IEffectMatrices*>(fx.get());
         if (matFx)
         {
             matFx->SetMatrices(world, view, proj);
