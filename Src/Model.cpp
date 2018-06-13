@@ -291,7 +291,7 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     const auto& m = materials[part->materialIndex];
 
     D3D12_INPUT_LAYOUT_DESC il = {};
-    il.NumElements = (uint32_t)part->vbDecl->size();
+    il.NumElements = static_cast<UINT>(part->vbDecl->size());
     il.pInputElementDescs = part->vbDecl->data();
 
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
@@ -320,7 +320,7 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
 {
     for (auto& fx : effectList)
     {
-        IEffectMatrices* matFx = dynamic_cast<IEffectMatrices*>(fx.get());
+        auto matFx = dynamic_cast<IEffectMatrices*>(fx.get());
         if (matFx)
         {
             matFx->SetMatrices(world, view, proj);

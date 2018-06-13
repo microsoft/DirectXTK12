@@ -144,6 +144,16 @@ namespace
 
         // We don't support n-channel formats
     };
+
+    BOOL WINAPI InitializeWICFactory(PINIT_ONCE, PVOID, PVOID *ifactory) noexcept
+    {
+        return SUCCEEDED(CoCreateInstance(
+            CLSID_WICImagingFactory2,
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            __uuidof(IWICImagingFactory2),
+            ifactory)) ? TRUE : FALSE;
+    }
 }
 
 //--------------------------------------------------------------------------------------
@@ -154,16 +164,11 @@ namespace DirectX
         static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
         IWICImagingFactory2* factory = nullptr;
-        (void)InitOnceExecuteOnce(&s_initOnce,
-            [](PINIT_ONCE, PVOID, PVOID *ifactory) -> BOOL
-        {
-            return SUCCEEDED(CoCreateInstance(
-                CLSID_WICImagingFactory2,
-                nullptr,
-                CLSCTX_INPROC_SERVER,
-                __uuidof(IWICImagingFactory2),
-                ifactory)) ? TRUE : FALSE;
-        }, nullptr, reinterpret_cast<LPVOID*>(&factory));
+        (void)InitOnceExecuteOnce(
+            &s_initOnce,
+            InitializeWICFactory,
+            nullptr,
+            reinterpret_cast<LPVOID*>(&factory));
 
         return factory;
     }
@@ -458,7 +463,7 @@ namespace
         D3D12_RESOURCE_DESC desc = {};
         desc.Width = twidth;
         desc.Height = theight;
-        desc.MipLevels = (uint16_t)mipCount;
+        desc.MipLevels = static_cast<UINT16>(mipCount);
         desc.DepthOrArraySize = 1;
         desc.Format = format;
         desc.SampleDesc.Count = 1;

@@ -177,18 +177,18 @@ void PrimitiveBatchBase::Impl::Draw(D3D_PRIMITIVE_TOPOLOGY topology, bool isInde
     // Copy over the index data.
     if (isIndexed)
     {
-        uint16_t* outputIndices = (uint16_t*)mIndexSegment.Memory() + mIndexCount;
+        auto outputIndices = static_cast<uint16_t*>(mIndexSegment.Memory()) + mIndexCount;
 
         for (size_t i = 0; i < indexCount; i++)
         {
-            outputIndices[i] = (uint16_t)(indices[i] + mVertexCount - mBaseIndex);
+            outputIndices[i] = static_cast<uint16_t>(indices[i] + mVertexCount - mBaseIndex);
         }
 
         mIndexCount += indexCount;
     }
 
     // Return the output vertex data location.
-    *pMappedVertices = (uint8_t*)mVertexSegment.Memory() + mVertexSize * mVertexCount;
+    *pMappedVertices = static_cast<uint8_t*>(mVertexSegment.Memory()) + mVertexSize * mVertexCount;
 
     mVertexCount += vertexCount;
 }

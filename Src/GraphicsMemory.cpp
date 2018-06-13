@@ -59,7 +59,7 @@ namespace
 #ifdef _WIN64
         return _BitScanForward64(&bitIndex, allocatorPageSize) ? bitIndex + 1 : 0;
 #else
-        return _BitScanForward(&bitIndex, (DWORD)allocatorPageSize) ? bitIndex + 1 : 0;
+        return _BitScanForward(&bitIndex, static_cast<DWORD>(allocatorPageSize)) ? bitIndex + 1 : 0;
 #endif
     }
 

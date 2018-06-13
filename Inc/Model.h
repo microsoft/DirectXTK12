@@ -255,7 +255,7 @@ namespace DirectX
                 return handle;
 
             handle = heap->GetGPUDescriptorHandleForHeapStart();
-            handle.ptr += descriptorSize * ((size_t)textureIndex + descriptorOffset);
+            handle.ptr += static_cast<UINT64>(descriptorSize * (static_cast<size_t>(textureIndex) + descriptorOffset));
 
             return handle;
         }

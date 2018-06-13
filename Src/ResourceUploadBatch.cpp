@@ -149,7 +149,7 @@ namespace
         };
 #pragma pack(pop)
 
-        static const uint32_t Num32BitConstants = (uint32_t)(sizeof(ConstantData) / sizeof(uint32_t));
+        static const uint32_t Num32BitConstants = static_cast<uint32_t>(sizeof(ConstantData) / sizeof(uint32_t));
         static const uint32_t ThreadGroupSize = 8;
 
         ComPtr<ID3D12RootSignature> rootSignature;
@@ -378,7 +378,7 @@ public:
         ThrowIfFailed(mList->Close());
 
         // Submit the job to the GPU
-        commandQueue->ExecuteCommandLists(1, (ID3D12CommandList**)mList.GetAddressOf());
+        commandQueue->ExecuteCommandLists(1, CommandListCast(mList.GetAddressOf()));
 
         // Set an event so we get notified when the GPU has completed all its work
         ComPtr<ID3D12Fence> fence;
@@ -544,7 +544,7 @@ private:
             descriptorSize); // offset by 1 descriptor
 
         // Process each mip
-        uint32_t mipWidth = (uint32_t)desc.Width;
+        auto mipWidth = static_cast<uint32_t>(desc.Width);
         uint32_t mipHeight = desc.Height;
         for (uint32_t mip = 1; mip < desc.MipLevels; ++mip)
         {
@@ -561,7 +561,7 @@ private:
             // Set constants
             GenerateMipsResources::ConstantData constants;
             constants.SrcMipIndex = mip - 1;
-            constants.InvOutTexelSize = XMFLOAT2(1 / (float)mipWidth, 1 / (float)mipHeight);
+            constants.InvOutTexelSize = XMFLOAT2(1 / float(mipWidth), 1 / float(mipHeight));
             mList->SetComputeRoot32BitConstants(
                 GenerateMipsResources::Constants,
                 GenerateMipsResources::Num32BitConstants,

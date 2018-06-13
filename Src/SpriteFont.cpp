@@ -120,7 +120,7 @@ SpriteFont::Impl::Impl(
     // Read font properties.
     lineSpacing = reader->Read<float>();
 
-    SetDefaultCharacter((wchar_t)reader->Read<uint32_t>());
+    SetDefaultCharacter(static_cast<wchar_t>(reader->Read<uint32_t>()));
 
     // Read the texture data.
     auto textureWidth = reader->Read<uint32_t>();
@@ -395,7 +395,10 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
     // If the text is mirrored, offset the start position accordingly.
     if (effects)
     {
-        baseOffset -= MeasureString(text) * axisIsMirroredTable[effects & 3];
+        baseOffset = XMVectorNegativeMultiplySubtract(
+            MeasureString(text),
+            axisIsMirroredTable[effects & 3],
+            baseOffset);
     }
 
     // Draw each character in turn.
@@ -411,7 +414,7 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
             XMVECTOR glyphRect = XMConvertVectorIntToFloat(XMLoadInt4(reinterpret_cast<uint32_t const*>(&glyph->Subrect)), 0);
 
             // xy = glyph width/height.
-            glyphRect = XMVectorSwizzle<2, 3, 0, 1>(glyphRect) - glyphRect;
+            glyphRect = XMVectorSubtract(XMVectorSwizzle<2, 3, 0, 1>(glyphRect), glyphRect);
 
             offset = XMVectorMultiplyAdd(glyphRect, axisIsMirroredTable[effects & 3], offset);
         }
@@ -429,8 +432,8 @@ XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text) const
     {
         UNREFERENCED_PARAMETER(advance);
 
-        float w = (float)(glyph->Subrect.right - glyph->Subrect.left);
-        float h = (float)(glyph->Subrect.bottom - glyph->Subrect.top) + glyph->YOffset;
+        auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
+        auto h = static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top) + glyph->YOffset;
 
         h = std::max(h, pImpl->lineSpacing);
 
@@ -447,8 +450,8 @@ RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& p
 
     pImpl->ForEachGlyph(text, [&](Glyph const* glyph, float x, float y, float advance)
     {
-        float w = (float)(glyph->Subrect.right - glyph->Subrect.left);
-        float h = (float)(glyph->Subrect.bottom - glyph->Subrect.top);
+        auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
+        auto h = static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top);
 
         float minX = position.x + x;
         float minY = position.y + y + glyph->YOffset;
@@ -504,7 +507,7 @@ void SpriteFont::SetLineSpacing(float spacing)
 // Font properties
 wchar_t SpriteFont::GetDefaultCharacter() const
 {
-    return pImpl->defaultGlyph ? (wchar_t)pImpl->defaultGlyph->Character : 0;
+    return static_cast<wchar_t>(pImpl->defaultGlyph ? pImpl->defaultGlyph->Character : 0);
 }
 
 

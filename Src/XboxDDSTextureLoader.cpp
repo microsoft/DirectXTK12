@@ -18,9 +18,9 @@
 
 #include "XboxDDSTextureLoader.h"
 
+#include "PlatformHelpers.h"
 #include "dds.h"
 #include "DirectXHelpers.h"
-#include "PlatformHelpers.h"
 
 #include <xdk.h>
 
