@@ -252,8 +252,10 @@ void Model::LoadBuffers(
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
-    for (auto part : uniqueParts)
+    for(auto it = uniqueParts.cbegin(); it != uniqueParts.cend(); ++it)
     {
+        auto part = *it;
+
         // Convert dynamic VB to static VB
         if (!part->staticVertexBuffer)
         {
@@ -281,9 +283,12 @@ void Model::LoadBuffers(
             resourceUploadBatch.Transition(part->staticVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
             // Scan for any other part with the same vertex buffer for sharing
-            for (auto sharePart : uniqueParts)
+            for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
             {
-                if (sharePart == part || sharePart->staticVertexBuffer)
+                auto sharePart = *sit;
+                assert(sharePart != part);
+
+                if (sharePart->staticVertexBuffer)
                     continue;
 
                 if (sharePart->vertexBuffer == part->vertexBuffer)
@@ -331,9 +336,12 @@ void Model::LoadBuffers(
             resourceUploadBatch.Transition(part->staticIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 
             // Scan for any other part with the same index buffer for sharing
-            for (auto sharePart : uniqueParts)
+            for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
             {
-                if (sharePart == part || sharePart->staticIndexBuffer)
+                auto sharePart = *sit;
+                assert(sharePart != part);
+
+                if (sharePart->staticIndexBuffer)
                     continue;
 
                 if (sharePart->indexBuffer == part->indexBuffer)
@@ -355,7 +363,6 @@ void Model::LoadBuffers(
         }
     }
 }
-
 
 
 // Create effects for each mesh piece
