@@ -281,7 +281,22 @@ void Model::LoadBuffers(
             resourceUploadBatch.Transition(part->staticVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
             // Scan for any other part with the same vertex buffer for sharing
-            // TODO -
+            for (auto sharePart : uniqueParts)
+            {
+                if (sharePart == part || sharePart->staticVertexBuffer)
+                    continue;
+
+                if (sharePart->vertexBuffer == part->vertexBuffer)
+                {
+                    sharePart->vertexBufferSize = part->vertexBufferSize;
+                    sharePart->staticVertexBuffer = part->staticVertexBuffer;
+
+                    if (!keepMemory)
+                    {
+                        sharePart->vertexBuffer.Reset();
+                    }
+                }
+            }
 
             if (!keepMemory)
             {
@@ -316,7 +331,22 @@ void Model::LoadBuffers(
             resourceUploadBatch.Transition(part->staticIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 
             // Scan for any other part with the same index buffer for sharing
-            // TODO -
+            for (auto sharePart : uniqueParts)
+            {
+                if (sharePart == part || sharePart->staticIndexBuffer)
+                    continue;
+
+                if (sharePart->indexBuffer == part->indexBuffer)
+                {
+                    sharePart->indexBufferSize = part->indexBufferSize;
+                    sharePart->staticIndexBuffer = part->staticIndexBuffer;
+
+                    if (!keepMemory)
+                    {
+                        sharePart->indexBuffer.Reset();
+                    }
+                }
+            }
 
             if (!keepMemory)
             {
