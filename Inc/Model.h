@@ -53,10 +53,14 @@ namespace DirectX
         uint32_t                                                vertexOffset;
         uint32_t                                                vertexStride;
         uint32_t                                                vertexCount;
+        uint32_t                                                indexBufferSize;
+        uint32_t                                                vertexBufferSize;
         D3D_PRIMITIVE_TOPOLOGY                                  primitiveType;
         DXGI_FORMAT                                             indexFormat;
         SharedGraphicsResource                                  indexBuffer;
         SharedGraphicsResource                                  vertexBuffer;
+        Microsoft::WRL::ComPtr<ID3D12Resource>                  staticIndexBuffer;
+        Microsoft::WRL::ComPtr<ID3D12Resource>                  staticVertexBuffer;
         std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
@@ -212,9 +216,15 @@ namespace DirectX
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_opt_z_ const wchar_t* texturesPath = nullptr,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
+
+        // Load VB/IB resources for static geometry
+        void __cdecl LoadBuffers(
+            _In_ ID3D12Device* device,
+            ResourceUploadBatch& resourceUploadBatch,
+            bool keepMemory = false);
 
         // Create effects using the default effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(

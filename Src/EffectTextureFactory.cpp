@@ -8,13 +8,14 @@
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
+
 #include "Effects.h"
 #include "DirectXHelpers.h"
 #include "DDSTextureLoader.h"
 #include "DescriptorHeap.h"
+#include "PlatformHelpers.h"
 #include "ResourceUploadBatch.h"
 #include "WICTextureLoader.h"
-#include "PlatformHelpers.h"
 
 #include <mutex>
 
@@ -36,7 +37,7 @@ public:
 
     Impl(
         _In_ ID3D12Device* device,
-        _Inout_ ResourceUploadBatch& resourceUploadBatch,
+        ResourceUploadBatch& resourceUploadBatch,
         _In_ ID3D12DescriptorHeap* descriptorHeap)
         : mPath{}
         , mTextureDescriptorHeap(descriptorHeap)
@@ -51,7 +52,7 @@ public:
 
     Impl(
         _In_ ID3D12Device* device,
-        _Inout_ ResourceUploadBatch& resourceUploadBatch,
+        ResourceUploadBatch& resourceUploadBatch,
         _In_ size_t numDescriptors,
         _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
         : mPath{}
@@ -202,19 +203,21 @@ void EffectTextureFactory::Impl::ReleaseCache()
 // EffectTextureFactory
 //--------------------------------------------------------------------------------------
 
+_Use_decl_annotations_
 EffectTextureFactory::EffectTextureFactory(
-    _In_ ID3D12Device* device,
-    _Inout_ ResourceUploadBatch& resourceUploadBatch,
-    _In_ ID3D12DescriptorHeap* descriptorHeap)
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch,
+    ID3D12DescriptorHeap* descriptorHeap)
 {
     pImpl = std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap);
 }
 
+_Use_decl_annotations_
 EffectTextureFactory::EffectTextureFactory(
-    _In_ ID3D12Device* device,
-    _Inout_ ResourceUploadBatch& resourceUploadBatch,
-    _In_ size_t numDescriptors,
-    _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch,
+    size_t numDescriptors,
+    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
 {
     pImpl = std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags);
 }

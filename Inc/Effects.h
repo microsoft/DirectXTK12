@@ -622,12 +622,12 @@ namespace DirectX
     public:
         EffectTextureFactory(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_ ID3D12DescriptorHeap* descriptorHeap);
 
         EffectTextureFactory(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_ size_t numDescriptors,
             _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags);
 

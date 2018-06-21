@@ -87,8 +87,10 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     part->materialIndex = 0;
     part->indexCount = header->numIndices;
     part->startIndex = 0;
-    part->vertexStride = static_cast<UINT>(sizeof(VertexPositionNormalTexture));
+    part->vertexStride = static_cast<uint32_t>(sizeof(VertexPositionNormalTexture));
     part->vertexCount = header->numVertices;
+    part->indexBufferSize = static_cast<uint32_t>(indexSize);
+    part->vertexBufferSize = static_cast<uint32_t>(vertSize);
     part->indexBuffer = std::move(ib);
     part->vertexBuffer = std::move(vb);
     part->vbDecl = g_vbdecl;
