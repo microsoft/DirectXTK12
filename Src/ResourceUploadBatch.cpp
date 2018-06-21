@@ -256,9 +256,9 @@ public:
     // The resource must be in the COPY_DEST state.
     void Upload(
         _In_ ID3D12Resource* resource,
-        _In_ uint32_t subresourceIndexStart,
+        uint32_t subresourceIndexStart,
         _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
-        _In_ uint32_t numSubresources)
+        uint32_t numSubresources)
     {
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
@@ -296,7 +296,7 @@ public:
 
     void Upload(
         _In_ ID3D12Resource* resource,
-        SharedGraphicsResource& buffer)
+        const SharedGraphicsResource& buffer)
     {
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
@@ -438,8 +438,8 @@ public:
             }
 
             // Delete the batch
-            // Because the vector contains ComPtrs, their destructors will fire and the
-            // resources will be Released.
+            // Because the vectors contain smart-pointers, their destructors will
+            // fire and the resources will be released.
             delete uploadBatch;
         });
 
@@ -447,6 +447,10 @@ public:
         mInBeginEndBlock = false;
         mList.Reset();
         mCmdAlloc.Reset();
+
+        // Swap above should have cleared these
+        assert(mTrackedObjects.empty());
+        assert(mTrackedMemoryResources.empty());
 
         return future;
     }
@@ -826,7 +830,7 @@ void ResourceUploadBatch::Upload(
 _Use_decl_annotations_
 void ResourceUploadBatch::Upload(
     ID3D12Resource* resource,
-    SharedGraphicsResource& buffer
+    const SharedGraphicsResource& buffer
 )
 {
     pImpl->Upload(resource, buffer);

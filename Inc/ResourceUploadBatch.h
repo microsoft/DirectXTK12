@@ -49,7 +49,7 @@ namespace DirectX
 
         void __cdecl Upload(
             _In_ ID3D12Resource* resource,
-            SharedGraphicsResource& buffer
+            const SharedGraphicsResource& buffer
             );
 
         // Asynchronously generate mips from a resource.
