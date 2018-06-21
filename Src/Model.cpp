@@ -280,7 +280,8 @@ void Model::LoadBuffers(
 
             resourceUploadBatch.Upload(part->staticVertexBuffer.Get(), part->vertexBuffer);
 
-            resourceUploadBatch.Transition(part->staticVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+            resourceUploadBatch.Transition(part->staticVertexBuffer.Get(),
+                D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
             // Scan for any other part with the same vertex buffer for sharing
             for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
@@ -333,7 +334,8 @@ void Model::LoadBuffers(
 
             resourceUploadBatch.Upload(part->staticIndexBuffer.Get(), part->indexBuffer);
 
-            resourceUploadBatch.Transition(part->staticIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+            resourceUploadBatch.Transition(part->staticIndexBuffer.Get(),
+                D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 
             // Scan for any other part with the same index buffer for sharing
             for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
