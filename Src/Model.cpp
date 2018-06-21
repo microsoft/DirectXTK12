@@ -231,7 +231,7 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
 
 // Load VB/IB resources for static geometry
 _Use_decl_annotations_
-void Model::LoadBuffers(
+void Model::LoadStaticBuffers(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
     bool keepMemory)

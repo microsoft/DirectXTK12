@@ -221,7 +221,7 @@ namespace DirectX
             D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
 
         // Load VB/IB resources for static geometry
-        void __cdecl LoadBuffers(
+        void __cdecl LoadStaticBuffers(
             _In_ ID3D12Device* device,
             ResourceUploadBatch& resourceUploadBatch,
             bool keepMemory = false);
