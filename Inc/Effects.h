@@ -650,7 +650,7 @@ namespace DirectX
         // How many textures are there in this factory?
         size_t __cdecl ResourceCount() const;
 
-        // Get a resource in a specific slot
+        // Get a resource in a specific slot (note: increases reference count on resource)
         void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
 
         // Settings.
