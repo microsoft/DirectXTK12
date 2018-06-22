@@ -69,6 +69,8 @@ namespace DirectX
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
+        void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation = 0) const;
+
         //
         // Utilities for drawing multiple mesh parts
         //

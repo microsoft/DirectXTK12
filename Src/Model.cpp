@@ -89,6 +89,45 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
 
 _Use_decl_annotations_
+void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const
+{
+    if (!indexBufferSize || !vertexBufferSize)
+    {
+        DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n", indexBufferSize, vertexBufferSize);
+        throw std::exception("ModelMeshPart");
+    }
+
+    if (!staticIndexBuffer && !indexBuffer)
+    {
+        DebugTrace("ERROR: Model part missing index buffer!\n");
+        throw std::exception("ModelMeshPart");
+    }
+
+    if (!staticVertexBuffer && !vertexBuffer)
+    {
+        DebugTrace("ERROR: Model part missing vertex buffer!\n");
+        throw std::exception("ModelMeshPart");
+    }
+
+    D3D12_VERTEX_BUFFER_VIEW vbv;
+    vbv.BufferLocation = staticVertexBuffer ? staticVertexBuffer->GetGPUVirtualAddress() : vertexBuffer.GpuAddress();
+    vbv.StrideInBytes = vertexStride;
+    vbv.SizeInBytes = vertexBufferSize;
+    commandList->IASetVertexBuffers(0, 1, &vbv);
+
+    D3D12_INDEX_BUFFER_VIEW ibv;
+    ibv.BufferLocation = staticIndexBuffer ? staticIndexBuffer->GetGPUVirtualAddress() : indexBuffer.GpuAddress();
+    ibv.SizeInBytes = indexBufferSize;
+    ibv.Format = indexFormat;
+    commandList->IASetIndexBuffer(&ibv);
+
+    commandList->IASetPrimitiveTopology(primitiveType);
+
+    commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, startInstanceLocation);
+}
+
+
+_Use_decl_annotations_
 void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
 {
     for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
