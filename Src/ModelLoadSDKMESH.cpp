@@ -549,12 +549,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
             // Vertex data
             auto verts = bufferData + (vh.DataOffset - bufferDataOffset);
             auto vbytes = static_cast<size_t>(vh.SizeBytes);
+            part->vertexBufferSize = static_cast<uint32_t>(vh.SizeBytes);
             part->vertexBuffer = GraphicsMemory::Get(device).Allocate(vbytes);
             memcpy(part->vertexBuffer.Memory(), verts, vbytes);
 
             // Index data
             auto indices = bufferData + (ih.DataOffset - bufferDataOffset);
             auto ibytes = static_cast<size_t>(ih.SizeBytes);
+            part->indexBufferSize = static_cast<uint32_t>(ih.SizeBytes);
             part->indexBuffer = GraphicsMemory::Get(device).Allocate(ibytes);
             memcpy(part->indexBuffer.Memory(), indices, ibytes);
 

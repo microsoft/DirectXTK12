@@ -18,6 +18,8 @@
 #include <future>
 #include <memory>
 
+#include "GraphicsMemory.h"
+
 
 namespace DirectX
 {
@@ -41,9 +43,14 @@ namespace DirectX
         // The resource must be in the COPY_DEST state.
         void __cdecl Upload(
             _In_ ID3D12Resource* resource,
-            _In_ uint32_t subresourceIndexStart,
+            uint32_t subresourceIndexStart,
             _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
-            _In_ uint32_t numSubresources);
+            uint32_t numSubresources);
+
+        void __cdecl Upload(
+            _In_ ID3D12Resource* resource,
+            const SharedGraphicsResource& buffer
+            );
 
         // Asynchronously generate mips from a resource.
         // Resource must be in the PIXEL_SHADER_RESOURCE state
@@ -52,8 +59,8 @@ namespace DirectX
         // Transition a resource once you're done with it
         void __cdecl Transition(
             _In_ ID3D12Resource* resource,
-            _In_ D3D12_RESOURCE_STATES stateBefore,
-            _In_ D3D12_RESOURCE_STATES stateAfter);
+            D3D12_RESOURCE_STATES stateBefore,
+            D3D12_RESOURCE_STATES stateAfter);
 
         // Submits all the uploads to the driver.
         // No more uploads can happen after this call until Begin is called again.
@@ -68,4 +75,3 @@ namespace DirectX
         std::unique_ptr<Impl> pImpl;
     };
 }
-

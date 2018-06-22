@@ -92,6 +92,9 @@ namespace DirectX
         
         explicit operator bool () const { return mSharedResource != nullptr; }
 
+        bool operator == (const SharedGraphicsResource& other) const { return mSharedResource.get() == other.mSharedResource.get(); }
+        bool operator != (const SharedGraphicsResource& other) const { return mSharedResource.get() != other.mSharedResource.get(); }
+
         // Clear the pointer. Using operator -> will produce bad results.
         void __cdecl Reset();
         void __cdecl Reset(GraphicsResource&&);
