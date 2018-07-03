@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-May 31, 2018
+July 3, 2018
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -114,6 +114,12 @@ RELEASE NOTES
 ---------------
 RELEASE HISTORY
 ---------------
+
+July 3, 2018
+    Model LoadStaticBuffers method to use static vs. dynamic VB/IB
+    *breaking change* Custom Model loaders and renderers should be updated for changes to ModelMeshPart
+    ModelMeshPart DrawInstanced method added
+    Code and project cleanup
 
 May 31, 2018
     VS 2017 updated for Windows 10 April 2018 Update SDK (17134)
