@@ -138,6 +138,8 @@ namespace
     //--------------------------------------------------------------------------------------
     // Direct3D 9 Vertex Declaration to Direct3D 12 Input Layout mapping
 
+    static_assert(D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT >= 32, "SDKMESH supports decls up to 32 entries");
+
     unsigned int GetInputLayoutDesc(
         _In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[],
         std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc)
@@ -411,6 +413,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     {
         auto& vh = vbArray[j];
 
+        if (vh.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+            throw std::exception("VB too large for DirectX 12");
+
         if (dataSize < vh.DataOffset
             || (dataSize < vh.DataOffset + vh.SizeBytes))
             throw std::exception("End of file");
@@ -434,6 +439,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     for (UINT j = 0; j < header->NumIndexBuffers; ++j)
     {
         auto& ih = ibArray[j];
+
+        if (ih.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+            throw std::exception("IB too large for DirectX 12");
 
         if (dataSize < ih.DataOffset
             || (dataSize < ih.DataOffset + ih.SizeBytes))
@@ -593,7 +601,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileNa
     HRESULT hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
     if (FAILED(hr))
     {
-        DebugTrace("CreateFromSDKMESH failed (%08X) loading '%ls'\n", hr, szFileName);
+        DebugTrace("ERROR: CreateFromSDKMESH failed (%08X) loading '%ls'\n", hr, szFileName);
         throw std::exception("CreateFromSDKMESH");
     }
 

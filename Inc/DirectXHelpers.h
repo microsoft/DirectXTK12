@@ -186,6 +186,8 @@ namespace DirectX
             : mCommandList(commandList),
             mBarriers(barriers)
         {
+            assert(mBarriers.size() <= UINT32_MAX);
+
             // Set barriers
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }

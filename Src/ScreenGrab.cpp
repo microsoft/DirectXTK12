@@ -49,7 +49,18 @@ namespace
             return E_INVALIDARG;
 
         if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+        {
+            DebugTrace("ERROR: ScreenGrab does not support 1D or volume textures. Consider using DirectXTex instead.\n");
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        }
+
+        if (desc.DepthOrArraySize > 1 || desc.MipLevels > 1)
+        {
+            DebugTrace("WARNING: ScreenGrab does not support 2D arrays, cubemaps, or mipmaps; only the first surface is written. Consider using DirectXTex instead.\n");
+        }
+
+        if (srcPitch > UINT32_MAX)
+            return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
         UINT numberOfPlanes = D3D12GetFormatPlaneCount(device, desc.Format);
         if (numberOfPlanes != 1)
@@ -229,6 +240,10 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
     // Get the size of the image
     const auto desc = pSource->GetDesc();
+
+    if (desc.Width > UINT32_MAX)
+        return E_INVALIDARG;
+
     UINT64 totalResourceSize = 0;
     UINT64 fpRowPitch = 0;
     UINT fpRowCount = 0;
@@ -250,6 +265,9 @@ HRESULT DirectX::SaveDDSTextureToFile(
     // Round up the srcPitch to multiples of 256
     UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFF;
 #endif
+
+    if (dstRowPitch > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
     ComPtr<ID3D12Resource> pStaging;
     HRESULT hr = CaptureTexture(device.Get(), pCommandQ, pSource, dstRowPitch, desc, pStaging, beforeState, afterState);
@@ -322,6 +340,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
         case DXGI_FORMAT_IA44:
         case DXGI_FORMAT_P8:
         case DXGI_FORMAT_A8P8:
+            DebugTrace("ERROR: ScreenGrab does not support video textures. Consider using DirectXTex.\n");
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 
         default:
@@ -338,6 +357,9 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
     size_t rowPitch, slicePitch, rowCount;
     GetSurfaceInfo(static_cast<size_t>(desc.Width), desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
+
+    if (rowPitch > UINT32_MAX || slicePitch > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
     if (IsCompressed(desc.Format))
     {
@@ -358,8 +380,12 @@ HRESULT DirectX::SaveDDSTextureToFile(
     assert(fpRowCount == rowCount);
     assert(fpRowPitch == rowPitch);
 
+    UINT64 imageSize = dstRowPitch * UINT64(rowCount);
+    if (imageSize > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
+
     void* pMappedMemory = nullptr;
-    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(dstRowPitch * rowCount) };
+    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(imageSize) };
     D3D12_RANGE writeRange = { 0, 0 };
     hr = pStaging->Map(0, &readRange, &pMappedMemory);
     if (FAILED(hr))
@@ -428,6 +454,10 @@ HRESULT DirectX::SaveWICTextureToFile(
 
     // Get the size of the image
     const auto desc = pSource->GetDesc();
+
+    if (desc.Width > UINT32_MAX)
+        return E_INVALIDARG;
+
     UINT64 totalResourceSize = 0;
     UINT64 fpRowPitch = 0;
     UINT fpRowCount = 0;
@@ -449,6 +479,9 @@ HRESULT DirectX::SaveWICTextureToFile(
     // Round up the srcPitch to multiples of 256
     UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFF;
 #endif
+
+    if (dstRowPitch > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
     ComPtr<ID3D12Resource> pStaging;
     HRESULT hr = CaptureTexture(device.Get(), pCommandQ, pSource, dstRowPitch, desc, pStaging, beforeState, afterState);
@@ -501,6 +534,7 @@ HRESULT DirectX::SaveWICTextureToFile(
             break;
 
         default:
+            DebugTrace("ERROR: ScreenGrab does not support all DXGI formats (%u). Consider using DirectXTex.\n", static_cast<uint32_t>(desc.Format));
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
@@ -684,8 +718,12 @@ HRESULT DirectX::SaveWICTextureToFile(
     #endif
     }
 
+    UINT64 imageSize = dstRowPitch * UINT64(desc.Height);
+    if (imageSize > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
+
     void* pMappedMemory = nullptr;
-    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(dstRowPitch * desc.Height) };
+    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(imageSize) };
     D3D12_RANGE writeRange = { 0, 0 };
     hr = pStaging->Map(0, &readRange, &pMappedMemory);
     if (FAILED(hr))
@@ -696,7 +734,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         // Conversion required to write
         ComPtr<IWICBitmap> source;
         hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height, pfGuid,
-            static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height),
+            static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize),
             static_cast<BYTE*>(pMappedMemory), source.GetAddressOf());
         if (FAILED(hr))
         {
@@ -737,7 +775,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     else
     {
         // No conversion required
-        hr = frame->WritePixels(desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(dstRowPitch * desc.Height), static_cast<BYTE*>(pMappedMemory));
+        hr = frame->WritePixels(desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize), static_cast<BYTE*>(pMappedMemory));
         if (FAILED(hr))
             return hr;
     }

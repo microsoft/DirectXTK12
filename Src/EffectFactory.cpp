@@ -99,14 +99,14 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     // If we have descriptors, make sure we have both texture and sampler descriptors
     if ((mTextureDescriptors == nullptr) != (mSamplerDescriptors == nullptr))
     {
-        DebugTrace("A texture or sampler descriptor heap was provided, but both are required.\n");
+        DebugTrace("ERROR: A texture or sampler descriptor heap was provided, but both are required.\n");
         throw std::exception("EffectFactory");
     }
 
     // Validate the we have either both texture and sampler descriptors, or neither
     if ((info.diffuseTextureIndex == -1) != (info.samplerIndex == -1))
     {
-        DebugTrace("Material provides either a texture or sampler, but both are required.\n");
+        DebugTrace("ERROR: Material provides either a texture or sampler, but both are required.\n");
         throw std::exception("EffectFactory");
     }
 
@@ -238,7 +238,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         {
             if (samplerIndex2 == -1)
             {
-                DebugTrace("Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
+                DebugTrace("ERROR: Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
                 throw std::exception("EffectFactory");
             }
 

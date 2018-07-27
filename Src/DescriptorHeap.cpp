@@ -66,6 +66,9 @@ DescriptorHeap::DescriptorHeap(
     m_desc{},
     m_increment(0)
 {
+    if (count > UINT32_MAX)
+        throw std::exception("Too many descriptors");
+
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
     desc.Flags = flags;
     desc.NumDescriptors = static_cast<UINT>(count);

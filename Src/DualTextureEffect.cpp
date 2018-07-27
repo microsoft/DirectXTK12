@@ -253,12 +253,12 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the textures
     if (!texture1.ptr || !texture2.ptr)
     {
-        DebugTrace("Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
+        DebugTrace("ERROR: Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
         throw std::exception("DualTextureEffect");
     }
     if (!texture1Sampler.ptr || !texture2Sampler.ptr)
     {
-        DebugTrace("Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
+        DebugTrace("ERROR: Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
         throw std::exception("DualTextureEffect");
     }
 

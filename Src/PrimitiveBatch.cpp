@@ -73,8 +73,17 @@ PrimitiveBatchBase::Impl::Impl(_In_ ID3D12Device* device, size_t maxIndices, siz
     mBaseIndex(0),
     mBaseVertex(0)
 {
-    if (maxVertices == 0)
+    if (!maxVertices)
         throw std::exception("maxVertices must be greater than 0");
+
+    if (vertexSize > D3D12_REQ_MULTI_ELEMENT_STRUCTURE_SIZE_IN_BYTES)
+        throw std::exception("Vertex size is too large for DirectX 12");
+
+    if ((uint64_t(maxIndices) * sizeof(uint16_t)) > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+        throw std::exception("IB too large for DirectX 12");
+
+    if ((uint64_t(maxVertices) * uint64_t(vertexSize)) > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+        throw std::exception("VB too large for DirectX 12");
 }
 
 

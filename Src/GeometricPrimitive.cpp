@@ -47,18 +47,31 @@ void GeometricPrimitive::Impl::Initialize(
     if (vertices.size() >= USHRT_MAX)
         throw std::exception("Too many vertices for 16-bit index buffer");
 
+    if (indices.size() > UINT32_MAX)
+        throw std::exception("Too many indices");
+
     // Vertex data
-    auto verts = reinterpret_cast<const uint8_t*>(vertices.data());
-    size_t vertSizeBytes = vertices.size() * sizeof(vertices[0]);
-    
+    uint64_t sizeInBytes = uint64_t(vertices.size()) * sizeof(vertices[0]);
+    if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+        throw std::exception("VB too large for DirectX 12");
+
+    auto vertSizeBytes = static_cast<size_t>(sizeInBytes);
+
     mVertexBuffer = GraphicsMemory::Get(device).Allocate(vertSizeBytes);
+
+    auto verts = reinterpret_cast<const uint8_t*>(vertices.data());
     memcpy(mVertexBuffer.Memory(), verts, vertSizeBytes);
 
     // Index data
-    auto ind = reinterpret_cast<const uint8_t*>(indices.data());
-    size_t indSizeBytes = indices.size() * sizeof(indices[0]);
+    sizeInBytes = uint64_t(indices.size()) * sizeof(indices[0]);
+    if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+        throw std::exception("IB too large for DirectX 12");
+
+    auto indSizeBytes = static_cast<size_t>(sizeInBytes);
 
     mIndexBuffer = GraphicsMemory::Get(device).Allocate(indSizeBytes);
+
+    auto ind = reinterpret_cast<const uint8_t*>(indices.data());
     memcpy(mIndexBuffer.Memory(), ind, indSizeBytes);
 
     // Record index count for draw

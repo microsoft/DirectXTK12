@@ -485,8 +485,13 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     const ModelMeshPart* part) const
 {
     assert(part->materialIndex < materials.size());
-
     const auto& m = materials[part->materialIndex];
+
+    if (!part->vbDecl || part->vbDecl->empty())
+        throw std::exception("Model mesh part missing vertex buffer input elements data");
+
+    if (part->vbDecl->size() > D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT)
+        throw std::exception("Model mesh part input layout size is too large for DirectX 12");
 
     D3D12_INPUT_LAYOUT_DESC il = {};
     il.NumElements = static_cast<UINT>(part->vbDecl->size());
