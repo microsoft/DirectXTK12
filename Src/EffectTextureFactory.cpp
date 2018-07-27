@@ -31,6 +31,8 @@ public:
     {
         ComPtr<ID3D12Resource> mResource;
         bool mIsCubeMap;
+
+        TextureCacheEntry() noexcept : mIsCubeMap(false) {}
     };
 
     typedef std::map< std::wstring, TextureCacheEntry > TextureCache;

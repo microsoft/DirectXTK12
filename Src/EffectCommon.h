@@ -121,7 +121,7 @@ namespace DirectX
     class EffectDeviceResources
     {
     public:
-        EffectDeviceResources(_In_ ID3D12Device* device)
+        EffectDeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
         { }
 
@@ -202,7 +202,7 @@ namespace DirectX
         class DeviceResources : public EffectDeviceResources
         {
         public:
-            DeviceResources(_In_ ID3D12Device* device)
+            DeviceResources(_In_ ID3D12Device* device) noexcept
                 : EffectDeviceResources(device),
                 mRootSignature{}
             { }
