@@ -500,7 +500,7 @@ namespace
             return hr;
         }
 
-        _Analysis_assume_(tex != 0);
+        _Analysis_assume_(tex != nullptr);
 
         subresource.pData = decodedData.get();
         subresource.RowPitch = rowPitch;
