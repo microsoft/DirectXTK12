@@ -356,7 +356,9 @@ HRESULT DirectX::SaveDDSTextureToFile(
     }
 
     size_t rowPitch, slicePitch, rowCount;
-    GetSurfaceInfo(static_cast<size_t>(desc.Width), desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
+    hr = GetSurfaceInfo(static_cast<size_t>(desc.Width), desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
+    if (FAILED(hr))
+        return hr;
 
     if (rowPitch > UINT32_MAX || slicePitch > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);

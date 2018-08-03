@@ -159,7 +159,9 @@ namespace
                 size_t d = depth;
                 for (size_t i = 0; i < mipCount; i++)
                 {
-                    GetSurfaceInfo(w, h, format, &NumBytes, &RowBytes, nullptr);
+                    HRESULT hr = GetSurfaceInfo(w, h, format, &NumBytes, &RowBytes, nullptr);
+                    if (FAILED(hr))
+                        return hr;
 
                     if (NumBytes > UINT32_MAX || RowBytes > UINT32_MAX)
                         return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
