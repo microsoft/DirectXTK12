@@ -52,6 +52,8 @@ DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
     const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) :
     m_desc{},
+    m_hCPU{},
+    m_hGPU{},
     m_increment(0)
 {
     Create(device, pDesc);
@@ -64,6 +66,8 @@ DescriptorHeap::DescriptorHeap(
     D3D12_DESCRIPTOR_HEAP_FLAGS flags,
     size_t count) :
     m_desc{},
+    m_hCPU{},
+    m_hGPU{},
     m_increment(0)
 {
     if (count > UINT32_MAX)
@@ -153,8 +157,7 @@ void DescriptorHeap::Create(
     if (pDesc->NumDescriptors == 0)
     {
         m_pHeap.Reset();
-        m_hCPU = CD3DX12_CPU_DESCRIPTOR_HANDLE(D3D12_DEFAULT);
-        m_hGPU = CD3DX12_GPU_DESCRIPTOR_HANDLE(D3D12_DEFAULT);
+        m_hCPU.ptr = m_hGPU.ptr = 0;
     }
     else
     {
