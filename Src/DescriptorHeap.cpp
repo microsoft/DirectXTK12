@@ -157,7 +157,8 @@ void DescriptorHeap::Create(
     if (pDesc->NumDescriptors == 0)
     {
         m_pHeap.Reset();
-        m_hCPU.ptr = m_hGPU.ptr = 0;
+        m_hCPU.ptr = 0;
+        m_hGPU.ptr = 0;
     }
     else
     {
