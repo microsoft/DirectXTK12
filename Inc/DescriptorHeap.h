@@ -189,27 +189,7 @@ namespace DirectX
             return start;
         }
 
-        void AllocateRange(size_t numDescriptors, _Out_ IndexType& start, _Out_ IndexType& end)
-        {
-            // make sure we didn't allocate zero
-            if (numDescriptors == 0)
-            {
-                throw std::out_of_range("Can't allocate zero descriptors");
-            }
-
-            // get the current top
-            start = m_top;
-
-            // increment top with new request
-            m_top += numDescriptors;
-            end = m_top;
-
-            // make sure we have enough room
-            if (m_top >= Count())
-            {
-                throw std::exception("Can't allocate more descriptors");
-            }
-        }
+        void AllocateRange(size_t numDescriptors, _Out_ IndexType& start, _Out_ IndexType& end);
 
     private:
         IndexType m_top;
