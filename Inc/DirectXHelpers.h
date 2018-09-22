@@ -77,7 +77,7 @@ namespace DirectX
 
     // Creates a shader resource view from an arbitrary resource
     void __cdecl CreateShaderResourceView(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_ ID3D12Resource* tex,
         D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
         bool isCubeMap = false);
