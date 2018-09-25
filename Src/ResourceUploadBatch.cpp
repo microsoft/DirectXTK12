@@ -208,9 +208,6 @@ namespace
             D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
             desc.CS.BytecodeLength = bytecodeSize;
             desc.CS.pShaderBytecode = bytecode;
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
-            desc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-#endif
             desc.pRootSignature = rootSignature;
 
             ComPtr<ID3D12PipelineState> pso;

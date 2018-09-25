@@ -471,7 +471,7 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
 #if defined(_XBOX_ONE) && defined(_TITLE)
     textureDescriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
 #else
-    HRESULT hresult = textureDescriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
+    HRESULT hresult = textureDescriptors->GetDevice(IID_PPVS_ARGS(device.GetAddressOf()));
     if (FAILED(hresult))
     {
         throw com_exception(hresult);
