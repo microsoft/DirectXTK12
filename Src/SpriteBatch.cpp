@@ -431,7 +431,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     d3dDesc.DSVFormat = psoDesc.renderTargetState.dsvFormat;
     d3dDesc.NodeMask = psoDesc.renderTargetState.nodeMask;
     d3dDesc.NumRenderTargets = psoDesc.renderTargetState.numRenderTargets;
-    memcpy(d3dDesc.RTVFormats, psoDesc.renderTargetState.rtvFormats, sizeof(d3dDesc.RTVFormats));
+    memcpy_s(d3dDesc.RTVFormats, sizeof(d3dDesc.RTVFormats), psoDesc.renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
     d3dDesc.SampleDesc = psoDesc.renderTargetState.sampleDesc;
     d3dDesc.SampleMask = psoDesc.renderTargetState.sampleMask;
     d3dDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
