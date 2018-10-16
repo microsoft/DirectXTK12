@@ -70,7 +70,7 @@ namespace DirectX
             psoDesc.IBStripCutValue = stripCutValue;
             psoDesc.PrimitiveTopologyType = primitiveTopology;
             psoDesc.NumRenderTargets = renderTargetState.numRenderTargets;
-            memcpy(psoDesc.RTVFormats, renderTargetState.rtvFormats, sizeof(psoDesc.RTVFormats));
+            memcpy_s(psoDesc.RTVFormats, sizeof(psoDesc.RTVFormats), renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
             psoDesc.DSVFormat = renderTargetState.dsvFormat;
             psoDesc.SampleDesc = renderTargetState.sampleDesc;
             psoDesc.NodeMask = renderTargetState.nodeMask;
