@@ -465,7 +465,7 @@ void LinearAllocator::ValidatePageLists()
 void LinearAllocator::SetDebugName(const char* name)
 {
     wchar_t wname[MAX_PATH] = {};
-    int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
+    int result = MultiByteToWideChar(CP_UTF8, 0, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
     if (result > 0)
     {
         SetDebugName(wname);
