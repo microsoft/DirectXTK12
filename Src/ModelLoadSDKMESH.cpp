@@ -59,17 +59,17 @@ namespace
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
-        wchar_t matName[DXUT::MAX_MATERIAL_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
+        wchar_t matName[DXUT::MAX_MATERIAL_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
 
-        wchar_t diffuseName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.DiffuseTexture, -1, diffuseName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t diffuseName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.DiffuseTexture, -1, diffuseName, DXUT::MAX_TEXTURE_NAME);
 
-        wchar_t specularName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.SpecularTexture, -1, specularName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t specularName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.SpecularTexture, -1, specularName, DXUT::MAX_TEXTURE_NAME);
 
-        wchar_t normalName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t normalName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
 
         if ((flags & DUAL_TEXTURE) && !mh.SpecularTexture[0])
         {
@@ -490,8 +490,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
         }
 
         auto mesh = std::make_shared<ModelMesh>();
-        wchar_t meshName[DXUT::MAX_MESH_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME);
+        wchar_t meshName[DXUT::MAX_MESH_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME);
         mesh->name = meshName;
 
         // Extents
