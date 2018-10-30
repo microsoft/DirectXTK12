@@ -290,11 +290,14 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effe
         weightsPerVertex,
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
     int pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

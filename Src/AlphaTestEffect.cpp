@@ -202,11 +202,14 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,
