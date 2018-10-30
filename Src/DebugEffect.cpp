@@ -204,11 +204,14 @@ DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         debugMode,
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<DebugEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
     int pi = EffectBase<DebugEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

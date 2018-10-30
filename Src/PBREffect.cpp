@@ -279,11 +279,14 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     int sp = GetPipelineStatePermutation(generateVelocity,
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

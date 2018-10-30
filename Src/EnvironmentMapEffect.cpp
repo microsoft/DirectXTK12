@@ -298,10 +298,13 @@ EnvironmentMapEffect::Impl::Impl(
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
 
     assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
     int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

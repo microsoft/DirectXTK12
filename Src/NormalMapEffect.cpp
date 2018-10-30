@@ -261,11 +261,14 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
         (effectFlags & EffectFlags::VertexColor) != 0,
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
     int pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

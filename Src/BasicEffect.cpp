@@ -387,11 +387,14 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
         (effectFlags & EffectFlags::VertexColor) != 0,
         (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,

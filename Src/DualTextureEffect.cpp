@@ -198,11 +198,14 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
+    _Analysis_assume_(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
+    _Analysis_assume_(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
     int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
+    _Analysis_assume_(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
     pipelineDescription.CreatePipelineState(
         device,
