@@ -31,8 +31,9 @@ public:
     {
         ComPtr<ID3D12Resource> mResource;
         bool mIsCubeMap;
+        size_t slot;
 
-        TextureCacheEntry() noexcept : mIsCubeMap(false) {}
+        TextureCacheEntry() noexcept : mIsCubeMap(false), slot(0) {}
     };
 
     typedef std::map< std::wstring, TextureCacheEntry > TextureCache;
@@ -68,7 +69,7 @@ public:
         SetDebugObjectName(mTextureDescriptorHeap.Heap(), L"EffectTextureFactory");
     }
 
-    void CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
+    size_t CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
 
     void ReleaseCache();
     void SetSharing(bool enabled) { mSharing = enabled; }
@@ -95,7 +96,7 @@ private:
 
 
 _Use_decl_annotations_
-void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot)
+size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot)
 {
     if (!name)
         throw std::exception("invalid arguments");
@@ -178,6 +179,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
         }
 
         std::lock_guard<std::mutex> lock(mutex);
+        textureEntry.slot = mResources.size();
         if (mSharing)
         {
             TextureCache::value_type v(name, textureEntry);
@@ -191,6 +193,8 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
     // bind a new descriptor in slot 
     auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(descriptorSlot);
     DirectX::CreateShaderResourceView(device, textureEntry.mResource.Get(), textureDescriptor, textureEntry.mIsCubeMap);
+
+    return textureEntry.slot;
 }
 
 void EffectTextureFactory::Impl::ReleaseCache()
@@ -241,9 +245,9 @@ EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&& mo
 }
 
 _Use_decl_annotations_
-void EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex)
+size_t EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex)
 {
-    pImpl->CreateTexture(name, descriptorIndex);
+    return pImpl->CreateTexture(name, descriptorIndex);
 }
 
 void EffectTextureFactory::ReleaseCache()
@@ -316,5 +320,9 @@ void EffectTextureFactory::GetResource(size_t slot, ID3D12Resource** resource, b
     const auto& textureEntry = pImpl->mResources[slot];
 
     textureEntry.mResource.CopyTo(resource);
-    *isCubeMap = textureEntry.mIsCubeMap;
+
+    if (isCubeMap)
+    {
+        *isCubeMap = textureEntry.mIsCubeMap;
+    }
 }

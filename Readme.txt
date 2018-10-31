@@ -4,16 +4,16 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-October 25, 2018
+October 31, 2018
 
-This package contains the "DirectX Tool Kit", a collection of helper classes for 
-writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
-applications for Windows 10, and Xbox One exclusive apps.
+This package contains the "DirectX Tool Kit", a collection of helper classes for
+writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32
+desktop applications for Windows 10, and Xbox One.
 
-This code is designed to build with Visual Studio 2015 Update 3 or Visual Studio 2017.
-It is recommended that you make use of VS 2015 Update 3, Windows Tools 1.4.1, and the
-Windows 10 Anniversary Update SDK (14393) or VS 2017 (15.8 update) or later with the
-Windows 10 April 2018 Update SDK (17134).
+This code is designed to build with Visual Studio 2015 Update 3 or
+Visual Studio 2017. It is recommended that you make use of VS 2015 Update 3,
+Windows Tools 1.4.1, and the Windows 10 Anniversary Update SDK (14393) -or-
+VS 2017 (15.8 update) with the Windows 10 April 2018 Update SDK (17134).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -49,28 +49,35 @@ Src\
 Audio\
     DirectXTK for Audio source files and internal implementation headers
 
-NOTE: MakeSpriteFont and XWBTool can be found in the DirectX Tool Kit for DirectX 11 package.
+NOTE: MakeSpriteFont and XWBTool can be found in the DirectX Tool Kit for
+      DirectX 11 package.
 
-All content and source code for this package are subject to the terms of the MIT License.
-<http://opensource.org/licenses/MIT>.
+All content and source code for this package are subject to the terms of the
+MIT License. <http://opensource.org/licenses/MIT>.
 
 Documentation is available at <https://github.com/Microsoft/DirectXTK12/wiki>.
 
-For the latest version of DirectX Tool Kit, bug reports, etc. please visit the project site.
+For the latest version of DirectX Tool Kit, bug reports, etc. please visit the
+project site. <http://go.microsoft.com/fwlink/?LinkID=615561>
 
-http://go.microsoft.com/fwlink/?LinkID=615561
-
-Note: Xbox One exclusive apps developers using the Xbox One XDK need to generate the
-      Src\Shaders\Compiled\XboxOne*.inc files to build the library as they are not
-      included in the distribution package. They are built by running the script
-      in Src\Shaders - "CompileShaders xbox", and should be generated with the matching
-      FXC compiler from the Xbox One XDK. While they will continue to work if outdated,
-      a mismatch will cause runtime compilation overhead that would otherwise be avoided.
-
-This project has adopted the Microsoft Open Source Code of Conduct. For more information see the
-Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
+This project has adopted the Microsoft Open Source Code of Conduct. For more
+information see the Code of Conduct FAQ or contact opencode@microsoft.com with
+any additional questions or comments.
 
 https://opensource.microsoft.com/codeofconduct/
+
+
+--------
+XBOX ONE
+--------
+
+* Developers using the Xbox One XDK need to generate the
+  Src\Shaders\Compiled\XboxOne*.inc files to build the library as they are not
+  included in the distribution package. They are built by running the script
+  in Src\Shaders - "CompileShaders xbox" from the "Xbox One XDK Command Prompt".
+  They are XDK version-specific. While they will continue to work if outdated,
+  a mismatch will cause runtime compilation overhead that would otherwise be
+  avoided.
 
 
 ---------------------------------
@@ -80,40 +87,50 @@ COMPARISONS TO DIRECTX 11 VERSION
 * No support for loading .CMO models or DGSL effect shaders (i.e. DGSLEffect)
 
 * VertexTypes does not include VertexPositionNormalTangentColorTexture or
-  VertexPositionNormalTangentColorTextureSkinning which were intended for use with
-  the DGSL pipeline.
+  VertexPositionNormalTangentColorTextureSkinning which were intended for use
+  with the DGSL pipeline.
 
-* DirectX Tool Kit for DirectX 11 supports Feature Level 9.x, while DirectX 12 requires
-  Direct3D Feature Level 11.0. There are no expected DirectX 12 drivers for
-  any lower feature level devices.
+* DirectX Tool Kit for DirectX 11 supports Feature Level 9.x, while DirectX 12
+  requires Direct3D Feature Level 11.0. There are no expected DirectX 12 drivers
+  for any lower feature level devices.
 
-* The library assumes it is building for Windows 10 (aka _WIN32_WINNT=0x0A00) so it makes
-  use of XAudio 2.9 and WIC2 as well as DirectX 12.
+* The library assumes it is building for Windows 10 (aka _WIN32_WINNT=0x0A00)
+  so it makes use of XAudio 2.9 and WIC2 as well as DirectX 12.
 
-* DirectX Tool Kit for Audio, GamePad, Keyboard, Mouse, and SimpleMath are identical
-  to the DirectX 11 version
+* DirectX Tool Kit for Audio, GamePad, Keyboard, Mouse, and SimpleMath are
+  identical to the DirectX 11 version.
 
 
 -------------
 RELEASE NOTES
 -------------
 
-* The VS 2017 projects make use of /permissive- for improved C++ standard conformance. Use of a Windows 10 SDK prior to
-  the Fall Creators Update (16299) or an Xbox One XDK prior to June 2017 QFE 4 may result in failures due to problems
-  with the system headers. You can work around these by disabling this switch in the project files which is found
-  in the <ConformanceMode> elements.
+* The VS 2017 projects make use of /permissive- for improved C++ standard
+  conformance. Use of a Windows 10 SDK prior to the Fall Creators Update (16299)
+  or an Xbox One XDK prior to June 2017 QFE 4 may result in failures due to
+  problems with the system headers. You can work around these by disabling this
+  switch in the project files which is found in the <ConformanceMode> elements.
 
-* The VS 2017 projects require the 15.5 update or later. For UWP and Win32 classic desktop projects with the 15.5
-  or 15.6 updates, you need to install the standalone Windows 10 SDK (17134) which is otherwise included in
-  the 15.7/15.8 update. Older VS 2017 updates will fail to load the projects due to use of the <ConformanceMode> element.
-  If using the 15.5 or 15.6 updates, you will see "warning D9002: ignoring unknown option '/Zc:__cplusplus'" because
-  this switch isn't supported until 15.7. It is safe to ignore this warning, or you can edit the project files
-  <AdditionalOptions> elements.
+* The VS 2017 projects require the 15.5 update or later. For UWP and Win32
+  classic desktop projects with the 15.5 or 15.6 updates, you need to install
+  the standalone Windows 10 SDK (17134) which is otherwise included in the
+  15.7/15.8 update. Older VS 2017 updates will fail to load the projects due
+  to use of the <ConformanceMode> element. If using the 15.5 or 15.6 updates,
+  you will see "warning D9002: ignoring unknown option '/Zc:__cplusplus'"
+  because this switch isn't supported until 15.7. It is safe to ignore this
+  warning, or you can edit the project files <AdditionalOptions> elements.
 
 
 ---------------
 RELEASE HISTORY
 ---------------
+
+October 31, 2018
+    Model loader for SDKMESH now attempts to use legacy DE3CN compressed normals
+    - This is an approximation only and emits a warning in debug builds
+    IEffectTextureFactory's CreateTexture interface method now returns the 'slot'
+    - This is for use with GetResource method
+    Minor code review
 
 October 25, 2018
     Use UTF-8 instead of ANSI for narrow strings
@@ -194,7 +211,7 @@ April 24, 2017
     Fixed NormalMapEffect shader selection for specular texture usage
     Fixed Direct3D validation layer issues when using Creators Update
     Fixed AudioEngine enumeration when using Single Threaded Apartment (STA)
-    Fixed bug with GamePad (Windows.Gaming.Input) when no user bound 
+    Fixed bug with GamePad (Windows.Gaming.Input) when no user bound
     Updated D3DX12 internal copy to latest version
 
 April 7, 2017
@@ -219,7 +236,7 @@ December 5, 2016
 
 October 6, 2016
     SDKMESH loader and BasicEffects support for compressed vertex normals with biasing
-    *breaking change* 
+    *breaking change*
       DDSTextureLoader Ex bool forceSRGB and generateMipsIfMissing parmeters are now a DDS_LOADER flag
       WICTextureLoader Ex bool forceSRGB and generateMips parameters are now a WIC_LOADER flag
     Add vertexCount member to ModelMeshPart

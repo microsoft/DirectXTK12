@@ -609,7 +609,7 @@ namespace DirectX
         IEffectTextureFactory(IEffectTextureFactory&&) = delete;
         IEffectTextureFactory& operator=(IEffectTextureFactory&&) = delete;
 
-        virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
+        virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
 
     protected:
         IEffectTextureFactory() = default;
@@ -639,7 +639,7 @@ namespace DirectX
 
         virtual ~EffectTextureFactory() override;
 
-        virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
+        virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
         ID3D12DescriptorHeap* __cdecl Heap() const;
 
@@ -651,7 +651,7 @@ namespace DirectX
         size_t __cdecl ResourceCount() const;
 
         // Get a resource in a specific slot (note: increases reference count on resource)
-        void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
+        void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_opt_ bool* isCubeMap = nullptr);
 
         // Settings.
         void __cdecl ReleaseCache();
