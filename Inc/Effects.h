@@ -651,7 +651,7 @@ namespace DirectX
         size_t __cdecl ResourceCount() const;
 
         // Get a resource in a specific slot (note: increases reference count on resource)
-        void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_opt_ bool* isCubeMap);
+        void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_opt_ bool* isCubeMap = nullptr);
 
         // Settings.
         void __cdecl ReleaseCache();
