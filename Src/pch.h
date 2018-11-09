@@ -132,3 +132,22 @@
 #pragma warning(pop)
 
 #include <wincodec.h>
+
+// DirectX Tool Kit for Audio is in all versions of DirectXTK12
+#include <mmreg.h>
+#include <audioclient.h>
+
+#ifndef XAUDIO2_HELPER_FUNCTIONS
+#define XAUDIO2_HELPER_FUNCTIONS
+#endif
+
+#include <xaudio2.h>
+#include <xaudio2fx.h>
+#include <x3daudio.h>
+#include <xapofx.h>
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+#include <apu.h>
+#include <shapexmacontext.h>
+#include <xma2defs.h>
+#endif
