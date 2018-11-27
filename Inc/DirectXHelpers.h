@@ -17,8 +17,6 @@
 
 #include <DirectXMath.h>
 
-#include <pix.h>
-
 #include <initializer_list>
 #include <utility>
 #include <vector>
@@ -107,6 +105,7 @@ namespace DirectX
         return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
     }
 
+#if defined(_PIX_H_) || defined(_PIX3_H_)
     // Scoped PIX event.
     class ScopedPixEvent
     {
@@ -124,6 +123,7 @@ namespace DirectX
     private:
         ID3D12GraphicsCommandList* mCommandList;
     };
+#endif
 
     // Helper sets a D3D resource name string (used by PIX and debug layer leak reporting).
     template<UINT TNameLength>

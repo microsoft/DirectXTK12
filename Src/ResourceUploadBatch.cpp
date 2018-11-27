@@ -244,8 +244,6 @@ public:
 
         SetDebugObjectName(mList.Get(), L"ResourceUploadBatch");
 
-        PIXBeginEvent(mList.Get(), 0, __FUNCTIONW__);
-
         mInBeginEndBlock = true;
     }
 
@@ -259,8 +257,6 @@ public:
     {
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
-
-        PIXBeginEvent(mList.Get(), 0, __FUNCTIONW__);
 
         UINT64 uploadSize = GetRequiredIntermediateSize(
             resource,
@@ -287,8 +283,6 @@ public:
 
         // Remember this upload object for delayed release
         mTrackedObjects.push_back(scratchResource);
-
-        PIXEndEvent(mList.Get());
     }
 
     void Upload(
@@ -298,15 +292,11 @@ public:
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
 
-        PIXBeginEvent(mList.Get(), 0, __FUNCTIONW__);
-
         // Submit resource copy to command list
         mList->CopyBufferRegion(resource, 0, buffer.Resource(), buffer.ResourceOffset(), buffer.Size());
 
         // Remember this upload resource for delayed release
         mTrackedMemoryResources.push_back(buffer);
-
-        PIXEndEvent(mList.Get());
     }
 
     // Asynchronously generate mips from a resource.
@@ -318,8 +308,6 @@ public:
         {
             throw std::invalid_argument("Nullptr passed to GenerateMips");
         }
-
-        ScopedPixEvent pix(mList.Get(), 0, __FUNCTIONW__);
 
         const auto desc = resource->GetDesc();
 
@@ -387,8 +375,6 @@ public:
     {
         if (!mInBeginEndBlock)
             throw std::exception("ResourceUploadBatch already closed.");
-
-        PIXEndEvent(mList.Get());
 
         ThrowIfFailed(mList->Close());
 
