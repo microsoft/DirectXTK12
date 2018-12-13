@@ -841,7 +841,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
         resourceUpload.Upload(
             *texture,
             0,
-            &subresources[0],
+            subresources.data(),
             static_cast<UINT>(subresources.size()));
 
         resourceUpload.Transition(
@@ -915,7 +915,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
         resourceUpload.Upload(
             *texture,
             0,
-            &subresources[0],
+            subresources.data(),
             static_cast<UINT>(subresources.size()));
 
         resourceUpload.Transition(
