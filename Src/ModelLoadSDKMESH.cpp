@@ -135,6 +135,44 @@ namespace
         m.samplerIndex2 = (flags & DUAL_TEXTURE) ? static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap) : -1;
     }
 
+    void InitMaterial(
+        const DXUT::SDKMESH_MATERIAL_V2& mh,
+        unsigned int flags,
+        _Out_ Model::ModelMaterialInfo& m,
+        _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
+    {
+        wchar_t matName[DXUT::MAX_MATERIAL_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
+
+        wchar_t albetoTexture[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.AlbetoTexture, -1, albetoTexture, DXUT::MAX_TEXTURE_NAME);
+
+        wchar_t normalName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
+
+        wchar_t rmaName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.RMATexture, -1, rmaName, DXUT::MAX_TEXTURE_NAME);
+
+        wchar_t emissiveName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.EmissiveTexture, -1, emissiveName, DXUT::MAX_TEXTURE_NAME);
+
+        m = {};
+        m.name = matName;
+        m.perVertexColor = false;
+        m.enableSkinning = false;
+        m.enableDualTexture = false;
+        m.enableNormalMaps = true;
+        m.biasedVertexNormals = (flags & BIASED_VERTEX_NORMALS) != 0;
+        m.alphaValue = (!mh.Alpha) ? 1.f : mh.Alpha;
+
+        m.diffuseTextureIndex = GetUniqueTextureIndex(albetoTexture, textureDictionary);
+        m.specularTextureIndex = GetUniqueTextureIndex(rmaName, textureDictionary);
+        m.normalTextureIndex = GetUniqueTextureIndex(normalName, textureDictionary);
+        m.emissiveTextureIndex = GetUniqueTextureIndex(emissiveName, textureDictionary);
+
+        m.samplerIndex = m.samplerIndex2 = static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
+    }
+
 
     //--------------------------------------------------------------------------------------
     // Direct3D 9 Vertex Declaration to Direct3D 12 Input Layout mapping
@@ -347,7 +385,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     if (dataSize < header->HeaderSize)
         throw std::exception("End of file");
 
-    if (header->Version != DXUT::SDKMESH_FILE_VERSION)
+    if (header->Version != DXUT::SDKMESH_FILE_VERSION && header->Version != DXUT::SDKMESH_FILE_VERSION_V2)
         throw std::exception("Not a supported SDKMESH version");
 
     if (header->IsBigEndian)
@@ -397,7 +435,17 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     if (dataSize < header->MaterialDataOffset
         || (dataSize < (header->MaterialDataOffset + header->NumMaterials * sizeof(DXUT::SDKMESH_MATERIAL))))
         throw std::exception("End of file");
-    auto materialArray = reinterpret_cast<const DXUT::SDKMESH_MATERIAL*>(meshData + header->MaterialDataOffset);
+
+    const DXUT::SDKMESH_MATERIAL* materialArray = nullptr;
+    const DXUT::SDKMESH_MATERIAL_V2* materialArray_v2 = nullptr;
+    if (header->Version == DXUT::SDKMESH_FILE_VERSION_V2)
+    {
+        materialArray_v2 = reinterpret_cast<const DXUT::SDKMESH_MATERIAL_V2*>(meshData + header->MaterialDataOffset);
+    }
+    else
+    {
+        materialArray = reinterpret_cast<const DXUT::SDKMESH_MATERIAL*>(meshData + header->MaterialDataOffset);
+    }
 
     // Buffer data
     uint64_t bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
@@ -551,11 +599,22 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
             auto& mat = materials[subset.MaterialID];
 
             const size_t vi = mh.VertexBuffers[0];
-            InitMaterial(
-                materialArray[subset.MaterialID],
-                materialFlags[vi],
-                mat,
-                textureDictionary);
+            if (materialArray_v2)
+            {
+                InitMaterial(
+                    materialArray_v2[subset.MaterialID],
+                    materialFlags[vi],
+                    mat,
+                    textureDictionary);
+            }
+            else
+            {
+                InitMaterial(
+                    materialArray[subset.MaterialID],
+                    materialFlags[vi],
+                    mat,
+                    textureDictionary);
+            }
 
             auto part = new ModelMeshPart(partCount++);
 
