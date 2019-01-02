@@ -112,6 +112,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
     int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
     int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+    int emissiveTextureIndex = (info.emissiveTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
     int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
     int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
     int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
@@ -234,8 +235,21 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
                 mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
-        if (specularTextureIndex != -1)
+        if (emissiveTextureIndex != -1)
         {
+            if (samplerIndex2 == -1)
+            {
+                DebugTrace("ERROR: Dual-texture requires a second sampler (emissive %d)\n", emissiveTextureIndex);
+                throw std::exception("EffectFactory");
+            }
+
+            effect->SetTexture2(
+                mTextureDescriptors->GetGpuHandle(emissiveTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex2));
+        }
+        else if (specularTextureIndex != -1)
+        {
+            // If there's no emissive texture specified, use the specular texture as the second texture
             if (samplerIndex2 == -1)
             {
                 DebugTrace("ERROR: Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);

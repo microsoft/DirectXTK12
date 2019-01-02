@@ -701,6 +701,7 @@ namespace DirectX
             int                 diffuseTextureIndex;
             int                 specularTextureIndex;
             int                 normalTextureIndex;
+            int                 emissiveTextureIndex;
             int                 samplerIndex;
             int                 samplerIndex2;
 
@@ -719,6 +720,7 @@ namespace DirectX
                 , diffuseTextureIndex(-1)
                 , specularTextureIndex(-1)
                 , normalTextureIndex(-1)
+                , emissiveTextureIndex(-1)
                 , samplerIndex(-1)
                 , samplerIndex2(-1)
             {
