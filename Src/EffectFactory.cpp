@@ -83,13 +83,13 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     int samplerDescriptorOffset)
 {
     // If textures are required, make sure we have a descriptor heap
-    if (mTextureDescriptors == nullptr && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.normalTextureIndex != -1 || info.emissiveTextureIndex != -1))
+    if (!mTextureDescriptors && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.normalTextureIndex != -1 || info.emissiveTextureIndex != -1))
     {
         DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, normal %d, emissive %d)!\n",
             info.diffuseTextureIndex, info.specularTextureIndex, info.normalTextureIndex, info.emissiveTextureIndex);
         throw std::exception("EffectFactory");
     }
-    if (mSamplerDescriptors == nullptr && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
+    if (!mSamplerDescriptors && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
     {
         DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
             info.samplerIndex, info.samplerIndex2);
@@ -149,7 +149,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<SkinnedEffect>(device, effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
@@ -220,7 +220,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::VertexColor;
         }
 
-        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD);
 
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
         effect->SetAlpha(info.alphaValue);
@@ -304,7 +304,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        std::shared_ptr<NormalMapEffect> effect = std::make_shared<NormalMapEffect>(device, effectflags, derivedPSD, (specularTextureIndex != -1));
+        auto effect = std::make_shared<NormalMapEffect>(device, effectflags, derivedPSD, (specularTextureIndex != -1));
 
         effect->EnableDefaultLighting();
 
@@ -396,7 +396,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<BasicEffect>(device, effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
@@ -463,11 +463,11 @@ EffectFactory::EffectFactory(_In_ ID3D12Device* device)
 
 EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
 {
-    if (textureDescriptors == nullptr)
+    if (!textureDescriptors)
     {
         throw std::exception("Texture descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
-    if (samplerDescriptors == nullptr)
+    if (!samplerDescriptors)
     {
         throw std::exception("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
