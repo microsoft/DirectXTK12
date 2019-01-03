@@ -783,4 +783,43 @@ namespace DirectX
 
         std::shared_ptr<Impl> pImpl;
     };
+
+
+    // Factory for Physically Based Rendering (PBR)
+    class PBREffectFactory : public IEffectFactory
+    {
+    public:
+        PBREffectFactory(_In_ ID3D12Device* device);
+        PBREffectFactory(
+            _In_ ID3D12DescriptorHeap* textureDescriptors,
+            _In_ ID3D12DescriptorHeap* samplerDescriptors);
+
+        PBREffectFactory(PBREffectFactory&& moveFrom) noexcept;
+        PBREffectFactory& operator= (PBREffectFactory&& moveFrom) noexcept;
+
+        PBREffectFactory(PBREffectFactory const&) = delete;
+        PBREffectFactory& operator= (PBREffectFactory const&) = delete;
+
+        virtual ~PBREffectFactory() override;
+
+        // IEffectFactory methods.
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+            const EffectInfo& info,
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0) override;
+
+        // Settings.
+        void __cdecl ReleaseCache();
+
+        void __cdecl SetSharing(bool enabled);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::shared_ptr<Impl> pImpl;
+    };
 }
