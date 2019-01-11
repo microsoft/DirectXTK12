@@ -191,7 +191,6 @@ public:
 
     ~Impl()
     {
-        mDeviceAllocator.reset();
     #if defined(_XBOX_ONE) && defined(_TITLE)
         s_graphicsMemory = nullptr;
     #else
@@ -200,6 +199,7 @@ public:
             s_graphicsMemory.erase(mDeviceAllocator->GetDevice());
         }
     #endif
+        mDeviceAllocator.reset();
     }
 
     void Initialize(_In_ ID3D12Device* device)
