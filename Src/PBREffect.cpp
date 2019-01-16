@@ -644,6 +644,11 @@ void PBREffect::SetIBLTextures(
 
 void PBREffect::SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive)
 {
+    if (!pImpl->emissiveMap)
+    {
+        DebugTrace("WARNING: Emissive texture set on PBREffect instance created without emissive shader (texture %llu)\n", emissive.ptr);
+    }
+
     pImpl->descriptors[Impl::RootParameterIndex::EmissiveTexture] = emissive;
 }
 

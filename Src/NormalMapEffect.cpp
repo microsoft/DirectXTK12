@@ -573,5 +573,10 @@ void NormalMapEffect::SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor
 
 void NormalMapEffect::SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
+    if (!pImpl->specularMap)
+    {
+        DebugTrace("WARNING: Specular texture set on NormalMapEffect instance created without specular shader (texture %llu)\n", srvDescriptor.ptr);
+    }
+
     pImpl->specular = srvDescriptor;
 }
