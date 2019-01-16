@@ -114,7 +114,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         }
     }
 
-    auto effect = std::make_shared<PBREffect>(device, effectflags, derivedPSD);
+    auto effect = std::make_shared<PBREffect>(device, effectflags, derivedPSD, (emissiveTextureIndex != -1));
 
     effect->EnableDefaultLighting();
 
