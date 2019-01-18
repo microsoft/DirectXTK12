@@ -701,6 +701,7 @@ namespace DirectX
             int                 diffuseTextureIndex;
             int                 specularTextureIndex;
             int                 normalTextureIndex;
+            int                 emissiveTextureIndex;
             int                 samplerIndex;
             int                 samplerIndex2;
 
@@ -719,6 +720,7 @@ namespace DirectX
                 , diffuseTextureIndex(-1)
                 , specularTextureIndex(-1)
                 , normalTextureIndex(-1)
+                , emissiveTextureIndex(-1)
                 , samplerIndex(-1)
                 , samplerIndex2(-1)
             {
@@ -774,6 +776,45 @@ namespace DirectX
         void __cdecl EnableNormalMapEffect(bool enabled);
 
         void __cdecl EnableFogging(bool enabled);
+
+    private:
+        // Private implementation.
+        class Impl;
+
+        std::shared_ptr<Impl> pImpl;
+    };
+
+
+    // Factory for Physically Based Rendering (PBR)
+    class PBREffectFactory : public IEffectFactory
+    {
+    public:
+        PBREffectFactory(_In_ ID3D12Device* device);
+        PBREffectFactory(
+            _In_ ID3D12DescriptorHeap* textureDescriptors,
+            _In_ ID3D12DescriptorHeap* samplerDescriptors);
+
+        PBREffectFactory(PBREffectFactory&& moveFrom) noexcept;
+        PBREffectFactory& operator= (PBREffectFactory&& moveFrom) noexcept;
+
+        PBREffectFactory(PBREffectFactory const&) = delete;
+        PBREffectFactory& operator= (PBREffectFactory const&) = delete;
+
+        virtual ~PBREffectFactory() override;
+
+        // IEffectFactory methods.
+        virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+            const EffectInfo& info,
+            const EffectPipelineStateDescription& opaquePipelineState,
+            const EffectPipelineStateDescription& alphaPipelineState,
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+            int textureDescriptorOffset = 0,
+            int samplerDescriptorOffset = 0) override;
+
+        // Settings.
+        void __cdecl ReleaseCache();
+
+        void __cdecl SetSharing(bool enabled);
 
     private:
         // Private implementation.
