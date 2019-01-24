@@ -53,6 +53,8 @@ public:
         uint32_t stride, uint32_t rows,
         _In_reads_(stride * rows) const uint8_t* data);
 
+    const wchar_t* ConvertUTF8(_In_z_ const char *text);
+
     // Fields.
     ComPtr<ID3D12Resource> textureResource;
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -60,6 +62,10 @@ public:
     std::vector<Glyph> glyphs;
     Glyph const* defaultGlyph;
     float lineSpacing;
+
+private:
+    size_t utfBufferSize;
+    std::unique_ptr<wchar_t[]> utfBuffer;
 };
 
 
@@ -99,7 +105,8 @@ SpriteFont::Impl::Impl(
     D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
     bool forceSRGB) :
     texture{},
-    defaultGlyph(nullptr)
+    defaultGlyph(nullptr),
+    utfBufferSize(0)
 {
     // Validate the header.
     for (char const* magic = spriteFontMagic; *magic; magic++)
@@ -161,7 +168,8 @@ SpriteFont::Impl::Impl(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize,
     textureSize(textureSize),
     glyphs(glyphs, glyphs + glyphCount),
     defaultGlyph(nullptr),
-    lineSpacing(lineSpacing)
+    lineSpacing(lineSpacing),
+    utfBufferSize(0)
 {
     if (!std::is_sorted(glyphs, glyphs + glyphCount))
     {
@@ -300,6 +308,36 @@ void SpriteFont::Impl::CreateTextureResource(
 }
 
 
+const wchar_t* SpriteFont::Impl::ConvertUTF8(_In_z_ const char *text)
+{
+    if (!utfBuffer)
+    {
+        utfBufferSize = 1024;
+        utfBuffer.reset(new wchar_t[1024]);
+    }
+
+    int result = MultiByteToWideChar(CP_UTF8, 0, text, -1, utfBuffer.get(), static_cast<int>(utfBufferSize));
+    if (!result && (GetLastError() == ERROR_INSUFFICIENT_BUFFER))
+    {
+        // Compute required buffer size
+        result = MultiByteToWideChar(CP_UTF8, 0, text, -1, nullptr, 0);
+        utfBufferSize = AlignUp(result, 1024);
+        utfBuffer.reset(new wchar_t[utfBufferSize]);
+
+        // Retry conversion
+        result = MultiByteToWideChar(CP_UTF8, 0, text, -1, utfBuffer.get(), static_cast<int>(utfBufferSize));
+    }
+
+    if (!result)
+    {
+        DebugTrace("ERROR: MultiByteToWideChar failed with error %u.\n", GetLastError());
+        throw std::exception("MultiByteToWideChar");
+    }
+
+    return utfBuffer.get();
+}
+
+
 // Construct from a binary file created by the MakeSpriteFont utility.
 _Use_decl_annotations_
 SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorDest, bool forceSRGB)
@@ -349,6 +387,7 @@ SpriteFont::~SpriteFont()
 }
 
 
+// Wide-character / UTF-16LE
 void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, float scale, SpriteEffects effects, float layerDepth) const
 {
     DrawString(spriteBatch, text, XMLoadFloat2(&position), color, rotation, XMLoadFloat2(&origin), XMVectorReplicate(scale), effects, layerDepth);
@@ -370,9 +409,9 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
 void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wchar_t const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects, float layerDepth) const
 {
     static_assert(SpriteEffects_FlipHorizontally == 1 &&
-        SpriteEffects_FlipVertically == 2, "If you change these enum values, the following tables must be updated to match");
+                  SpriteEffects_FlipVertically == 2, "If you change these enum values, the following tables must be updated to match");
 
-// Lookup table indicates which way to move along each axis per SpriteEffects enum value.
+    // Lookup table indicates which way to move along each axis per SpriteEffects enum value.
     static XMVECTORF32 axisDirectionTable[4] =
     {
         { { { -1, -1, 0, 0 } } },
@@ -488,6 +527,52 @@ RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, FXMVE
     XMStoreFloat2(&pos, position);
 
     return MeasureDrawBounds(text, pos);
+}
+
+
+// UTF-8
+void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ char const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, float scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, pImpl->ConvertUTF8(text), XMLoadFloat2(&position), color, rotation, XMLoadFloat2(&origin), XMVectorReplicate(scale), effects, layerDepth);
+}
+
+
+void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ char const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, pImpl->ConvertUTF8(text), XMLoadFloat2(&position), color, rotation, XMLoadFloat2(&origin), XMLoadFloat2(&scale), effects, layerDepth);
+}
+
+
+void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ char const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, float scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, pImpl->ConvertUTF8(text), position, color, rotation, origin, XMVectorReplicate(scale), effects, layerDepth);
+}
+
+
+void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ char const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, pImpl->ConvertUTF8(text), position, color, rotation, origin, scale, effects, layerDepth);
+}
+
+
+XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ char const* text) const
+{
+    return MeasureString(pImpl->ConvertUTF8(text));
+}
+
+
+RECT SpriteFont::MeasureDrawBounds(_In_z_ char const* text, XMFLOAT2 const& position) const
+{
+    return MeasureDrawBounds(pImpl->ConvertUTF8(text), position);
+}
+
+
+RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ char const* text, FXMVECTOR position) const
+{
+    XMFLOAT2 pos;
+    XMStoreFloat2(&pos, position);
+
+    return MeasureDrawBounds(pImpl->ConvertUTF8(text), pos);
 }
 
 
