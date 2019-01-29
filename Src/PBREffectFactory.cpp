@@ -116,7 +116,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
 
     auto effect = std::make_shared<PBREffect>(device, effectflags, derivedPSD, (emissiveTextureIndex != -1));
 
-    effect->EnableDefaultLighting();
+    // We don't use EnableDefaultLighting generally for PBR as it uses Image-Based Lighting instead.
 
     effect->SetAlpha(info.alphaValue);
 
