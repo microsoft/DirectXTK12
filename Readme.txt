@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-November 16, 2018
+February 7, 2019
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32
@@ -127,6 +127,14 @@ RELEASE NOTES
 ---------------
 RELEASE HISTORY
 ---------------
+
+February 7, 2019
+    Model now supports loading SDKMESH v2 models
+    PBREffectFactory added to support PBR materials
+    PBREffect and NormalMapEffect shaders updated to support BC5_UNORM compressed normal maps
+    SpriteFont: DrawString overloads for UTF-8 chars in addition to UTF-16LE wide chars
+    Fixed bug with GraphicsMemory dtor introduced with mGPU handling
+    Made library agonstic to legacy Windows SDK pix.h vs. latest pix3.h from NuGet
 
 November 16, 2018
     VS 2017 updated for Windows 10 October 2018 Update SDK (17763)
