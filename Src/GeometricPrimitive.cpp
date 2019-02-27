@@ -9,12 +9,14 @@
 
 #include "pch.h"
 #include "GeometricPrimitive.h"
-#include "Effects.h"
+
 #include "CommonStates.h"
 #include "DirectXHelpers.h"
+#include "Effects.h"
 #include "Geometry.h"
-#include "PrimitiveBatch.h"
 #include "GraphicsMemory.h"
+#include "PlatformHelpers.h"
+#include "ResourceUploadBatch.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -27,14 +29,17 @@ public:
 
     void Initialize(const VertexCollection& vertices, const IndexCollection& indices, _In_opt_ ID3D12Device* device);
 
+    void LoadStaticBuffers(_In_ ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch);
+
     void Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
     
-    UINT					 mIndexCount;
-    GraphicsResource		 mIndexBuffer;
-    GraphicsResource		 mVertexBuffer;
-
-    D3D12_VERTEX_BUFFER_VIEW mVertexBufferView;
-    D3D12_INDEX_BUFFER_VIEW  mIndexBufferView;
+    UINT                        mIndexCount;
+    SharedGraphicsResource      mIndexBuffer;
+    SharedGraphicsResource      mVertexBuffer;
+    ComPtr<ID3D12Resource>      mStaticIndexBuffer;
+    ComPtr<ID3D12Resource>      mStaticVertexBuffer;
+    D3D12_VERTEX_BUFFER_VIEW    mVertexBufferView;
+    D3D12_INDEX_BUFFER_VIEW     mIndexBufferView;
 };
 
 
@@ -88,6 +93,70 @@ void GeometricPrimitive::Impl::Initialize(
 }
 
 
+// Load VB/IB resources for static geometry.
+_Use_decl_annotations_
+void GeometricPrimitive::Impl::LoadStaticBuffers(
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch)
+{
+    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+
+    // Convert dynamic VB to static VB
+    if (!mStaticVertexBuffer)
+    {
+        assert(mVertexBuffer);
+
+        auto desc = CD3DX12_RESOURCE_DESC::Buffer(mVertexBuffer.Size());
+
+        ThrowIfFailed(device->CreateCommittedResource(
+            &heapProperties,
+            D3D12_HEAP_FLAG_NONE,
+            &desc,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(mStaticVertexBuffer.GetAddressOf())
+        ));
+
+        resourceUploadBatch.Upload(mStaticVertexBuffer.Get(), mVertexBuffer);
+
+        resourceUploadBatch.Transition(mStaticVertexBuffer.Get(),
+            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+
+        // Update view
+        mVertexBufferView.BufferLocation = mStaticVertexBuffer->GetGPUVirtualAddress();
+
+        mVertexBuffer.Reset();
+    }
+
+    // Convert dynamic IB to static IB
+    if (!mStaticIndexBuffer)
+    {
+        assert(mIndexBuffer);
+
+        auto desc = CD3DX12_RESOURCE_DESC::Buffer(mIndexBuffer.Size());
+
+        ThrowIfFailed(device->CreateCommittedResource(
+            &heapProperties,
+            D3D12_HEAP_FLAG_NONE,
+            &desc,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(mStaticIndexBuffer.GetAddressOf())
+        ));
+
+        resourceUploadBatch.Upload(mStaticIndexBuffer.Get(), mIndexBuffer);
+
+        resourceUploadBatch.Transition(mStaticIndexBuffer.Get(),
+            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+
+        // Update view
+        mIndexBufferView.BufferLocation = mStaticIndexBuffer->GetGPUVirtualAddress();
+
+        mIndexBuffer.Reset();
+    }
+}
+
+
 // Draws the primitive.
 _Use_decl_annotations_
 void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList) const
@@ -117,6 +186,13 @@ GeometricPrimitive::~GeometricPrimitive()
 
 
 // Public entrypoints.
+_Use_decl_annotations_
+void GeometricPrimitive::LoadStaticBuffers(ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch)
+{
+    pImpl->LoadStaticBuffers(device, resourceUploadBatch);
+}
+
+
 _Use_decl_annotations_
 void GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList) const
 {
