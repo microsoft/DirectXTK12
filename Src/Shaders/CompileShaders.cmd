@@ -8,6 +8,7 @@ set error=0
 set FXCOPTS=/nologo /WX /Ges /Zi /Zpc /Qstrip_reflect /Qstrip_debug
 
 if %1.==xbox. goto continuexbox
+if %1.==dxil. goto continuedxil
 if %1.==. goto continuepc
 echo usage: CompileShaders [xbox]
 exit /b
@@ -28,6 +29,11 @@ if exist %XBOXFXC% goto continue
 set XBOXFXC="%DurangoXDK%xdk\FXC\amd64\FXC.exe"
 if not exist %XBOXFXC% goto needxdk
 goto continue
+
+:continuedxil
+set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
+if exist %PCDXC% goto continue
+goto needdxil
 
 :continuepc
 set PCOPTS=/force_rootsig_ver rootsig_1_0
@@ -225,42 +231,42 @@ endlocal
 exit /b
 
 :CompileShader
-set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_0 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
-echo.
-echo %fxc%
-%fxc% || set error=1
-exit /b
-
-:CompileShaderHLSL
-set fxc=%PCFXC% %1.hlsl %FXCOPTS% /T%2_5_0 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_0 %PCOPTS% /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
+exit /b
+
+:CompileShaderdxil
+set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+echo.
+echo %dxc%
+%dxc% || set error=1
+exit /b
+
+:CompileComputeShaderdxil
+set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+echo.
+echo %dxc%
+%dxc% || set error=1
 exit /b
 
 :CompileShaderxbox
-set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_0 %XBOXOPTS% /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
-echo.
-echo %fxc%
-%fxc% || set error=1
-exit /b
-
-:CompileShaderHLSLxbox
-set fxc=%XBOXFXC% %1.hlsl %FXCOPTS% /T%2_5_0 %XBOXOPTS% /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShaderxbox
-set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_0 %XBOXOPTS% /E%2 /FhCompiled\%XBOXPREFIX%%1_%2.inc /FdCompiled\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 /FhCompiled\%XBOXPREFIX%%1_%2.inc /FdCompiled\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
@@ -269,3 +275,8 @@ exit /b
 :needxdk
 echo ERROR: CompileShaders xbox requires the Microsoft Xbox One XDK
 echo        (try re-running from the XDK Command Prompt)
+exit /b
+
+:needdxil
+echo ERROR: CompileShaders dxil requires the Microsoft Windows 10 SDK (16299 or later)
+exit /b
