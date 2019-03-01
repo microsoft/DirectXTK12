@@ -18,16 +18,16 @@
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_Target                0   xyzw        0   TARGET   float   xyzw
 //
-ps_5_0
+ps_5_1
 dcl_globalFlags refactoringAllowed
-dcl_sampler s0, mode_default
-dcl_resource_texture2d (float,float,float,float) t0
+dcl_sampler S0[0:0], mode_default, space=0
+dcl_resource_texture2d (float,float,float,float) T0[0:0], space=0
 dcl_input_ps linear v0.xyzw
 dcl_input_ps linear v1.xyz
 dcl_input_ps linear v2.xy
 dcl_output o0.xyzw
 dcl_temps 1
-sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0
+sample r0.xyzw, v2.xyxx, T0[0].xyzw, S0[0]
 mul r0.xyzw, r0.xyzw, v0.xyzw
 mad o0.xyz, v1.xyzx, r0.wwww, r0.xyzx
 mov o0.w, r0.w
@@ -37,14 +37,14 @@ ret
 
 const BYTE BasicEffect_PSBasicVertexLightingTxNoFog[] =
 {
-     68,  88,  66,  67,  90, 229, 
-    225, 197, 247, 133, 174, 188, 
-    147, 170,   2, 248,  40, 215, 
-     83, 116,   1,   0,   0,   0, 
-     60,   2,   0,   0,   4,   0, 
+     68,  88,  66,  67,  86, 134, 
+      6, 226,  61, 180, 155,  95, 
+     11,  50, 151, 186,   8, 133, 
+    159, 170,   1,   0,   0,   0, 
+     84,   2,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     152,   0,   0,   0, 204,   0, 
-      0,   0, 184,   1,   0,   0, 
+      0,   0, 208,   1,   0,   0, 
      73,  83,  71,  78,  96,   0, 
       0,   0,   3,   0,   0,   0, 
       8,   0,   0,   0,  80,   0, 
@@ -71,14 +71,18 @@ const BYTE BasicEffect_PSBasicVertexLightingTxNoFog[] =
       0,   0,  15,   0,   0,   0, 
      83,  86,  95,  84,  97, 114, 
     103, 101, 116,   0, 171, 171, 
-     83,  72,  69,  88, 228,   0, 
-      0,   0,  80,   0,   0,   0, 
-     57,   0,   0,   0, 106,   8, 
-      0,   1,  90,   0,   0,   3, 
-      0,  96,  16,   0,   0,   0, 
-      0,   0,  88,  24,   0,   4, 
-      0, 112,  16,   0,   0,   0, 
-      0,   0,  85,  85,   0,   0, 
+     83,  72,  69,  88, 252,   0, 
+      0,   0,  81,   0,   0,   0, 
+     63,   0,   0,   0, 106,   8, 
+      0,   1,  90,   0,   0,   6, 
+     70, 110,  48,   0,   0,   0, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0,  88,  24,   0,   7, 
+     70, 126,  48,   0,   0,   0, 
+      0,   0,   0,   0,   0,   0, 
+      0,   0,   0,   0,  85,  85, 
+      0,   0,   0,   0,   0,   0, 
      98,  16,   0,   3, 242,  16, 
      16,   0,   0,   0,   0,   0, 
      98,  16,   0,   3, 114,  16, 
@@ -88,13 +92,13 @@ const BYTE BasicEffect_PSBasicVertexLightingTxNoFog[] =
     101,   0,   0,   3, 242,  32, 
      16,   0,   0,   0,   0,   0, 
     104,   0,   0,   2,   1,   0, 
-      0,   0,  69,   0,   0, 139, 
-    194,   0,   0, 128,  67,  85, 
-     21,   0, 242,   0,  16,   0, 
-      0,   0,   0,   0,  70,  16, 
-     16,   0,   2,   0,   0,   0, 
-     70, 126,  16,   0,   0,   0, 
-      0,   0,   0,  96,  16,   0, 
+      0,   0,  69,   0,   0,  11, 
+    242,   0,  16,   0,   0,   0, 
+      0,   0,  70,  16,  16,   0, 
+      2,   0,   0,   0,  70, 126, 
+     32,   0,   0,   0,   0,   0, 
+      0,   0,   0,   0,   0,  96, 
+     32,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,  56,   0, 
       0,   7, 242,   0,  16,   0, 
       0,   0,   0,   0,  70,  14, 
