@@ -504,6 +504,11 @@ namespace
 
         if (SUCCEEDED(hr))
         {
+            if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && !ResourceUploadBatch::IsSupportedForGenerateMips(format))
+            {
+                loadFlags &= ~(DDS_LOADER_MIP_AUTOGEN | DDS_LOADER_MIP_RESERVE);
+            }
+
             size_t reservedMips = mipCount;
             if (loadFlags & (DDS_LOADER_MIP_AUTOGEN | DDS_LOADER_MIP_RESERVE))
             {

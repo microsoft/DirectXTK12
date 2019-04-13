@@ -841,3 +841,9 @@ std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue
 {
     return pImpl->End(commandQueue);
 }
+
+
+bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format)
+{
+    return (FormatIsUAVCompatible(format) || FormatIsSRGB(format) || FormatIsBGR(format));
+}

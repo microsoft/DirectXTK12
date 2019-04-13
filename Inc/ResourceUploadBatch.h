@@ -68,6 +68,9 @@ namespace DirectX
         std::future<void> __cdecl End(
             _In_ ID3D12CommandQueue* commandQueue);
 
+        // Validates if the given DXGI format is supported for autogen mipmaps
+        static bool __cdecl IsSupportedForGenerateMips(DXGI_FORMAT format);
+
     private:
         // Private implementation.
         class Impl;

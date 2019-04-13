@@ -469,6 +469,11 @@ namespace
                 return hr;
         }
 
+        if ((loadFlags & WIC_LOADER_MIP_AUTOGEN) && !ResourceUploadBatch::IsSupportedForGenerateMips(format))
+        {
+            loadFlags &= ~(WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE);
+        }
+
         // Count the number of mips
         uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE)) ? CountMips(twidth, theight) : 1;
 
