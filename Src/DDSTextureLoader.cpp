@@ -547,12 +547,6 @@ namespace
         _In_ ID3D12Resource** texture)
     {
 #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-#if defined(_XBOX_ONE) && defined(_TITLE)
-        if (texture != 0 && *texture != 0)
-        {
-            (*texture)->SetName(fileName);
-        }
-#else
         if (texture)
         {
             const wchar_t* pstrName = wcsrchr(fileName, '\\');
@@ -570,7 +564,6 @@ namespace
                 (*texture)->SetName(pstrName);
             }
         }
-#endif
 #else
         UNREFERENCED_PARAMETER(fileName);
         UNREFERENCED_PARAMETER(texture);
