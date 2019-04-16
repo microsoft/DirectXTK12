@@ -469,11 +469,6 @@ namespace
                 return hr;
         }
 
-        if ((loadFlags & WIC_LOADER_MIP_AUTOGEN) && !ResourceUploadBatch::IsSupportedForGenerateMips(format))
-        {
-            loadFlags &= ~(WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE);
-        }
-
         // Count the number of mips
         uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE)) ? CountMips(twidth, theight) : 1;
 
@@ -513,6 +508,64 @@ namespace
 
         *texture = tex;
         return hr;
+    }
+
+    //--------------------------------------------------------------------------------------
+    void SetDebugTextureInfo(
+        _In_z_ const wchar_t* fileName,
+        _In_ ID3D12Resource** texture)
+    {
+#if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
+#if defined(_XBOX_ONE) && defined(_TITLE)
+        if (texture != 0 && *texture != 0)
+        {
+            (*texture)->SetName(fileName);
+        }
+#else
+        if (texture)
+        {
+            const wchar_t* pstrName = wcsrchr(fileName, '\\');
+            if (!pstrName)
+            {
+                pstrName = fileName;
+            }
+            else
+            {
+                pstrName++;
+            }
+
+            if (texture && *texture)
+            {
+                (*texture)->SetName(pstrName);
+            }
+        }
+#endif
+#else
+        UNREFERENCED_PARAMETER(fileName);
+        UNREFERENCED_PARAMETER(texture);
+#endif
+    }
+
+    //--------------------------------------------------------------------------------------
+    DXGI_FORMAT GetPixelFormat(_In_ IWICBitmapFrameDecode* frame)
+    {
+        WICPixelFormatGUID pixelFormat;
+        if (FAILED(frame->GetPixelFormat(&pixelFormat)))
+            return DXGI_FORMAT_UNKNOWN;
+
+        DXGI_FORMAT format = _WICToDXGI(pixelFormat);
+        if (format == DXGI_FORMAT_UNKNOWN)
+        {
+            for (size_t i = 0; i < _countof(g_WICConvert); ++i)
+            {
+                if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
+                {
+                    return _WICToDXGI(g_WICConvert[i].target);
+                }
+            }
+        }
+
+        return format;
     }
 } // anonymous namespace
 
@@ -638,21 +691,66 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     unsigned int loadFlags,
     ID3D12Resource** texture)
 {
+    if (texture)
+    {
+        *texture = nullptr;
+    }
+
+    if (!d3dDevice || !wicData || !texture)
+        return E_INVALIDARG;
+
+    if (!wicDataSize)
+        return E_FAIL;
+
+    if (wicDataSize > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
+
+    auto pWIC = _GetWIC();
+    if (!pWIC)
+        return E_NOINTERFACE;
+
+    // Create input stream for memory
+    ComPtr<IWICStream> stream;
+    HRESULT hr = pWIC->CreateStream(stream.GetAddressOf());
+    if (FAILED(hr))
+        return hr;
+
+    hr = stream->InitializeFromMemory(const_cast<uint8_t*>(wicData), static_cast<DWORD>(wicDataSize));
+    if (FAILED(hr))
+        return hr;
+
+    // Initialize WIC
+    ComPtr<IWICBitmapDecoder> decoder;
+    hr = pWIC->CreateDecoderFromStream(stream.Get(), nullptr, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf());
+    if (FAILED(hr))
+        return hr;
+
+    ComPtr<IWICBitmapFrameDecode> frame;
+    hr = decoder->GetFrame(0, frame.GetAddressOf());
+    if (FAILED(hr))
+        return hr;
+
+    if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+    {
+        if (!resourceUpload.IsSupportedForGenerateMips(GetPixelFormat(frame.Get())))
+        {
+            loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
+        }
+    }
+
     std::unique_ptr<uint8_t[]> decodedData;
     D3D12_SUBRESOURCE_DATA initData;
-    HRESULT hr = LoadWICTextureFromMemoryEx(
-        d3dDevice,
-        wicData,
-        wicDataSize,
-        maxsize,
-        resFlags,
-        loadFlags,
-        texture,
-        decodedData,
-        initData);
+    hr = CreateTextureFromWIC(d3dDevice,
+        frame.Get(), maxsize,
+        resFlags, loadFlags,
+        texture, decodedData, initData);
 
     if (SUCCEEDED(hr))
     {
+        assert(texture != 0 && *texture != 0);
+        _Analysis_assume_(texture != 0 && *texture != 0);
+        SetDebugObjectName(*texture, L"WICTextureLoader");
+
         resourceUpload.Upload(
             *texture,
             0,
@@ -742,7 +840,11 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
 
     // Initialize WIC
     ComPtr<IWICBitmapDecoder> decoder;
-    HRESULT hr = pWIC->CreateDecoderFromFilename(fileName, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf());
+    HRESULT hr = pWIC->CreateDecoderFromFilename(fileName,
+        nullptr,
+        GENERIC_READ,
+        WICDecodeMetadataCacheOnDemand,
+        decoder.GetAddressOf());
     if (FAILED(hr))
         return hr;
 
@@ -755,25 +857,10 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
         resFlags, loadFlags,
         texture, decodedData, subresource);
 
-#if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
     if (SUCCEEDED(hr))
     {
-        const wchar_t* pstrName = wcsrchr(fileName, '\\');
-        if (!pstrName)
-        {
-            pstrName = fileName;
-        }
-        else
-        {
-            pstrName++;
-        }
-
-        if (texture && *texture)
-        {
-            (*texture)->SetName(pstrName);
-        }
+        SetDebugTextureInfo(fileName, texture);
     }
-#endif
 
     return hr;
 }
@@ -788,20 +875,51 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     unsigned int loadFlags,
     ID3D12Resource** texture)
 {
+    if (texture)
+    {
+        *texture = nullptr;
+    }
+
+    if (!d3dDevice || !fileName || !texture)
+        return E_INVALIDARG;
+
+    auto pWIC = _GetWIC();
+    if (!pWIC)
+        return E_NOINTERFACE;
+
+    // Initialize WIC
+    ComPtr<IWICBitmapDecoder> decoder;
+    HRESULT hr = pWIC->CreateDecoderFromFilename(fileName,
+        nullptr,
+        GENERIC_READ,
+        WICDecodeMetadataCacheOnDemand,
+        decoder.GetAddressOf());
+    if (FAILED(hr))
+        return hr;
+
+    ComPtr<IWICBitmapFrameDecode> frame;
+    hr = decoder->GetFrame(0, frame.GetAddressOf());
+    if (FAILED(hr))
+        return hr;
+
+    if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+    {
+        if (!resourceUpload.IsSupportedForGenerateMips(GetPixelFormat(frame.Get())))
+        {
+            loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
+        }
+    }
+
     std::unique_ptr<uint8_t[]> decodedData;
     D3D12_SUBRESOURCE_DATA initData;
-    HRESULT hr = LoadWICTextureFromFileEx(
-        d3dDevice,
-        fileName,
-        maxsize,
-        resFlags,
-        loadFlags,
-        texture,
-        decodedData,
-        initData);
+    hr = CreateTextureFromWIC(d3dDevice, frame.Get(), maxsize,
+        resFlags, loadFlags,
+        texture, decodedData, initData);
 
     if (SUCCEEDED(hr))
     {
+        SetDebugTextureInfo(fileName, texture);
+
         resourceUpload.Upload(
             *texture,
             0,
