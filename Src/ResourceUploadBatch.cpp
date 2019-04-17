@@ -419,7 +419,7 @@ public:
 
         if (!uavCompat && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
         {
-            throw std::exception("GenerateMips doesn't support this texture format");
+            throw std::exception("GenerateMips doesn't support this texture format on this device");
         }
 
         // Ensure that we have valid generate mips data
@@ -433,6 +433,10 @@ public:
         if (uavCompat)
         {
             GenerateMips_UnorderedAccessPath(resource);
+        }
+        else if (!mTypedUAVLoadAdditionalFormats)
+        {
+            throw std::exception("GenerateMips needs TypedUAVLoadAdditionalFormats device support for sRGB/BGR");
         }
         else if (FormatIsBGR(desc.Format))
         {
@@ -529,9 +533,16 @@ public:
 
     bool IsSupportedForGenerateMips(DXGI_FORMAT format)
     {
-        return (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format)
-                || FormatIsSRGB(format)
-                || FormatIsBGR(format));
+        if (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format))
+            return true;
+
+        if (FormatIsSRGB(format) || FormatIsBGR(format))
+        {
+            // sRGB/BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store
+            return mTypedUAVLoadAdditionalFormats;
+        }
+
+        return false;
     }
 
 private:
