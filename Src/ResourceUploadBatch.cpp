@@ -778,7 +778,6 @@ private:
         D3D12_HEAP_DESC heapDesc = {};
         auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
         heapDesc.SizeInBytes = allocInfo.SizeInBytes;
-        heapDesc.Alignment = allocInfo.Alignment;
         heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
