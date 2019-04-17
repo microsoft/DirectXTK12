@@ -722,8 +722,10 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        if (!resourceUpload.IsSupportedForGenerateMips(GetPixelFormat(frame.Get())))
+        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
+            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
             loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
         }
     }
@@ -894,8 +896,10 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        if (!resourceUpload.IsSupportedForGenerateMips(GetPixelFormat(frame.Get())))
+        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
+            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
             loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
         }
     }
