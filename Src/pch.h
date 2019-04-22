@@ -35,15 +35,13 @@
 // C5045 Spectre mitigation warning
 
 // XBox One XDK related Off by default warnings
-#pragma warning(disable : 4471 4917 4986 5043)
+#pragma warning(disable : 4471 4643 4917 4986 5029 5043)
 // C4471 forward declaration of an unscoped enumeration must have an underlying type
+// C4643 Forward declaring in namespace std is not permitted by the C++ Standard
 // C4917 a GUID can only be associated with a class, interface or namespace
 // C4986 exception specification does not match previous declaration
+// C5029 nonstandard extension used
 // C5043 exception specification does not match previous declaration
-
-// Xbox One XDK related Off by default warnings
-#pragma warning(disable : 4643)
-// C4643 Forward declaring in namespace std is not permitted by the C++ Standard
 
 #ifdef __INTEL_COMPILER
 #pragma warning(disable : 161 2960 3280)
