@@ -77,7 +77,6 @@
 
 #include <d3d12_x.h> // core 12.x header
 #include <d3dx12_x.h>  // utility 12.x header
-#define DCOMMON_H_INCLUDED
 #else
 #include <dxgi1_4.h>
 #include <d3d12.h>
