@@ -832,6 +832,8 @@ private:
             nullptr,
             IID_GRAPHICS_PPV_ARGS(aliasCopy.GetAddressOf())));
 
+        SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
+
         // Copy the resource data BGR to RGB
         D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
         aliasBarrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;

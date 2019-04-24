@@ -117,6 +117,8 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
             IID_GRAPHICS_PPV_ARGS(mStaticVertexBuffer.GetAddressOf())
         ));
 
+        SetDebugObjectName(mStaticVertexBuffer.Get(), L"GeometricPrimitive");
+
         resourceUploadBatch.Upload(mStaticVertexBuffer.Get(), mVertexBuffer);
 
         resourceUploadBatch.Transition(mStaticVertexBuffer.Get(),
@@ -143,6 +145,8 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
             nullptr,
             IID_GRAPHICS_PPV_ARGS(mStaticIndexBuffer.GetAddressOf())
         ));
+
+        SetDebugObjectName(mStaticIndexBuffer.Get(), L"GeometricPrimitive");
 
         resourceUploadBatch.Upload(mStaticIndexBuffer.Get(), mIndexBuffer);
 

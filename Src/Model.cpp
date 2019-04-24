@@ -317,6 +317,8 @@ void Model::LoadStaticBuffers(
                 IID_GRAPHICS_PPV_ARGS(part->staticVertexBuffer.GetAddressOf())
             ));
 
+            SetDebugObjectName(part->staticVertexBuffer.Get(), L"ModelMeshPart");
+
             resourceUploadBatch.Upload(part->staticVertexBuffer.Get(), part->vertexBuffer);
 
             resourceUploadBatch.Transition(part->staticVertexBuffer.Get(),
@@ -370,6 +372,8 @@ void Model::LoadStaticBuffers(
                 nullptr,
                 IID_GRAPHICS_PPV_ARGS(part->staticIndexBuffer.GetAddressOf())
             ));
+
+            SetDebugObjectName(part->staticIndexBuffer.Get(), L"ModelMeshPart");
 
             resourceUploadBatch.Upload(part->staticIndexBuffer.Get(), part->indexBuffer);
 
