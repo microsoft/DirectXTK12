@@ -700,8 +700,18 @@ private:
         if (staging.Get() != resource)
         {
             // Transition the resources ready for copy
-            Transition(staging.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-            Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+            D3D12_RESOURCE_BARRIER barrier[2] = {};
+            barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+            barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+            barrier[0].Transition.pResource = staging.Get();
+            barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+            barrier[1].Transition.pResource = resource;
+            barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+            barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+            mList->ResourceBarrier(2, barrier);
 
             // Copy the entire resource back
             mList->CopyResource(resource, staging.Get());
@@ -753,8 +763,19 @@ private:
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
         // Direct copy back
-        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+        D3D12_RESOURCE_BARRIER barrier[2] = {};
+        barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        barrier[0].Transition.pResource = resourceCopy.Get();
+        barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        barrier[1].Transition.pResource = resource;
+        barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+        mList->ResourceBarrier(2, barrier);
+
         mList->CopyResource(resource, resourceCopy.Get());
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
@@ -764,13 +785,14 @@ private:
     }
 
     // Resource is not UAV compatible (copy via alias to avoid validation failure)
+
     void GenerateMips_TexturePathBGR(
         _In_ ID3D12Resource* resource)
     {
         const auto resourceDesc = resource->GetDesc();
         assert(FormatIsBGR(resourceDesc.Format));
 
-        // Create a resource with the same description, but without SRGB, and with UAV flags
+        // Create a resource with the same description with RGB and with UAV flags
         auto copyDesc = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
@@ -810,20 +832,45 @@ private:
             nullptr,
             IID_GRAPHICS_PPV_ARGS(aliasCopy.GetAddressOf())));
 
-        // Copy the resource data
-        AliasBarrier(nullptr, aliasCopy.Get());
-        Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        // Copy the resource data BGR to RGB
+        D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
+        aliasBarrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
+        aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
+
+        aliasBarrier[1].Type = aliasBarrier[2].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        aliasBarrier[1].Transition.Subresource = aliasBarrier[2].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        aliasBarrier[1].Transition.pResource = resource;
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        mList->ResourceBarrier(2, aliasBarrier);
         mList->CopyResource(aliasCopy.Get(), resource);
 
         // Generate the mips
-        AliasBarrier(aliasCopy.Get(), resourceCopy.Get());
-        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+        aliasBarrier[0].Aliasing.pResourceBefore = aliasCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter = resourceCopy.Get();
+
+        aliasBarrier[1].Transition.pResource = resourceCopy.Get();
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+        mList->ResourceBarrier(2, aliasBarrier);
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
-        // Direct copy back
-        AliasBarrier(resourceCopy.Get(), aliasCopy.Get());
-        Transition(aliasCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+        // Direct copy back RGB to BGR
+        aliasBarrier[0].Aliasing.pResourceBefore = resourceCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
+
+        aliasBarrier[1].Transition.pResource = aliasCopy.Get();
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        aliasBarrier[2].Transition.pResource = resource;
+        aliasBarrier[2].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        aliasBarrier[2].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+        mList->ResourceBarrier(3, aliasBarrier);
+
         mList->CopyResource(resource, aliasCopy.Get());
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
@@ -834,19 +881,6 @@ private:
         mTrackedObjects.push_back(resource);
     }
 
-    void AliasBarrier(_In_opt_ ID3D12Resource* before, _In_ ID3D12Resource* after)
-    {
-        if (before == after)
-            return;
-
-        D3D12_RESOURCE_BARRIER desc = {};
-        desc.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
-        desc.Aliasing.pResourceBefore = before;
-        desc.Aliasing.pResourceAfter = after;
-
-        mList->ResourceBarrier(1, &desc);
-    }
-    
     struct UploadBatch
     {
         std::vector<ComPtr<ID3D12DeviceChild>>  TrackedObjects;
