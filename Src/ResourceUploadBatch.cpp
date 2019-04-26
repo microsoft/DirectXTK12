@@ -304,6 +304,7 @@ public:
         : mDevice(device)
         , mInBeginEndBlock(false)
         , mTypedUAVLoadAdditionalFormats(false)
+        , mStandardSwizzle64KBSupported(false)
     {
         assert(device != 0);
         D3D12_FEATURE_DATA_D3D12_OPTIONS options = {};
@@ -313,6 +314,7 @@ public:
             sizeof(options))))
         {
             mTypedUAVLoadAdditionalFormats = options.TypedUAVLoadAdditionalFormats != 0;
+            mStandardSwizzle64KBSupported = options.StandardSwizzle64KBSupported != 0;
         }
     }
 
@@ -440,6 +442,13 @@ public:
         }
         else if (FormatIsBGR(desc.Format))
         {
+#if !defined(_XBOX_ONE) || !defined(_TITLE)
+            if (!mStandardSwizzle64KBSupported)
+            {
+                throw std::exception("GenerateMips needs StandardSwizzle64KBSupported device support for BGR");
+            }
+#endif
+
             GenerateMips_TexturePathBGR(resource);
         }
         else
@@ -536,9 +545,20 @@ public:
         if (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format))
             return true;
 
-        if (FormatIsSRGB(format) || FormatIsBGR(format))
+        if (FormatIsBGR(format))
         {
-            // sRGB/BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store
+#if defined(_XBOX_ONE) && defined(_TITLE)
+            // We know the RGB and BGR memory layouts match for Xbox One
+            return true;
+#else
+            // BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store plus matching layouts
+            return mTypedUAVLoadAdditionalFormats && mStandardSwizzle64KBSupported;
+#endif
+        }
+
+        if (FormatIsSRGB(format))
+        {
+            // sRGB path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store
             return mTypedUAVLoadAdditionalFormats;
         }
 
@@ -795,7 +815,6 @@ private:
     }
 
     // Resource is not UAV compatible (copy via alias to avoid validation failure)
-
     void GenerateMips_TexturePathBGR(
         _In_ ID3D12Resource* resource)
     {
@@ -806,9 +825,12 @@ private:
         auto copyDesc = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+#if !defined(_XBOX_ONE) || !defined(_TITLE)
+        copyDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE;
+#endif
 
         D3D12_HEAP_DESC heapDesc = {};
-        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
+        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
         heapDesc.SizeInBytes = allocInfo.SizeInBytes;
         heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -832,6 +854,7 @@ private:
         // Create a BGRA alias
         auto aliasDesc = resourceDesc;
         aliasDesc.Format = (resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM || resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM_SRGB) ? DXGI_FORMAT_B8G8R8X8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM;
+        aliasDesc.Layout = copyDesc.Layout;
 
         ComPtr<ID3D12Resource> aliasCopy;
         ThrowIfFailed(mDevice->CreatePlacedResource(
@@ -917,6 +940,7 @@ private:
     std::vector<SharedGraphicsResource>         mTrackedMemoryResources;
     bool                                        mInBeginEndBlock;
     bool                                        mTypedUAVLoadAdditionalFormats;
+    bool                                        mStandardSwizzle64KBSupported;
 };
 
 
