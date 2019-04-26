@@ -573,9 +573,13 @@ private:
 
             SetDebugObjectName(staging.Get(), L"GenerateMips Staging");
 
-            // Copy the resource to staging
+            // Copy the top mip of resource to staging
             Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-            mList->CopyResource(staging.Get(), resource);
+
+            CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+            CD3DX12_TEXTURE_COPY_LOCATION dst(staging.Get(), 0);
+            mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+
             Transition(staging.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
         else
@@ -754,9 +758,13 @@ private:
 
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
-        // Copy the resource data
+        // Copy the top mip of resource data
         Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        mList->CopyResource(resourceCopy.Get(), resource);
+
+        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        CD3DX12_TEXTURE_COPY_LOCATION dst(resourceCopy.Get(), 0);
+        mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+
         Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         
         // Generate the mips
@@ -776,7 +784,9 @@ private:
 
         mList->ResourceBarrier(2, barrier);
 
+        // Copy the entire resource back
         mList->CopyResource(resource, resourceCopy.Get());
+
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // Track these object lifetimes on the GPU
@@ -834,7 +844,7 @@ private:
 
         SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
 
-        // Copy the resource data BGR to RGB
+        // Copy the top mip of the resource data BGR to RGB
         D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
         aliasBarrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
         aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
@@ -846,7 +856,10 @@ private:
         aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
         mList->ResourceBarrier(2, aliasBarrier);
-        mList->CopyResource(aliasCopy.Get(), resource);
+
+        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        CD3DX12_TEXTURE_COPY_LOCATION dst(aliasCopy.Get(), 0);
+        mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
         // Generate the mips
         aliasBarrier[0].Aliasing.pResourceBefore = aliasCopy.Get();
@@ -873,6 +886,7 @@ private:
 
         mList->ResourceBarrier(3, aliasBarrier);
 
+        // Copy the entire resource back
         mList->CopyResource(resource, aliasCopy.Get());
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
