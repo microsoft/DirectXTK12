@@ -652,6 +652,21 @@ void PBREffect::SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive)
     pImpl->descriptors[Impl::RootParameterIndex::EmissiveTexture] = emissive;
 }
 
+void PBREffect::SetAlbedoTexture(D3D12_GPU_DESCRIPTOR_HANDLE albedo)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::AlbedoTexture] = albedo;
+}
+
+void PBREffect::SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE normal)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::NormalTexture] = normal;
+}
+
+void PBREffect::SetRMATexture(D3D12_GPU_DESCRIPTOR_HANDLE roughnessMetallicAmbientOcclusion)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::RMATexture] = roughnessMetallicAmbientOcclusion;
+}
+
 
 // Additional settings.
 void PBREffect::SetRenderTargetSizeInPixels(int width, int height)

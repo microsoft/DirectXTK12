@@ -537,6 +537,9 @@ namespace DirectX
             D3D12_GPU_DESCRIPTOR_HANDLE sampler);
 
         void __cdecl SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive);
+        void __cdecl SetAlbedoTexture(D3D12_GPU_DESCRIPTOR_HANDLE albedo);
+        void __cdecl SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE normal);
+        void __cdecl SetRMATexture(D3D12_GPU_DESCRIPTOR_HANDLE roughnessMetallicAmbientOcclusion);
 
         // Render target size, required for velocity buffer output.
         void __cdecl SetRenderTargetSizeInPixels(int width, int height);
