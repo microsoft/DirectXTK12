@@ -116,8 +116,11 @@ namespace
             assert(poolSize < MinPageSize || poolSize == allocator->PageSize());
 
             LinearAllocatorPage* page = allocator->FindPageForAlloc(size, alignment);
-            if (page == nullptr)
-                throw std::exception("Out of memory");
+            if (!page)
+            {
+                DebugTrace("GraphicsMemory failed to allocate page (%zu requested bytes, %zu alignment)\n", size, alignment);
+                throw std::bad_alloc();
+            }
 
             size_t offset = page->Suballocate(size, alignment);
 
@@ -159,12 +162,28 @@ namespace
             }
         }
 
+        void GetStatistics(GraphicsMemoryStatistics& stats) const
+        {
+            ScopedLock lock(mMutex);
+
+            memset(&stats, 0, sizeof(stats));
+
+            for (auto& i : mPools)
+            {
+                if (i != nullptr)
+                {
+                    stats.pendingMemoryBytes += i->CommittedMemoryUsage();
+                    stats.totalMemoryBytes += i->TotalMemoryUsage();
+                }
+            }
+        }
+
         ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
     private:
         ComPtr<ID3D12Device> mDevice;
         std::array<std::unique_ptr<LinearAllocator>, AllocatorPoolCount> mPools;
-        std::mutex mMutex;
+        mutable std::mutex mMutex;
     };
 } // anonymous namespace
 
@@ -228,6 +247,11 @@ public:
     void GarbageCollect()
     {
         mDeviceAllocator->GarbageCollect();
+    }
+
+    void GetStatistics(GraphicsMemoryStatistics& stats) const
+    {
+        mDeviceAllocator->GetStatistics(stats);
     }
 
     GraphicsMemory* mOwner;
@@ -299,6 +323,11 @@ void GraphicsMemory::Commit(_In_ ID3D12CommandQueue* commandQueue)
 void GraphicsMemory::GarbageCollect()
 {
     pImpl->GarbageCollect();
+}
+
+void GraphicsMemory::GetStatistics(GraphicsMemoryStatistics& stats) const
+{
+    pImpl->GetStatistics(stats);
 }
 
 
