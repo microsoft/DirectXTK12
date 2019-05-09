@@ -613,6 +613,36 @@ void PBREffect::SetConstantRoughness(float value)
 
 
 // Texture settings.
+void PBREffect::SetAlbedoTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::AlbedoTexture] = srvDescriptor;
+    pImpl->descriptors[Impl::RootParameterIndex::SurfaceSampler] = samplerDescriptor;
+}
+
+
+void PBREffect::SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::NormalTexture] = srvDescriptor;
+}
+
+
+void PBREffect::SetRMATexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+{
+    pImpl->descriptors[Impl::RootParameterIndex::RMATexture] = srvDescriptor;
+}
+
+
+void PBREffect::SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+{
+    if (!pImpl->emissiveMap)
+    {
+        DebugTrace("WARNING: Emissive texture set on PBREffect instance created without emissive shader (texture %llu)\n", srvDescriptor.ptr);
+    }
+
+    pImpl->descriptors[Impl::RootParameterIndex::EmissiveTexture] = srvDescriptor;
+}
+
+
 void PBREffect::SetSurfaceTextures(
     D3D12_GPU_DESCRIPTOR_HANDLE albedo,
     D3D12_GPU_DESCRIPTOR_HANDLE normal,
@@ -639,17 +669,6 @@ void PBREffect::SetIBLTextures(
     pImpl->descriptors[Impl::RootParameterIndex::IrradianceTexture] = irradiance;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
-}
-
-
-void PBREffect::SetEmissiveTexture(D3D12_GPU_DESCRIPTOR_HANDLE emissive)
-{
-    if (!pImpl->emissiveMap)
-    {
-        DebugTrace("WARNING: Emissive texture set on PBREffect instance created without emissive shader (texture %llu)\n", emissive.ptr);
-    }
-
-    pImpl->descriptors[Impl::RootParameterIndex::EmissiveTexture] = emissive;
 }
 
 
