@@ -115,7 +115,7 @@ namespace
             assert(allocator != nullptr);
             assert(poolSize < MinPageSize || poolSize == allocator->PageSize());
 
-            LinearAllocatorPage* page = allocator->FindPageForAlloc(size, alignment);
+            auto page = allocator->FindPageForAlloc(size, alignment);
             if (!page)
             {
                 DebugTrace("GraphicsMemory failed to allocate page (%zu requested bytes, %zu alignment)\n", size, alignment);
@@ -141,7 +141,7 @@ namespace
 
             for (auto& i : mPools)
             {
-                if (i != nullptr)
+                if (i)
                 {
                     i->RetirePendingPages();
                     i->FenceCommittedPages(commandQueue);
@@ -155,7 +155,7 @@ namespace
 
             for (auto& i : mPools)
             {
-                if (i != nullptr)
+                if (i)
                 {
                     i->Shrink();
                 }
@@ -368,6 +368,7 @@ GraphicsResource::GraphicsResource(
     , mBufferOffset(offset)
     , mSize(size)
 {
+    assert(mPage != nullptr);
     mPage->AddRef();
 }
 
@@ -384,7 +385,7 @@ GraphicsResource::GraphicsResource(GraphicsResource&& other) noexcept
 
 GraphicsResource::~GraphicsResource()
 {
-    if (mPage != nullptr)
+    if (mPage)
     {
         mPage->Release();
     }
@@ -398,7 +399,7 @@ GraphicsResource&& GraphicsResource::operator= (GraphicsResource&& other) noexce
 
 void GraphicsResource::Reset()
 {
-    if (mPage != nullptr)
+    if (mPage)
     {
         mPage->Release();
     }
@@ -413,7 +414,7 @@ void GraphicsResource::Reset()
 
 void GraphicsResource::Reset(GraphicsResource&& alloc)
 {
-    if (mPage != nullptr)
+    if (mPage)
     {
         mPage->Release();
     }
