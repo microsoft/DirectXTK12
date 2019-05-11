@@ -305,7 +305,6 @@ void GraphicsMemory::GarbageCollect()
 }
 
 
-
 #if defined(_XBOX_ONE) && defined(_TITLE)
 GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
 {
