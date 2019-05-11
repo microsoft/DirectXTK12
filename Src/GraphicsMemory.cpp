@@ -162,22 +162,6 @@ namespace
             }
         }
 
-        void GetStatistics(GraphicsMemoryStatistics& stats) const
-        {
-            ScopedLock lock(mMutex);
-
-            memset(&stats, 0, sizeof(stats));
-
-            for (auto& i : mPools)
-            {
-                if (i != nullptr)
-                {
-                    stats.pendingMemoryBytes += i->CommittedMemoryUsage();
-                    stats.totalMemoryBytes += i->TotalMemoryUsage();
-                }
-            }
-        }
-
         ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
     private:
@@ -247,11 +231,6 @@ public:
     void GarbageCollect()
     {
         mDeviceAllocator->GarbageCollect();
-    }
-
-    void GetStatistics(GraphicsMemoryStatistics& stats) const
-    {
-        mDeviceAllocator->GetStatistics(stats);
     }
 
     GraphicsMemory* mOwner;
@@ -325,10 +304,6 @@ void GraphicsMemory::GarbageCollect()
     pImpl->GarbageCollect();
 }
 
-void GraphicsMemory::GetStatistics(GraphicsMemoryStatistics& stats) const
-{
-    pImpl->GetStatistics(stats);
-}
 
 
 #if defined(_XBOX_ONE) && defined(_TITLE)

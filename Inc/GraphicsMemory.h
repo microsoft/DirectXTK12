@@ -22,9 +22,8 @@ namespace DirectX
 {
     class LinearAllocatorPage;
 
-    //----------------------------------------------------------------------------------
-    // These work like smart-pointers. The memory will only be fenced by the GPU
-    // once the pointer has been invalidated or the user explicitly marks it for fencing.
+    // Works a little like a smart pointer. The memory will only be fenced by the GPU once the pointer
+    // has been invalidated or the user explicitly marks it for fencing.
     class GraphicsResource
     {
     public:
@@ -106,14 +105,6 @@ namespace DirectX
         std::shared_ptr<GraphicsResource> mSharedResource;
     };
 
-    //----------------------------------------------------------------------------------
-    struct GraphicsMemoryStatistics
-    {
-        size_t pendingMemoryBytes;
-        size_t totalMemoryBytes;
-    };
-
-    //----------------------------------------------------------------------------------
     class GraphicsMemory
     {
     public:
@@ -155,9 +146,6 @@ namespace DirectX
         // It is not recommended that you call this unless absolutely necessary (e.g. your
         // memory budget changes at run-time, or perhaps you're changing levels in your game.)
         void __cdecl GarbageCollect();
-
-        // This returns memory statistics for the graphics memory manager.
-        void __cdecl GetStatistics(GraphicsMemoryStatistics& stats) const;
 
         // Singleton
         // Should only use nullptr for single GPU scenarios; mGPU requires a specific device
