@@ -388,6 +388,7 @@ GraphicsResource::~GraphicsResource()
     if (mPage)
     {
         mPage->Release();
+        mPage = nullptr;
     }
 }
 
@@ -402,9 +403,9 @@ void GraphicsResource::Reset()
     if (mPage)
     {
         mPage->Release();
+        mPage = nullptr;
     }
 
-    mPage = nullptr;
     mGpuAddress = {};
     mResource = nullptr;
     mMemory = nullptr;
@@ -417,6 +418,7 @@ void GraphicsResource::Reset(GraphicsResource&& alloc)
     if (mPage)
     {
         mPage->Release();
+        mPage = nullptr;
     }
 
     mGpuAddress = alloc.GpuAddress();
