@@ -306,7 +306,7 @@ public:
         , mTypedUAVLoadAdditionalFormats(false)
         , mStandardSwizzle64KBSupported(false)
     {
-        assert(device != 0);
+        assert(device != nullptr);
         D3D12_FEATURE_DATA_D3D12_OPTIONS options = {};
         if (SUCCEEDED(device->CheckFeatureSupport(
             D3D12_FEATURE_D3D12_OPTIONS,

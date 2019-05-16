@@ -267,7 +267,8 @@ namespace
             IID_GRAPHICS_PPV_ARGS(texture));
         if (SUCCEEDED(hr))
         {
-            _Analysis_assume_(*texture != 0);
+            assert(texture != nullptr && *texture != nullptr);
+            _Analysis_assume_(texture != nullptr && *texture != nullptr);
 
             SetDebugObjectName(*texture, L"DDSTextureLoader");
         }

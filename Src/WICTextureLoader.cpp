@@ -739,8 +739,8 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 
     if (SUCCEEDED(hr))
     {
-        assert(texture != 0 && *texture != 0);
-        _Analysis_assume_(texture != 0 && *texture != 0);
+        assert(texture != nullptr && *texture != nullptr);
+        _Analysis_assume_(texture != nullptr && *texture != nullptr);
         SetDebugObjectName(*texture, L"WICTextureLoader");
 
         resourceUpload.Upload(
