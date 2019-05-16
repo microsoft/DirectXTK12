@@ -321,7 +321,7 @@ const wchar_t* SpriteFont::Impl::ConvertUTF8(_In_z_ const char *text)
     {
         // Compute required buffer size
         result = MultiByteToWideChar(CP_UTF8, 0, text, -1, nullptr, 0);
-        utfBufferSize = AlignUp(result, 1024);
+        utfBufferSize = AlignUp(static_cast<size_t>(result), 1024);
         utfBuffer.reset(new wchar_t[utfBufferSize]);
 
         // Retry conversion

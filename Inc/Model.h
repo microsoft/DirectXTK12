@@ -50,7 +50,7 @@ namespace DirectX
         uint32_t                                                materialIndex;  // Index of the material spec to use
         uint32_t                                                indexCount;
         uint32_t                                                startIndex;
-        uint32_t                                                vertexOffset;
+        int32_t                                                 vertexOffset;
         uint32_t                                                vertexStride;
         uint32_t                                                vertexCount;
         uint32_t                                                indexBufferSize;

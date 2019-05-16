@@ -503,8 +503,8 @@ namespace
         _Analysis_assume_(tex != nullptr);
 
         subresource.pData = decodedData.get();
-        subresource.RowPitch = rowPitch;
-        subresource.SlicePitch = imageSize;
+        subresource.RowPitch = static_cast<LONG>(rowPitch);
+        subresource.SlicePitch = static_cast<LONG>(imageSize);
 
         *texture = tex;
         return hr;

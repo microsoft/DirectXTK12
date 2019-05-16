@@ -139,7 +139,7 @@ namespace
         const DXUT::SDKMESH_MATERIAL_V2& mh,
         unsigned int flags,
         _Out_ Model::ModelMaterialInfo& m,
-        _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
+        _Inout_ std::map<std::wstring, int>& textureDictionary)
     {
         wchar_t matName[DXUT::MAX_MATERIAL_NAME] = {};
         MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
@@ -623,7 +623,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
             part->indexCount = static_cast<uint32_t>(subset.IndexCount);
             part->startIndex = static_cast<uint32_t>(subset.IndexStart);
-            part->vertexOffset = static_cast<uint32_t>(subset.VertexStart);
+            part->vertexOffset = static_cast<int32_t>(subset.VertexStart);
             part->vertexStride = static_cast<uint32_t>(vh.StrideBytes);
             part->vertexCount = static_cast<uint32_t>(subset.VertexCount);
             part->primitiveType = primType;
@@ -660,7 +660,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     model->textureNames.resize(textureDictionary.size());
     for (auto texture = std::cbegin(textureDictionary); texture != std::cend(textureDictionary); ++texture)
     {
-        model->textureNames[texture->second] = texture->first;
+        model->textureNames[static_cast<size_t>(texture->second)] = texture->first;
     }
 
     return model;

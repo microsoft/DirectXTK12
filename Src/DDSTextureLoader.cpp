@@ -85,13 +85,13 @@ namespace
             if (!slicePlane)
             {
                 // Plane 0
-                res.SlicePitch = res.RowPitch * height;
+                res.SlicePitch = res.RowPitch * static_cast<LONG>(height);
             }
             else
             {
                 // Plane 1
                 res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
-                res.SlicePitch = res.RowPitch * ((height + 1) >> 1);
+                res.SlicePitch = res.RowPitch * ((static_cast<LONG>(height) + 1) >> 1);
             }
             break;
 
@@ -99,14 +99,14 @@ namespace
             if (!slicePlane)
             {
                 // Plane 0
-                res.SlicePitch = res.RowPitch * height;
+                res.SlicePitch = res.RowPitch * static_cast<LONG>(height);
             }
             else
             {
                 // Plane 1
                 res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
                 res.RowPitch = (res.RowPitch >> 1);
-                res.SlicePitch = res.RowPitch * height;
+                res.SlicePitch = res.RowPitch * static_cast<LONG>(height);
             }
             break;
 
@@ -517,9 +517,10 @@ namespace
             {
                 subresources.clear();
 
-                maxsize = (resDim == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
+                maxsize = static_cast<size_t>(
+                    (resDim == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
                     ? D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION
-                    : D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+                    : D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION);
 
                 hr = FillInitData(width, height, depth, mipCount, arraySize,
                     numberOfPlanes, format,

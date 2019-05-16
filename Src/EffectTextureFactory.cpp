@@ -191,7 +191,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
     assert(textureEntry.mResource != nullptr);
 
     // bind a new descriptor in slot 
-    auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(descriptorSlot);
+    auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
     DirectX::CreateShaderResourceView(device, textureEntry.mResource.Get(), textureDescriptor, textureEntry.mIsCubeMap);
 
     return textureEntry.slot;

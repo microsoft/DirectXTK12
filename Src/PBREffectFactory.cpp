@@ -121,14 +121,14 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     effect->SetAlpha(info.alphaValue);
 
     effect->SetSurfaceTextures(
-        mTextureDescriptors->GetGpuHandle(albetoTextureIndex),
-        mTextureDescriptors->GetGpuHandle(normalTextureIndex),
-        mTextureDescriptors->GetGpuHandle(rmaTextureIndex),
-        mSamplerDescriptors->GetGpuHandle(samplerIndex));
+        mTextureDescriptors->GetGpuHandle(static_cast<size_t>(albetoTextureIndex)),
+        mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
+        mTextureDescriptors->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
+        mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
 
     if (emissiveTextureIndex != -1)
     {
-        effect->SetEmissiveTexture(mTextureDescriptors->GetGpuHandle(emissiveTextureIndex));
+        effect->SetEmissiveTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)));
     }
 
     if (mSharing && !info.name.empty())

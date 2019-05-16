@@ -180,8 +180,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
         }
 
         if (mSharing && !info.name.empty())
@@ -231,8 +231,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
         }
 
         if (emissiveTextureIndex != -1)
@@ -244,8 +244,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
 
             effect->SetTexture2(
-                mTextureDescriptors->GetGpuHandle(emissiveTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex2));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex2)));
         }
         else if (specularTextureIndex != -1)
         {
@@ -257,8 +257,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
 
             effect->SetTexture2(
-                mTextureDescriptors->GetGpuHandle(specularTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex2));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex2)));
         }
 
         if (mSharing && !info.name.empty())
@@ -335,18 +335,18 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
         }
 
         if (specularTextureIndex != -1)
         {
-            effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(specularTextureIndex));
+            effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)));
         }
 
         if (normalTextureIndex != -1)
         {
-            effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(normalTextureIndex));
+            effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)));
         }
 
         if (mSharing && !info.name.empty())
@@ -426,8 +426,8 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (diffuseTextureIndex != -1)
         {
             effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
-                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
         }
 
         if (mSharing && !info.name.empty())
