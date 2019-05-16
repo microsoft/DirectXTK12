@@ -36,7 +36,7 @@ namespace DirectX
         SpriteSortMode_FrontToBack,
     };
 
-    enum SpriteEffects
+    enum SpriteEffects : uint32_t
     {
         SpriteEffects_None = 0,
         SpriteEffects_FlipHorizontally = 1,
