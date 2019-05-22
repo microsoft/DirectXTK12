@@ -31,7 +31,7 @@ public:
         , mUseNormalMapEffect(true)
         , mEnablePerPixelLighting(true)
         , mEnableFog(false)
-        , device(device)
+        , mDevice(device)
         , mSharing(true)
     { 
         if (textureDescriptors)
@@ -59,7 +59,7 @@ public:
     bool mEnableFog;
 
 private:
-    ID3D12Device*                  device;
+    ComPtr<ID3D12Device> mDevice;
 
     typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
 
@@ -149,7 +149,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        auto effect = std::make_shared<SkinnedEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
@@ -191,7 +191,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             mEffectCacheSkinning.insert(v);
         }
 
-        return effect;
+        return std::move(effect);
     }
     else if (info.enableDualTexture)
     {
@@ -220,7 +220,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::VertexColor;
         }
 
-        auto effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<DualTextureEffect>(mDevice.Get(), effectflags, derivedPSD);
 
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
         effect->SetAlpha(info.alphaValue);
@@ -268,7 +268,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             mEffectCacheDualTexture.insert(v);
         }
 
-        return effect;
+        return std::move(effect);
     }
     else if (info.enableNormalMaps && mUseNormalMapEffect)
     {
@@ -304,7 +304,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        auto effect = std::make_shared<NormalMapEffect>(device, effectflags, derivedPSD, (specularTextureIndex != -1));
+        auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD, (specularTextureIndex != -1));
 
         effect->EnableDefaultLighting();
 
@@ -356,7 +356,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             mEffectCacheNormalMap.insert(v);
         }
 
-        return effect;
+        return std::move(effect);
     }
     else
     {
@@ -396,7 +396,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        auto effect = std::make_shared<BasicEffect>(device, effectflags, derivedPSD);
+        auto effect = std::make_shared<BasicEffect>(mDevice.Get(), effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
@@ -437,7 +437,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             mEffectCache.insert(v);
         }
 
-        return effect;
+        return std::move(effect);
     }
 }
 

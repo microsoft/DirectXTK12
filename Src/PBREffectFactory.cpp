@@ -28,7 +28,7 @@ public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
-        , device(device)
+        , mDevice(device)
         , mSharing(true)
     { 
         if (textureDescriptors)
@@ -52,7 +52,7 @@ public:
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
 
 private:
-    ID3D12Device*                  device;
+    ComPtr<ID3D12Device> mDevice;
 
     typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
 
@@ -114,7 +114,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         }
     }
 
-    auto effect = std::make_shared<PBREffect>(device, effectflags, derivedPSD, (emissiveTextureIndex != -1));
+    auto effect = std::make_shared<PBREffect>(mDevice.Get(), effectflags, derivedPSD, (emissiveTextureIndex != -1));
 
     // We don't use EnableDefaultLighting generally for PBR as it uses Image-Based Lighting instead.
 
@@ -138,7 +138,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         mEffectCache.insert(v);
     }
 
-    return effect;
+    return std::move(effect);
 }
 
 void PBREffectFactory::Impl::ReleaseCache()

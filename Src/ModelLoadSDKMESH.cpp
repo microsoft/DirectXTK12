@@ -75,14 +75,14 @@ namespace
         if ((flags & DUAL_TEXTURE) && !mh.SpecularTexture[0])
         {
             DebugTrace("WARNING: Material '%s' has multiple texture coords but not multiple textures\n", mh.Name);
-            flags &= ~DUAL_TEXTURE;
+            flags &= ~static_cast<unsigned int>(DUAL_TEXTURE);
         }
 
         if (flags & NORMAL_MAPS)
         {
             if (!mh.NormalTexture[0])
             {
-                flags &= ~NORMAL_MAPS;
+                flags &= ~static_cast<unsigned int>(NORMAL_MAPS);
                 *normalName = 0;
             }
         }
@@ -163,7 +163,7 @@ namespace
         m.enableDualTexture = false;
         m.enableNormalMaps = true;
         m.biasedVertexNormals = (flags & BIASED_VERTEX_NORMALS) != 0;
-        m.alphaValue = (!mh.Alpha) ? 1.f : mh.Alpha;
+        m.alphaValue = (mh.Alpha == 0.f) ? 1.f : mh.Alpha;
 
         m.diffuseTextureIndex = GetUniqueTextureIndex(albetoTexture, textureDictionary);
         m.specularTextureIndex = GetUniqueTextureIndex(rmaName, textureDictionary);
@@ -478,11 +478,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
         if (flags & SKINNING)
         {
-            flags &= ~(DUAL_TEXTURE | NORMAL_MAPS);
+            flags &= ~static_cast<unsigned int>(DUAL_TEXTURE | NORMAL_MAPS);
         }
         if (flags & DUAL_TEXTURE)
         {
-            flags &= ~NORMAL_MAPS;
+            flags &= ~static_cast<unsigned int>(NORMAL_MAPS);
         }
 
         if (flags & USES_OBSOLETE_DEC3N)

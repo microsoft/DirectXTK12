@@ -18,7 +18,7 @@
 #include "DDSTextureLoader.h"
 
 #include "PlatformHelpers.h"
-#include "dds.h"
+#include "DDS.h"
 #include "DirectXHelpers.h"
 #include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
@@ -90,7 +90,7 @@ namespace
             else
             {
                 // Plane 1
-                res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
+                res.pData = static_cast<const uint8_t*>(res.pData) + uintptr_t(res.RowPitch) * height;
                 res.SlicePitch = res.RowPitch * ((static_cast<LONG>(height) + 1) >> 1);
             }
             break;
@@ -104,7 +104,7 @@ namespace
             else
             {
                 // Plane 1
-                res.pData = static_cast<const uint8_t*>(res.pData) + res.RowPitch * height;
+                res.pData = static_cast<const uint8_t*>(res.pData) + uintptr_t(res.RowPitch) * height;
                 res.RowPitch = (res.RowPitch >> 1);
                 res.SlicePitch = res.RowPitch * static_cast<LONG>(height);
             }

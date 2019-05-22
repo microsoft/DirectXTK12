@@ -26,7 +26,7 @@
 #include "DirectXHelpers.h"
 
 #include "PlatformHelpers.h"
-#include "dds.h"
+#include "DDS.h"
 #include "LoaderHelpers.h"
 
 using Microsoft::WRL::ComPtr;
@@ -263,7 +263,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     UINT64 dstRowPitch = (fpRowPitch + D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1) & ~(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1);
 #else
     // Round up the srcPitch to multiples of 256
-    UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFF;
+    UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;
 #endif
 
     if (dstRowPitch > UINT32_MAX)
@@ -479,7 +479,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     UINT64 dstRowPitch = (fpRowPitch + D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1) & ~(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1);
 #else
     // Round up the srcPitch to multiples of 256
-    UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFF;
+    UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;
 #endif
 
     if (dstRowPitch > UINT32_MAX)
