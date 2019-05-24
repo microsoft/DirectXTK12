@@ -117,11 +117,16 @@ source_group(Src REGULAR_EXPRESSION Src/*.*)
 target_include_directories( directxtk12 PUBLIC Inc )
 target_include_directories( directxtk12 PRIVATE Audio Src )
 
+target_compile_options( directxtk12 PRIVATE /EHsc /GR /fp:fast  )
+
 if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
     target_compile_options( directxtk12 PRIVATE -Wall -Wpedantic -Wextra )
+    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
+        target_compile_options( directxtk12 PRIVATE /arch:SSE2 )
+    endif()
 endif()
 if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    target_compile_options( directxtk12 PRIVATE /Wall /fp:fast /permissive- /Zc:__cplusplus )
+    target_compile_options( directxtk12 PRIVATE /Wall /permissive- /Zc:__cplusplus )
 endif()
 
 # Windows 10 is used here
