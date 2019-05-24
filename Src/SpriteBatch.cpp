@@ -817,7 +817,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
         // Set the vertex buffer view
         D3D12_VERTEX_BUFFER_VIEW vbv;
         size_t spriteVertexTotalSize = sizeof(VertexPositionColorTexture) * VerticesPerSprite;
-        vbv.BufferLocation = mVertexSegment.GpuAddress() + mSpriteCount * spriteVertexTotalSize;
+        vbv.BufferLocation = mVertexSegment.GpuAddress() + (UINT64(mSpriteCount) * UINT64(spriteVertexTotalSize));
         vbv.StrideInBytes = sizeof(VertexPositionColorTexture);
         vbv.SizeInBytes = static_cast<UINT>(batchSize * spriteVertexTotalSize);
         commandList->IASetVertexBuffers(0, 1, &vbv);

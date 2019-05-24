@@ -366,10 +366,12 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t dataSize, ID3D12Device* device)
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t idataSize, ID3D12Device* device)
 {
     if (!meshData)
         throw std::exception("meshData cannot be null");
+
+    uint64_t dataSize = idataSize;
 
     // File Headers
     if (dataSize < sizeof(DXUT::SDKMESH_HEADER))
@@ -408,32 +410,32 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
     // Sub-headers
     if (dataSize < header->VertexStreamHeadersOffset
-        || (dataSize < (header->VertexStreamHeadersOffset + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER))))
+        || (dataSize < (header->VertexStreamHeadersOffset + uint64_t(header->NumVertexBuffers) * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER))))
         throw std::exception("End of file");
     auto vbArray = reinterpret_cast<const DXUT::SDKMESH_VERTEX_BUFFER_HEADER*>(meshData + header->VertexStreamHeadersOffset);
 
     if (dataSize < header->IndexStreamHeadersOffset
-        || (dataSize < (header->IndexStreamHeadersOffset + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER))))
+        || (dataSize < (header->IndexStreamHeadersOffset + uint64_t(header->NumIndexBuffers) * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER))))
         throw std::exception("End of file");
     auto ibArray = reinterpret_cast<const DXUT::SDKMESH_INDEX_BUFFER_HEADER*>(meshData + header->IndexStreamHeadersOffset);
 
     if (dataSize < header->MeshDataOffset
-        || (dataSize < (header->MeshDataOffset + header->NumMeshes * sizeof(DXUT::SDKMESH_MESH))))
+        || (dataSize < (header->MeshDataOffset + uint64_t(header->NumMeshes) * sizeof(DXUT::SDKMESH_MESH))))
         throw std::exception("End of file");
     auto meshArray = reinterpret_cast<const DXUT::SDKMESH_MESH*>(meshData + header->MeshDataOffset);
 
     if (dataSize < header->SubsetDataOffset
-        || (dataSize < (header->SubsetDataOffset + header->NumTotalSubsets * sizeof(DXUT::SDKMESH_SUBSET))))
+        || (dataSize < (header->SubsetDataOffset + uint64_t(header->NumTotalSubsets) * sizeof(DXUT::SDKMESH_SUBSET))))
         throw std::exception("End of file");
     auto subsetArray = reinterpret_cast<const DXUT::SDKMESH_SUBSET*>(meshData + header->SubsetDataOffset);
 
     if (dataSize < header->FrameDataOffset
-        || (dataSize < (header->FrameDataOffset + header->NumFrames * sizeof(DXUT::SDKMESH_FRAME))))
+        || (dataSize < (header->FrameDataOffset + uint64_t(header->NumFrames) * sizeof(DXUT::SDKMESH_FRAME))))
         throw std::exception("End of file");
     // TODO - auto frameArray = reinterpret_cast<const DXUT::SDKMESH_FRAME*>( meshData + header->FrameDataOffset );
 
     if (dataSize < header->MaterialDataOffset
-        || (dataSize < (header->MaterialDataOffset + header->NumMaterials * sizeof(DXUT::SDKMESH_MATERIAL))))
+        || (dataSize < (header->MaterialDataOffset + uint64_t(header->NumMaterials) * sizeof(DXUT::SDKMESH_MATERIAL))))
         throw std::exception("End of file");
 
     const DXUT::SDKMESH_MATERIAL* materialArray = nullptr;
@@ -539,7 +541,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
         // mh.NumVertexBuffers is sometimes not what you'd expect, so we skip validating it
 
         if (dataSize < mh.SubsetOffset
-            || (dataSize < mh.SubsetOffset + mh.NumSubsets * sizeof(UINT)))
+            || (dataSize < mh.SubsetOffset + uint64_t(mh.NumSubsets) * sizeof(UINT)))
             throw std::exception("End of file");
 
         auto subsets = reinterpret_cast<const UINT*>(meshData + mh.SubsetOffset);
@@ -547,7 +549,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
         if (mh.NumFrameInfluences > 0)
         {
             if (dataSize < mh.FrameInfluenceOffset
-                || (dataSize < mh.FrameInfluenceOffset + mh.NumFrameInfluences * sizeof(UINT)))
+                || (dataSize < mh.FrameInfluenceOffset + uint64_t(mh.NumFrameInfluences) * sizeof(UINT)))
                 throw std::exception("End of file");
 
             // TODO - auto influences = reinterpret_cast<const UINT*>( meshData + mh.FrameInfluenceOffset );
