@@ -420,7 +420,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
             throw std::exception("PBREffect");
         }
 
-        for (int i = 0; i < ConstantBuffer; i++)
+        for (unsigned i = 0; i < ConstantBuffer; i++)
         {
             if (i == EmissiveTexture)
                 continue;
