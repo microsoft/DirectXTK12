@@ -17,6 +17,9 @@ using Microsoft::WRL::ComPtr;
 
 namespace DirectX
 {
+    uint32_t CountMips(uint32_t width, uint32_t height);
+        // Also used by DDSTextureLoader & WICTextureLoader
+
     uint32_t CountMips(uint32_t width, uint32_t height)
     {
         if (width == 0 || height == 0)

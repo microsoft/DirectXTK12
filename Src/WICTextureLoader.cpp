@@ -159,6 +159,9 @@ namespace
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
+    IWICImagingFactory2* _GetWIC();
+        // Also used by ScreenGrab
+
     IWICImagingFactory2* _GetWIC()
     {
         static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
