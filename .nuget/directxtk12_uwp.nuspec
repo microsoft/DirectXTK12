@@ -36,7 +36,7 @@ WICTextureLoader - WIC-based image file texture loader</description>
         <releaseNotes>Matches the May 30, 2019 release on GitHub.</releaseNotes>
         <projectUrl>http://go.microsoft.com/fwlink/?LinkID=615561</projectUrl>
         <iconUrl>https://github.com/Microsoft/DirectXTK12/wiki/X_jpg.jpg</iconUrl>
-        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <license type="expression">MIT</license>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
         <tags>DirectX  DirectXTK  DirectXTK12  native nativepackage</tags>
