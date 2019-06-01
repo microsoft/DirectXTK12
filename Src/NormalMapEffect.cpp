@@ -195,7 +195,7 @@ const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
 
 // Global pool of per-device NormalMapEffect resources.
 template<>
-SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResources> EffectBase<NormalMapEffectTraits>::deviceResourcesPool;
+SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResources> EffectBase<NormalMapEffectTraits>::deviceResourcesPool = {};
 
 
 // Constructor.

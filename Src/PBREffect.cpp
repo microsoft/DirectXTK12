@@ -173,7 +173,7 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 
 // Global pool of per-device PBREffect resources. Required by EffectBase<>, but not used.
 template<>
-SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool;
+SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool = {};
 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
