@@ -52,8 +52,8 @@ namespace DirectX
     public:
         LinearAllocatorPage() noexcept;
 
-        LinearAllocatorPage(LinearAllocatorPage&&) = default;
-        LinearAllocatorPage& operator= (LinearAllocatorPage&&) = default;
+        LinearAllocatorPage(LinearAllocatorPage&&) = delete;
+        LinearAllocatorPage& operator= (LinearAllocatorPage&&) = delete;
 
         LinearAllocatorPage(LinearAllocatorPage const&) = delete;
         LinearAllocatorPage& operator=(LinearAllocatorPage const&) = delete;

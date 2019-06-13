@@ -260,7 +260,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
     // Round up the srcPitch to multiples of 1024
-    UINT64 dstRowPitch = (fpRowPitch + D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1) & ~(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1);
+    UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
     // Round up the srcPitch to multiples of 256
     UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;
@@ -476,7 +476,7 @@ HRESULT DirectX::SaveWICTextureToFile(
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
     // Round up the srcPitch to multiples of 1024
-    UINT64 dstRowPitch = (fpRowPitch + D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1) & ~(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT - 1);
+    UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
     // Round up the srcPitch to multiples of 256
     UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;

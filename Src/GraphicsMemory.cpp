@@ -162,7 +162,9 @@ namespace
             }
         }
 
+    #if !defined(_XBOX_ONE) || !defined(_TITLE)
         ID3D12Device* GetDevice() const { return mDevice.Get(); }
+    #endif
 
     private:
         ComPtr<ID3D12Device> mDevice;
