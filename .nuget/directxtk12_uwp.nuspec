@@ -63,8 +63,8 @@ WICTextureLoader - WIC-based image file texture loader</description>
         <file target="lib\Win32\Debug" src="Bin\Windows10_2017\Win32\Debug\*.lib" />
         <file target="lib\Win32\Debug" src="Bin\Windows10_2017\Win32\Debug\*.pdb" />
 
-        <file target="lib\Win32\Release" src="Bin\Windows10\Win32\Release\*.lib" />
-        <file target="lib\Win32\Release" src="Bin\Windows10\Win32\Release\*.pdb" />
+        <file target="lib\Win32\Release" src="Bin\Windows10_2017\Win32\Release\*.lib" />
+        <file target="lib\Win32\Release" src="Bin\Windows10_2017\Win32\Release\*.pdb" />
 
         <file target="lib\x64\Debug" src="Bin\Windows10_2017\x64\Debug\*.lib" />
         <file target="lib\x64\Debug" src="Bin\Windows10_2017\x64\Debug\*.pdb" />
