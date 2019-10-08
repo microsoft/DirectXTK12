@@ -300,7 +300,7 @@ namespace
 
         switch (xboxext->resourceDimension)
         {
-        case D3D11_RESOURCE_DIMENSION_TEXTURE1D:
+        case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
             if ((header->flags & DDS_HEIGHT) && height != 1)
             {
                 return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
@@ -308,8 +308,8 @@ namespace
             height = depth = 1;
             break;
 
-        case D3D11_RESOURCE_DIMENSION_TEXTURE2D:
-            if (xboxext->miscFlag & D3D11_RESOURCE_MISC_TEXTURECUBE)
+        case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
+            if (xboxext->miscFlag & 0x4 /* RESOURCE_MISC_TEXTURECUBE */)
             {
                 arraySize *= 6;
                 isCubeMap = true;
@@ -317,7 +317,7 @@ namespace
             depth = 1;
             break;
 
-        case D3D11_RESOURCE_DIMENSION_TEXTURE3D:
+        case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
             if (!(header->flags & DDS_HEADER_FLAGS_VOLUME))
             {
                 return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
@@ -341,38 +341,38 @@ namespace
 
         switch (xboxext->resourceDimension)
         {
-        case D3D11_RESOURCE_DIMENSION_TEXTURE1D:
-            if ((arraySize > D3D11_REQ_TEXTURE1D_ARRAY_AXIS_DIMENSION) ||
-                (width > D3D11_REQ_TEXTURE1D_U_DIMENSION))
+        case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
+            if ((arraySize > D3D12_REQ_TEXTURE1D_ARRAY_AXIS_DIMENSION) ||
+                (width > D3D12_REQ_TEXTURE1D_U_DIMENSION))
             {
                 return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
             }
             break;
 
-        case D3D11_RESOURCE_DIMENSION_TEXTURE2D:
+        case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
             if (isCubeMap)
             {
                 // This is the right bound because we set arraySize to (NumCubes*6) above
-                if ((arraySize > D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
-                    (width > D3D11_REQ_TEXTURECUBE_DIMENSION) ||
-                    (height > D3D11_REQ_TEXTURECUBE_DIMENSION))
+                if ((arraySize > D3D12_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
+                    (width > D3D12_REQ_TEXTURECUBE_DIMENSION) ||
+                    (height > D3D12_REQ_TEXTURECUBE_DIMENSION))
                 {
                     return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
                 }
             }
-            else if ((arraySize > D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
-                (width > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION) ||
-                (height > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION))
+            else if ((arraySize > D3D12_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
+                (width > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION) ||
+                (height > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION))
             {
                 return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
             }
             break;
 
-        case D3D11_RESOURCE_DIMENSION_TEXTURE3D:
+        case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
             if ((arraySize > 1) ||
-                (width > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
-                (height > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
-                (depth > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
+                (width > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
+                (height > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
+                (depth > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
             {
                 return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
             }
