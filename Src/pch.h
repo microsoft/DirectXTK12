@@ -130,6 +130,7 @@
 #include <DirectXCollision.h>
 
 #include <algorithm>
+#include <atomic>
 #include <array>
 #include <exception>
 #include <future>

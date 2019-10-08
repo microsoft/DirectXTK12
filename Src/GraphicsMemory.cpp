@@ -12,8 +12,6 @@
 #include "PlatformHelpers.h"
 #include "LinearAllocator.h"
 
-#include <atomic>
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 using ScopedLock = std::lock_guard<std::mutex>;
