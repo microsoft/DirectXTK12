@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-August 21, 2019
+October 17, 2019
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32
@@ -127,6 +127,11 @@ RELEASE NOTES
 ---------------
 RELEASE HISTORY
 ---------------
+
+October 17, 2019
+    Added optional forceSRGB parameter to SaveWICTextureToFile
+    GamePad updated to report VID/PID (when supported)
+    Minor code cleanup
 
 August 21, 2019
     Updated D3DX12 internal copy to latest version
