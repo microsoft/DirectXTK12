@@ -123,7 +123,9 @@ string(REPLACE "/W3" "/Wall" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 string(REPLACE "/W3" "/Wall" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
 string(REPLACE "/W3" "/Wall" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
 
-target_compile_options(${PROJECT_NAME} PRIVATE /GR /fp:fast)
+# Model uses dynamic_cast, so we need /GR (Enable RTTI)
+
+target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)
 
 if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
     target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
