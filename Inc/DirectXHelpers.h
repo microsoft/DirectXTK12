@@ -21,6 +21,8 @@
 #include <utility>
 #include <vector>
 
+#include <assert.h>
+
 #include <wrl/client.h>
 
 #ifndef IID_GRAPHICS_PPV_ARGS
