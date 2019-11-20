@@ -28,6 +28,8 @@
 #include <assert.h>
 #include <stdint.h>
 
+#include <wrl/client.h>
+
 #include "GraphicsMemory.h"
 #include "Effects.h"
 
