@@ -13,6 +13,7 @@
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
+#include <dxgiformat.h>
 #endif
 
 #include <DirectXMath.h>
