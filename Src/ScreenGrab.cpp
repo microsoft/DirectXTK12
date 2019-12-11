@@ -230,7 +230,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     ID3D12Resource* pSource,
     const wchar_t* fileName,
     D3D12_RESOURCE_STATES beforeState,
-    D3D12_RESOURCE_STATES afterState)
+    D3D12_RESOURCE_STATES afterState) noexcept
 {
     if (!fileName)
         return E_INVALIDARG;
@@ -447,7 +447,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     D3D12_RESOURCE_STATES afterState,
     const GUID* targetFormat,
     std::function<void(IPropertyBag2*)> setCustomProps,
-    bool forceSRGB)
+    bool forceSRGB) noexcept
 {
     if (!fileName)
         return E_INVALIDARG;

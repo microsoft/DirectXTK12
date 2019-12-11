@@ -65,7 +65,7 @@ namespace Xbox
         _Outptr_ void** grfxMemory,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr, 
         _In_ bool forceSRGB = false,
-        _Out_opt_ bool* isCubeMap = nullptr);
+        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFile( 
         _In_ ID3D12Device* d3dDevice,
@@ -74,7 +74,7 @@ namespace Xbox
         _Outptr_ void** grfxMemory,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _In_ bool forceSRGB = false,
-        _Out_opt_ bool* isCubeMap = nullptr);
+        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
-    void FreeDDSTextureMemory(_In_opt_ void* grfxMemory);
+    void FreeDDSTextureMemory(_In_opt_ void* grfxMemory) noexcept;
 }

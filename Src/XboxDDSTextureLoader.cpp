@@ -464,7 +464,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
     void** grfxMemory,
     DDS_ALPHA_MODE* alphaMode,
     bool forceSRGB,
-    bool* isCubeMap )
+    bool* isCubeMap ) noexcept
 {
     if (texture)
     {
@@ -552,7 +552,7 @@ HRESULT Xbox::CreateDDSTextureFromFile(
     void** grfxMemory,
     DDS_ALPHA_MODE* alphaMode,
     bool forceSRGB,
-    bool* isCubeMap )
+    bool* isCubeMap ) noexcept
 {
     if (texture)
     {
@@ -617,7 +617,7 @@ HRESULT Xbox::CreateDDSTextureFromFile(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-void Xbox::FreeDDSTextureMemory(void* grfxMemory)
+void Xbox::FreeDDSTextureMemory(void* grfxMemory) noexcept
 {
     if (grfxMemory)
     {

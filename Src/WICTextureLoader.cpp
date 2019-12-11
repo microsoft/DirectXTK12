@@ -572,7 +572,7 @@ HRESULT DirectX::LoadWICTextureFromMemory(
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& decodedData,
     D3D12_SUBRESOURCE_DATA& subresource,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return LoadWICTextureFromMemoryEx(
         d3dDevice,
@@ -594,7 +594,7 @@ HRESULT DirectX::CreateWICTextureFromMemory(
     size_t wicDataSize,
     ID3D12Resource** texture,
     bool generateMips,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return CreateWICTextureFromMemoryEx(
         d3dDevice,
@@ -619,7 +619,7 @@ HRESULT DirectX::LoadWICTextureFromMemoryEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& decodedData,
-    D3D12_SUBRESOURCE_DATA& subresource)
+    D3D12_SUBRESOURCE_DATA& subresource) noexcept
 {
     if (texture)
     {
@@ -682,7 +682,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
     unsigned int loadFlags,
-    ID3D12Resource** texture)
+    ID3D12Resource** texture) noexcept
 {
     if (texture)
     {
@@ -776,7 +776,7 @@ HRESULT DirectX::LoadWICTextureFromFile(
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& wicData,
     D3D12_SUBRESOURCE_DATA& subresource,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return LoadWICTextureFromFileEx(
         d3dDevice,
@@ -796,7 +796,7 @@ HRESULT DirectX::CreateWICTextureFromFile(
     const wchar_t* fileName,
     ID3D12Resource** texture,
     bool generateMips,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return CreateWICTextureFromFileEx(
         d3dDevice,
@@ -819,7 +819,7 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& decodedData,
-    D3D12_SUBRESOURCE_DATA& subresource)
+    D3D12_SUBRESOURCE_DATA& subresource) noexcept
 {
     if (texture)
     {
@@ -868,7 +868,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
     unsigned int loadFlags,
-    ID3D12Resource** texture)
+    ID3D12Resource** texture) noexcept
 {
     if (texture)
     {

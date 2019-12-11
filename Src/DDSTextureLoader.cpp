@@ -604,7 +604,7 @@ HRESULT DirectX::LoadDDSTextureFromMemory(
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     return LoadDDSTextureFromMemoryEx(
         d3dDevice,
@@ -631,7 +631,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
     ID3D12Resource** texture,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     if (texture)
     {
@@ -696,7 +696,7 @@ HRESULT DirectX::LoadDDSTextureFromFile(
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     return LoadDDSTextureFromFileEx(
         d3dDevice,
@@ -722,7 +722,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
     std::unique_ptr<uint8_t[]>& ddsData,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     if (texture)
     {
@@ -784,7 +784,7 @@ HRESULT DirectX::CreateDDSTextureFromMemory(
     bool generateMipsIfMissing,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     return CreateDDSTextureFromMemoryEx(
         d3dDevice,
@@ -811,7 +811,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     if (texture)
     {
@@ -905,7 +905,7 @@ HRESULT DirectX::CreateDDSTextureFromFile(
     bool generateMipsIfMissing,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     return CreateDDSTextureFromFileEx(
         d3dDevice,
@@ -929,7 +929,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap)
+    bool* isCubeMap) noexcept
 {
     if (texture)
     {
