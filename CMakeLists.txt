@@ -144,5 +144,7 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
     target_compile_options(${PROJECT_NAME} PRIVATE /permissive- /JMC- /Zc:__cplusplus)
 endif()
 
-# Windows 10 is used here
-add_compile_definitions(_UNICODE UNICODE _WIN32_WINNT=0x0A00)
+if(WIN32)
+    # Windows 10 is used here
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _UNICODE UNICODE _WIN32_WINNT=0x0A00)
+endif()
