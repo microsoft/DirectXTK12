@@ -29,15 +29,15 @@ namespace DirectX
     {
     public:
         DescriptorHeap(
-            _In_ ID3D12DescriptorHeap* pExistingHeap);
+            _In_ ID3D12DescriptorHeap* pExistingHeap) noexcept;
         DescriptorHeap(
             _In_ ID3D12Device* device,
-            _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc);
+            _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) noexcept(false);
         DescriptorHeap(
             _In_ ID3D12Device* device,
             D3D12_DESCRIPTOR_HEAP_TYPE type,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-            size_t count);
+            size_t count) noexcept(false);
 
         DescriptorHeap(DescriptorHeap&&) = default;
         DescriptorHeap& operator=(DescriptorHeap&&) = default;
@@ -66,14 +66,14 @@ namespace DirectX
             _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptors,
             uint32_t descriptorCount);
 
-        D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const
+        D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const noexcept
         {
             assert(m_desc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
             assert(m_pHeap != nullptr);
             return m_hGPU;
         }
 
-        D3D12_CPU_DESCRIPTOR_HANDLE GetFirstCpuHandle() const
+        D3D12_CPU_DESCRIPTOR_HANDLE GetFirstCpuHandle() const noexcept
         {
             assert(m_pHeap != nullptr);
             return m_hCPU;
@@ -106,18 +106,18 @@ namespace DirectX
             return handle;
         }
 
-        size_t Count() const { return m_desc.NumDescriptors; }
-        unsigned int Flags() const { return m_desc.Flags; }
-        D3D12_DESCRIPTOR_HEAP_TYPE Type() const { return m_desc.Type; }
-        size_t Increment() const { return m_increment; }
-        ID3D12DescriptorHeap* Heap() const { return m_pHeap.Get(); }
+        size_t Count() const noexcept { return m_desc.NumDescriptors; }
+        unsigned int Flags() const noexcept { return m_desc.Flags; }
+        D3D12_DESCRIPTOR_HEAP_TYPE Type() const noexcept { return m_desc.Type; }
+        size_t Increment() const noexcept { return m_increment; }
+        ID3D12DescriptorHeap* Heap() const noexcept { return m_pHeap.Get(); }
 
         static void __cdecl DefaultDesc(
             _In_ D3D12_DESCRIPTOR_HEAP_TYPE type,
-            _Out_ D3D12_DESCRIPTOR_HEAP_DESC* pDesc);
+            _Out_ D3D12_DESCRIPTOR_HEAP_DESC* pDesc) noexcept;
 
     private:
-        void __cdecl Create(_In_ ID3D12Device* pDevice, _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc);
+        void Create(_In_ ID3D12Device* pDevice, _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc);
 
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>    m_pHeap;
         D3D12_DESCRIPTOR_HEAP_DESC                      m_desc;
@@ -137,7 +137,7 @@ namespace DirectX
 
         DescriptorPile(
             _In_ ID3D12DescriptorHeap* pExistingHeap,
-            size_t reserve = 0)
+            size_t reserve = 0) noexcept(false)
             : DescriptorHeap(pExistingHeap),
             m_top(reserve)
         {
@@ -150,7 +150,7 @@ namespace DirectX
         DescriptorPile(
             _In_ ID3D12Device* device,
             _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc,
-            size_t reserve = 0)
+            size_t reserve = 0) noexcept(false)
             : DescriptorHeap(device, pDesc),
             m_top(reserve)
         {
@@ -165,7 +165,7 @@ namespace DirectX
             D3D12_DESCRIPTOR_HEAP_TYPE type,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags,
             size_t capacity,
-            size_t reserve = 0)
+            size_t reserve = 0) noexcept(false)
             : DescriptorHeap(device, type, flags, capacity),
             m_top(reserve)
         {

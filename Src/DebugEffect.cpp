@@ -51,7 +51,7 @@ public:
         RootParameterCount
     };
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -224,7 +224,7 @@ DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 }
 
 
-int DebugEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const
+int DebugEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const noexcept
 {
     int permutation = static_cast<int>(debugMode);
 

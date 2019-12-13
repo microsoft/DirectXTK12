@@ -47,7 +47,7 @@ size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
     return offset;
 }
 
-void LinearAllocatorPage::Release()
+void LinearAllocatorPage::Release() noexcept
 {
     assert(mRefCount > 0); 
 
@@ -185,7 +185,7 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
 
 // Call this once a frame after all of your driver submissions.
 // (immediately before or after Present-time)
-void LinearAllocator::RetirePendingPages()
+void LinearAllocator::RetirePendingPages() noexcept
 {
     // For each page that we know has a fence pending, check it. If the fence has passed,
     // we can mark the page for re-use.
@@ -206,7 +206,7 @@ void LinearAllocator::RetirePendingPages()
     }
 }
 
-void LinearAllocator::Shrink()
+void LinearAllocator::Shrink() noexcept
 {
     FreePages(m_unusedPages);
     m_unusedPages = nullptr;
@@ -262,7 +262,7 @@ LinearAllocatorPage* LinearAllocator::GetPageForAlloc(
 LinearAllocatorPage* LinearAllocator::FindPageForAlloc(
     LinearAllocatorPage* list,
     size_t sizeBytes,
-    size_t alignment)
+    size_t alignment) noexcept
 {
     for (auto page = list; page != nullptr; page = page->pNextPage)
     {
@@ -342,7 +342,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     return page;
 }
 
-void LinearAllocator::UnlinkPage(LinearAllocatorPage* page)
+void LinearAllocator::UnlinkPage(LinearAllocatorPage* page) noexcept
 {
     if (page->pPrevPage)
         page->pPrevPage->pNextPage = page->pNextPage;
@@ -366,7 +366,7 @@ void LinearAllocator::UnlinkPage(LinearAllocatorPage* page)
 #endif
 }
 
-void LinearAllocator::LinkPageChain(LinearAllocatorPage* page, LinearAllocatorPage*& list)
+void LinearAllocator::LinkPageChain(LinearAllocatorPage* page, LinearAllocatorPage*& list) noexcept
 {
 #if VALIDATE_LISTS
     // Walk the chain and ensure it's not in the list twice
@@ -393,7 +393,7 @@ void LinearAllocator::LinkPageChain(LinearAllocatorPage* page, LinearAllocatorPa
 #endif
 }
 
-void LinearAllocator::LinkPage(LinearAllocatorPage* page, LinearAllocatorPage*& list)
+void LinearAllocator::LinkPage(LinearAllocatorPage* page, LinearAllocatorPage*& list) noexcept
 {
 #if VALIDATE_LISTS
     // Walk the chain and ensure it's not in the list twice
@@ -417,7 +417,7 @@ void LinearAllocator::LinkPage(LinearAllocatorPage* page, LinearAllocatorPage*& 
 #endif
 }
 
-void LinearAllocator::ReleasePage(LinearAllocatorPage* page)
+void LinearAllocator::ReleasePage(LinearAllocatorPage* page) noexcept
 {
     assert(m_numPending > 0);
     m_numPending--;
@@ -437,7 +437,7 @@ void LinearAllocator::ReleasePage(LinearAllocatorPage* page)
 #endif
 }
 
-void LinearAllocator::FreePages(LinearAllocatorPage* page)
+void LinearAllocator::FreePages(LinearAllocatorPage* page) noexcept
 {
     while (page != nullptr)
     {
@@ -494,7 +494,7 @@ void LinearAllocator::SetDebugName(const wchar_t* name)
     SetPageDebugName(m_unusedPages);
 }
 
-void LinearAllocator::SetPageDebugName(LinearAllocatorPage* list)
+void LinearAllocator::SetPageDebugName(LinearAllocatorPage* list) noexcept
 {
     for (auto page = list; page != nullptr; page = page->pNextPage)
     {

@@ -165,7 +165,7 @@ namespace
 
         ID3D12RootSignature* GetRootSignature(const D3D12_ROOT_SIGNATURE_DESC& desc)
         {
-            return DemandCreate(mRootSignature, mMutex, [&](ID3D12RootSignature** pResult) -> HRESULT
+            return DemandCreate(mRootSignature, mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
             {
                 HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
@@ -176,7 +176,7 @@ namespace
             });
         }
 
-        ID3D12Device* GetDevice() const { return mDevice.Get(); }
+        ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
     protected:
         ComPtr<ID3D12Device>                        mDevice;
@@ -192,7 +192,7 @@ public:
 
     void Process(_In_ ID3D12GraphicsCommandList* commandList);
 
-    void SetDirtyFlag() { mDirtyFlags = INT_MAX; }
+    void SetDirtyFlag() noexcept { mDirtyFlags = INT_MAX; }
 
     enum RootParameterIndex
     {

@@ -17,10 +17,10 @@ using Microsoft::WRL::ComPtr;
 
 namespace DirectX
 {
-    uint32_t CountMips(uint32_t width, uint32_t height);
+    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
         // Also used by DDSTextureLoader & WICTextureLoader
 
-    uint32_t CountMips(uint32_t width, uint32_t height)
+    uint32_t CountMips(uint32_t width, uint32_t height) noexcept
     {
         if (width == 0 || height == 0)
             return 0;
@@ -45,7 +45,7 @@ namespace
 #   include "Shaders/Compiled/GenerateMips_main.inc"
 #endif
 
-    bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format)
+    bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept
     {
         switch (format)
         {
@@ -115,7 +115,7 @@ namespace
         }
     }
 
-    bool FormatIsBGR(DXGI_FORMAT format)
+    bool FormatIsBGR(DXGI_FORMAT format) noexcept
     {
         switch (format)
         {
@@ -129,7 +129,7 @@ namespace
         }
     }
 
-    bool FormatIsSRGB(DXGI_FORMAT format)
+    bool FormatIsSRGB(DXGI_FORMAT format) noexcept
     {
         switch (format)
         {
@@ -142,7 +142,7 @@ namespace
         }
     }
 
-    DXGI_FORMAT ConvertSRVtoResourceFormat(DXGI_FORMAT format)
+    DXGI_FORMAT ConvertSRVtoResourceFormat(DXGI_FORMAT format) noexcept
     {
         switch (format)
         {
@@ -303,7 +303,7 @@ class ResourceUploadBatch::Impl
 {
 public:
     Impl(
-        _In_ ID3D12Device* device)
+        _In_ ID3D12Device* device) noexcept
         : mDevice(device)
         , mInBeginEndBlock(false)
         , mTypedUAVLoadAdditionalFormats(false)
@@ -543,7 +543,7 @@ public:
         return future;
     }
 
-    bool IsSupportedForGenerateMips(DXGI_FORMAT format)
+    bool IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
     {
         if (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format))
             return true;
@@ -949,7 +949,7 @@ private:
 
 
 // Public constructor.
-ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device)
+ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false)
     : pImpl(std::make_unique<Impl>(device))
 {
 }
@@ -1026,7 +1026,7 @@ std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue
 }
 
 
-bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format)
+bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
 {
     return pImpl->IsSupportedForGenerateMips(format);
 }

@@ -36,17 +36,17 @@ namespace
     #include "Shaders/Compiled/SpriteEffect_SpritePixelShaderHeap.inc"
     #endif
 
-    inline bool operator != (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b)
+    inline bool operator != (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b) noexcept
     {
         return a.ptr != b.ptr;
     }
-    inline bool operator < (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b)
+    inline bool operator < (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b) noexcept
     {
         return a.ptr < b.ptr;
     }
 
     // Helper converts a RECT to XMVECTOR.
-    inline XMVECTOR LoadRect(_In_ RECT const* rect)
+    inline XMVECTOR LoadRect(_In_ RECT const* rect) noexcept
     {
         XMVECTOR v = XMLoadInt4(reinterpret_cast<uint32_t const*>(rect));
 
@@ -708,7 +708,7 @@ void SpriteBatch::Impl::SortSprites()
         // Sort by texture.
         std::sort(mSortedSprites.begin(),
             mSortedSprites.begin() + static_cast<int>(mSpriteQueueCount),
-            [](SpriteInfo const* x, SpriteInfo const* y) -> bool
+            [](SpriteInfo const* x, SpriteInfo const* y) noexcept -> bool
             {
                 return x->texture < y->texture;
             });
@@ -718,7 +718,7 @@ void SpriteBatch::Impl::SortSprites()
         // Sort back to front.
         std::sort(mSortedSprites.begin(),
             mSortedSprites.begin() + static_cast<int>(mSpriteQueueCount),
-            [](SpriteInfo const* x, SpriteInfo const* y) -> bool
+            [](SpriteInfo const* x, SpriteInfo const* y) noexcept -> bool
             {
                 return x->originRotationDepth.w > y->originRotationDepth.w;
             });
@@ -728,7 +728,7 @@ void SpriteBatch::Impl::SortSprites()
         // Sort front to back.
         std::sort(mSortedSprites.begin(),
             mSortedSprites.begin() + static_cast<int>(mSpriteQueueCount),
-            [](SpriteInfo const* x, SpriteInfo const* y) -> bool
+            [](SpriteInfo const* x, SpriteInfo const* y) noexcept -> bool
             {
                 return x->originRotationDepth.w < y->originRotationDepth.w;
             });
@@ -1188,7 +1188,7 @@ void SpriteBatch::SetRotation(DXGI_MODE_ROTATION mode)
 }
 
 
-DXGI_MODE_ROTATION SpriteBatch::GetRotation() const
+DXGI_MODE_ROTATION SpriteBatch::GetRotation() const noexcept
 {
     return pImpl->mRotation;
 }

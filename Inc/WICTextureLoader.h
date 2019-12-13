@@ -68,7 +68,7 @@ namespace DirectX
         size_t wicDataSize,
         _Outptr_ ID3D12Resource** texture,
         bool generateMips = false,
-        size_t maxsize = 0) noexcept;
+        size_t maxsize = 0);
 
     HRESULT __cdecl CreateWICTextureFromFile(
         _In_ ID3D12Device* d3dDevice,
@@ -76,7 +76,7 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         _Outptr_ ID3D12Resource** texture,
         bool generateMips = false,
-        size_t maxsize = 0) noexcept;
+        size_t maxsize = 0);
 
     // Extended version
     HRESULT __cdecl LoadWICTextureFromMemoryEx(
@@ -109,7 +109,7 @@ namespace DirectX
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
         unsigned int loadFlags,
-        _Outptr_ ID3D12Resource** texture) noexcept;
+        _Outptr_ ID3D12Resource** texture);
 
     HRESULT __cdecl CreateWICTextureFromFileEx(
         _In_ ID3D12Device* d3dDevice,
@@ -118,5 +118,5 @@ namespace DirectX
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
         unsigned int loadFlags,
-        _Outptr_ ID3D12Resource** texture) noexcept;
+        _Outptr_ ID3D12Resource** texture);
 }

@@ -61,7 +61,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -218,7 +218,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
 }
 
 
-int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
+int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept
 {
     int permutation = 0;
 

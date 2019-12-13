@@ -72,9 +72,9 @@ public:
     size_t CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
 
     void ReleaseCache();
-    void SetSharing(bool enabled) { mSharing = enabled; }
-    void EnableForceSRGB(bool forceSRGB) { mForceSRGB = forceSRGB; }
-    void EnableAutoGenMips(bool generateMips) { mAutoGenMips = generateMips; }
+    void SetSharing(bool enabled) noexcept { mSharing = enabled; }
+    void EnableForceSRGB(bool forceSRGB) noexcept { mForceSRGB = forceSRGB; }
+    void EnableAutoGenMips(bool generateMips) noexcept { mAutoGenMips = generateMips; }
 
     wchar_t mPath[MAX_PATH];
 
@@ -213,7 +213,7 @@ _Use_decl_annotations_
 EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
-    ID3D12DescriptorHeap* descriptorHeap)
+    ID3D12DescriptorHeap* descriptorHeap) noexcept(false)
 {
     pImpl = std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap);
 }
@@ -223,7 +223,7 @@ EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
     size_t numDescriptors,
-    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags)
+    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false)
 {
     pImpl = std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags);
 }
@@ -255,22 +255,22 @@ void EffectTextureFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void EffectTextureFactory::SetSharing(bool enabled)
+void EffectTextureFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->SetSharing(enabled);
 }
 
-void EffectTextureFactory::EnableForceSRGB(bool forceSRGB)
+void EffectTextureFactory::EnableForceSRGB(bool forceSRGB) noexcept
 {
     pImpl->EnableForceSRGB(forceSRGB);
 }
 
-void EffectTextureFactory::EnableAutoGenMips(bool generateMips)
+void EffectTextureFactory::EnableAutoGenMips(bool generateMips) noexcept
 {
     pImpl->EnableAutoGenMips(generateMips);
 }
 
-void EffectTextureFactory::SetDirectory(_In_opt_z_ const wchar_t* path)
+void EffectTextureFactory::SetDirectory(_In_opt_z_ const wchar_t* path) noexcept
 {
     if (path && *path != 0)
     {
@@ -290,7 +290,7 @@ void EffectTextureFactory::SetDirectory(_In_opt_z_ const wchar_t* path)
         *pImpl->mPath = 0;
 }
 
-ID3D12DescriptorHeap* EffectTextureFactory::Heap() const
+ID3D12DescriptorHeap* EffectTextureFactory::Heap() const noexcept
 {
     return pImpl->mTextureDescriptorHeap.Heap();
 }
@@ -306,7 +306,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE EffectTextureFactory::GetGpuDescriptorHandle(size_t 
     return pImpl->mTextureDescriptorHeap.GetGpuHandle(index);
 }
 
-size_t EffectTextureFactory::ResourceCount() const
+size_t EffectTextureFactory::ResourceCount() const noexcept
 {
     return pImpl->mResources.size();
 }

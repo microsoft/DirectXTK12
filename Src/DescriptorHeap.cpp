@@ -34,7 +34,7 @@ namespace
 
 _Use_decl_annotations_
 DescriptorHeap::DescriptorHeap(
-    ID3D12DescriptorHeap* pExistingHeap)
+    ID3D12DescriptorHeap* pExistingHeap) noexcept
     : m_pHeap(pExistingHeap)
 {
     m_hCPU = pExistingHeap->GetCPUDescriptorHandleForHeapStart();
@@ -50,7 +50,7 @@ DescriptorHeap::DescriptorHeap(
 _Use_decl_annotations_
 DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
-    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) :
+    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) noexcept(false) :
     m_desc{},
     m_hCPU{},
     m_hGPU{},
@@ -64,7 +64,7 @@ DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
     D3D12_DESCRIPTOR_HEAP_TYPE type,
     D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-    size_t count) :
+    size_t count) noexcept(false) :
     m_desc{},
     m_hCPU{},
     m_hGPU{},
@@ -179,7 +179,7 @@ void DescriptorHeap::Create(
 _Use_decl_annotations_
 void DescriptorHeap::DefaultDesc(
     D3D12_DESCRIPTOR_HEAP_TYPE type,
-    D3D12_DESCRIPTOR_HEAP_DESC* pDesc)
+    D3D12_DESCRIPTOR_HEAP_DESC* pDesc) noexcept
 {
     assert(c_DescriptorHeapDescs[type].Type == type);
     pDesc->Flags = c_DescriptorHeapDescs[type].Flags;

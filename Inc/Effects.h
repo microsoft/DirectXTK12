@@ -627,13 +627,13 @@ namespace DirectX
         EffectTextureFactory(
             _In_ ID3D12Device* device,
             ResourceUploadBatch& resourceUploadBatch,
-            _In_ ID3D12DescriptorHeap* descriptorHeap);
+            _In_ ID3D12DescriptorHeap* descriptorHeap) noexcept(false);
 
         EffectTextureFactory(
             _In_ ID3D12Device* device,
             ResourceUploadBatch& resourceUploadBatch,
             _In_ size_t numDescriptors,
-            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags);
+            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false);
 
         EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept;
         EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom) noexcept;
@@ -645,14 +645,14 @@ namespace DirectX
 
         virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
-        ID3D12DescriptorHeap* __cdecl Heap() const;
+        ID3D12DescriptorHeap* __cdecl Heap() const noexcept;
 
         // Shorthand accessors for the descriptor heap
         D3D12_CPU_DESCRIPTOR_HANDLE __cdecl GetCpuDescriptorHandle(size_t index) const;
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuDescriptorHandle(size_t index) const;
 
         // How many textures are there in this factory?
-        size_t __cdecl ResourceCount() const;
+        size_t __cdecl ResourceCount() const noexcept;
 
         // Get a resource in a specific slot (note: increases reference count on resource)
         void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_opt_ bool* isCubeMap = nullptr);
@@ -660,12 +660,12 @@ namespace DirectX
         // Settings.
         void __cdecl ReleaseCache();
 
-        void __cdecl SetSharing(bool enabled);
+        void __cdecl SetSharing(bool enabled) noexcept;
 
-        void __cdecl EnableForceSRGB(bool forceSRGB);
-        void __cdecl EnableAutoGenMips(bool generateMips);
+        void __cdecl EnableForceSRGB(bool forceSRGB) noexcept;
+        void __cdecl EnableAutoGenMips(bool generateMips) noexcept;
 
-        void __cdecl SetDirectory(_In_opt_z_ const wchar_t* path);
+        void __cdecl SetDirectory(_In_opt_z_ const wchar_t* path) noexcept;
 
     private:
         // Private implementation
@@ -773,13 +773,13 @@ namespace DirectX
         // Settings.
         void __cdecl ReleaseCache();
 
-        void __cdecl SetSharing(bool enabled);
+        void __cdecl SetSharing(bool enabled) noexcept;
 
-        void __cdecl EnablePerPixelLighting(bool enabled);
+        void __cdecl EnablePerPixelLighting(bool enabled) noexcept;
 
-        void __cdecl EnableNormalMapEffect(bool enabled);
+        void __cdecl EnableNormalMapEffect(bool enabled) noexcept;
 
-        void __cdecl EnableFogging(bool enabled);
+        void __cdecl EnableFogging(bool enabled) noexcept;
 
     private:
         // Private implementation.
@@ -793,10 +793,10 @@ namespace DirectX
     class PBREffectFactory : public IEffectFactory
     {
     public:
-        PBREffectFactory(_In_ ID3D12Device* device);
+        PBREffectFactory(_In_ ID3D12Device* device) noexcept(false);
         PBREffectFactory(
             _In_ ID3D12DescriptorHeap* textureDescriptors,
-            _In_ ID3D12DescriptorHeap* samplerDescriptors);
+            _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false);
 
         PBREffectFactory(PBREffectFactory&& moveFrom) noexcept;
         PBREffectFactory& operator= (PBREffectFactory&& moveFrom) noexcept;
@@ -818,7 +818,7 @@ namespace DirectX
         // Settings.
         void __cdecl ReleaseCache();
 
-        void __cdecl SetSharing(bool enabled);
+        void __cdecl SetSharing(bool enabled) noexcept;
 
     private:
         // Private implementation.

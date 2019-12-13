@@ -44,7 +44,7 @@ namespace DirectX
         // Single render target convenience constructor
         RenderTargetState(
             _In_ DXGI_FORMAT rtFormat,
-            _In_ DXGI_FORMAT dsFormat)
+            _In_ DXGI_FORMAT dsFormat) noexcept
             : sampleMask(UINT_MAX)
             , numRenderTargets(1)
             , rtvFormats{}
@@ -59,7 +59,7 @@ namespace DirectX
         // Convenience constructor converting from DXGI_SWAPCHAIN_DESC
         RenderTargetState(
             _In_ const DXGI_SWAP_CHAIN_DESC* desc,
-            _In_ DXGI_FORMAT dsFormat)
+            _In_ DXGI_FORMAT dsFormat) noexcept
             : sampleMask(UINT_MAX)
             , numRenderTargets(1)
             , rtvFormats{}

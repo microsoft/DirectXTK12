@@ -43,7 +43,7 @@ namespace
         const D3D12_RESOURCE_DESC& desc,
         ComPtr<ID3D12Resource>& pStaging,
         D3D12_RESOURCE_STATES beforeState,
-        D3D12_RESOURCE_STATES afterState)
+        D3D12_RESOURCE_STATES afterState) noexcept
     {
         if (!pCommandQ || !pSource)
             return E_INVALIDARG;
@@ -434,7 +434,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    extern IWICImagingFactory2* _GetWIC();
+    extern IWICImagingFactory2* _GetWIC() noexcept;
 }
 
 _Use_decl_annotations_

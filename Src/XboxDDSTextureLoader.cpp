@@ -69,8 +69,7 @@ namespace
         std::unique_ptr<uint8_t[]>& ddsData,
         DDS_HEADER** header,
         uint8_t** bitData,
-        size_t* bitSize
-    )
+        size_t* bitSize) noexcept
     {
         if (!header || !bitData || !bitSize)
         {
@@ -172,7 +171,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT format)
+    DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT format) noexcept
     {
         switch (format)
         {
@@ -212,7 +211,7 @@ namespace
         _In_ uint32_t arraySize,
         _In_ bool forceSRGB,
         _In_ void* grfxMemory,
-        _Outptr_ ID3D12Resource** texture)
+        _Outptr_ ID3D12Resource** texture) noexcept
     {
         if (!d3dDevice || !grfxMemory)
             return E_POINTER;
@@ -260,7 +259,7 @@ namespace
         _In_ bool forceSRGB,
         _Outptr_ ID3D12Resource** texture,
         _Outptr_ void** grfxMemory,
-        _Out_opt_ bool* outIsCubeMap)
+        _Out_opt_ bool* outIsCubeMap) noexcept
     {
         HRESULT hr = S_OK;
 
@@ -427,7 +426,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    DDS_ALPHA_MODE GetAlphaMode(_In_ const DDS_HEADER* header)
+    DDS_ALPHA_MODE GetAlphaMode(_In_ const DDS_HEADER* header) noexcept
     {
         if (header->ddspf.flags & DDS_FOURCC)
         {

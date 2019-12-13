@@ -163,7 +163,7 @@ namespace DirectX
             }
         }
 
-        D3D12_GPU_VIRTUAL_ADDRESS GetConstantBufferGpuAddress()
+        D3D12_GPU_VIRTUAL_ADDRESS GetConstantBufferGpuAddress() noexcept
         {
             return mConstantBuffer.GpuAddress();
         }
@@ -216,7 +216,7 @@ namespace DirectX
                 return DemandCreateRootSig(mRootSignature[slot], desc);
             }
 
-            ID3D12Device* GetDevice() const { return mDevice.Get(); }
+            ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
         private:
             Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature[Traits::RootSignatureCount];

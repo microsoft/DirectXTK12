@@ -63,7 +63,7 @@ public:
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
-    int GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const;
+    int GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const noexcept;
 
     bool textureEnabled;
     bool emissiveMap;
@@ -299,7 +299,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const
+int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const noexcept
 {
     int permutation = 0;
 

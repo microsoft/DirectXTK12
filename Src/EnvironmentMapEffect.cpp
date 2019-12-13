@@ -80,7 +80,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMap;
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMapSampler;
 
-    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting, bool biasedVertexNormals) const;
+    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting, bool biasedVertexNormals) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -319,7 +319,7 @@ EnvironmentMapEffect::Impl::Impl(
 
 int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(
     bool fresnelEnabled, bool specularEnabled,
-    bool preferPerPixelLighting, bool biasedVertexNormals) const
+    bool preferPerPixelLighting, bool biasedVertexNormals) const noexcept
 {
     int permutation = 0;
 

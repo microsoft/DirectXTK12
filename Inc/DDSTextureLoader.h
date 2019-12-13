@@ -56,7 +56,7 @@ namespace DirectX
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl LoadDDSTextureFromFile(
         _In_ ID3D12Device* d3dDevice,
@@ -66,7 +66,7 @@ namespace DirectX
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     // Standard version with resource upload
     HRESULT __cdecl CreateDDSTextureFromMemory(
@@ -78,7 +78,7 @@ namespace DirectX
         bool generateMipsIfMissing = false,
         size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D12Device* device,
@@ -88,7 +88,7 @@ namespace DirectX
         bool generateMipsIfMissing = false,
         size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     // Extended version
     HRESULT __cdecl LoadDDSTextureFromMemoryEx(
@@ -101,7 +101,7 @@ namespace DirectX
         _Outptr_ ID3D12Resource** texture,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl LoadDDSTextureFromFileEx(
         _In_ ID3D12Device* d3dDevice,
@@ -113,7 +113,7 @@ namespace DirectX
         std::unique_ptr<uint8_t[]>& ddsData,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     // Extended version with resource upload
     HRESULT __cdecl CreateDDSTextureFromMemoryEx(
@@ -126,7 +126,7 @@ namespace DirectX
         unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl CreateDDSTextureFromFileEx(
         _In_ ID3D12Device* device,
@@ -137,5 +137,5 @@ namespace DirectX
         unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
-        _Out_opt_ bool* isCubeMap = nullptr) noexcept;
+        _Out_opt_ bool* isCubeMap = nullptr);
 }

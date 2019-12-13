@@ -31,7 +31,7 @@
 
 namespace DirectX
 {
-    uint32_t CountMips(uint32_t width, uint32_t height);
+    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
 }
 
 using namespace DirectX;
@@ -159,10 +159,10 @@ namespace
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    IWICImagingFactory2* _GetWIC();
+    IWICImagingFactory2* _GetWIC() noexcept;
         // Also used by ScreenGrab
 
-    IWICImagingFactory2* _GetWIC()
+    IWICImagingFactory2* _GetWIC() noexcept
     {
         static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
@@ -181,7 +181,7 @@ namespace DirectX
 namespace
 {
     //---------------------------------------------------------------------------------
-    DXGI_FORMAT _WICToDXGI(const GUID& guid)
+    DXGI_FORMAT _WICToDXGI(const GUID& guid) noexcept
     {
         for (size_t i = 0; i < _countof(g_WICFormats); ++i)
         {
@@ -193,7 +193,7 @@ namespace
     }
 
     //---------------------------------------------------------------------------------
-    size_t _WICBitsPerPixel(REFGUID targetGuid)
+    size_t _WICBitsPerPixel(REFGUID targetGuid) noexcept
     {
         auto pWIC = _GetWIC();
         if (!pWIC)
@@ -229,7 +229,7 @@ namespace
         unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& decodedData,
-        D3D12_SUBRESOURCE_DATA& subresource)
+        D3D12_SUBRESOURCE_DATA& subresource) noexcept
     {
         UINT width, height;
         HRESULT hr = frame->GetSize(&width, &height);
@@ -516,7 +516,7 @@ namespace
     //--------------------------------------------------------------------------------------
     void SetDebugTextureInfo(
         _In_z_ const wchar_t* fileName,
-        _In_ ID3D12Resource** texture)
+        _In_ ID3D12Resource** texture) noexcept
     {
 #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
         if (texture && *texture)
@@ -540,7 +540,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    DXGI_FORMAT GetPixelFormat(_In_ IWICBitmapFrameDecode* frame)
+    DXGI_FORMAT GetPixelFormat(_In_ IWICBitmapFrameDecode* frame) noexcept
     {
         WICPixelFormatGUID pixelFormat;
         if (FAILED(frame->GetPixelFormat(&pixelFormat)))
@@ -594,7 +594,7 @@ HRESULT DirectX::CreateWICTextureFromMemory(
     size_t wicDataSize,
     ID3D12Resource** texture,
     bool generateMips,
-    size_t maxsize) noexcept
+    size_t maxsize)
 {
     return CreateWICTextureFromMemoryEx(
         d3dDevice,
@@ -682,7 +682,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
     unsigned int loadFlags,
-    ID3D12Resource** texture) noexcept
+    ID3D12Resource** texture)
 {
     if (texture)
     {
@@ -796,7 +796,7 @@ HRESULT DirectX::CreateWICTextureFromFile(
     const wchar_t* fileName,
     ID3D12Resource** texture,
     bool generateMips,
-    size_t maxsize) noexcept
+    size_t maxsize)
 {
     return CreateWICTextureFromFileEx(
         d3dDevice,
@@ -868,7 +868,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
     unsigned int loadFlags,
-    ID3D12Resource** texture) noexcept
+    ID3D12Resource** texture)
 {
     if (texture)
     {

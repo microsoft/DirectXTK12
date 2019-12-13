@@ -25,7 +25,7 @@
 
 namespace DirectX
 {
-    uint32_t CountMips(uint32_t width, uint32_t height);
+    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
 }
 
 using namespace DirectX;
@@ -37,7 +37,7 @@ static_assert(static_cast<int>(DDS_DIMENSION_TEXTURE3D) == static_cast<int>(D3D1
 
 namespace
 {
-    inline bool IsDepthStencil(DXGI_FORMAT fmt)
+    inline bool IsDepthStencil(DXGI_FORMAT fmt) noexcept
     {
         switch (fmt)
         {
@@ -69,7 +69,7 @@ namespace
         _In_ DXGI_FORMAT fmt,
         _In_ size_t height,
         _In_ size_t slicePlane,
-        _Inout_ D3D12_SUBRESOURCE_DATA& res)
+        _Inout_ D3D12_SUBRESOURCE_DATA& res) noexcept
     {
         switch (fmt)
         {
@@ -233,7 +233,7 @@ namespace
         DXGI_FORMAT format,
         D3D12_RESOURCE_FLAGS resFlags,
         unsigned int loadFlags,
-        _Outptr_ ID3D12Resource** texture)
+        _Outptr_ ID3D12Resource** texture) noexcept
     {
         if (!d3dDevice)
             return E_POINTER;
@@ -286,7 +286,7 @@ namespace
         unsigned int loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
-        _Out_opt_ bool* outIsCubeMap)
+        _Out_opt_ bool* outIsCubeMap) noexcept(false)
     {
         HRESULT hr = S_OK;
 
@@ -556,7 +556,7 @@ namespace
     //--------------------------------------------------------------------------------------
     void SetDebugTextureInfo(
         _In_z_ const wchar_t* fileName,
-        _In_ ID3D12Resource** texture)
+        _In_ ID3D12Resource** texture) noexcept
     {
 #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
         if (texture && *texture)
@@ -580,7 +580,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    DXGI_FORMAT GetPixelFormat(const DDS_HEADER* header)
+    DXGI_FORMAT GetPixelFormat(const DDS_HEADER* header) noexcept
     {
         if ((header->ddspf.flags & DDS_FOURCC) &&
             (MAKEFOURCC('D', 'X', '1', '0') == header->ddspf.fourCC))
@@ -604,7 +604,7 @@ HRESULT DirectX::LoadDDSTextureFromMemory(
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     return LoadDDSTextureFromMemoryEx(
         d3dDevice,
@@ -631,7 +631,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
     ID3D12Resource** texture,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     if (texture)
     {
@@ -696,7 +696,7 @@ HRESULT DirectX::LoadDDSTextureFromFile(
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     return LoadDDSTextureFromFileEx(
         d3dDevice,
@@ -722,7 +722,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
     std::unique_ptr<uint8_t[]>& ddsData,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     if (texture)
     {
@@ -784,7 +784,7 @@ HRESULT DirectX::CreateDDSTextureFromMemory(
     bool generateMipsIfMissing,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     return CreateDDSTextureFromMemoryEx(
         d3dDevice,
@@ -811,7 +811,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     if (texture)
     {
@@ -905,7 +905,7 @@ HRESULT DirectX::CreateDDSTextureFromFile(
     bool generateMipsIfMissing,
     size_t maxsize,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     return CreateDDSTextureFromFileEx(
         d3dDevice,
@@ -929,7 +929,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
     unsigned int loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
-    bool* isCubeMap) noexcept
+    bool* isCubeMap)
 {
     if (texture)
     {

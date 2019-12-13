@@ -60,7 +60,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     
-    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -222,7 +222,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
+int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept
 {
     int permutation = 0;
 

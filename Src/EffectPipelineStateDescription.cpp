@@ -68,7 +68,7 @@ namespace
 }
 
 
-uint32_t EffectPipelineStateDescription::ComputeHash() const
+uint32_t EffectPipelineStateDescription::ComputeHash() const noexcept
 {
     // Computes a CRC32 of the structure
     uint32_t crc = 0xFFFFFFFF;

@@ -25,7 +25,7 @@ using Microsoft::WRL::ComPtr;
 class EffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
+    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
         , mUseNormalMapEffect(true)
@@ -49,7 +49,7 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing(bool enabled) { mSharing = enabled; }
+    void SetSharing(bool enabled) noexcept { mSharing = enabled; }
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
@@ -527,22 +527,22 @@ void EffectFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void EffectFactory::SetSharing(bool enabled)
+void EffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->SetSharing(enabled);
 }
 
-void EffectFactory::EnablePerPixelLighting(bool enabled)
+void EffectFactory::EnablePerPixelLighting(bool enabled) noexcept
 {
     pImpl->mEnablePerPixelLighting = enabled;
 }
 
-void EffectFactory::EnableFogging(bool enabled)
+void EffectFactory::EnableFogging(bool enabled) noexcept
 {
     pImpl->mEnableFog = enabled;
 }
 
-void EffectFactory::EnableNormalMapEffect(bool enabled)
+void EffectFactory::EnableNormalMapEffect(bool enabled) noexcept
 {
     pImpl->mUseNormalMapEffect = enabled;
 }

@@ -86,7 +86,7 @@ namespace DirectX
     inline HRESULT CreateRootSignature(
         _In_ ID3D12Device* device,
         _In_ const D3D12_ROOT_SIGNATURE_DESC* rootSignatureDesc,
-        _Out_ ID3D12RootSignature** rootSignature)
+        _Out_ ID3D12RootSignature** rootSignature) noexcept
     {
         Microsoft::WRL::ComPtr<ID3DBlob> pSignature;
         Microsoft::WRL::ComPtr<ID3DBlob> pError;
@@ -101,7 +101,7 @@ namespace DirectX
     }
 
     // Helper for obtaining texture size
-    inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex)
+    inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
     {
         const auto desc = tex->GetDesc();
         return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
@@ -112,7 +112,7 @@ namespace DirectX
     class ScopedPixEvent
     {
     public:
-        ScopedPixEvent(_In_ ID3D12GraphicsCommandList* pCommandList, UINT64 /*metadata*/, PCWSTR pFormat)
+        ScopedPixEvent(_In_ ID3D12GraphicsCommandList* pCommandList, UINT64 /*metadata*/, PCWSTR pFormat) noexcept
             : mCommandList(pCommandList)
         {
             PIXBeginEvent(pCommandList, 0, pFormat);
@@ -129,7 +129,7 @@ namespace DirectX
 
     // Helper sets a D3D resource name string (used by PIX and debug layer leak reporting).
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const char(&name)[TNameLength])
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const char(&name)[TNameLength]) noexcept
     {
     #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
         wchar_t wname[MAX_PATH];
@@ -145,7 +145,7 @@ namespace DirectX
     }
 
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength])
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength]) noexcept
     {
     #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
         resource->SetName(name);
@@ -160,7 +160,7 @@ namespace DirectX
         _In_ ID3D12GraphicsCommandList* commandList,
         _In_ ID3D12Resource* resource,
         D3D12_RESOURCE_STATES stateBefore,
-        D3D12_RESOURCE_STATES stateAfter)
+        D3D12_RESOURCE_STATES stateAfter) noexcept
     {
         assert(commandList != nullptr);
         assert(resource != nullptr);
@@ -184,7 +184,7 @@ namespace DirectX
     public:
         ScopedBarrier(
             _In_ ID3D12GraphicsCommandList* commandList,
-            std::initializer_list<D3D12_RESOURCE_BARRIER> barriers)
+            std::initializer_list<D3D12_RESOURCE_BARRIER> barriers) noexcept(false)
             : mCommandList(commandList),
             mBarriers(barriers)
         {
@@ -213,7 +213,7 @@ namespace DirectX
 
     // Helpers for aligning values by a power of 2
     template<typename T>
-    inline T AlignDown(T size, size_t alignment)
+    inline T AlignDown(T size, size_t alignment) noexcept
     {
         if (alignment > 0)
         {
@@ -225,7 +225,7 @@ namespace DirectX
     }
 
     template<typename T>
-    inline T AlignUp(T size, size_t alignment)
+    inline T AlignUp(T size, size_t alignment) noexcept
     {
         if (alignment > 0)
         {

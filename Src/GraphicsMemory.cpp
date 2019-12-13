@@ -29,7 +29,7 @@ namespace
     static_assert((MinAllocSize & (MinAllocSize - 1)) == 0, "MinAllocSize size must be a power of 2");
     static_assert(MinAllocSize >= (4 * 1024), "MinAllocSize size must be greater than 4K");
 
-    inline size_t NextPow2(size_t x)
+    inline size_t NextPow2(size_t x) noexcept
     {
         x--;
         x |= x >> 1;
@@ -43,7 +43,7 @@ namespace
         return ++x;
     }
 
-    inline size_t GetPoolIndexFromSize(size_t x)
+    inline size_t GetPoolIndexFromSize(size_t x) noexcept
     {
         size_t allocatorPageSize = x >> AllocatorIndexShift;
         // gives a value from range:
@@ -61,7 +61,7 @@ namespace
 #endif
     }
 
-    inline size_t GetPageSizeFromPoolIndex(size_t x)
+    inline size_t GetPageSizeFromPoolIndex(size_t x) noexcept
     {
         x = (x == 0) ? 0 : x - 1; // clamp to zero
         return std::max<size_t>(MinPageSize, size_t(1) << (x + AllocatorIndexShift));
@@ -73,7 +73,7 @@ namespace
     class DeviceAllocator
     {
     public:
-        DeviceAllocator(_In_ ID3D12Device* device)
+        DeviceAllocator(_In_ ID3D12Device* device) noexcept(false)
             : mDevice(device)
         {
             if (!device)
@@ -161,7 +161,7 @@ namespace
         }
 
     #if !defined(_XBOX_ONE) || !defined(_TITLE)
-        ID3D12Device* GetDevice() const { return mDevice.Get(); }
+        ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
     #endif
 
     private:
@@ -179,7 +179,7 @@ namespace
 class GraphicsMemory::Impl
 {
 public:
-    Impl(GraphicsMemory* owner)
+    Impl(GraphicsMemory* owner) noexcept(false)
         : mOwner(owner)
     {
     #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -360,7 +360,7 @@ GraphicsResource::GraphicsResource(
     _In_ ID3D12Resource* resource,
     _In_ void* memory,
     _In_ size_t offset,
-    _In_ size_t size)
+    _In_ size_t size) noexcept
     : mPage(page)
     , mGpuAddress(gpuAddress)
     , mResource(resource)
@@ -398,7 +398,7 @@ GraphicsResource&& GraphicsResource::operator= (GraphicsResource&& other) noexce
     return std::move(*this);
 }
 
-void GraphicsResource::Reset()
+void GraphicsResource::Reset() noexcept
 {
     if (mPage)
     {
@@ -413,7 +413,7 @@ void GraphicsResource::Reset()
     mSize = 0;
 }
 
-void GraphicsResource::Reset(GraphicsResource&& alloc)
+void GraphicsResource::Reset(GraphicsResource&& alloc) noexcept
 {
     if (mPage)
     {
@@ -446,7 +446,7 @@ SharedGraphicsResource::SharedGraphicsResource() noexcept
 {
 }
 
-SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource)
+SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource) noexcept(false)
     : mSharedResource(std::make_shared<GraphicsResource>(std::move(resource)))
 {
 }
@@ -456,7 +456,7 @@ SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource
 {
 }
 
-SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource)
+SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource) noexcept
     : mSharedResource(resource.mSharedResource)
 {
 }
@@ -477,13 +477,13 @@ SharedGraphicsResource&& SharedGraphicsResource::operator= (GraphicsResource&& r
     return std::move(*this);
 }
 
-SharedGraphicsResource& SharedGraphicsResource::operator= (const SharedGraphicsResource& resource)
+SharedGraphicsResource& SharedGraphicsResource::operator= (const SharedGraphicsResource& resource) noexcept
 {
     mSharedResource = resource.mSharedResource;
     return *this;
 }
 
-void SharedGraphicsResource::Reset()
+void SharedGraphicsResource::Reset() noexcept
 {
     mSharedResource.reset();
 }
@@ -493,12 +493,12 @@ void SharedGraphicsResource::Reset(GraphicsResource&& resource)
     mSharedResource = std::make_shared<GraphicsResource>(std::move(resource));
 }
 
-void SharedGraphicsResource::Reset(SharedGraphicsResource&& resource)
+void SharedGraphicsResource::Reset(SharedGraphicsResource&& resource) noexcept
 {
     mSharedResource = std::move(resource.mSharedResource);
 }
 
-void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource)
+void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource) noexcept
 {
     mSharedResource = resource.mSharedResource;
 }

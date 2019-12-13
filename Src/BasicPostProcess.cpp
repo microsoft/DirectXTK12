@@ -41,7 +41,7 @@ namespace
     static_assert((sizeof(PostProcessConstants) % 16) == 0, "CB size not padded correctly");
 
     // 2-parameter Gaussian distribution given standard deviation (rho)
-    inline float GaussianDistribution(float x, float y, float rho)
+    inline float GaussianDistribution(float x, float y, float rho) noexcept
     {
         return expf(-(x * x + y * y) / (2 * rho * rho)) / sqrtf(2 * XM_PI * rho * rho);
     }
@@ -114,7 +114,7 @@ namespace
             assert(slot >= 0 && slot < RootSignatureCount);
             _Analysis_assume_(slot >= 0 && slot < RootSignatureCount);
 
-            return DemandCreate(mRootSignature[slot], mMutex, [&](ID3D12RootSignature** pResult) -> HRESULT
+            return DemandCreate(mRootSignature[slot], mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
             {
                 HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
@@ -125,7 +125,7 @@ namespace
             });
         }
 
-        ID3D12Device* GetDevice() const { return mDevice.Get(); }
+        ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
     protected:
         ComPtr<ID3D12Device>                        mDevice;
@@ -141,7 +141,7 @@ public:
 
     void Process(_In_ ID3D12GraphicsCommandList* commandList);
 
-    void SetDirtyFlag() { mDirtyFlags = INT_MAX; }
+    void SetDirtyFlag() noexcept { mDirtyFlags = INT_MAX; }
 
     enum RootParameterIndex
     {

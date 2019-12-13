@@ -54,19 +54,19 @@ namespace DirectX
         RECT XM_CALLCONV MeasureDrawBounds(_In_z_ char const* text, FXMVECTOR position) const;
 
         // Spacing properties
-        float __cdecl GetLineSpacing() const;
+        float __cdecl GetLineSpacing() const noexcept;
         void __cdecl SetLineSpacing(float spacing);
 
         // Font properties
-        wchar_t __cdecl GetDefaultCharacter() const;
+        wchar_t __cdecl GetDefaultCharacter() const noexcept;
         void __cdecl SetDefaultCharacter(wchar_t character);
 
         bool __cdecl ContainsCharacter(wchar_t character) const;
 
         // Custom layout/rendering
         Glyph const* __cdecl FindGlyph(wchar_t character) const;
-        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetSpriteSheet() const;
-        XMUINT2 __cdecl GetSpriteSheetSize() const;
+        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetSpriteSheet() const noexcept;
+        XMUINT2 __cdecl GetSpriteSheetSize() const noexcept;
 
         // Describes a single character glyph.
         struct Glyph

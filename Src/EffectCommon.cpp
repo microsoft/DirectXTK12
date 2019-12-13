@@ -387,7 +387,7 @@ void EffectLights::EnableDefaultLighting(_In_ IEffectLights* effect)
 // Gets or lazily creates the specified root signature.
 ID3D12RootSignature* EffectDeviceResources::DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc)
 {
-    return DemandCreate(rootSig, mMutex, [&](ID3D12RootSignature** pResult) -> HRESULT
+    return DemandCreate(rootSig, mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
     {
         HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 

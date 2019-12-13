@@ -53,7 +53,7 @@ namespace DirectX
             _In_opt_ const D3D12_BLEND_DESC* blend = nullptr,
             _In_opt_ const D3D12_DEPTH_STENCIL_DESC* depthStencil = nullptr,
             _In_opt_ const D3D12_RASTERIZER_DESC* rasterizer = nullptr,
-            _In_opt_ const D3D12_GPU_DESCRIPTOR_HANDLE* isamplerDescriptor = nullptr)
+            _In_opt_ const D3D12_GPU_DESCRIPTOR_HANDLE* isamplerDescriptor = nullptr) noexcept
             :
             blendDesc(blend ? *blend : s_DefaultBlendDesc),
             depthStencilDesc(depthStencil ? *depthStencil : s_DefaultDepthStencilDesc),
@@ -118,7 +118,7 @@ namespace DirectX
 
         // Rotation mode to be applied to the sprite transformation
         void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
-        DXGI_MODE_ROTATION __cdecl GetRotation() const;
+        DXGI_MODE_ROTATION __cdecl GetRotation() const noexcept;
 
         // Set viewport for sprite transformation
         void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);

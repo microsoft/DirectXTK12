@@ -33,7 +33,7 @@ namespace DirectX
             const D3D12_RASTERIZER_DESC& rasterizer,
             const RenderTargetState& renderTarget,
             D3D12_PRIMITIVE_TOPOLOGY_TYPE iprimitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE istripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
+            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE istripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED) noexcept
             :
             inputLayout{},
             blendDesc(blend),
@@ -60,7 +60,7 @@ namespace DirectX
             const D3D12_SHADER_BYTECODE& pixelShader,
             _Outptr_ ID3D12PipelineState** pPipelineState) const;
 
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDesc() const
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDesc() const noexcept
         {
             D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
             psoDesc.BlendState = blendDesc;
@@ -78,7 +78,7 @@ namespace DirectX
             return psoDesc;
         }
 
-        uint32_t ComputeHash() const;
+        uint32_t ComputeHash() const noexcept;
 
         D3D12_INPUT_LAYOUT_DESC             inputLayout;
         D3D12_BLEND_DESC                    blendDesc;

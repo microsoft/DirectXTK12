@@ -25,7 +25,7 @@ using Microsoft::WRL::ComPtr;
 class PBREffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
+    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
         , mDevice(device)
@@ -46,7 +46,7 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing(bool enabled) { mSharing = enabled; }
+    void SetSharing(bool enabled) noexcept { mSharing = enabled; }
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
@@ -153,12 +153,12 @@ void PBREffectFactory::Impl::ReleaseCache()
 // PBREffectFactory
 //--------------------------------------------------------------------------------------
 
-PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device)
+PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device) noexcept(false)
 {
     pImpl = std::make_shared<Impl>(device, nullptr, nullptr);
 }
 
-PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
+PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
 {
     if (!textureDescriptors)
     {
@@ -224,7 +224,7 @@ void PBREffectFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void PBREffectFactory::SetSharing(bool enabled)
+void PBREffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->SetSharing(enabled);
 }

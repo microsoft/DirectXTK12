@@ -46,7 +46,7 @@ namespace DirectX
     class ModelMeshPart
     {
     public:
-        ModelMeshPart(uint32_t partIndex);
+        ModelMeshPart(uint32_t partIndex) noexcept;
         virtual ~ModelMeshPart();
 
         uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
