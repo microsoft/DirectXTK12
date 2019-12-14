@@ -9,6 +9,8 @@ cmake_minimum_required (VERSION 3.11)
 
 project (DirectXTK12 LANGUAGES CXX)
 
+option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -17,8 +19,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 
-add_library (${PROJECT_NAME} STATIC
-    Inc/Audio.h
+set(LIBRARY_SOURCES
     Inc/CommonStates.h
     Inc/DDSTextureLoader.h
     Inc/DescriptorHeap.h
@@ -42,17 +43,6 @@ add_library (${PROJECT_NAME} STATIC
     Inc/SpriteFont.h
     Inc/VertexTypes.h
     Inc/WICTextureLoader.h
-    Audio/AudioEngine.cpp
-    Audio/DynamicSoundEffectInstance.cpp
-    Audio/SoundCommon.cpp
-    Audio/SoundCommon.h
-    Audio/SoundEffect.cpp
-    Audio/SoundEffectInstance.cpp
-    Audio/WaveBank.cpp
-    Audio/WaveBankReader.cpp
-    Audio/WaveBankReader.h
-    Audio/WAVFileReader.cpp
-    Audio/WAVFileReader.h
     Src/AlignedNew.h
     Src/AlphaTestEffect.cpp
     Src/BasicEffect.cpp
@@ -98,7 +88,6 @@ add_library (${PROJECT_NAME} STATIC
     Src/ResourceUploadBatch.cpp
     Src/ScreenGrab.cpp
     Src/SDKMesh.h
-    Src/Shaders
     Src/SharedResourcePool.h
     Src/SimpleMath.cpp
     Src/SkinnedEffect.cpp
@@ -108,15 +97,36 @@ add_library (${PROJECT_NAME} STATIC
     Src/ToneMapPostProcess.cpp
     Src/vbo.h
     Src/VertexTypes.cpp
-    Src/WICTextureLoader.cpp
-)
+    Src/WICTextureLoader.cpp)
+
+if(BUILD_XAUDIO_WIN10 MATCHES ON)
+    set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+        Inc/Audio.h
+        Audio/AudioEngine.cpp
+        Audio/DynamicSoundEffectInstance.cpp
+        Audio/SoundCommon.cpp
+        Audio/SoundCommon.h
+        Audio/SoundEffect.cpp
+        Audio/SoundEffectInstance.cpp
+        Audio/WaveBank.cpp
+        Audio/WaveBankReader.cpp
+        Audio/WaveBankReader.h
+        Audio/WAVFileReader.cpp
+        Audio/WAVFileReader.h)
+endif()
+
+add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES})
 
 source_group(Audio REGULAR_EXPRESSION Audio/*.*)
 source_group(Inc REGULAR_EXPRESSION Inc/*.*)
 source_group(Src REGULAR_EXPRESSION Src/*.*)
 
 target_include_directories(${PROJECT_NAME} PUBLIC Inc)
-target_include_directories(${PROJECT_NAME} PRIVATE Audio Src)
+target_include_directories(${PROJECT_NAME} PRIVATE Src)
+
+if(BUILD_XAUDIO_WIN10 MATCHES ON)
+    target_include_directories(${PROJECT_NAME} PRIVATE Audio)
+endif()
 
 if(MSVC)
     # Use max Warning Level 
