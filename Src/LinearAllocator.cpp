@@ -63,15 +63,17 @@ void LinearAllocatorPage::Release() noexcept
 LinearAllocator::LinearAllocator(
     _In_ ID3D12Device* pDevice,
     _In_ size_t pageSize,
-    _In_ size_t preallocateBytes)
-    : m_device(pDevice)
-    , m_pendingPages(nullptr)
+    _In_ size_t preallocateBytes) noexcept(false)
+    : m_pendingPages(nullptr)
     , m_usedPages(nullptr)
     , m_unusedPages(nullptr)
     , m_increment(pageSize)
     , m_numPending(0)
     , m_totalPages(0)
+    , m_fenceCount(0)
+    , m_device(pDevice)
 {
+    assert(pDevice != nullptr);
 #if defined(_DEBUG) || defined(PROFILE)
     m_debugName = L"LinearAllocator";
 #endif
@@ -86,6 +88,11 @@ LinearAllocator::LinearAllocator(
             throw std::bad_alloc();
         }
     }
+
+    ThrowIfFailed(pDevice->CreateFence(
+        0,
+        D3D12_FENCE_FLAG_NONE,
+        IID_GRAPHICS_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
 }
 
 LinearAllocator::~LinearAllocator()
@@ -152,7 +159,8 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
         {
             // Signal the fence
             numReady++;
-            ThrowIfFailed(commandQueue->Signal(page->mFence.Get(), ++page->mPendingFence));
+            page->mPendingFence = ++m_fenceCount;
+            ThrowIfFailed(commandQueue->Signal(m_fence.Get(), m_fenceCount));
 
             // Link to the ready pages list
             page->pNextPage = readyPages;
@@ -187,16 +195,18 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
 // (immediately before or after Present-time)
 void LinearAllocator::RetirePendingPages() noexcept
 {
+    uint64_t fenceValue = m_fence->GetCompletedValue();
+
     // For each page that we know has a fence pending, check it. If the fence has passed,
     // we can mark the page for re-use.
     auto page = m_pendingPages;
     while (page != nullptr)
     {
-        LinearAllocatorPage* nextPage = page->pNextPage;
+        auto nextPage = page->pNextPage;
 
         assert(page->mPendingFence != 0);
 
-        if (page->mFence->GetCompletedValue() >= page->mPendingFence)
+        if (fenceValue >= page->mPendingFence)
         {
             // Fence has passed. It is safe to use this page again.
             ReleasePage(page);
@@ -305,29 +315,12 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     ThrowIfFailed(spResource->Map(0, nullptr, &pMemory));
     memset(pMemory, 0, m_increment);
 
-    // Create a fence
-    ComPtr<ID3D12Fence> spFence;
-    hr = m_device->CreateFence(
-        0,
-        D3D12_FENCE_FLAG_NONE,
-        IID_GRAPHICS_PPV_ARGS(spFence.ReleaseAndGetAddressOf()));
-    if (FAILED(hr))
-    {
-        DebugTrace("LinearAllocator::GetNewPage failed to allocate fence with error %08X\n", hr);
-        return nullptr;
-    }
-
-    SetDebugObjectName(spFence.Get(), L"LinearAllocator");
-
     // Add the page to the page list
     auto page = new LinearAllocatorPage;
-    page->mSize = m_increment;
     page->mMemory = pMemory;
-    page->pPrevPage = nullptr;
-    page->pNextPage = m_unusedPages;
     page->mGpuAddress = spResource->GetGPUVirtualAddress();
+    page->mSize = m_increment;
     page->mUploadResource.Swap(spResource);
-    page->mFence.Swap(spFence);
 
     // Set as head of the list
     page->pNextPage = m_unusedPages;
@@ -441,7 +434,7 @@ void LinearAllocator::FreePages(LinearAllocatorPage* page) noexcept
 {
     while (page != nullptr)
     {
-        LinearAllocatorPage* nextPage = page->pNextPage;
+        auto nextPage = page->pNextPage;
 
         page->Release();
 
@@ -489,6 +482,7 @@ void LinearAllocator::SetDebugName(const wchar_t* name)
     m_debugName = name;
 
     // Rename existing pages
+    m_fence->SetName(name);
     SetPageDebugName(m_pendingPages);
     SetPageDebugName(m_usedPages);
     SetPageDebugName(m_unusedPages);

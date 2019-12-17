@@ -77,12 +77,11 @@ namespace DirectX
         LinearAllocatorPage*                    pNextPage;
 
         void*                                   mMemory;
-        Microsoft::WRL::ComPtr<ID3D12Resource>  mUploadResource;
-        Microsoft::WRL::ComPtr<ID3D12Fence>     mFence;
         uint64_t                                mPendingFence;
         D3D12_GPU_VIRTUAL_ADDRESS               mGpuAddress;
         size_t                                  mOffset;
         size_t                                  mSize;
+        Microsoft::WRL::ComPtr<ID3D12Resource>  mUploadResource;
 
     private:
         std::atomic<int32_t>                    mRefCount;
@@ -97,7 +96,7 @@ namespace DirectX
         LinearAllocator(
             _In_ ID3D12Device* pDevice,
             _In_ size_t pageSize,
-            _In_ size_t preallocateBytes = 0);
+            _In_ size_t preallocateBytes = 0) noexcept(false);
 
         LinearAllocator(LinearAllocator&&) = default;
         LinearAllocator& operator= (LinearAllocator&&) = default;
@@ -134,13 +133,15 @@ namespace DirectX
 #endif
 
     private:
-        Microsoft::WRL::ComPtr<ID3D12Device>    m_device;
         LinearAllocatorPage*                    m_pendingPages; // Pages in use by the GPU
         LinearAllocatorPage*                    m_usedPages;    // Pages to be submitted to the GPU
         LinearAllocatorPage*                    m_unusedPages;  // Pages not being used right now
         size_t                                  m_increment;
         size_t                                  m_numPending;
         size_t                                  m_totalPages;
+        uint64_t                                m_fenceCount;
+        Microsoft::WRL::ComPtr<ID3D12Device>    m_device;
+        Microsoft::WRL::ComPtr<ID3D12Fence>     m_fence;
         
         LinearAllocatorPage* GetPageForAlloc(size_t sizeBytes, size_t alignment);
         LinearAllocatorPage* GetCleanPageForAlloc();
