@@ -105,6 +105,18 @@ namespace DirectX
         std::shared_ptr<GraphicsResource> mSharedResource;
     };
 
+    //----------------------------------------------------------------------------------
+    struct GraphicsMemoryStatistics
+    {
+        size_t committedMemory;     // Bytes of memory currently committed/in-flight
+        size_t totalMemory;         // Total bytes of memory used by the allocators
+        size_t totalPages;          // Total page count
+        size_t peakCommitedMemory;  // Peak commited memory value since last reset
+        size_t peakTotalMemory;     // Peak total bytes
+        size_t peakTotalPages;      // Peak total page count
+    };
+
+    //----------------------------------------------------------------------------------
     class GraphicsMemory
     {
     public:
@@ -146,6 +158,10 @@ namespace DirectX
         // It is not recommended that you call this unless absolutely necessary (e.g. your
         // memory budget changes at run-time, or perhaps you're changing levels in your game.)
         void __cdecl GarbageCollect();
+
+        // Memory statistics
+        void __cdecl GetStatistics(GraphicsMemoryStatistics& stats);
+        void __cdecl ResetStatistics();
 
         // Singleton
         // Should only use nullptr for single GPU scenarios; mGPU requires a specific device

@@ -160,6 +160,30 @@ namespace
             }
         }
 
+        void GetStatistics(GraphicsMemoryStatistics& stats) const
+        {
+            size_t totalPageCount = 0;
+            size_t committedMemoryUsage = 0;
+            size_t totalMemoryUsage = 0;
+           
+            ScopedLock lock(mMutex);
+
+            for (auto& i : mPools)
+            {
+                if (i)
+                {
+                    totalPageCount += i->TotalPageCount();
+                    committedMemoryUsage += i->CommittedMemoryUsage();
+                    totalMemoryUsage += i->TotalMemoryUsage();
+                }
+            }
+
+            stats = {};
+            stats.committedMemory = committedMemoryUsage;
+            stats.totalMemory = totalMemoryUsage;
+            stats.totalPages = totalPageCount;
+        }
+
     #if !defined(_XBOX_ONE) || !defined(_TITLE)
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
     #endif
@@ -181,6 +205,9 @@ class GraphicsMemory::Impl
 public:
     Impl(GraphicsMemory* owner) noexcept(false)
         : mOwner(owner)
+        , m_peakCommited(0)
+        , m_peakBytes(0)
+        , m_peakPages(0)
     {
     #if defined(_XBOX_ONE) && defined(_TITLE)
         if (s_graphicsMemory)
@@ -233,6 +260,36 @@ public:
         mDeviceAllocator->GarbageCollect();
     }
 
+    void GetStatistics(GraphicsMemoryStatistics& stats)
+    {
+        mDeviceAllocator->GetStatistics(stats);
+
+        if (stats.committedMemory > m_peakCommited)
+        {
+            m_peakCommited = stats.committedMemory;
+        }
+        stats.peakCommitedMemory = m_peakCommited;
+
+        if (stats.totalMemory > m_peakBytes)
+        {
+            m_peakBytes = stats.totalMemory;
+        }
+        stats.peakTotalMemory = m_peakBytes;
+
+        if (stats.totalPages > m_peakPages)
+        {
+            m_peakPages = stats.totalPages;
+        }
+        stats.peakTotalPages = m_peakPages;
+    }
+
+    void ResetStatistics()
+    {
+        m_peakCommited = 0;
+        m_peakBytes = 0;
+        m_peakPages = 0;
+}
+
     GraphicsMemory* mOwner;
 #if defined(_XBOX_ONE) && defined(_TITLE)
     static GraphicsMemory::Impl* s_graphicsMemory;
@@ -242,6 +299,10 @@ public:
 
 private:
     std::unique_ptr<DeviceAllocator> mDeviceAllocator;
+
+    size_t  m_peakCommited;
+    size_t  m_peakBytes;
+    size_t  m_peakPages;
 };
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -304,6 +365,16 @@ void GraphicsMemory::GarbageCollect()
     pImpl->GarbageCollect();
 }
 
+
+void GraphicsMemory::GetStatistics(GraphicsMemoryStatistics& stats)
+{
+    pImpl->GetStatistics(stats);
+}
+
+void GraphicsMemory::ResetStatistics()
+{
+    pImpl->ResetStatistics();
+}
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
 GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
