@@ -160,7 +160,7 @@ namespace DirectX
         void __cdecl GarbageCollect();
 
         // Memory statistics
-        void __cdecl GetStatistics(GraphicsMemoryStatistics& stats);
+        GraphicsMemoryStatistics __cdecl GetStatistics();
         void __cdecl ResetStatistics();
 
         // Singleton

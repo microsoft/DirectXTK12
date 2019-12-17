@@ -366,9 +366,11 @@ void GraphicsMemory::GarbageCollect()
 }
 
 
-void GraphicsMemory::GetStatistics(GraphicsMemoryStatistics& stats)
+GraphicsMemoryStatistics GraphicsMemory::GetStatistics()
 {
+    GraphicsMemoryStatistics stats;
     pImpl->GetStatistics(stats);
+    return stats;
 }
 
 void GraphicsMemory::ResetStatistics()
