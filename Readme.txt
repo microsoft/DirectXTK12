@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-October 17, 2019
+December 17, 2019
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32
@@ -13,7 +13,7 @@ desktop applications for Windows 10, and Xbox One.
 This code is designed to build with Visual Studio 2015 Update 3, Visual Studio 2017,
 or Visual Studio 2019. It is recommended that you make use of VS 2015 Update 3,
 Windows Tools 1.4.1, and the Windows 10 Anniversary Update SDK (14393) -or-
-VS 2017 (15.9 update) / VS 2019 with the Windows 10 October 2018 Update SDK (17763).
+VS 2017 (15.9 update) / VS 2019 with the Windows 10 May 2019 Update SDK (18362).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -127,6 +127,14 @@ RELEASE NOTES
 ---------------
 RELEASE HISTORY
 ---------------
+
+December 17, 2019
+    Added ARM64 platform to VS 2019 Win32 desktop Win10 project
+    Added Vector operator/ by float scalar to SimpleMath
+    Added GetStatistics method to GraphicsMemory
+    Reduced fence object usage in GraphicsMemory's LinearAllocator
+    Updated CMake project
+    Code cleaup
 
 October 17, 2019
     Added optional forceSRGB parameter to SaveWICTextureToFile
