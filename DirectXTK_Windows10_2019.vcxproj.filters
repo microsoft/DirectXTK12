@@ -1025,6 +1025,7 @@
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AlphaTestEffect.cpp">
@@ -1171,8 +1172,5 @@
     <ClCompile Include="Src\PBREffectFactory.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
   </ItemGroup>
 </Project>

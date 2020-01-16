@@ -325,7 +325,6 @@
     <None Include="Src\Shaders\SkinnedEffect.fx">
       <Filter>Src\Shaders</Filter>
     </None>
-    <None Include="Readme.txt" />
     <None Include="Src\Shaders\Compiled\AlphaTestEffect_PSAlphaTestEqNe.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -1172,5 +1171,6 @@
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

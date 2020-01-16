@@ -1215,8 +1215,6 @@
     <None Include="Src\Shaders\Compiled\XboxOneDebugEffect_VSDebugVcBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>
