@@ -678,7 +678,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileNa
     HRESULT hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
     if (FAILED(hr))
     {
-        DebugTrace("ERROR: CreateFromSDKMESH failed (%08X) loading '%ls'\n", hr, szFileName);
+        DebugTrace("ERROR: CreateFromSDKMESH failed (%08X) loading '%ls'\n",
+            static_cast<unsigned int>(hr), szFileName);
         throw std::exception("CreateFromSDKMESH");
     }
 
