@@ -61,7 +61,7 @@ public:
 private:
     ComPtr<ID3D12Device> mDevice;
 
-    typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
+    using EffectCache = std::map< std::wstring, std::shared_ptr<IEffect> >;
 
     EffectCache  mEffectCache;
     EffectCache  mEffectCacheSkinning;

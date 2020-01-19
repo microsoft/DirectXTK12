@@ -36,7 +36,7 @@ public:
         TextureCacheEntry() noexcept : mIsCubeMap(false), slot(0) {}
     };
 
-    typedef std::map< std::wstring, TextureCacheEntry > TextureCache;
+    using TextureCache = std::map< std::wstring, TextureCacheEntry >;
 
     Impl(
         _In_ ID3D12Device* device,
