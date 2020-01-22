@@ -108,7 +108,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     BoundingBox::CreateFromPoints(mesh->boundingBox, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
     mesh->opaqueMeshParts.emplace_back(part);
 
-    std::unique_ptr<Model> model(new Model());
+    auto model = std::make_unique<Model>();
     model->meshes.emplace_back(mesh);
 
     return model;

@@ -523,7 +523,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
     std::map<std::wstring, int> textureDictionary;
 
-    std::unique_ptr<Model> model(new Model);
+    auto model = std::make_unique<Model>();
     model->meshes.reserve(header->NumMeshes);
 
     uint32_t partCount = 0;
