@@ -44,7 +44,7 @@ public:
     void SetDefaultCharacter(wchar_t character);
 
     template<typename TAction>
-    void ForEachGlyph(_In_z_ wchar_t const* text, TAction action) const;
+    void ForEachGlyph(_In_z_ wchar_t const* text, TAction action, bool ignoreWhitespace) const;
 
     void CreateTextureResource(_In_ ID3D12Device* device,
         ResourceUploadBatch& upload,
@@ -104,9 +104,10 @@ SpriteFont::Impl::Impl(
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDesc,
     D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
     bool forceSRGB) noexcept(false) :
-    texture{},
-    defaultGlyph(nullptr),
-    utfBufferSize(0)
+        texture{},
+        defaultGlyph(nullptr),
+        lineSpacing(0),
+        utfBufferSize(0)
 {
     // Validate the header.
     for (char const* magic = spriteFontMagic; *magic; magic++)
@@ -168,13 +169,13 @@ SpriteFont::Impl::Impl(
     XMUINT2 itextureSize,
     Glyph const* iglyphs,
     size_t glyphCount,
-    float ilineSpacing) noexcept(false)
-        : texture(itexture),
-          textureSize(itextureSize),
-          glyphs(iglyphs, iglyphs + glyphCount),
-          defaultGlyph(nullptr),
-          lineSpacing(ilineSpacing),
-          utfBufferSize(0)
+    float ilineSpacing) noexcept(false) :
+        texture(itexture),
+        textureSize(itextureSize),
+        glyphs(iglyphs, iglyphs + glyphCount),
+        defaultGlyph(nullptr),
+        lineSpacing(ilineSpacing),
+        utfBufferSize(0)
 {
     if (!std::is_sorted(iglyphs, iglyphs + glyphCount))
     {
@@ -217,7 +218,7 @@ void SpriteFont::Impl::SetDefaultCharacter(wchar_t character)
 
 // The core glyph layout algorithm, shared between DrawString and MeasureString.
 template<typename TAction>
-void SpriteFont::Impl::ForEachGlyph(_In_z_ wchar_t const* text, TAction action) const
+void SpriteFont::Impl::ForEachGlyph(_In_z_ wchar_t const* text, TAction action, bool ignoreWhitespace) const
 {
     float x = 0;
     float y = 0;
@@ -249,7 +250,8 @@ void SpriteFont::Impl::ForEachGlyph(_In_z_ wchar_t const* text, TAction action) 
 
                 float advance = glyph->Subrect.right - glyph->Subrect.left + glyph->XAdvance;
 
-                if (!iswspace(character)
+                if (!ignoreWhitespace
+                    || !iswspace(character)
                     || ((glyph->Subrect.right - glyph->Subrect.left) > 1)
                     || ((glyph->Subrect.bottom - glyph->Subrect.top) > 1))
                 {
@@ -326,7 +328,7 @@ const wchar_t* SpriteFont::Impl::ConvertUTF8(_In_z_ const char *text) noexcept(f
     {
         // Compute required buffer size
         result = MultiByteToWideChar(CP_UTF8, 0, text, -1, nullptr, 0);
-        utfBufferSize = AlignUp(static_cast<size_t>(result), 1024);
+        utfBufferSize = AlignUp(static_cast<size_t>(result), 1024u);
         utfBuffer.reset(new wchar_t[utfBufferSize]);
 
         // Retry conversion
@@ -464,11 +466,11 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
         }
 
         spriteBatch->Draw(pImpl->texture, pImpl->textureSize, position, &glyph->Subrect, color, rotation, offset, scale, effects, layerDepth);
-    });
+    }, true);
 }
 
 
-XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text) const
+XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text, bool ignoreWhitespace) const
 {
     XMVECTOR result = XMVectorZero();
 
@@ -482,13 +484,13 @@ XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text) const
         h = std::max(h, pImpl->lineSpacing);
 
         result = XMVectorMax(result, XMVectorSet(x + w, y + h, 0, 0));
-    });
+    }, ignoreWhitespace);
 
     return result;
 }
 
 
-RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& position) const
+RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& position, bool ignoreWhitespace) const
 {
     RECT result = { LONG_MAX, LONG_MAX, 0, 0 };
 
@@ -514,7 +516,7 @@ RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& p
 
         if (result.bottom < maxY)
             result.bottom = long(maxY);
-    });
+    }, ignoreWhitespace);
 
     if (result.left == LONG_MAX)
     {
@@ -526,12 +528,12 @@ RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& p
 }
 
 
-RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, FXMVECTOR position) const
+RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, FXMVECTOR position, bool ignoreWhitespace) const
 {
     XMFLOAT2 pos;
     XMStoreFloat2(&pos, position);
 
-    return MeasureDrawBounds(text, pos);
+    return MeasureDrawBounds(text, pos, ignoreWhitespace);
 }
 
 
@@ -560,24 +562,24 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ ch
 }
 
 
-XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ char const* text) const
+XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ char const* text, bool ignoreWhitespace) const
 {
-    return MeasureString(pImpl->ConvertUTF8(text));
+    return MeasureString(pImpl->ConvertUTF8(text), ignoreWhitespace);
 }
 
 
-RECT SpriteFont::MeasureDrawBounds(_In_z_ char const* text, XMFLOAT2 const& position) const
+RECT SpriteFont::MeasureDrawBounds(_In_z_ char const* text, XMFLOAT2 const& position, bool ignoreWhitespace) const
 {
-    return MeasureDrawBounds(pImpl->ConvertUTF8(text), position);
+    return MeasureDrawBounds(pImpl->ConvertUTF8(text), position, ignoreWhitespace);
 }
 
 
-RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ char const* text, FXMVECTOR position) const
+RECT XM_CALLCONV SpriteFont::MeasureDrawBounds(_In_z_ char const* text, FXMVECTOR position, bool ignoreWhitespace) const
 {
     XMFLOAT2 pos;
     XMStoreFloat2(&pos, position);
 
-    return MeasureDrawBounds(pImpl->ConvertUTF8(text), pos);
+    return MeasureDrawBounds(pImpl->ConvertUTF8(text), pos, ignoreWhitespace);
 }
 
 
