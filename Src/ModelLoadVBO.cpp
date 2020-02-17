@@ -47,7 +47,10 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, size_t dataSize, ID3D12Device* device)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
+    ID3D12Device* device,
+    const uint8_t* meshData, size_t dataSize,
+    uint32_t flags)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
@@ -64,8 +67,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
         throw std::exception("No vertices or indices found");
 
     uint64_t sizeInBytes = uint64_t(header->numVertices) * sizeof(VertexPositionNormalTexture);
-    if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-        throw std::exception("VB too large for DirectX 12");
+    if (sizeInBytes > UINT32_MAX)
+        throw std::exception("VB too large");
+
+    if (!(flags & ModelLoader_AllowLargeModels))
+    {
+        if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+            throw std::exception("VB too large for DirectX 12");
+    }
 
     auto vertSize = static_cast<size_t>(sizeInBytes);
 
@@ -74,8 +83,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
     auto verts = reinterpret_cast<const VertexPositionNormalTexture*>(meshData + sizeof(VBO::header_t));
 
     sizeInBytes = uint64_t(header->numIndices) * sizeof(uint16_t);
-    if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-        throw std::exception("IB too large for DirectX 12");
+    if (sizeInBytes > UINT32_MAX)
+        throw std::exception("IB too large");
+
+    if (!(flags & ModelLoader_AllowLargeModels))
+    {
+        if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+            throw std::exception("IB too large for DirectX 12");
+    }
 
     auto indexSize = static_cast<size_t>(sizeInBytes);
 
@@ -117,7 +132,10 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const uint8_t* meshData, si
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName, ID3D12Device* device)
+std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
+    ID3D12Device* device,
+    const wchar_t* szFileName,
+    uint32_t flags)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -129,7 +147,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(const wchar_t* szFileName, 
         throw std::exception("CreateFromVBO");
     }
 
-    auto model = CreateFromVBO(data.get(), dataSize, device);
+    auto model = CreateFromVBO(device, data.get(), dataSize, flags);
 
     model->name = szFileName;
 

@@ -366,7 +366,11 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData, size_t idataSize, ID3D12Device* device)
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
+    ID3D12Device* device,
+    const uint8_t* meshData,
+    size_t idataSize,
+    uint32_t flags)
 {
     if (!meshData)
         throw std::exception("meshData cannot be null");
@@ -468,31 +472,37 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     {
         auto& vh = vbArray[j];
 
-        if (vh.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-            throw std::exception("VB too large for DirectX 12");
+        if (vh.SizeBytes > UINT32_MAX)
+            throw std::exception("VB too large");
+
+        if (!(flags & ModelLoader_AllowLargeModels))
+        {
+            if (vh.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+                throw std::exception("VB too large for DirectX 12");
+        }
 
         if (dataSize < vh.DataOffset
             || (dataSize < vh.DataOffset + vh.SizeBytes))
             throw std::exception("End of file");
 
         vbDecls[j] = std::make_shared<std::vector<D3D12_INPUT_ELEMENT_DESC>>();
-        unsigned int flags = GetInputLayoutDesc(vh.Decl, *vbDecls[j].get());
+        unsigned int ilflags = GetInputLayoutDesc(vh.Decl, *vbDecls[j].get());
 
-        if (flags & SKINNING)
+        if (ilflags & SKINNING)
         {
-            flags &= ~static_cast<unsigned int>(DUAL_TEXTURE | NORMAL_MAPS);
+            ilflags &= ~static_cast<unsigned int>(DUAL_TEXTURE | NORMAL_MAPS);
         }
-        if (flags & DUAL_TEXTURE)
+        if (ilflags & DUAL_TEXTURE)
         {
-            flags &= ~static_cast<unsigned int>(NORMAL_MAPS);
+            ilflags &= ~static_cast<unsigned int>(NORMAL_MAPS);
         }
 
-        if (flags & USES_OBSOLETE_DEC3N)
+        if (ilflags & USES_OBSOLETE_DEC3N)
         {
             dec3nwarning = true;
         }
 
-        materialFlags[j] = flags;
+        materialFlags[j] = ilflags;
     }
 
     if (dec3nwarning)
@@ -506,8 +516,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     {
         auto& ih = ibArray[j];
 
-        if (ih.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-            throw std::exception("IB too large for DirectX 12");
+        if (ih.SizeBytes > UINT32_MAX)
+            throw std::exception("IB too large");
+
+        if (!(flags & ModelLoader_AllowLargeModels))
+        {
+            if (ih.SizeBytes > (D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
+                throw std::exception("IB too large for DirectX 12");
+        }
 
         if (dataSize < ih.DataOffset
             || (dataSize < ih.DataOffset + ih.SizeBytes))
@@ -671,7 +687,10 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileName, ID3D12Device* device)
+std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
+    ID3D12Device* device,
+    const wchar_t* szFileName,
+    uint32_t flags)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -683,7 +702,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const wchar_t* szFileNa
         throw std::exception("CreateFromSDKMESH");
     }
 
-    auto model = CreateFromSDKMESH(data.get(), dataSize, device);
+    auto model = CreateFromSDKMESH(device, data.get(), dataSize, flags);
 
     model->name = szFileName;
 
