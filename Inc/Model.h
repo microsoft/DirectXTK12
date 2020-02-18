@@ -45,9 +45,12 @@ namespace DirectX
     // Model loading options
     enum ModelLoaderFlags : uint32_t
     {
-        ModelLoader_Default = 0,
-        ModelLoader_AllowLargeModels = 0x10000,
+        ModelLoader_Default             = 0x0,
+        ModelLoader_MaterialColorsSRGB  = 0x1,
+        ModelLoader_AllowLargeModels    = 0x2,
     };
+
+    inline ModelLoaderFlags operator|(ModelLoaderFlags a, ModelLoaderFlags b) noexcept { return static_cast<ModelLoaderFlags>(static_cast<int>(a) | static_cast<int>(b)); }
 
     //----------------------------------------------------------------------------------
     // Each mesh part is a submesh with a single effect
@@ -260,21 +263,21 @@ namespace DirectX
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
             _In_opt_ ID3D12Device* device,
             _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
-            uint32_t flags = ModelLoader_Default);
+            ModelLoaderFlags flags = ModelLoader_Default);
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
             _In_opt_ ID3D12Device* device,
             _In_z_ const wchar_t* szFileName,
-            uint32_t flags = ModelLoader_Default);
+            ModelLoaderFlags flags = ModelLoader_Default);
 
         // Loads a model from a .VBO file
         static std::unique_ptr<Model> __cdecl CreateFromVBO(
             _In_opt_ ID3D12Device* device,
             _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
-            uint32_t flags = ModelLoader_Default);
+            ModelLoaderFlags flags = ModelLoader_Default);
         static std::unique_ptr<Model> __cdecl CreateFromVBO(
             _In_opt_ ID3D12Device* device,
             _In_z_ const wchar_t* szFileName,
-            uint32_t flags = ModelLoader_Default);
+            ModelLoaderFlags flags = ModelLoader_Default);
 
         // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
         // descriptor will be zero.

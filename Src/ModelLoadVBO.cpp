@@ -50,7 +50,7 @@ _Use_decl_annotations_
 std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
     ID3D12Device* device,
     const uint8_t* meshData, size_t dataSize,
-    uint32_t flags)
+    ModelLoaderFlags flags)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::exception("One-time initialization failed");
@@ -135,7 +135,7 @@ _Use_decl_annotations_
 std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
     ID3D12Device* device,
     const wchar_t* szFileName,
-    uint32_t flags)
+    ModelLoaderFlags flags)
 {
     size_t dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
