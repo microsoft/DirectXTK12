@@ -478,14 +478,13 @@ XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text, bool 
     {
         UNREFERENCED_PARAMETER(advance);
 
+        auto isWhitespace = iswspace(wchar_t(glyph->Character));
         auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
-        auto h = pImpl->lineSpacing;
+        auto h = static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top) + glyph->YOffset;
 
-        if (!iswspace(wchar_t(glyph->Character)))
-        {
-            auto gh = static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top) + glyph->YOffset;
-            h = std::max(h, gh);
-        }
+        h = isWhitespace ?
+            pImpl->lineSpacing :
+            std::max(h, pImpl->lineSpacing);
 
         result = XMVectorMax(result, XMVectorSet(x + w, y + h, 0, 0));
     }, ignoreWhitespace);
@@ -502,10 +501,9 @@ RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& p
     {
         auto isWhitespace = iswspace(wchar_t(glyph->Character));
         auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
-        auto h = (isWhitespace ?
+        auto h = isWhitespace ?
             pImpl->lineSpacing :
-            static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top)
-        );
+            static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top);
 
         float minX = position.x + x;
         float minY = position.y + y + (isWhitespace ? 0.0f : glyph->YOffset);
