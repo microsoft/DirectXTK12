@@ -21,9 +21,9 @@
 #include <d3d12.h>
 #endif
 
+#include <cstdint>
 #include <memory>
 #include <vector>
-#include <stdint.h>
 
 
 namespace DirectX

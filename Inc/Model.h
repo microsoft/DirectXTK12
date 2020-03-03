@@ -19,6 +19,7 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
+#include <cstdint>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -26,8 +27,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+
 #include <assert.h>
-#include <stdint.h>
 
 #include <wrl/client.h>
 

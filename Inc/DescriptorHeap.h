@@ -15,9 +15,10 @@
 #include <d3d12.h>
 #endif
 
+#include <cstdint>
 #include <stdexcept>
+
 #include <assert.h>
-#include <stdint.h>
 
 #include <wrl/client.h>
 

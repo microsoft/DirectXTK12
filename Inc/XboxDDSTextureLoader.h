@@ -22,7 +22,7 @@
 
 #include <d3d12_x.h>
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace Xbox
 {

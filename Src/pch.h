@@ -133,6 +133,8 @@
 #include <algorithm>
 #include <atomic>
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <initializer_list>
 #include <iterator>
@@ -157,8 +159,6 @@
 #pragma warning(pop)
 
 #include <malloc.h>
-#include <stddef.h>
-#include <stdint.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4467 5038 5204)

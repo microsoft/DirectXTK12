@@ -25,7 +25,7 @@
 #include <d3d12.h>
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 
 

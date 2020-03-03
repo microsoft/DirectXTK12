@@ -16,7 +16,7 @@
 #include <dxgiformat.h>
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "RenderTargetState.h"
 
