@@ -167,7 +167,7 @@ namespace DirectX
         BasicEffect(BasicEffect const&) = delete;
         BasicEffect& operator= (BasicEffect const&) = delete;
 
-        virtual ~BasicEffect() override;
+        ~BasicEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -225,7 +225,7 @@ namespace DirectX
         AlphaTestEffect(AlphaTestEffect const&) = delete;
         AlphaTestEffect& operator= (AlphaTestEffect const&) = delete;
 
-        virtual ~AlphaTestEffect() override;
+        ~AlphaTestEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -271,7 +271,7 @@ namespace DirectX
         DualTextureEffect(DualTextureEffect const&) = delete;
         DualTextureEffect& operator= (DualTextureEffect const&) = delete;
 
-        virtual ~DualTextureEffect() override;
+        ~DualTextureEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -315,7 +315,7 @@ namespace DirectX
         EnvironmentMapEffect(EnvironmentMapEffect const&) = delete;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect const&) = delete;
 
-        virtual ~EnvironmentMapEffect() override;
+        ~EnvironmentMapEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -377,7 +377,7 @@ namespace DirectX
         SkinnedEffect(SkinnedEffect const&) = delete;
         SkinnedEffect& operator= (SkinnedEffect const&) = delete;
 
-        virtual ~SkinnedEffect() override;
+        ~SkinnedEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -439,7 +439,7 @@ namespace DirectX
         NormalMapEffect(NormalMapEffect const&) = delete;
         NormalMapEffect& operator= (NormalMapEffect const&) = delete;
 
-        virtual ~NormalMapEffect() override;
+        ~NormalMapEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -499,7 +499,7 @@ namespace DirectX
         PBREffect(PBREffect const&) = delete;
         PBREffect& operator= (PBREffect const&) = delete;
 
-        virtual ~PBREffect() override;
+        ~PBREffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -577,7 +577,7 @@ namespace DirectX
         DebugEffect(DebugEffect const&) = delete;
         DebugEffect& operator= (DebugEffect const&) = delete;
 
-        virtual ~DebugEffect() override;
+        ~DebugEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -641,9 +641,9 @@ namespace DirectX
         EffectTextureFactory(EffectTextureFactory const&) = delete;
         EffectTextureFactory& operator= (EffectTextureFactory const&) = delete;
 
-        virtual ~EffectTextureFactory() override;
+        ~EffectTextureFactory() override;
 
-        virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
+        size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
         ID3D12DescriptorHeap* __cdecl Heap() const noexcept;
 
@@ -759,7 +759,7 @@ namespace DirectX
         EffectFactory(EffectFactory const&) = delete;
         EffectFactory& operator= (EffectFactory const&) = delete;
 
-        virtual ~EffectFactory() override;
+        ~EffectFactory() override;
 
         // IEffectFactory methods.
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
@@ -804,7 +804,7 @@ namespace DirectX
         PBREffectFactory(PBREffectFactory const&) = delete;
         PBREffectFactory& operator= (PBREffectFactory const&) = delete;
 
-        virtual ~PBREffectFactory() override;
+        ~PBREffectFactory() override;
 
         // IEffectFactory methods.
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
