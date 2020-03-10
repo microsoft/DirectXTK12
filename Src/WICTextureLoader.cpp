@@ -246,7 +246,7 @@ namespace
 
         if (!maxsize)
         {
-            maxsize = D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+            maxsize = size_t(D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION);
         }
 
         UINT twidth, theight;
