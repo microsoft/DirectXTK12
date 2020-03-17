@@ -59,6 +59,13 @@ namespace DirectX
     {
     public:
         ModelMeshPart(uint32_t partIndex) noexcept;
+
+        ModelMeshPart(ModelMeshPart&&) = default;
+        ModelMeshPart& operator= (ModelMeshPart&&) = default;
+
+        ModelMeshPart(ModelMeshPart const&) = default;
+        ModelMeshPart& operator= (ModelMeshPart const&) = default;
+
         virtual ~ModelMeshPart();
 
         uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
@@ -136,6 +143,13 @@ namespace DirectX
     {
     public:
         ModelMesh() noexcept;
+
+        ModelMesh(ModelMesh&&) = default;
+        ModelMesh& operator= (ModelMesh&&) = default;
+
+        ModelMesh(ModelMesh const&) = default;
+        ModelMesh& operator= (ModelMesh const&) = default;
+
         virtual ~ModelMesh();
 
         BoundingSphere              boundingSphere;
@@ -179,6 +193,13 @@ namespace DirectX
     {
     public:
         Model() noexcept;
+
+        Model(Model&&) = default;
+        Model& operator= (Model&&) = default;
+
+        Model(Model const&) = default;
+        Model& operator= (Model const&) = default;
+
         virtual ~Model();
 
         using ModelMaterialInfo = IEffectFactory::EffectInfo;

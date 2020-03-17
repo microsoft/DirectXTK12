@@ -45,7 +45,7 @@ namespace DirectX
         void __cdecl Upload(
             _In_ ID3D12Resource* resource,
             uint32_t subresourceIndexStart,
-            _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
+            _In_reads_(numSubresources) const D3D12_SUBRESOURCE_DATA* subRes,
             uint32_t numSubresources);
 
         void __cdecl Upload(

@@ -194,6 +194,12 @@ namespace DirectX
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }
 
+        ScopedBarrier(ScopedBarrier&&) = default;
+        ScopedBarrier& operator= (ScopedBarrier&&) = default;
+
+        ScopedBarrier(ScopedBarrier const&) = delete;
+        ScopedBarrier& operator= (ScopedBarrier const&) = delete;
+
         ~ScopedBarrier()
         {
             // reverse barrier inputs and outputs

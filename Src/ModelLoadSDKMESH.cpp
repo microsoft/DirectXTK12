@@ -54,7 +54,7 @@ namespace
         }
     }
 
-    inline XMFLOAT3 GetMaterialColor(float r, float g, float b, bool srgb)
+    inline XMFLOAT3 GetMaterialColor(float r, float g, float b, bool srgb) noexcept
     {
         if (srgb)
         {

@@ -119,7 +119,7 @@ private:
     static void XM_CALLCONV RenderSprite(_In_ SpriteInfo const* sprite,
         _Out_writes_(VerticesPerSprite) VertexPositionColorTexture* vertices,
         FXMVECTOR textureSize,
-        FXMVECTOR inverseTextureSize);
+        FXMVECTOR inverseTextureSize) noexcept;
 
     XMMATRIX GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation);
 
@@ -838,7 +838,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
 
 // Generates vertex data for drawing a single sprite.
 _Use_decl_annotations_
-void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, VertexPositionColorTexture* vertices, FXMVECTOR textureSize, FXMVECTOR inverseTextureSize)
+void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, VertexPositionColorTexture* vertices, FXMVECTOR textureSize, FXMVECTOR inverseTextureSize) noexcept
 {
     // Load sprite parameters into SIMD registers.
     XMVECTOR source = XMLoadFloat4A(&sprite->source);

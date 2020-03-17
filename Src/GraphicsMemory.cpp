@@ -29,7 +29,7 @@ namespace
     static_assert((MinAllocSize & (MinAllocSize - 1)) == 0, "MinAllocSize size must be a power of 2");
     static_assert(MinAllocSize >= (4 * 1024), "MinAllocSize size must be greater than 4K");
 
-    inline size_t NextPow2(size_t x) noexcept
+    inline constexpr size_t NextPow2(size_t x) noexcept
     {
         x--;
         x |= x >> 1;
@@ -87,6 +87,12 @@ namespace
                     pageSize);
             }
         }
+
+        DeviceAllocator(DeviceAllocator&&) = delete;
+        DeviceAllocator& operator= (DeviceAllocator&&) = delete;
+
+        DeviceAllocator(DeviceAllocator const&) = delete;
+        DeviceAllocator& operator= (DeviceAllocator const&) = delete;
 
         // Explicitly destroy LinearAllocators inside a critical section
         ~DeviceAllocator()
@@ -218,6 +224,12 @@ public:
         s_graphicsMemory = this;
     #endif
     }
+
+    Impl(Impl&&) = default;
+    Impl& operator= (Impl&&) = default;
+
+    Impl(Impl const&) = delete;
+    Impl& operator= (Impl const&) = delete;
 
     ~Impl()
     {

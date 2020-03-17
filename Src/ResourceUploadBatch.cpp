@@ -343,7 +343,7 @@ public:
     void Upload(
         _In_ ID3D12Resource* resource,
         uint32_t subresourceIndexStart,
-        _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
+        _In_reads_(numSubresources) const D3D12_SUBRESOURCE_DATA* subRes,
         uint32_t numSubresources)
     {
         if (!mInBeginEndBlock)
@@ -986,7 +986,7 @@ _Use_decl_annotations_
 void ResourceUploadBatch::Upload(
     ID3D12Resource* resource,
     uint32_t subresourceIndexStart,
-    D3D12_SUBRESOURCE_DATA* subRes,
+    const D3D12_SUBRESOURCE_DATA* subRes,
     uint32_t numSubresources)
 {
     pImpl->Upload(resource, subresourceIndexStart, subRes, numSubresources);
