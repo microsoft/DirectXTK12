@@ -301,7 +301,7 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     {
         if (hr != E_OUTOFMEMORY)
         {
-            DebugTrace("LinearAllocator::GetNewPage resource allocation failed due to unexpected error %08X\n", hr);
+            DebugTrace("LinearAllocator::GetNewPage resource allocation failed due to unexpected error %08X\n", static_cast<unsigned int>(hr));
         }
         return nullptr;
     }
