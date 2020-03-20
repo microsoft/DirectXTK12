@@ -370,7 +370,14 @@ public:
         SetDebugObjectName(scratchResource.Get(), L"ResourceUploadBatch Temporary");
 
         // Submit resource copy to command list
-        UpdateSubresources(mList.Get(), resource, scratchResource.Get(), 0, subresourceIndexStart, numSubresources, subRes);
+        UpdateSubresources(mList.Get(), resource, scratchResource.Get(), 0, subresourceIndexStart, numSubresources,
+#if defined(_XBOX_ONE) && defined(_TITLE)
+            // Workaround for header constness issue
+            const_cast<D3D12_SUBRESOURCE_DATA*>(subRes)
+#else
+            subRes
+#endif
+        );
 
         // Remember this upload object for delayed release
         mTrackedObjects.push_back(scratchResource);
