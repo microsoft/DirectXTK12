@@ -138,6 +138,10 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc)
 
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16")
+    target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
+endif()
+
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
     MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"

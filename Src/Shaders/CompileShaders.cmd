@@ -31,13 +31,17 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuedxil
+set PCDXC="%WindowsSdkVerBinPath%\x86\dxc.exe"
+if exist %PCDXC% goto continue
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
 if exist %PCDXC% goto continue
 goto needdxil
 
 :continuepc
-set PCOPTS=/force_rootsig_ver rootsig_1_0
+set PCOPTS=
 
+set PCDXC="%WindowsSdkVerBinPath%\x86\fxc.exe"
+if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\x86\fxc.exe"
