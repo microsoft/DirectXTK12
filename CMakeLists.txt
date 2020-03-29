@@ -5,7 +5,7 @@
 #
 # http://go.microsoft.com/fwlink/?LinkID=615561
 
-cmake_minimum_required (VERSION 3.16)
+cmake_minimum_required (VERSION 3.11)
 
 project (DirectXTK12 LANGUAGES CXX)
 
@@ -138,7 +138,9 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc)
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16")
+    target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
+endif()
 
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
