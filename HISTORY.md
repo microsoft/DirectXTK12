@@ -6,6 +6,14 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### April 3, 2020
+* Updated D3DX12 internal copy to latest version
+* SpriteFont MeasureString / MeasureDrawBounds fixes for !ignoreWhitespace
+* Regenerated shaders using Windows 10 SDK (19041)
+  * Upgraded to use root signature 1.1 which requires Windows 10 (14393) or later
+* Code review (constexpr / noexcept usage)
+* CMake updated for PCH usage with 3.16 or later
+
 ### February 24, 2020
 * *breaking change* ``Model::CreateFrom*`` parameter order changed and addded ModelLoaderFlags
 * Added ``ignoreWhitespace`` defaulted parameter to SpriteFont Measure methods
