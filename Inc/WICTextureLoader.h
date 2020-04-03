@@ -28,6 +28,8 @@
 #include <cstdint>
 #include <memory>
 
+#pragma comment(lib,"uuid.lib")
+
 
 namespace DirectX
 {

@@ -25,6 +25,8 @@
 #include <OCIdl.h>
 #include <functional>
 
+#pragma comment(lib,"uuid.lib")
+
 
 namespace DirectX
 {

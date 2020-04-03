@@ -25,6 +25,8 @@
 
 #include <wrl/client.h>
 
+#pragma comment(lib,"dxguid.lib")
+
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
 #endif
