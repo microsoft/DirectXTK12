@@ -498,11 +498,30 @@ public:
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
 
-        if (stateAfter == D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE
-            || stateAfter == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
+        if (mCommandType == D3D12_COMMAND_LIST_TYPE_COPY)
         {
-            if (mCommandType == D3D12_COMMAND_LIST_TYPE_COPY || mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
+            switch (stateAfter)
+            {
+            case D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE:
+            case D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE:
+                // Ignore these for copy queues
                 return;
+
+            default:
+                break;
+            }
+        }
+        else if (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
+        {
+            if (stateBefore == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
+            {
+                stateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+            }
+
+            if (stateAfter == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
+            {
+                stateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+            }
         }
 
         TransitionResource(mList.Get(), resource, stateBefore, stateAfter);
@@ -615,6 +634,9 @@ private:
 
         CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
+        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
+            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
         // Create a staging resource if we have to
         ComPtr<ID3D12Resource> staging;
         if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0)
@@ -633,9 +655,6 @@ private:
 
             SetDebugObjectName(staging.Get(), L"GenerateMips Staging");
 
-            D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-                ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-
             // Copy the top mip of resource to staging
             TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
@@ -648,6 +667,7 @@ private:
         else
         {
             // Resource is already a UAV so we can do this in-place
+            // Must be in originalState
             staging = resource;
         }
 
@@ -691,9 +711,6 @@ private:
         barrierUAV.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
         barrierUAV.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
         barrierUAV.UAV.pResource = staging.Get();
-
-        D3D12_RESOURCE_STATES originalState = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Barrier for transitioning the subresources to UAVs
         D3D12_RESOURCE_BARRIER srv2uavDesc = {};
@@ -824,8 +841,8 @@ private:
 
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
-        D3D12_RESOURCE_STATES originalState = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        const D3D12_RESOURCE_STATES originalState = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE
+            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of resource data
         TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
@@ -916,8 +933,8 @@ private:
 
         SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
 
-        D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
+            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of the resource data BGR to RGB
         D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
