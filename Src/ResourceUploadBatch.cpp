@@ -502,25 +502,35 @@ public:
         {
             switch (stateAfter)
             {
-            case D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE:
-            case D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE:
-                // Ignore these for copy queues
-                return;
+            case D3D12_RESOURCE_STATE_COPY_DEST:
+            case D3D12_RESOURCE_STATE_COPY_SOURCE:
+                break;
 
             default:
-                break;
+                // Ignore other states for copy queues.
+                return;
             }
         }
         else if (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
         {
-            if (stateBefore == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
+            switch (stateAfter)
             {
-                stateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-            }
+            case D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER:
+            case D3D12_RESOURCE_STATE_UNORDERED_ACCESS:
+            case D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE:
+            case D3D12_RESOURCE_STATE_INDIRECT_ARGUMENT:
+            case D3D12_RESOURCE_STATE_COPY_DEST:
+            case D3D12_RESOURCE_STATE_COPY_SOURCE:
+                break;
 
-            if (stateAfter == D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)
-            {
+            case D3D12_RESOURCE_STATE_INDEX_BUFFER:
+            case D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE:
                 stateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+                break;
+
+            default:
+                // Ignore other states for compute queues.
+                return;
             }
         }
 
