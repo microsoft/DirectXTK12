@@ -29,7 +29,16 @@ public:
 
     void Initialize(const VertexCollection& vertices, const IndexCollection& indices, _In_opt_ ID3D12Device* device);
 
-    void LoadStaticBuffers(_In_ ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch);
+    void LoadStaticBuffers(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUploadBatch);
+
+    void Transition(
+        _In_ ID3D12GraphicsCommandList* commandList,
+        D3D12_RESOURCE_STATES stateBeforeVB,
+        D3D12_RESOURCE_STATES stateAfterVB,
+        D3D12_RESOURCE_STATES stateBeforeIB,
+        D3D12_RESOURCE_STATES stateAfterIB);
 
     void Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
     
@@ -161,6 +170,50 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
 }
 
 
+// Transition VB/IB resources for static geometry.
+_Use_decl_annotations_
+void GeometricPrimitive::Impl::Transition(
+    ID3D12GraphicsCommandList* commandList,
+    D3D12_RESOURCE_STATES stateBeforeVB,
+    D3D12_RESOURCE_STATES stateAfterVB,
+    D3D12_RESOURCE_STATES stateBeforeIB,
+    D3D12_RESOURCE_STATES stateAfterIB)
+{
+    UINT start = 0;
+    UINT count = 0;
+
+    D3D12_RESOURCE_BARRIER barrier[2] = {};
+    barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    barrier[0].Transition.pResource = mStaticIndexBuffer.Get();
+    barrier[0].Transition.StateBefore = stateBeforeIB;
+    barrier[0].Transition.StateAfter = stateAfterIB;
+
+    barrier[1].Transition.pResource = mStaticVertexBuffer.Get();
+    barrier[1].Transition.StateBefore = stateBeforeVB;
+    barrier[1].Transition.StateAfter = stateAfterVB;
+
+    if (stateBeforeIB == stateAfterIB || !mStaticIndexBuffer)
+    {
+        ++start;
+    }
+    else
+    {
+        ++count;
+    }
+
+    if (stateBeforeVB != stateAfterVB && mStaticVertexBuffer)
+    {
+        ++count;
+    }
+
+    if (count > 0)
+    {
+        commandList->ResourceBarrier(count, &barrier[start]);
+    }
+}
+
+
 // Draws the primitive.
 _Use_decl_annotations_
 void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList) const
@@ -195,6 +248,18 @@ void GeometricPrimitive::LoadStaticBuffers(ID3D12Device* device, ResourceUploadB
 {
     pImpl->LoadStaticBuffers(device, resourceUploadBatch);
 }
+
+
+void GeometricPrimitive::Transition(
+    _In_ ID3D12GraphicsCommandList* commandList,
+    D3D12_RESOURCE_STATES stateBeforeVB,
+    D3D12_RESOURCE_STATES stateAfterVB,
+    D3D12_RESOURCE_STATES stateBeforeIB,
+    D3D12_RESOURCE_STATES stateAfterIB)
+{
+    pImpl->Transition(commandList, stateBeforeVB, stateAfterVB, stateBeforeIB, stateAfterIB);
+}
+
 
 
 _Use_decl_annotations_
