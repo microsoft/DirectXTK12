@@ -852,7 +852,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
         DXGI_FORMAT fmt = GetPixelFormat(header);
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
-            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
+            DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
             loadFlags &= ~DDS_LOADER_MIP_AUTOGEN;
         }
     }
@@ -970,7 +970,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
         DXGI_FORMAT fmt = GetPixelFormat(header);
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
-            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
+            DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
             loadFlags &= ~DDS_LOADER_MIP_AUTOGEN;
         }
     }

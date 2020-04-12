@@ -606,6 +606,9 @@ public:
 
     bool IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
     {
+        if (mCommandType == D3D12_COMMAND_LIST_TYPE_COPY)
+            return false;
+
         if (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format))
             return true;
 
