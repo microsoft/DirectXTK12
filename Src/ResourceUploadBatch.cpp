@@ -523,11 +523,6 @@ public:
             case D3D12_RESOURCE_STATE_COPY_SOURCE:
                 break;
 
-            case D3D12_RESOURCE_STATE_INDEX_BUFFER:
-            case D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE:
-                stateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-                break;
-
             default:
                 // Ignore other states for compute queues.
                 return;
@@ -644,8 +639,9 @@ private:
 
         CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
+        assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
         const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Create a staging resource if we have to
         ComPtr<ID3D12Resource> staging;
@@ -851,8 +847,9 @@ private:
 
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
+        assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
         const D3D12_RESOURCE_STATES originalState = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE
-            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of resource data
         TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
@@ -943,8 +940,9 @@ private:
 
         SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
 
+        assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
         const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-            ? D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of the resource data BGR to RGB
         D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
