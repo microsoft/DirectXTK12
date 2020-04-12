@@ -62,7 +62,17 @@ namespace DirectX
         static void __cdecl CreateTeapot(std::vector<VertexType>& vertices, std::vector<uint16_t>& indices, float size = 1, size_t tessellation = 8, bool rhcoords = true);
 
         // Load VB/IB resources for static geometry.
-        void __cdecl LoadStaticBuffers(_In_ ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch);
+        void __cdecl LoadStaticBuffers(
+            _In_ ID3D12Device* device,
+            ResourceUploadBatch& resourceUploadBatch);
+
+        // Transition VB/IB resources for static geometry.
+        void __cdecl Transition(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            D3D12_RESOURCE_STATES stateBeforeVB,
+            D3D12_RESOURCE_STATES stateAfterVB,
+            D3D12_RESOURCE_STATES stateBeforeIB,
+            D3D12_RESOURCE_STATES stateAfterIB);
 
         // Draw the primitive.
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
