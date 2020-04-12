@@ -668,13 +668,14 @@ private:
             CD3DX12_TEXTURE_COPY_LOCATION dst(staging.Get(), 0);
             mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
-            TransitionResource(mList.Get(), staging.Get(), D3D12_RESOURCE_STATE_COPY_DEST, originalState);
+            TransitionResource(mList.Get(), staging.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
         }
         else
         {
             // Resource is already a UAV so we can do this in-place
-            // Must be in originalState
             staging = resource;
+
+            TransitionResource(mList.Get(), staging.Get(), originalState, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
         }
 
         // Create a descriptor heap that holds our resource descriptors
@@ -723,7 +724,7 @@ private:
         srv2uavDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
         srv2uavDesc.Transition.pResource = staging.Get();
         srv2uavDesc.Transition.Subresource = 0;
-        srv2uavDesc.Transition.StateBefore = originalState;
+        srv2uavDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
         srv2uavDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 
         // Barrier for transitioning the subresources to SRVs
@@ -732,7 +733,7 @@ private:
         uav2srvDesc.Transition.pResource = staging.Get();
         uav2srvDesc.Transition.Subresource = 0;
         uav2srvDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-        uav2srvDesc.Transition.StateAfter = originalState;
+        uav2srvDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 
         // based on format, select srgb or not
         ComPtr<ID3D12PipelineState> pso = mGenMipsResources->generateMipsPSO;
@@ -797,7 +798,7 @@ private:
             barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
             barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
             barrier[0].Transition.pResource = staging.Get();
-            barrier[0].Transition.StateBefore = originalState;
+            barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
             barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
             barrier[1].Transition.pResource = resource;
@@ -813,6 +814,10 @@ private:
             TransitionResource(mList.Get(), resource, D3D12_RESOURCE_STATE_COPY_DEST, originalState);
 
             mTrackedObjects.push_back(staging);
+        }
+        else
+        {
+            TransitionResource(mList.Get(), staging.Get(), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, originalState);
         }
 
         // Add our temporary objects to the deferred deletion queue
