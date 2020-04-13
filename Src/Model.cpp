@@ -534,3 +534,93 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
         }
     }
 }
+
+// Transition static VB/IB resources (if applicable)
+void Model::Transition(
+    _In_ ID3D12GraphicsCommandList* commandList,
+    D3D12_RESOURCE_STATES stateBeforeVB,
+    D3D12_RESOURCE_STATES stateAfterVB,
+    D3D12_RESOURCE_STATES stateBeforeIB,
+    D3D12_RESOURCE_STATES stateAfterIB)
+{
+    UINT count = 0;
+    D3D12_RESOURCE_BARRIER barrier[64] = {};
+
+    for (auto& mit : meshes)
+    {
+        for (auto& pit : mit->opaqueMeshParts)
+        {
+            if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
+            {
+                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+                barrier[count].Transition.pResource = pit->staticIndexBuffer.Get();
+                barrier[count].Transition.StateBefore = stateBeforeIB;
+                barrier[count].Transition.StateAfter = stateAfterIB;
+                ++count;
+
+                if (count >= _countof(barrier))
+                {
+                    commandList->ResourceBarrier(count, barrier);
+                    count = 0;
+                }
+            }
+
+            if (stateBeforeVB != stateAfterVB && pit->staticVertexBuffer)
+            {
+                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+                barrier[count].Transition.pResource = pit->staticVertexBuffer.Get();
+                barrier[count].Transition.StateBefore = stateBeforeVB;
+                barrier[count].Transition.StateAfter = stateAfterVB;
+                ++count;
+
+                if (count >= _countof(barrier))
+                {
+                    commandList->ResourceBarrier(count, barrier);
+                    count = 0;
+                }
+            }
+        }
+
+        for (auto& pit : mit->alphaMeshParts)
+        {
+            if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
+            {
+                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+                barrier[count].Transition.pResource = pit->staticIndexBuffer.Get();
+                barrier[count].Transition.StateBefore = stateBeforeIB;
+                barrier[count].Transition.StateAfter = stateAfterIB;
+                ++count;
+
+                if (count >= _countof(barrier))
+                {
+                    commandList->ResourceBarrier(count, barrier);
+                    count = 0;
+                }
+            }
+
+            if (stateBeforeVB != stateAfterVB && pit->staticVertexBuffer)
+            {
+                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+                barrier[count].Transition.pResource = pit->staticVertexBuffer.Get();
+                barrier[count].Transition.StateBefore = stateBeforeVB;
+                barrier[count].Transition.StateAfter = stateAfterVB;
+                ++count;
+
+                if (count >= _countof(barrier))
+                {
+                    commandList->ResourceBarrier(count, barrier);
+                    count = 0;
+                }
+            }
+        }
+    }
+
+    if (count > 0)
+    {
+        commandList->ResourceBarrier(count, barrier);
+    }
+}

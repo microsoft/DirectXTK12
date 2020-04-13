@@ -303,7 +303,7 @@ namespace DirectX
 
         // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
         // descriptor will be zero.
-        D3D12_GPU_DESCRIPTOR_HANDLE GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
+        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
         {
             D3D12_GPU_DESCRIPTOR_HANDLE handle = {};
 
@@ -327,6 +327,14 @@ namespace DirectX
             DirectX::FXMMATRIX world,
             DirectX::CXMMATRIX view,
             DirectX::CXMMATRIX proj);
+
+        // Utility function to transition VB/IB resources for static geometry.
+        void __cdecl Transition(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            D3D12_RESOURCE_STATES stateBeforeVB,
+            D3D12_RESOURCE_STATES stateAfterVB,
+            D3D12_RESOURCE_STATES stateBeforeIB,
+            D3D12_RESOURCE_STATES stateAfterIB);
 
         ModelMesh::Collection           meshes;
         ModelMaterialInfoCollection     materials;
