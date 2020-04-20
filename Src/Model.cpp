@@ -550,6 +550,9 @@ void Model::Transition(
     {
         for (auto& pit : mit->opaqueMeshParts)
         {
+            assert(count < _countof(barrier));
+            _Analysis_assume_(count < _countof(barrier));
+
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
                 barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -585,6 +588,9 @@ void Model::Transition(
 
         for (auto& pit : mit->alphaMeshParts)
         {
+            assert(count < _countof(barrier));
+            _Analysis_assume_(count < _countof(barrier));
+
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
                 barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
