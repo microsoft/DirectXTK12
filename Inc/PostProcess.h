@@ -48,7 +48,7 @@ namespace DirectX
     class BasicPostProcess : public IPostProcess
     {
     public:
-        enum Effect
+        enum Effect : unsigned int
         {
             Copy,
             Monochrome,
@@ -98,7 +98,7 @@ namespace DirectX
     class DualPostProcess : public IPostProcess
     {
     public:
-        enum Effect
+        enum Effect : unsigned int
         {
             Merge,
             BloomCombine,
@@ -140,7 +140,8 @@ namespace DirectX
     class ToneMapPostProcess : public IPostProcess
     {
     public:
-        enum Operator           // Tone-mapping operator
+        // Tone-mapping operator
+        enum Operator : unsigned int
         {
             None,               // Pass-through
             Saturate,           // Clamp [0,1]
@@ -149,7 +150,8 @@ namespace DirectX
             Operator_Max
         };
 
-        enum TransferFunction   // Electro-Optical Transfer Function (EOTF)
+        // Electro-Optical Transfer Function (EOTF)
+        enum TransferFunction : unsigned int
         {
             Linear,             // Pass-through
             SRGB,               // sRGB (Rec.709 and approximate sRGB display curve)
