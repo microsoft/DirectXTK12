@@ -35,12 +35,14 @@ set PCDXC="%WindowsSdkVerBinPath%\x86\dxc.exe"
 if exist %PCDXC% goto continue
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
 if exist %PCDXC% goto continue
-goto needdxil
+
+set PCDXC=dxc.exe
+goto continue
 
 :continuepc
 set PCOPTS=
 
-set PCDXC="%WindowsSdkVerBinPath%\x86\fxc.exe"
+set PCFXC="%WindowsSdkVerBinPath%\x86\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
 if exist %PCFXC% goto continue
@@ -279,8 +281,4 @@ exit /b
 :needxdk
 echo ERROR: CompileShaders xbox requires the Microsoft Xbox One XDK
 echo        (try re-running from the XDK Command Prompt)
-exit /b
-
-:needdxil
-echo ERROR: CompileShaders dxil requires the Microsoft Windows 10 SDK (16299 or later)
 exit /b
