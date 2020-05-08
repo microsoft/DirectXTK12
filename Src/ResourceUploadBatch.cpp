@@ -11,30 +11,10 @@
 #include "DirectXHelpers.h"
 #include "PlatformHelpers.h"
 #include "ResourceUploadBatch.h"
+#include "LoaderHelpers.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
-
-namespace DirectX
-{
-    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
-        // Also used by DDSTextureLoader & WICTextureLoader
-
-    uint32_t CountMips(uint32_t width, uint32_t height) noexcept
-    {
-        if (width == 0 || height == 0)
-            return 0;
-
-        uint32_t count = 1;
-        while (width > 1 || height > 1)
-        {
-            width >>= 1;
-            height >>= 1;
-            count++;
-        }
-        return count;
-    }
-}
 
 // Include the precompiled shader code.
 namespace

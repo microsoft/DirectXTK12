@@ -29,11 +29,6 @@
 #include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
 
-namespace DirectX
-{
-    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
-}
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
@@ -483,7 +478,8 @@ namespace
         }
 
         // Count the number of mips
-        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE)) ? CountMips(twidth, theight) : 1;
+        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
+            ? LoaderHelpers::CountMips(twidth, theight) : 1;
 
         // Create texture
         D3D12_RESOURCE_DESC desc = {};
