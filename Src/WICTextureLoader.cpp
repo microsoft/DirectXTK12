@@ -485,7 +485,7 @@ namespace
 
         // Count the number of mips
         uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
-            ? LoaderHelpers::CountMips(twidth, theight) : 1;
+            ? LoaderHelpers::CountMips(twidth, theight) : 1u;
 
         // Create texture
         D3D12_RESOURCE_DESC desc = {};
