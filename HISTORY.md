@@ -6,6 +6,15 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### May 10, 2020
+* [ResourceUploadBatch](https://github.com/microsoft/DirectXTK12/wiki/ResourceUploadBatch#command-queues) updated to support usage with copy & compute queues
+* ``Transition`` methods added for GeometricPrimtive and Model for use with static VBs/IBs
+* WICTextureLoader updated with new loader flags: ``FORCE_RGBA32``, ``FIT_POW2``, and ``MAKE_SQUARE``
+* SimpleMath no longer forces use of d3d11.h or d3d12.h (can be used with d3d9.h for example)
+* *DirectX Tool Kit for Audio* updated with [SoundStreamInstance](https://github.com/microsoft/DirectXTK/wiki/SoundStreamInstance) class for async I/O playback from XACT-style streaming wavebanks
+* Code cleanup
+* Updated D3DX12 internal copy to Windows 10 SDK (19041) version
+
 ### April 3, 2020
 * Updated D3DX12 internal copy to latest version
 * SpriteFont MeasureString / MeasureDrawBounds fixes for !ignoreWhitespace

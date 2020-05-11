@@ -6,7 +6,7 @@ http://go.microsoft.com/fwlink/?LinkID=615561
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-**April 3, 2020**
+**May 10, 2020**
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop applications for Windows 10, and Xbox One.
 
@@ -73,7 +73,7 @@ Developers using the Xbox One XDK need to generate the ``Src\Shaders\Compiled\Xb
 
 ## Comparisons to DirectX 11 Version
 
-* No support for loading .CMO models or DGSL effect shaders (i.e. DGSLEffect)
+* No support for loading ``.CMO`` models or DGSL effect shaders (i.e. *DGSLEffect*)
 
 * VertexTypes does not include VertexPositionNormalTangentColorTexture or VertexPositionNormalTangentColorTextureSkinning which were intended for use with the DGSL pipeline.
 
@@ -93,5 +93,4 @@ Developers using the Xbox One XDK need to generate the ``Src\Shaders\Compiled\Xb
 
 * The UWP projects and the VS 2019 Win10 classic desktop project include configurations for the ARM64 platform. These require VS 2017 (15.9 update) or VS 2019 to build, with the ARM64 toolset installed.
 
-* The CompileShaders.cmd script must have Windows-style (CRLF) line-endings. If it is changed to Linux-style (LF) line-endings, it can fail to build all the required shaders.
-
+* The ``CompileShaders.cmd`` script must have Windows-style (CRLF) line-endings. If it is changed to Linux-style (LF) line-endings, it can fail to build all the required shaders.
