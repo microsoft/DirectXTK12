@@ -105,6 +105,7 @@ public:
 
     bool mSetViewport;
     D3D12_VIEWPORT mViewPort;
+    D3D12_GPU_DESCRIPTOR_HANDLE mSampler;
 
 private:
     // Implementation helper methods.
@@ -114,7 +115,11 @@ private:
     void SortSprites();
     void GrowSortedSprites();
 
-    void RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTOR textureSize, _In_reads_(count) SpriteInfo const* const* sprites, size_t count);
+    void RenderBatch(
+        D3D12_GPU_DESCRIPTOR_HANDLE texture,
+        XMVECTOR textureSize,
+        _In_reads_(count) SpriteInfo const* const* sprites,
+        size_t count);
 
     static void XM_CALLCONV RenderSprite(_In_ SpriteInfo const* sprite,
         _Out_writes_(VerticesPerSprite) VertexPositionColorTexture* vertices,
@@ -160,7 +165,6 @@ private:
     SpriteSortMode mSortMode;
     ComPtr<ID3D12PipelineState> mPSO;
     ComPtr<ID3D12RootSignature> mRootSignature;
-    D3D12_GPU_DESCRIPTOR_HANDLE mSampler;
     XMMATRIX mTransformMatrix;
     ComPtr<ID3D12GraphicsCommandList> mCommandList;
 
@@ -406,11 +410,11 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
     mSetViewport(false),
     mViewPort{},
+    mSampler{},
     mSpriteQueueCount(0),
     mSpriteQueueArraySize(0),
     mInBeginEndPair(false),
     mSortMode(SpriteSortMode_Deferred),
-    mSampler{},
     mTransformMatrix(MatrixIdentity),
     mVertexSegment{},
     mVertexPageSize(sizeof(VertexPositionColorTexture) * MaxBatchSize * VerticesPerSprite),
@@ -480,10 +484,16 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
 
 // Begins a batch of sprite drawing operations.
 _Use_decl_annotations_
-void XM_CALLCONV SpriteBatch::Impl::Begin(ID3D12GraphicsCommandList* commandList, SpriteSortMode sortMode, FXMMATRIX transformMatrix)
+void XM_CALLCONV SpriteBatch::Impl::Begin(
+    ID3D12GraphicsCommandList* commandList,
+    SpriteSortMode sortMode,
+    FXMMATRIX transformMatrix)
 {
     if (mInBeginEndPair)
-        throw std::exception("Cannot nest Begin calls on a single SpriteBatch");
+    {
+        DebugTrace("ERROR: Cannot nest Begin calls on a single SpriteBatch\n");
+        throw std::exception("SpriteBatch::Begin");
+    }
 
     mSortMode = sortMode;
     mTransformMatrix = transformMatrix;
@@ -498,12 +508,14 @@ void XM_CALLCONV SpriteBatch::Impl::Begin(ID3D12GraphicsCommandList* commandList
     mInBeginEndPair = true;
 }
 
-
 // Ends a batch of sprite drawing operations.
 void SpriteBatch::Impl::End()
 {
     if (!mInBeginEndPair)
-        throw std::exception("Begin must be called before End");
+    {
+        DebugTrace("ERROR: Begin must be called before End\n");
+        throw std::exception("SpriteBatch::End");
+    }
 
     if (mSortMode != SpriteSortMode_Immediate)
     {
@@ -532,7 +544,10 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     unsigned int flags)
 {
     if (!mInBeginEndPair)
-        throw std::exception("Begin must be called before Draw");
+    {
+        DebugTrace("ERROR: Begin must be called before Draw\n");
+        throw std::exception("SpriteBatch::Draw");
+    }
 
     if (!texture.ptr)
         throw std::exception("Invalid texture for Draw");
@@ -952,7 +967,10 @@ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteInfo const* sprite, Verte
 XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation)
 {
     if (!mSetViewport)
+    {
+        DebugTrace("ERROR: SpriteBatch requires viewport information via SetViewport\n");
         throw std::exception("Viewport not set.");
+    }
 
     // Compute the matrix.
     float xScale = (mViewPort.Width > 0) ? 2.0f / mViewPort.Width : 0.0f;
@@ -1036,10 +1054,29 @@ void XM_CALLCONV SpriteBatch::Begin(
     SpriteSortMode sortMode,
     FXMMATRIX transformMatrix)
 {
-    pImpl->Begin(
-        commandList,
-        sortMode,
-        transformMatrix);
+    pImpl->Begin(commandList, sortMode, transformMatrix);
+}
+
+
+_Use_decl_annotations_
+void XM_CALLCONV SpriteBatch::Begin(
+    ID3D12GraphicsCommandList* commandList,
+    D3D12_GPU_DESCRIPTOR_HANDLE sampler,
+    SpriteSortMode sortMode,
+    FXMMATRIX transformMatrix)
+{
+    if (!sampler.ptr)
+        throw std::exception("Invalid heap-based sampler for Begin");
+
+    if (!pImpl->mSampler.ptr)
+    {
+        DebugTrace("ERROR: sampler version of Begin requires SpriteBatch was created with a heap-based sampler\n");
+        throw std::exception("SpriteBatch::Begin");
+    }
+
+    pImpl->mSampler = sampler;
+
+    pImpl->Begin(commandList, sortMode, transformMatrix);
 }
 
 

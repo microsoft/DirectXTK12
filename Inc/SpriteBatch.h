@@ -100,6 +100,11 @@ namespace DirectX
             _In_ ID3D12GraphicsCommandList* commandList,
             SpriteSortMode sortMode = SpriteSortMode_Deferred,
             FXMMATRIX transformMatrix = MatrixIdentity);
+        void XM_CALLCONV Begin(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            D3D12_GPU_DESCRIPTOR_HANDLE sampler,
+            SpriteSortMode sortMode = SpriteSortMode_Deferred,
+            FXMMATRIX transformMatrix = MatrixIdentity);
         void __cdecl End();
 
         // Draw overloads specifying position, origin and scale as XMFLOAT2.
