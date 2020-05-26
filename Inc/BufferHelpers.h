@@ -47,7 +47,8 @@ namespace DirectX
         D3D12_RESOURCE_STATES afterState,
         _COM_Outptr_ ID3D12Resource** pBuffer) noexcept
     {
-        return CreateStaticBuffer(device, resourceUpload, data.data(), data.size(), sizeof(typename T::value_type), afterState, pBuffer);
+        return CreateStaticBuffer(device, resourceUpload, data.data(), data.size(), sizeof(typename T::value_type),
+            afterState, pBuffer);
     }
 
     // Helpers for creating texture from memory arrays.
