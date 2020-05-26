@@ -153,6 +153,9 @@
     <ClInclude Include="Inc\PostProcess.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\BufferHelpers.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shaders\CompileShaders.cmd">
@@ -1174,6 +1177,9 @@
     </ClCompile>
     <ClCompile Include="Audio\SoundStreamInstance.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BufferHelpers.cpp">
+      <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
