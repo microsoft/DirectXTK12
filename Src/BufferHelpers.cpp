@@ -37,9 +37,17 @@ HRESULT DirectX::CreateStaticBuffer(
     if (!device || !ptr || !count || !stride)
         return E_INVALIDARG;
 
-    uint64_t bytes = uint64_t(count) * uint64_t(stride);
+    uint64_t sizeInbytes = uint64_t(count) * uint64_t(stride);
 
-    auto desc = CD3DX12_RESOURCE_DESC::Buffer(bytes);
+    static constexpr uint64_t c_maxBytes = D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u;
+
+    if (sizeInbytes > c_maxBytes)
+    {
+        DebugTrace("ERROR: Resource size too large for DirectX 12 (size %llu)\n", sizeInbytes);
+        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+    }
+
+    auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes);
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
