@@ -27,7 +27,8 @@ HRESULT DirectX::CreateStaticBuffer(
     size_t count,
     size_t stride,
     D3D12_RESOURCE_STATES afterState,
-    ID3D12Resource** pBuffer) noexcept
+    ID3D12Resource** pBuffer,
+    D3D12_RESOURCE_FLAGS resFlags) noexcept
 {
     if (!pBuffer)
         return E_INVALIDARG;
@@ -47,7 +48,7 @@ HRESULT DirectX::CreateStaticBuffer(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes);
+    auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -94,7 +95,8 @@ HRESULT DirectX::CreateTextureFromMemory(
     DXGI_FORMAT format,
     const D3D12_SUBRESOURCE_DATA& initData,
     ID3D12Resource** texture,
-    D3D12_RESOURCE_STATES afterState)
+    D3D12_RESOURCE_STATES afterState,
+    D3D12_RESOURCE_FLAGS resFlags)
 {
     if (!texture)
         return E_INVALIDARG;
@@ -112,7 +114,7 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u);
+    auto desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u, resFlags);
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -157,7 +159,8 @@ HRESULT DirectX::CreateTextureFromMemory(
     const D3D12_SUBRESOURCE_DATA& initData,
     ID3D12Resource** texture,
     bool generateMips,
-    D3D12_RESOURCE_STATES afterState)
+    D3D12_RESOURCE_STATES afterState,
+    D3D12_RESOURCE_FLAGS resFlags)
 {
     if (!texture)
         return E_INVALIDARG;
@@ -187,7 +190,8 @@ HRESULT DirectX::CreateTextureFromMemory(
         }
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height), 1u, mipCount);
+    auto desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
+        1u, mipCount, 1u, 0u, resFlags);
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -236,7 +240,8 @@ HRESULT DirectX::CreateTextureFromMemory(
     DXGI_FORMAT format,
     const D3D12_SUBRESOURCE_DATA& initData,
     ID3D12Resource** texture,
-    D3D12_RESOURCE_STATES afterState)
+    D3D12_RESOURCE_STATES afterState,
+    D3D12_RESOURCE_FLAGS resFlags)
 {
     if (!texture)
         return E_INVALIDARG;
@@ -257,7 +262,9 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex3D(format, static_cast<UINT64>(width), static_cast<UINT>(height), static_cast<UINT16>(depth), 1u);
+    auto desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
+        static_cast<UINT64>(width), static_cast<UINT>(height), static_cast<UINT16>(depth),
+        1u, resFlags);
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
