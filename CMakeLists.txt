@@ -20,6 +20,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 
 set(LIBRARY_SOURCES
+    Inc/BufferHelpers.h
     Inc/CommonStates.h
     Inc/DDSTextureLoader.h
     Inc/DescriptorHeap.h
@@ -50,6 +51,7 @@ set(LIBRARY_SOURCES
     Src/Bezier.h
     Src/BinaryReader.cpp
     Src/BinaryReader.h
+    Src/BufferHelpers.cpp
     Src/CommonStates.cpp
     Src/d3dx12.h
     Src/dds.h
