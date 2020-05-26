@@ -38,8 +38,6 @@ HRESULT DirectX::CreateStaticBuffer(
         return E_INVALIDARG;
 
     uint64_t bytes = uint64_t(count) * uint64_t(stride);
-    if (bytes >= UINT32_MAX)
-        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
     auto desc = CD3DX12_RESOURCE_DESC::Buffer(bytes);
 
@@ -56,7 +54,7 @@ HRESULT DirectX::CreateStaticBuffer(
     if (FAILED(hr))
         return hr;
 
-    D3D12_SUBRESOURCE_DATA initData = { ptr, static_cast<LONG_PTR>(bytes), 0 };
+    D3D12_SUBRESOURCE_DATA initData = { ptr, 0, 0 };
 
     try
     {
@@ -98,7 +96,9 @@ HRESULT DirectX::CreateTextureFromMemory(
     if (!device || !width || !initData.pData)
         return E_INVALIDARG;
 
-    if (width > D3D12_REQ_TEXTURE1D_U_DIMENSION || width > UINT32_MAX)
+    static_assert(D3D12_REQ_TEXTURE1D_U_DIMENSION <= UINT64_MAX, "Exceeded integer limits");
+
+    if (width > D3D12_REQ_TEXTURE1D_U_DIMENSION)
     {
         DebugTrace("ERROR: Resource dimensions too large for DirectX 12 (1D: size %zu)\n", width);
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
@@ -160,8 +160,10 @@ HRESULT DirectX::CreateTextureFromMemory(
         || !initData.pData || !initData.RowPitch)
         return E_INVALIDARG;
 
-    if ((width > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION) || (width > UINT32_MAX)
-        || (height > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION) || (height > UINT32_MAX))
+    static_assert(D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION <= UINT32_MAX, "Exceeded integer limits");
+
+    if ((width > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+        || (height > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION))
     {
         DebugTrace("ERROR: Resource dimensions too large for DirectX 12 (2D: size %zu by %zu)\n", width, height);
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
@@ -237,9 +239,11 @@ HRESULT DirectX::CreateTextureFromMemory(
         || !initData.pData || !initData.RowPitch || !initData.SlicePitch)
         return E_INVALIDARG;
 
-    if ((width > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) || (width > UINT32_MAX)
-        || (height > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) || (height > UINT32_MAX)
-        || (depth > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) || (depth > UINT32_MAX))
+    static_assert(D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION <= UINT16_MAX, "Exceeded integer limits");
+
+    if ((width > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+        || (height > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+        || (depth > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
     {
         DebugTrace("ERROR: Resource dimensions too large for DirectX 12 (3D: size %zu by %zu by %zu)\n", width, height, depth);
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
