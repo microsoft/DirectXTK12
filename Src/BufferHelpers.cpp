@@ -96,7 +96,7 @@ HRESULT DirectX::CreateTextureFromMemory(
     const D3D12_SUBRESOURCE_DATA& initData,
     ID3D12Resource** texture,
     D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags)
+    D3D12_RESOURCE_FLAGS resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;
@@ -160,7 +160,7 @@ HRESULT DirectX::CreateTextureFromMemory(
     ID3D12Resource** texture,
     bool generateMips,
     D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags)
+    D3D12_RESOURCE_FLAGS resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;
@@ -241,7 +241,7 @@ HRESULT DirectX::CreateTextureFromMemory(
     const D3D12_SUBRESOURCE_DATA& initData,
     ID3D12Resource** texture,
     D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags)
+    D3D12_RESOURCE_FLAGS resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;

@@ -62,7 +62,7 @@ namespace DirectX
         const D3D12_SUBRESOURCE_DATA& initData,
         _COM_Outptr_ ID3D12Resource** texture,
         D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE);
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
 
     HRESULT __cdecl CreateTextureFromMemory(_In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -72,7 +72,7 @@ namespace DirectX
         _COM_Outptr_ ID3D12Resource** texture,
         bool generateMips = false,
         D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE);
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
 
     HRESULT __cdecl CreateTextureFromMemory(_In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -81,5 +81,5 @@ namespace DirectX
         const D3D12_SUBRESOURCE_DATA& initData,
         _COM_Outptr_ ID3D12Resource** texture,
         D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE);
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
 }
