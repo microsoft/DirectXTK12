@@ -29,7 +29,7 @@ namespace
     static_assert((MinAllocSize & (MinAllocSize - 1)) == 0, "MinAllocSize size must be a power of 2");
     static_assert(MinAllocSize >= (4 * 1024), "MinAllocSize size must be greater than 4K");
 
-    inline constexpr size_t NextPow2(size_t x) noexcept
+    inline size_t NextPow2(size_t x) noexcept
     {
         x--;
         x |= x >> 1;
