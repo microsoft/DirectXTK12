@@ -13,52 +13,53 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-
-// Constant buffer layout. Must match the shader!
-struct EnvironmentMapEffectConstants
+namespace
 {
-    XMVECTOR environmentMapSpecular;
-    float environmentMapAmount;
-    float fresnelFactor;
-    float pad[2];
+    // Constant buffer layout. Must match the shader!
+    struct EnvironmentMapEffectConstants
+    {
+        XMVECTOR environmentMapSpecular;
+        float environmentMapAmount;
+        float fresnelFactor;
+        float pad[2];
 
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-static_assert((sizeof(EnvironmentMapEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
+
+    static_assert((sizeof(EnvironmentMapEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct EnvironmentMapEffectTraits
-{
-    using ConstantBufferType = EnvironmentMapEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct EnvironmentMapEffectTraits
+    {
+        using ConstantBufferType = EnvironmentMapEffectConstants;
 
-    static const int VertexShaderCount = 6;
-    static const int PixelShaderCount = 8;
-    static const int ShaderPermutationCount = 24;
-    static const int RootSignatureCount = 1;
-};
-
+        static constexpr int VertexShaderCount = 6;
+        static constexpr int PixelShaderCount = 8;
+        static constexpr int ShaderPermutationCount = 24;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal EnvironmentMapEffect implementation class.
 class EnvironmentMapEffect::Impl : public EffectBase<EnvironmentMapEffectTraits>
 {
 public:
     Impl(_In_ ID3D12Device* device,
-         int effectFlags,
+         uint32_t effectFlags,
          const EffectPipelineStateDescription& pipelineDescription,
          bool fresnelEnabled,
          bool specularEnabled);
@@ -228,15 +229,15 @@ SharedResourcePool<ID3D12Device*, EffectBase<EnvironmentMapEffectTraits>::Device
 // Constructor.
 EnvironmentMapEffect::Impl::Impl(
     _In_ ID3D12Device* device,
-    int effectFlags,
+    uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription,
     bool fresnelEnabled,
     bool specularEnabled)
     : EffectBase(device),
-    texture{},
-    textureSampler{},
-    environmentMap{},
-    environmentMapSampler{}
+        texture{},
+        textureSampler{},
+        environmentMap{},
+        environmentMapSampler{}
 {
     static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -401,19 +402,19 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
 
 // Public constructor.
 EnvironmentMapEffect::EnvironmentMapEffect(
-    _In_ ID3D12Device* device, 
-    int effectFlags, 
-    const EffectPipelineStateDescription& pipelineDescription, 
-    bool fresnelEnabled, 
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool fresnelEnabled,
     bool specularEnabled)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, fresnelEnabled, specularEnabled))
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, fresnelEnabled, specularEnabled))
 {
 }
 
 
 // Move constructor.
 EnvironmentMapEffect::EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

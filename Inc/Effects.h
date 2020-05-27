@@ -91,7 +91,7 @@ namespace DirectX
 
         virtual void __cdecl EnableDefaultLighting() = 0;
 
-        static const int MaxDirectionalLights = 3;
+        static constexpr int MaxDirectionalLights = 3;
 
     protected:
         IEffectLights() = default;
@@ -134,7 +134,7 @@ namespace DirectX
         virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
         virtual void __cdecl ResetBoneTransforms() = 0;
 
-        static const int MaxBones = 72;
+        static constexpr int MaxBones = 72;
 
     protected:
         IEffectSkinning() = default;
@@ -144,14 +144,14 @@ namespace DirectX
     //----------------------------------------------------------------------------------
     namespace EffectFlags
     {
-        const int None                = 0x00;
-        const int Fog                 = 0x01;
-        const int Lighting            = 0x02;
-        const int PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
-        const int VertexColor         = 0x08;
-        const int Texture             = 0x10;
+        constexpr uint32_t None                = 0x00;
+        constexpr uint32_t Fog                 = 0x01;
+        constexpr uint32_t Lighting            = 0x02;
+        constexpr uint32_t PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
+        constexpr uint32_t VertexColor         = 0x08;
+        constexpr uint32_t Texture             = 0x10;
 
-        const int BiasedVertexNormals = 0x10000; // compressed vertex normals need x2 bias
+        constexpr uint32_t BiasedVertexNormals = 0x10000; // compressed vertex normals need x2 bias
     }
 
 
@@ -160,7 +160,7 @@ namespace DirectX
     class BasicEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        BasicEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         BasicEffect(BasicEffect&& moveFrom) noexcept;
         BasicEffect& operator= (BasicEffect&& moveFrom) noexcept;
 
@@ -217,8 +217,8 @@ namespace DirectX
     class AlphaTestEffect : public IEffect, public IEffectMatrices, public IEffectFog
     {
     public:
-        AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-                        D3D12_COMPARISON_FUNC alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
+        AlphaTestEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            D3D12_COMPARISON_FUNC alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
         AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept;
         AlphaTestEffect& operator= (AlphaTestEffect&& moveFrom) noexcept;
 
@@ -264,7 +264,7 @@ namespace DirectX
     class DualTextureEffect : public IEffect, public IEffectMatrices, public IEffectFog
     {
     public:
-        DualTextureEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        DualTextureEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         DualTextureEffect(DualTextureEffect&& moveFrom) noexcept;
         DualTextureEffect& operator= (DualTextureEffect&& moveFrom) noexcept;
 
@@ -308,7 +308,8 @@ namespace DirectX
     class EnvironmentMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        EnvironmentMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool fresnelEnabled = true, bool specularEnabled = false);
+        EnvironmentMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            bool fresnelEnabled = true, bool specularEnabled = false);
         EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom) noexcept;
 
@@ -370,7 +371,8 @@ namespace DirectX
     class SkinnedEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog, public IEffectSkinning
     {
     public:
-        SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex = 4);
+        SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            int weightsPerVertex = 4);
         SkinnedEffect(SkinnedEffect&& moveFrom) noexcept;
         SkinnedEffect& operator= (SkinnedEffect&& moveFrom) noexcept;
 
@@ -432,7 +434,8 @@ namespace DirectX
     class NormalMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap = true);
+        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            bool specularMap = true);
         NormalMapEffect(NormalMapEffect&& moveFrom) noexcept;
         NormalMapEffect& operator= (NormalMapEffect&& moveFrom) noexcept;
 
@@ -492,7 +495,8 @@ namespace DirectX
     class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
     {
     public:
-        explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool emissive = false, bool generateVelocity = false);
+        explicit PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            bool emissive = false, bool generateVelocity = false);
         PBREffect(PBREffect&& moveFrom) noexcept;
         PBREffect& operator= (PBREffect&& moveFrom) noexcept;
 
@@ -570,7 +574,8 @@ namespace DirectX
             Mode_BiTangents,    // RGB bi-tangents
         };
 
-        explicit DebugEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, Mode debugMode = Mode_Default);
+        explicit DebugEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+            Mode debugMode = Mode_Default);
         DebugEffect(DebugEffect&& moveFrom) noexcept;
         DebugEffect& operator= (DebugEffect&& moveFrom) noexcept;
 

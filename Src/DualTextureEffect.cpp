@@ -13,36 +13,37 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-
-// Constant buffer layout. Must match the shader!
-struct DualTextureEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
-    XMMATRIX worldViewProj;
-};
+    // Constant buffer layout. Must match the shader!
+    struct DualTextureEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
+        XMMATRIX worldViewProj;
+    };
 
-static_assert((sizeof(DualTextureEffectConstants) % 16) == 0, "CB size not padded correctly");
+    static_assert((sizeof(DualTextureEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct DualTextureEffectTraits
-{
-    using ConstantBufferType = DualTextureEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct DualTextureEffectTraits
+    {
+        using ConstantBufferType = DualTextureEffectConstants;
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 2;
-    static const int ShaderPermutationCount = 4;
-    static const int RootSignatureCount = 1;
-};
-
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 2;
+        static constexpr int ShaderPermutationCount = 4;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal DualTextureEffect implementation class.
 class DualTextureEffect::Impl : public EffectBase<DualTextureEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
     
     enum RootParameterIndex
     {
@@ -136,18 +137,21 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
 
 
 // Constructor.
-DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+DualTextureEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-    texture1{},
-    texture1Sampler{},
-    texture2{},
-    texture2Sampler{}
+        texture1{},
+        texture1Sampler{},
+        texture2{},
+        texture2Sampler{}
 {
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderBytecode) == DualTextureEffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    
+
     // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
@@ -280,7 +284,10 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-DualTextureEffect::DualTextureEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+DualTextureEffect::DualTextureEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
@@ -288,7 +295,7 @@ DualTextureEffect::DualTextureEffect(_In_ ID3D12Device* device, int effectFlags,
 
 // Move constructor.
 DualTextureEffect::DualTextureEffect(DualTextureEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

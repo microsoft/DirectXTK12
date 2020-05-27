@@ -12,48 +12,50 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct NormalMapEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    XMVECTOR specularColorAndPower;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
+    // Constant buffer layout. Must match the shader!
+    struct NormalMapEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
+        XMVECTOR specularColorAndPower;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-static_assert((sizeof(NormalMapEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
+
+    static_assert((sizeof(NormalMapEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct NormalMapEffectTraits
-{
-    using ConstantBufferType = NormalMapEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct NormalMapEffectTraits
+    {
+        using ConstantBufferType = NormalMapEffectConstants;
 
-    static const int VertexShaderCount = 8;
-    static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 16;
-    static const int RootSignatureCount = 2;
-};
-
+        static constexpr int VertexShaderCount = 8;
+        static constexpr int PixelShaderCount = 4;
+        static constexpr int ShaderPermutationCount = 16;
+        static constexpr int RootSignatureCount = 2;
+    };
+}
 
 // Internal NormalMapEffect implementation class.
 class NormalMapEffect::Impl : public EffectBase<NormalMapEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        bool specularMap);
 
     enum RootParameterIndex
     {
@@ -199,13 +201,17 @@ SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResou
 
 
 // Constructor.
-NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool ispecularMap)
+NormalMapEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool ispecularMap)
     : EffectBase(device),
-    specularMap(ispecularMap),
-    texture{},
-    specular{},
-    normal{},
-    sampler{}
+        specularMap(ispecularMap),
+        texture{},
+        specular{},
+        normal{},
+        sampler{}
 {
     static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderIndices) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderBytecode) == NormalMapEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -357,15 +363,19 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-NormalMapEffect::NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, specularMap))
+NormalMapEffect::NormalMapEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool specularMap)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, specularMap))
 {
 }
 
 
 // Move constructor.
 NormalMapEffect::NormalMapEffect(NormalMapEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

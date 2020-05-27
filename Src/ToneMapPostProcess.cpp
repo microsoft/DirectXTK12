@@ -24,15 +24,15 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    const int Dirty_ConstantBuffer  = 0x01;
-    const int Dirty_Parameters      = 0x02;
+    constexpr int Dirty_ConstantBuffer  = 0x01;
+    constexpr int Dirty_Parameters      = 0x02;
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    const int PixelShaderCount = 15;
-    const int ShaderPermutationCount = 24;
+    constexpr int PixelShaderCount = 15;
+    constexpr int ShaderPermutationCount = 24;
 #else
-    const int PixelShaderCount = 9;
-    const int ShaderPermutationCount = 12;
+    constexpr int PixelShaderCount = 9;
+    constexpr int ShaderPermutationCount = 12;
 #endif
 
     // Constant buffer layout. Must match the shader!

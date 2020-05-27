@@ -12,48 +12,49 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct BasicEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    XMVECTOR specularColorAndPower;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
+    // Constant buffer layout. Must match the shader!
+    struct BasicEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
+        XMVECTOR specularColorAndPower;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-static_assert((sizeof(BasicEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
+
+    static_assert((sizeof(BasicEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct BasicEffectTraits
-{
-    using ConstantBufferType = BasicEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct BasicEffectTraits
+    {
+        using ConstantBufferType = BasicEffectConstants;
 
-    static const int VertexShaderCount = 24;
-    static const int PixelShaderCount = 10;
-    static const int ShaderPermutationCount = 40;
-    static const int RootSignatureCount = 2;
-};
-
+        static constexpr int VertexShaderCount = 24;
+        static constexpr int PixelShaderCount = 10;
+        static constexpr int ShaderPermutationCount = 40;
+        static constexpr int RootSignatureCount = 2;
+    };
+}
 
 // Internal BasicEffect implementation class.
 class BasicEffect::Impl : public EffectBase<BasicEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
 
     enum RootParameterIndex
     {
@@ -325,10 +326,13 @@ SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources
 
 
 // Constructor.
-BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+BasicEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-    texture{},
-    sampler{}
+        texture{},
+        sampler{}
 {
     static_assert(_countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<BasicEffectTraits>::VertexShaderBytecode) == BasicEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -488,7 +492,10 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-BasicEffect::BasicEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+BasicEffect::BasicEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
   : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }

@@ -12,51 +12,52 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct PBREffectConstants
-{    
-    XMVECTOR eyePosition;
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-    XMMATRIX prevWorldViewProj; // for velocity generation
-
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];           
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    
-    // PBR Parameters
-    XMVECTOR Albedo;
-    float    Metallic;
-    float    Roughness;
-    int      numRadianceMipLevels;
-
-    // Size of render target 
-    float   targetWidth;
-    float   targetHeight;
-};
-
-static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
-
-
-// Traits type describes our characteristics to the EffectBase template.
-struct PBREffectTraits
+namespace
 {
-    using ConstantBufferType = PBREffectConstants;
+    // Constant buffer layout. Must match the shader!
+    struct PBREffectConstants
+    {
+        XMVECTOR eyePosition;
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+        XMMATRIX prevWorldViewProj; // for velocity generation
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 5;
-    static const int ShaderPermutationCount = 10;
-    static const int RootSignatureCount = 1;
-};
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
 
+        // PBR Parameters
+        XMVECTOR Albedo;
+        float    Metallic;
+        float    Roughness;
+        int      numRadianceMipLevels;
+
+        // Size of render target 
+        float   targetWidth;
+        float   targetHeight;
+    };
+
+    static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
+
+
+    // Traits type describes our characteristics to the EffectBase template.
+    struct PBREffectTraits
+    {
+        using ConstantBufferType = PBREffectConstants;
+
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 5;
+        static constexpr int ShaderPermutationCount = 10;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal PBREffect implementation class.
 class PBREffect::Impl : public EffectBase<PBREffectTraits>
 {
 public:
     Impl(_In_ ID3D12Device* device, 
-        int effectFlags, 
+        uint32_t effectFlags,
         const EffectPipelineStateDescription& pipelineDescription,
         bool emissive,
         bool generateVelocity);
@@ -177,14 +178,14 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
-    int effectFlags,
+    uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription,
     bool emissive,
     bool generateVelocity)
     : EffectBase(device),
-    emissiveMap(emissive),
-    descriptors{},
-    lightColor{}
+        emissiveMap(emissive),
+        descriptors{},
+        lightColor{}
 {
     static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
@@ -455,11 +456,11 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-PBREffect::PBREffect(_In_ ID3D12Device* device, 
-                     int effectFlags, 
-                    const EffectPipelineStateDescription& pipelineDescription, 
-                    bool emissive,
-                    bool generateVelocity)
+PBREffect::PBREffect(_In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool emissive,
+    bool generateVelocity)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, emissive, generateVelocity))
 {
 }
@@ -467,7 +468,7 @@ PBREffect::PBREffect(_In_ ID3D12Device* device,
 
 // Move constructor.
 PBREffect::PBREffect(PBREffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

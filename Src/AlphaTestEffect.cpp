@@ -12,37 +12,39 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct AlphaTestEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR alphaTest;
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
-    XMMATRIX worldViewProj;
-};
+    // Constant buffer layout. Must match the shader!
+    struct AlphaTestEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR alphaTest;
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
+        XMMATRIX worldViewProj;
+    };
 
-static_assert((sizeof(AlphaTestEffectConstants) % 16) == 0, "CB size not padded correctly");
+    static_assert((sizeof(AlphaTestEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct AlphaTestEffectTraits
-{
-    using ConstantBufferType = AlphaTestEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct AlphaTestEffectTraits
+    {
+        using ConstantBufferType = AlphaTestEffectConstants;
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 8;
-    static const int RootSignatureCount = 1;
-};
-
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 4;
+        static constexpr int ShaderPermutationCount = 8;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal AlphaTestEffect implementation class.
 class AlphaTestEffect::Impl : public EffectBase<AlphaTestEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        D3D12_COMPARISON_FUNC alphaFunction);
 
     enum RootParameterIndex
     {
@@ -148,13 +150,16 @@ template<>
 SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResources> EffectBase<AlphaTestEffectTraits>::deviceResourcesPool = {};
 
 // Constructor.
-AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
-    int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
+AlphaTestEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    D3D12_COMPARISON_FUNC alphaFunction)
     : EffectBase(device),
-    mAlphaFunction(alphaFunction),
-    referenceAlpha(0),
-    texture{},
-    textureSampler{}
+        mAlphaFunction(alphaFunction),
+        referenceAlpha(0),
+        texture{},
+        textureSampler{}
 {
     static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -360,7 +365,11 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-AlphaTestEffect::AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
+AlphaTestEffect::AlphaTestEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    D3D12_COMPARISON_FUNC alphaFunction)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, alphaFunction))
 {
 }
@@ -368,7 +377,7 @@ AlphaTestEffect::AlphaTestEffect(_In_ ID3D12Device* device, int effectFlags, con
 
 // Move constructor.
 AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

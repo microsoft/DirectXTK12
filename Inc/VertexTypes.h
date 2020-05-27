@@ -45,7 +45,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 1;
+        static constexpr unsigned int InputElementCount = 1;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -78,7 +78,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 2;
+        static constexpr unsigned int InputElementCount = 2;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -111,7 +111,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 2;
+        static constexpr unsigned int InputElementCount = 2;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -153,7 +153,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 3;
+        static constexpr unsigned int InputElementCount = 3;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -186,7 +186,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 2;
+        static constexpr unsigned int InputElementCount = 2;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -222,7 +222,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 3;
+        static constexpr unsigned int InputElementCount = 3;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -258,7 +258,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 3;
+        static constexpr unsigned int InputElementCount = 3;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -294,7 +294,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 3;
+        static constexpr unsigned int InputElementCount = 3;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
@@ -337,7 +337,7 @@ namespace DirectX
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
-        static const int InputElementCount = 4;
+        static constexpr unsigned int InputElementCount = 4;
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 }

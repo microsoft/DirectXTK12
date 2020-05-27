@@ -12,50 +12,52 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct SkinnedEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    XMVECTOR specularColorAndPower;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
+    // Constant buffer layout. Must match the shader!
+    struct SkinnedEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
+        XMVECTOR specularColorAndPower;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-    XMVECTOR bones[SkinnedEffect::MaxBones][3];
-};
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
 
-static_assert((sizeof(SkinnedEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMVECTOR bones[SkinnedEffect::MaxBones][3];
+    };
+
+    static_assert((sizeof(SkinnedEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct SkinnedEffectTraits
-{
-    using ConstantBufferType = SkinnedEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct SkinnedEffectTraits
+    {
+        using ConstantBufferType = SkinnedEffectConstants;
 
-    static const int VertexShaderCount = 12;
-    static const int PixelShaderCount = 3;
-    static const int ShaderPermutationCount = 24;
-    static const int RootSignatureCount = 1;
-};
-
+        static constexpr int VertexShaderCount = 12;
+        static constexpr int PixelShaderCount = 3;
+        static constexpr int ShaderPermutationCount = 24;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal SkinnedEffect implementation class.
 class SkinnedEffect::Impl : public EffectBase<SkinnedEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        int weightsPerVertex);
 
     enum RootParameterIndex
     {
@@ -225,10 +227,14 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
 
 
 // Constructor.
-SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
+SkinnedEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    int weightsPerVertex)
     : EffectBase(device),
-    texture{},
-    sampler{}
+        texture{},
+        sampler{}
 {
     static_assert(_countof(EffectBase<SkinnedEffectTraits>::VertexShaderIndices) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -379,15 +385,19 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, int weightsPerVertex)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, weightsPerVertex))
+SkinnedEffect::SkinnedEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    int weightsPerVertex)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, weightsPerVertex))
 {
 }
 
 
 // Move constructor.
 SkinnedEffect::SkinnedEffect(SkinnedEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
