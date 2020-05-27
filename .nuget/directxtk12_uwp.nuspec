@@ -11,6 +11,7 @@
 
 Features:
 Audio - low-level audio API using XAudio2
+BufferHelpers - C++ helpers for creating D3D resources from CPU data
 CommonStates - common D3D state combinations
 DDSTextureLoader - light-weight DDS file texture loader 
 DescriptorHeap - helper for managing DX12 descriptor heaps
