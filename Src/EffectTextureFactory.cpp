@@ -130,7 +130,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
         wchar_t ext[_MAX_EXT];
         _wsplitpath_s(name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
 
-        unsigned int loadFlags = DDS_LOADER_DEFAULT;
+        DDS_LOADER_FLAGS loadFlags = DDS_LOADER_DEFAULT;
         if (mForceSRGB)
             loadFlags |= DDS_LOADER_FORCE_SRGB;
         if (mAutoGenMips)
@@ -170,7 +170,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
                 fullName,
                 0u,
                 D3D12_RESOURCE_FLAG_NONE,
-                loadFlags,
+                static_cast<WIC_LOADER_FLAGS>(loadFlags),
                 textureEntry.mResource.ReleaseAndGetAddressOf());
             if (FAILED(hr))
             {

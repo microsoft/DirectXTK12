@@ -227,7 +227,7 @@ namespace
         size_t arraySize,
         DXGI_FORMAT format,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture) noexcept
     {
         if (!d3dDevice)
@@ -278,7 +278,7 @@ namespace
         size_t bitSize,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ bool* outIsCubeMap) noexcept(false)
@@ -623,7 +623,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
     size_t ddsDataSize,
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
-    unsigned int loadFlags,
+    DDS_LOADER_FLAGS loadFlags,
     ID3D12Resource** texture,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
     DDS_ALPHA_MODE* alphaMode,
@@ -713,7 +713,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
     const wchar_t* fileName,
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
-    unsigned int loadFlags,
+    DDS_LOADER_FLAGS loadFlags,
     ID3D12Resource** texture,
     std::unique_ptr<uint8_t[]>& ddsData,
     std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
@@ -804,7 +804,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
     size_t ddsDataSize,
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
-    unsigned int loadFlags,
+    DDS_LOADER_FLAGS loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
     bool* isCubeMap)
@@ -922,7 +922,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
     const wchar_t* fileName,
     size_t maxsize,
     D3D12_RESOURCE_FLAGS resFlags,
-    unsigned int loadFlags,
+    DDS_LOADER_FLAGS loadFlags,
     ID3D12Resource** texture,
     DDS_ALPHA_MODE* alphaMode,
     bool* isCubeMap)
