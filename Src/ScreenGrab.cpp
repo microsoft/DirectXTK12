@@ -445,7 +445,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     D3D12_RESOURCE_STATES afterState,
     const GUID* targetFormat,
     std::function<void(IPropertyBag2*)> setCustomProps,
-    bool forceSRGB) noexcept
+    bool forceSRGB)
 {
     if (!fileName)
         return E_INVALIDARG;
