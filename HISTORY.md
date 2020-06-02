@@ -6,25 +6,35 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### June 1, 2020
+* Added BufferHelpers header with functions **CreateStaticBuffer** and **CreateTextureFromMemory**
+* Added **IsPowerOf2** helper to DirectXHelpers
+* SpriteBatch now supports providing a new heap-based sampler on calls to **Begin**
+* Converted to typed enum bitmask flags (see release notes for details on this potential *breaking change*)
+  + ``AUDIO_ENGINE_FLAGS``, ``DDS_LOADER_FLAGS``, ``ModelLoaderFlags``, ``SOUND_EFFECT_INSTANCE_FLAGS``, and ``WIC_LOADER_FLAGS``
+* WICTextureLoader for ``PNG`` codec now checks ``gAMA`` chunk to determine colorspace if the ``sRGB`` chunk is not found for legacy sRGB detection.
+* ``WIC_LOADER_SRGB_DEFAULT`` flag added when loading image via WIC without explicit colorspace metadata
+* CMake project updates
+
 ### May 10, 2020
-* [ResourceUploadBatch](https://github.com/microsoft/DirectXTK12/wiki/ResourceUploadBatch#command-queues) updated to support usage with copy & compute queues
-* ``Transition`` methods added for GeometricPrimtive and Model for use with static VBs/IBs
+* **ResourceUploadBatch** updated to support usage with copy & compute queues
+* **Transition** methods added for GeometricPrimtive and Model for use with static VBs/IBs
 * WICTextureLoader updated with new loader flags: ``FORCE_RGBA32``, ``FIT_POW2``, and ``MAKE_SQUARE``
 * SimpleMath no longer forces use of d3d11.h or d3d12.h (can be used with d3d9.h for example)
-* *DirectX Tool Kit for Audio* updated with [SoundStreamInstance](https://github.com/microsoft/DirectXTK/wiki/SoundStreamInstance) class for async I/O playback from XACT-style streaming wavebanks
+* *DirectX Tool Kit for Audio* updated with **SoundStreamInstance** class for async I/O playback from XACT-style streaming wavebanks
 * Code cleanup
 * Updated D3DX12 internal copy to Windows 10 SDK (19041) version
 
 ### April 3, 2020
 * Updated D3DX12 internal copy to latest version
-* SpriteFont MeasureString / MeasureDrawBounds fixes for !ignoreWhitespace
+* SpriteFont **MeasureString** / **MeasureDrawBounds** fixes for !ignoreWhitespace
 * Regenerated shaders using Windows 10 SDK (19041)
   * Upgraded to use root signature 1.1 which requires Windows 10 (14393) or later
-* Code review (constexpr / noexcept usage)
+* Code review (``constexpr`` / ``noexcept`` usage)
 * CMake updated for PCH usage with 3.16 or later
 
 ### February 24, 2020
-* *breaking change* ``Model::CreateFrom*`` parameter order changed and addded ModelLoaderFlags
+* *breaking change* **Model::CreateFromxxx** parameter order changed and added ModelLoaderFlags
 * Added ``ignoreWhitespace`` defaulted parameter to SpriteFont Measure methods
 * Sync'd DirectX Tool Kit for Audio and GamePad with DX11 version
 * Fixed encoding issue with Utilities.fxh
@@ -34,8 +44,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 ### December 17, 2019
 * Added ARM64 platform to VS 2019 Win32 desktop Win10 project
 * Added Vector ``operator/`` by float scalar to SimpleMath
-* Added ``GetStatistics`` method to GraphicsMemory
-* Reduced fence object usage in GraphicsMemory's LinearAllocator
+* Added **GetStatistics** method to GraphicsMemory
+* Reduced fence object usage in GraphicsMemory's **LinearAllocator**
 * Updated CMake project
 * Code cleaup
 
@@ -61,7 +71,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### April 26, 2019
 * Updated auto-generated mipmaps support to make it more robust
-* Added optional ``LoadStaticBuffers`` method for GeometricPrimitive
+* Added optional **LoadStaticBuffers** method for GeometricPrimitive
 * Added VS 2019 desktop projects
 * Fixed guards w.r.t. to windows.h usage in Keyboard/Mouse headers
 * Added C++/WinRT SetWindow helper to Keyboard/Mouse
@@ -69,12 +79,12 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Code cleanup
 
 ### February 7, 2019
-* Model now supports loading SDKMESH v2 models
-* PBREffectFactory added to support PBR materials
+* Model now supports loading ``SDKMESH v2`` models
+* **PBREffectFactory** added to support PBR materials
 * PBREffect and NormalMapEffect shaders updated to support ``BC5_UNORM`` compressed normal maps
-* SpriteFont: DrawString overloads for UTF-8 chars in addition to UTF-16LE wide chars
+* SpriteFont: **DrawString** overloads for UTF-8 chars in addition to UTF-16LE wide chars
 * Fixed bug with GraphicsMemory dtor introduced with mGPU handling
-* Made library agonstic to legacy Windows SDK pix.h vs. latest pix3.h from NuGet
+* Made library agnostic to legacy Windows SDK pix.h vs. latest pix3.h from NuGet
 
 ### November 16, 2018
 * VS 2017 updated for Windows 10 October 2018 Update SDK (17763)
@@ -85,7 +95,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Model loader for SDKMESH now attempts to use legacy DE3CN compressed normals
   + This is an approximation only and emits a warning in debug builds
 * IEffectTextureFactory's CreateTexture interface method now returns the 'slot'
-  + This is for use with ``GetResource`` method
+  + This is for use with **GetResource** method
 * Minor code review
 
 ### October 25, 2018
@@ -104,9 +114,9 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Code cleanup
 
 ### July 3, 2018
-* Model ``LoadStaticBuffers`` method to use static vs. dynamic VB/IB
+* Model **LoadStaticBuffers** method to use static vs. dynamic VB/IB
 * *breaking change* Custom Model loaders and renderers should be updated for changes to ModelMeshPart
-* ModelMeshPart DrawInstanced method added
+* ModelMeshPart **DrawInstanced** method added
 * Code and project cleanup
 
 ### May 31, 2018
@@ -114,13 +124,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Regenerated shaders using Windows 10 April 2018 Update SDK (17134)
 
 ### May 14, 2018
-* EffectPipelineStateDescription updated with GetDesc method
+* EffectPipelineStateDescription updated with **GetDesc** method
 * Updated for VS 2017 15.7 update warnings
 * Code and project cleanup
 
 ### April 23, 2018
-* ``AlignUp``, ``AlignDown`` template functions in DirectXHelpers.h
-* ScopedBarrier added to DirectXHelpers.h
+* **AlignUp**, **AlignDown** template functions in DirectXHelpers.h
+* **ScopedBarrier** added to DirectXHelpers.h
 * Mouse support for cursor visibility
 * SimpleMath and VertexTypes updated with default copy and move ctors
 * SimpleMath updates to use constexpr
@@ -134,8 +144,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Updated for a few more VS 2017 warnings
 
 ### December 13, 2017
-* PBREffect and DebugEffect added
-* NormalMapEffect no longer requires or uses explicit vertex tangents
+* **PBREffect** and **DebugEffect** added
+* **NormalMapEffect** no longer requires or uses explicit vertex tangents
 * Updated for VS 2017 15.5 update warnings
 * Code cleanup
 
@@ -147,7 +157,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 ### September 22, 2017
 * Updated for VS 2017 15.3 update ``/permissive-`` changes
 * ScreenGrab updated to use non-sRGB metadata for PNG
-* Mouse use of WM_INPUT updated for Remote Desktop scenarios
+* Mouse use of ``WM_INPUT`` updated for Remote Desktop scenarios
 
 ### July 28, 2017
 * Fix for WIC writer when codec target format requires a palette
@@ -155,8 +165,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Code cleanup
 
 ### June 21, 2017
-* Post-processing support
-* Added DescriptorPile utility class
+* Post-processing support with the **BasicPostProcess**, **DualPostProcess**, and **ToneMapPostProcess** classes
+* Added **DescriptorPile** utility class
 * SDKMESH loader fix when loading legacy files with all zero materials
 * DirectXTK for Audio: Minor fixes for environmental audio
 * Optimized root signatures for Effects shaders
@@ -177,15 +187,15 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 ### February 10, 2017
 * SpriteBatch default rasterizer state now matches DirectX 11 version
 * DDSTextureLoader now supports loading planar video format textures
-* GamePad now supports special value of -1 for 'most recently connected controller'
+* **GamePad** now supports special value of -1 for 'most recently connected controller'
 * WIC format 40bppCMYKAlpha should be converted to RGBA8 rather than RGBA16
 * DDS support for L8A8 with bitcount 8 rather than 16
 * Updated D3DX12 internal copy to latest version
 * Minor code cleanup
 
 ### December 5, 2016
-* Mouse and Keyboard classes updated with IsConnected method
-* Windows10 project /ZW switch removed to support use in C++/WinRT projection apps
+* Mouse and Keyboard classes updated with **IsConnected** method
+* Windows10 project ``/ZW`` switch removed to support use in C++/WinRT projection apps
 * VS 2017 RC projects added
 * Updated D3DX12 internal copy to latest version
 * Minor code cleanup
@@ -203,12 +213,12 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Minor code cleanup
 
 ### September 1, 2016
-* EffectPipelineStateDescription is now in it's own header
+* **EffectPipelineStateDescription** is now in it's own header
 * Additional debug object naming
 * Fixed Tier 1 hardware support issues with BasicEffect and generating mipmaps
 * Fixed default graphics memory alignment to resolve rendering problems on some hardware
 * Added ``forceSRGB`` optional parameter to SpriteFont ctor
-* EffectFactory method ``EnableForceSRGB`` added
+* EffectFactory method **EnableForceSRGB** added
 * Removed problematic ABI::Windows::Foundation::Rect interop for SimpleMath
 * Updated D3DX12 internal copy for the Windows 10 Anniversary Update SDK (14393)
 * Minor code cleanup
@@ -234,8 +244,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
   + removed unnecesary "one-light" shader permutations
   + fixed bug in AlphaTestEfect implementation
   + improved debug messages for misconfigured effects NormalMapEffect for normal-map with optional specular map rendering
-* EnvironmentMapEffect now supports per-pixel lighting
-* Effects updated with SetMatrices and SetColorAndAlpha methods
+* **EnvironmentMapEffect** now supports per-pixel lighting
+* Effects updated with **SetMatrices** and **SetColorAndAlpha** methods
 * GraphicsMemory support for SharedGraphicsResource shared_ptr style smart-pointer
 * PrimitiveBatch fix for DrawQuad
 * ScreenGrab handles resource state transition
