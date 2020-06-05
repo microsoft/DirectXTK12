@@ -11,6 +11,8 @@ project (DirectXTK12 LANGUAGES CXX)
 
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
 
+option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -122,7 +124,7 @@ set(SHADER_SOURCES
     Src/Shaders/ToneMap.fx
     Src/Shaders/Utilities.fxh)
 
-if(BUILD_XAUDIO_WIN10 MATCHES ON)
+if(BUILD_XAUDIO_WIN10)
     set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
         Inc/Audio.h
         Audio/AudioEngine.cpp
@@ -161,7 +163,7 @@ source_group(Src REGULAR_EXPRESSION Src/*.*)
 target_include_directories(${PROJECT_NAME} PUBLIC Inc)
 target_include_directories(${PROJECT_NAME} PRIVATE Src)
 
-if(BUILD_XAUDIO_WIN10 MATCHES ON)
+if(BUILD_XAUDIO_WIN10)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
 endif()
 
@@ -189,6 +191,10 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
 endif()
 if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
     target_compile_options(${PROJECT_NAME} PRIVATE /permissive- /JMC- /Zc:__cplusplus)
+
+   if(ENABLE_CODE_ANALYSIS)
+      target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
+   endif()
 
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
         target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
