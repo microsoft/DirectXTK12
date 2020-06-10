@@ -638,7 +638,7 @@ namespace DirectX
             _In_ ID3D12Device* device,
             ResourceUploadBatch& resourceUploadBatch,
             _In_ size_t numDescriptors,
-            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false);
+            _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) noexcept(false);
 
         EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept;
         EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom) noexcept;
