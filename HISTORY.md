@@ -6,6 +6,11 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### June 15, 2020
+* DescriptorHeap / DescriptorPile updated with additional ctor
+* EffectTextureFactory ctor parameter updated with default value
+* Code cleanup for some new VC++ 16.7 warnings and static code analysis
+
 ### June 1, 2020
 * Added BufferHelpers header with functions **CreateStaticBuffer** and **CreateTextureFromMemory**
 * Added **IsPowerOf2** helper to DirectXHelpers
