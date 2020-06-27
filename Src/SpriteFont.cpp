@@ -60,6 +60,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     XMUINT2 textureSize;
     std::vector<Glyph> glyphs;
+    std::vector<uint32_t> glyphsIndex;
     Glyph const* defaultGlyph;
     float lineSpacing;
 
@@ -105,6 +106,7 @@ SpriteFont::Impl::Impl(
     D3D12_GPU_DESCRIPTOR_HANDLE gpuDesc,
     bool forceSRGB) noexcept(false) :
         texture{},
+        textureSize{},
         defaultGlyph(nullptr),
         lineSpacing(0),
         utfBufferSize(0)
@@ -124,6 +126,12 @@ SpriteFont::Impl::Impl(
     auto glyphData = reader->ReadArray<Glyph>(glyphCount);
 
     glyphs.assign(glyphData, glyphData + glyphCount);
+    glyphsIndex.reserve(glyphs.size());
+
+    for (auto& glyph : glyphs)
+    {
+        glyphsIndex.emplace_back(glyph.Character);
+    }
 
     // Read font properties.
     lineSpacing = reader->Read<float>();
@@ -136,16 +144,25 @@ SpriteFont::Impl::Impl(
     auto textureFormat = reader->Read<DXGI_FORMAT>();
     auto textureStride = reader->Read<uint32_t>();
     auto textureRows = reader->Read<uint32_t>();
-    auto textureData = reader->ReadArray<uint8_t>(size_t(textureStride) * size_t(textureRows));
+
+    uint64_t dataSize = uint64_t(textureStride) * uint64_t(textureRows);
+    if (dataSize > UINT32_MAX)
+    {
+        DebugTrace("ERROR: SpriteFont provided with an invalid .spritefont file\n");
+        throw std::overflow_error("Invalid .spritefont file");
+    }
+
+    auto textureData = reader->ReadArray<uint8_t>(static_cast<size_t>(dataSize));
 
     if (forceSRGB)
     {
         textureFormat = LoaderHelpers::MakeSRGB(textureFormat);
     }
 
-    // Create the D3D texture object.
+    // Create the D3D texture.
     CreateTextureResource(
-        device, upload,
+        device,
+        upload,
         textureWidth, textureHeight,
         textureFormat,
         textureStride, textureRows,
@@ -181,17 +198,52 @@ SpriteFont::Impl::Impl(
     {
         throw std::exception("Glyphs must be in ascending codepoint order");
     }
+
+    glyphsIndex.reserve(glyphs.size());
+
+    for (auto& glyph : glyphs)
+    {
+        glyphsIndex.emplace_back(glyph.Character);
+    }
 }
 
 
 // Looks up the requested glyph, falling back to the default character if it is not in the font.
 SpriteFont::Glyph const* SpriteFont::Impl::FindGlyph(wchar_t character) const
 {
-    auto glyph = std::lower_bound(glyphs.begin(), glyphs.end(), character);
+    // Rather than use std::lower_bound (which includes a slow debug path when built for _DEBUG),
+    // we implement a binary search inline to ensure sufficient Debug build performance to be useful
+    // for text-heavy applications.
 
-    if (glyph != glyphs.end() && glyph->Character == character)
+    size_t lower = 0;
+    size_t higher = glyphs.size() - 1;
+    size_t index = higher / 2;
+    const size_t size = glyphs.size();
+
+    while (index < size)
     {
-        return &*glyph;
+        const auto curChar = glyphsIndex[index];
+        if (curChar == character) { return &glyphs[index]; }
+        if (curChar < character)
+        {
+            lower = index + 1;
+        }
+        else
+        {
+            higher = index - 1;
+        }
+        if (higher < lower) { break; }
+        else if (higher - lower <= 4)
+        {
+            for (index = lower; index <= higher; index++)
+            {
+                if (glyphsIndex[index] == character)
+                {
+                    return &glyphs[index];
+                }
+            }
+        }
+        index = lower + ((higher - lower) / 2);
     }
 
     if (defaultGlyph)
@@ -274,16 +326,21 @@ void SpriteFont::Impl::CreateTextureResource(
     uint32_t stride, uint32_t rows,
     const uint8_t* data) noexcept(false)
 {
+    uint64_t sliceBytes = uint64_t(stride) * uint64_t(rows);
+    if (sliceBytes > UINT32_MAX)
+    {
+        DebugTrace("ERROR: SpriteFont provided with an invalid .spritefont file\n");
+        throw std::overflow_error("Invalid .spritefont file");
+    }
+
     D3D12_RESOURCE_DESC desc = {};
-    desc.Width = static_cast<UINT>(width);
-    desc.Height = static_cast<UINT>(height);
-    desc.MipLevels = 1;
-    desc.DepthOrArraySize = 1;
-    desc.Format = format;
-    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    desc.SampleDesc.Count = 1;
-    desc.SampleDesc.Quality = 0;
     desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    desc.Width = width;
+    desc.Height = height;
+    desc.DepthOrArraySize = 1;
+    desc.MipLevels = 1;
+    desc.Format = format;
+    desc.SampleDesc.Count = 1;
 
     CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -297,15 +354,12 @@ void SpriteFont::Impl::CreateTextureResource(
 
     SetDebugObjectName(textureResource.Get(), L"SpriteFont:Texture");
 
-    D3D12_SUBRESOURCE_DATA subres = {};
-    subres.pData = data;
-    subres.RowPitch = ptrdiff_t(stride);
-    subres.SlicePitch = ptrdiff_t(stride) * ptrdiff_t(rows);
+    D3D12_SUBRESOURCE_DATA initData = { data, static_cast<LONG_PTR>(stride), static_cast<LONG_PTR>(sliceBytes) };
 
     upload.Upload(
         textureResource.Get(),
         0,
-        &subres,
+        &initData,
         1);
 
     upload.Transition(
