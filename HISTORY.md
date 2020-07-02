@@ -6,6 +6,12 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### July 2, 2020
+* Improved SpriteFont drawing performance in Debug builds
+* Regenerated shaders using Windows 10 May 2020 Update SDK (19041)
+* Code cleanup for some new VC++ 16.7 warnings
+* CMake updates
+
 ### June 15, 2020
 * DescriptorHeap / DescriptorPile updated with additional ctor
 * EffectTextureFactory ctor parameter updated with default value
