@@ -152,7 +152,7 @@
 #include <vector>
 
 #pragma warning(push)
-#pragma warning(disable : 5204)
+#pragma warning(disable : 5204 5220)
 #include <future>
 #pragma warning(pop)
 
@@ -164,7 +164,7 @@
 #include <malloc.h>
 
 #pragma warning(push)
-#pragma warning(disable : 4467 5038 5204)
+#pragma warning(disable : 4467 5038 5204 5220)
 #include <wrl.h>
 #pragma warning(pop)
 
