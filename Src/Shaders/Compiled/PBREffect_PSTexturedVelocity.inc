@@ -153,7 +153,7 @@ mul r0.x, r1.x, CB0[0][23].w
 mul r0.y, r1.y, CB0[0][24].x
 add r0.xyz, r0.xyzx, -v4.xyzx
 ushr r1.xyz, r0.xyzx, l(31, 31, 31, 0)
-mul r0.xyz, r0.xyzx, l(0.000031, 0.000031, 0.007813, 0.000000)
+mul r0.xyz, r0.xyzx, l(0.000031, 0.000031, 0.007812, 0.000000)
 min r0.xyz, |r0.xyzx|, l(0.007809, 0.007809, 0.007809, 0.000000)
 f32tof16 r0.xyz, r0.xyzx
 iadd r0.xyz, r0.xyzx, l(8, 8, 2, 0)
