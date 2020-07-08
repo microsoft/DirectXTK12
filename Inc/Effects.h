@@ -151,6 +151,11 @@ namespace DirectX
         constexpr uint32_t VertexColor         = 0x08;
         constexpr uint32_t Texture             = 0x10;
 
+        constexpr uint32_t Specular            = 0x100; // enable optional specular/specularMap feature
+        constexpr uint32_t Emissive            = 0x200; // enable optional emissive/emissiveMap feature
+        constexpr uint32_t Fresnel             = 0x400; // enable optional Fresnel feature
+        constexpr uint32_t Velocity            = 0x800; // enable optional velocity feature
+
         constexpr uint32_t BiasedVertexNormals = 0x10000; // compressed vertex normals need x2 bias
     }
 
@@ -308,8 +313,15 @@ namespace DirectX
     class EnvironmentMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
+        enum Mapping
+        {
+            Mapping_Cube = 0,       // Cubic environment map
+            Mapping_Sphere,         // Spherical environment map
+            Mapping_DualParabola,   // Dual-parabola environment map (requires Feature Level 10.0)
+        };
+
         EnvironmentMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-            bool fresnelEnabled = true, bool specularEnabled = false);
+            Mapping mapping = Mapping_Cube);
         EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom) noexcept;
 
@@ -434,8 +446,7 @@ namespace DirectX
     class NormalMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-            bool specularMap = true);
+        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         NormalMapEffect(NormalMapEffect&& moveFrom) noexcept;
         NormalMapEffect& operator= (NormalMapEffect&& moveFrom) noexcept;
 
@@ -495,8 +506,7 @@ namespace DirectX
     class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
     {
     public:
-        explicit PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-            bool emissive = false, bool generateVelocity = false);
+        explicit PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         PBREffect(PBREffect&& moveFrom) noexcept;
         PBREffect& operator= (PBREffect&& moveFrom) noexcept;
 

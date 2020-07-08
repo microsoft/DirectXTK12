@@ -54,8 +54,7 @@ namespace
 class NormalMapEffect::Impl : public EffectBase<NormalMapEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-        bool specularMap);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
 
     enum RootParameterIndex
     {
@@ -76,7 +75,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -204,10 +203,9 @@ SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResou
 NormalMapEffect::Impl::Impl(
     _In_ ID3D12Device* device,
     uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    bool ispecularMap)
+    const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        specularMap(ispecularMap),
+        specularMap(effectFlags & EffectFlags::Specular),
         texture{},
         specular{},
         normal{},
@@ -263,9 +261,7 @@ NormalMapEffect::Impl::Impl(
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
@@ -287,7 +283,7 @@ NormalMapEffect::Impl::Impl(
 }
 
 
-int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const noexcept
+int NormalMapEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -298,18 +294,17 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, 
     }
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 2;
     }
 
-    // Specular map?
     if (!specularMap)
     {
         permutation += 4;
     }
 
-    if (biasedVertexNormals)
+    if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 8;
@@ -366,9 +361,8 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 NormalMapEffect::NormalMapEffect(
     _In_ ID3D12Device* device,
     uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    bool specularMap)
-    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, specularMap))
+    const EffectPipelineStateDescription& pipelineDescription)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
 
