@@ -101,6 +101,11 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         effectflags |= EffectFlags::BiasedVertexNormals;
     }
 
+    if (emissiveTextureIndex != -1)
+    {
+        effectflags |= EffectFlags::Emissive;
+    }
+
     std::wstring cacheName;
     if (mSharing && !info.name.empty())
     {
@@ -114,7 +119,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         }
     }
 
-    auto effect = std::make_shared<PBREffect>(mDevice.Get(), effectflags, derivedPSD, (emissiveTextureIndex != -1));
+    auto effect = std::make_shared<PBREffect>(mDevice.Get(), effectflags, derivedPSD);
 
     // We don't use EnableDefaultLighting generally for PBR as it uses Image-Based Lighting instead.
 

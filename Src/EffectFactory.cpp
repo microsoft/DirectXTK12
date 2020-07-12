@@ -290,12 +290,15 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
+        if (specularTextureIndex != -1)
+        {
+            effectflags |= EffectFlags::Specular;
+        }
+
         if (mSharing && !info.name.empty())
         {
             uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-            if (specularTextureIndex != -1)
-                cacheName += L"spec";
 
             auto it = mEffectCacheNormalMap.find(cacheName);
             if (mSharing && it != mEffectCacheNormalMap.end())
@@ -304,7 +307,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD, (specularTextureIndex != -1));
+        auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
 
         effect->EnableDefaultLighting();
 
