@@ -506,7 +506,7 @@ namespace DirectX
     class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
     {
     public:
-        explicit PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+        PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         PBREffect(PBREffect&& moveFrom) noexcept;
         PBREffect& operator= (PBREffect&& moveFrom) noexcept;
 
@@ -584,7 +584,7 @@ namespace DirectX
             Mode_BiTangents,    // RGB bi-tangents
         };
 
-        explicit DebugEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        DebugEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
             Mode debugMode = Mode_Default);
         DebugEffect(DebugEffect&& moveFrom) noexcept;
         DebugEffect& operator= (DebugEffect&& moveFrom) noexcept;
