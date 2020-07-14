@@ -205,7 +205,7 @@ NormalMapEffect::Impl::Impl(
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        specularMap(effectFlags & EffectFlags::Specular),
+        specularMap((effectFlags & EffectFlags::Specular) != 0),
         texture{},
         specular{},
         normal{},

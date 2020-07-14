@@ -179,7 +179,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        emissiveMap(effectFlags & EffectFlags::Emissive),
+        emissiveMap((effectFlags & EffectFlags::Emissive) != 0),
         descriptors{},
         lightColor{}
 {
