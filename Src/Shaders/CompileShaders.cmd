@@ -137,17 +137,9 @@ call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapDualParabolaPixelLightingN
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapDualParabolaPixelLightingFresnel
 call :CompileShader%1 EnvironmentMapEffect ps PSEnvMapDualParabolaPixelLightingFresnelNoFog
 
-call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingOneBone
-call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingOneBoneBn
-call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingTwoBones
-call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingTwoBonesBn
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingFourBones
 call :CompileShader%1 SkinnedEffect vs VSSkinnedVertexLightingFourBonesBn
 
-call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingOneBone
-call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingOneBoneBn
-call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingTwoBones
-call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingTwoBonesBn
 call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingFourBones
 call :CompileShader%1 SkinnedEffect vs VSSkinnedPixelLightingFourBonesBn
 

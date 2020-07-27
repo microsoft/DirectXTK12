@@ -383,8 +383,7 @@ namespace DirectX
     class SkinnedEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog, public IEffectSkinning
     {
     public:
-        SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-            int weightsPerVertex = 4);
+        SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
         SkinnedEffect(SkinnedEffect&& moveFrom) noexcept;
         SkinnedEffect& operator= (SkinnedEffect&& moveFrom) noexcept;
 
