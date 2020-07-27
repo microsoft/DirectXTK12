@@ -487,19 +487,7 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.inc">
@@ -754,19 +742,7 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBone.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBone.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBones.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.pdb">
@@ -823,19 +799,7 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLightingBn.pdb">
@@ -880,19 +844,7 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpec.inc">
