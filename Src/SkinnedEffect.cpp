@@ -45,9 +45,9 @@ namespace
     {
         using ConstantBufferType = SkinnedEffectConstants;
 
-        static constexpr int VertexShaderCount = 12;
+        static constexpr int VertexShaderCount = 4;
         static constexpr int PixelShaderCount = 3;
-        static constexpr int ShaderPermutationCount = 24;
+        static constexpr int ShaderPermutationCount = 8;
         static constexpr int RootSignatureCount = 1;
     };
 }
