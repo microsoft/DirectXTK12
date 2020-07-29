@@ -31,7 +31,7 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuedxil
-set PCDXC="%WindowsSdkVerBinPath%\x86\dxc.exe"
+set PCDXC="%WindowsSdkVerBinPath%x86\dxc.exe"
 if exist %PCDXC% goto continue
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
 if exist %PCDXC% goto continue
@@ -42,7 +42,7 @@ goto continue
 :continuepc
 set PCOPTS=
 
-set PCFXC="%WindowsSdkVerBinPath%\x86\fxc.exe"
+set PCFXC="%WindowsSdkVerBinPath%x86\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
 if exist %PCFXC% goto continue
