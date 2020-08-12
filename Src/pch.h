@@ -183,7 +183,7 @@
 #include <x3daudio.h>
 #include <xapofx.h>
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <apu.h>
 #include <shapexmacontext.h>
 #include <xma2defs.h>
