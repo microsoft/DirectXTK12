@@ -256,7 +256,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
         &fpRowPitch,
         &totalResourceSize);
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
     UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
@@ -471,7 +471,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         &fpRowPitch,
         &totalResourceSize);
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
     UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
@@ -673,7 +673,7 @@ HRESULT DirectX::SaveWICTextureToFile(
                 (void)metawriter->RemoveMetadataByName(L"/sRGB/RenderingIntent");
             }
         }
-    #if defined(_XBOX_ONE) && defined(_TITLE)
+    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         else if (memcmp(&guidContainerFormat, &GUID_ContainerFormatJpeg, sizeof(GUID)) == 0)
         {
             // Set Software name

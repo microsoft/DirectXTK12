@@ -90,7 +90,18 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTextured.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstant.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocity.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstantBn.inc"

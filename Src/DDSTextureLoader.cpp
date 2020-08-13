@@ -47,7 +47,7 @@ namespace
         case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
         case DXGI_FORMAT_D16_UNORM:
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         case DXGI_FORMAT_D16_UNORM_S8_UINT:
         case DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
         case DXGI_FORMAT_X16_TYPELESS_G8_UINT:
@@ -72,7 +72,7 @@ namespace
         case DXGI_FORMAT_P010:
         case DXGI_FORMAT_P016:
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         case DXGI_FORMAT_D16_UNORM_S8_UINT:
         case DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
         case DXGI_FORMAT_X16_TYPELESS_G8_UINT:

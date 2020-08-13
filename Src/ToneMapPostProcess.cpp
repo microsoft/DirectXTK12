@@ -27,7 +27,7 @@ namespace
     constexpr int Dirty_ConstantBuffer  = 0x01;
     constexpr int Dirty_Parameters      = 0x02;
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     constexpr int PixelShaderCount = 15;
     constexpr int ShaderPermutationCount = 24;
 #else
@@ -49,7 +49,25 @@ namespace
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_VSQuad.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSCopy.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSSaturate.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSReinhard.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSACESFilmic.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PS_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSSaturate_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSReinhard_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSACESFilmic_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_Saturate.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_Reinhard.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_ACESFilmic.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_Saturate_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_Reinhard_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSHDR10_ACESFilmic_SRGB.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneToneMap_VSQuad.inc"
 
     #include "Shaders/Compiled/XboxOneToneMap_PSCopy.inc"
@@ -99,7 +117,7 @@ namespace
         { ToneMap_PSACESFilmic_SRGB,        sizeof(ToneMap_PSACESFilmic_SRGB) },
         { ToneMap_PSHDR10,                  sizeof(ToneMap_PSHDR10) },
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         // Shaders that generate both HDR10 and GameDVR SDR signals via Multiple Render Targets.
         { ToneMap_PSHDR10_Saturate,         sizeof(ToneMap_PSHDR10_Saturate) },
         { ToneMap_PSHDR10_Reinhard,         sizeof(ToneMap_PSHDR10_Reinhard) },
@@ -132,7 +150,7 @@ namespace
         8,  // HDR10
         8,  // HDR10
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         // MRT Linear EOTF
         9,  // HDR10+Saturate
         9,  // HDR10+Saturate
@@ -289,7 +307,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     assert(mRootSignature != nullptr);
 
     // Determine shader permutation.
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     int permutation = (mrt) ? 12 : 0;
     permutation += (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
 #else
@@ -364,7 +382,7 @@ void ToneMapPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandLi
 
 
 // Public constructor.
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func, bool mrt)
   : pImpl(std::make_unique<Impl>(device, rtState, op, func, mrt))
 #else

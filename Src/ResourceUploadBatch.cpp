@@ -19,10 +19,12 @@ using Microsoft::WRL::ComPtr;
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
-#   include "Shaders/Compiled/XboxOneGenerateMips_main.inc"
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOneGenerateMips_main.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
+    #include "Shaders/Compiled/XboxOneGenerateMips_main.inc"
 #else
-#   include "Shaders/Compiled/GenerateMips_main.inc"
+    #include "Shaders/Compiled/GenerateMips_main.inc"
 #endif
 
     bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept
@@ -454,7 +456,7 @@ public:
         }
         else if (FormatIsBGR(desc.Format))
         {
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
+#if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
             if (!mStandardSwizzle64KBSupported)
             {
                 throw std::exception("GenerateMips needs StandardSwizzle64KBSupported device support for BGR");
@@ -594,7 +596,7 @@ public:
 
         if (FormatIsBGR(format))
         {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if defined(_GAMING_XBOX) || (defined(_XBOX_ONE) && defined(_TITLE))
             // We know the RGB and BGR memory layouts match for Xbox One
             return true;
 #else
@@ -886,7 +888,7 @@ private:
         auto copyDesc = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
+#if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
         copyDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE;
 #endif
 

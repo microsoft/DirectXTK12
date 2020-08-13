@@ -71,7 +71,17 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTest.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVcNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGt.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNe.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTest.inc"
     #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
     #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTestVc.inc"

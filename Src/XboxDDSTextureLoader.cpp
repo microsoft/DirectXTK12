@@ -22,7 +22,9 @@
 #include "DDS.h"
 #include "DirectXHelpers.h"
 
-#include <xdk.h>
+#ifdef _GAMING_XBOX
+#include <xmem.h>
+#endif
 
 using namespace DirectX;
 using namespace Xbox;
@@ -37,7 +39,11 @@ namespace
         0,
         XALLOC_MEMTYPE_GRAPHICS_WRITECOMBINE_GPU_READONLY,
         XALLOC_PAGESIZE_64KB,
-        XALLOC_ALIGNMENT_64K);
+        XALLOC_ALIGNMENT_64K
+#ifdef _GAMING_XBOX
+        , 0
+#endif
+        );
 
     //--------------------------------------------------------------------------------------
     // DDS file structure definitions
@@ -54,10 +60,10 @@ namespace
         uint32_t    miscFlag; // see DDS_RESOURCE_MISC_FLAG
         uint32_t    arraySize;
         uint32_t    miscFlags2; // see DDS_MISC_FLAGS2
-        uint32_t    tileMode; // see XG_TILE_MODE
+        uint32_t    tileMode;
         uint32_t    baseAlignment;
         uint32_t    dataSize;
-        uint32_t    xdkVer; // matching _XDK_VER
+        uint32_t    xdkVer; // matching _XDK_VER / _GXDK_VER
     };
 
     static_assert(sizeof(DDS_HEADER_XBOX) == 36, "DDS XBOX Header size mismatch");
@@ -282,7 +288,12 @@ namespace
 
         auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<const uint8_t*>(header) + sizeof(DDS_HEADER));
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && defined(_GXDK_VER)
+        if (xboxext->xdkVer < _GXDK_VER)
+        {
+            OutputDebugStringA("WARNING: DDS XBOX file may be outdated and need regeneration\n");
+        }
+#elif !defined(NDEBUG) && defined(_XDK_VER)
         if (xboxext->xdkVer < _XDK_VER)
         {
             OutputDebugStringA("WARNING: DDS XBOX file may be outdated and need regeneration\n");

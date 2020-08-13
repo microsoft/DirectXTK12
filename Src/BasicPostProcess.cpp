@@ -50,7 +50,19 @@ namespace
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_VSQuadNoCB.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_VSQuad.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSCopy.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSMonochrome.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSSepia.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSDownScale2x2.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSDownScale4x4.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSGaussianBlur5x5.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSBloomExtract.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSBloomBlur.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePostProcess_VSQuadNoCB.inc"
     #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
 

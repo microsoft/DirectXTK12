@@ -190,7 +190,7 @@ namespace
             stats.totalPages = totalPageCount;
         }
 
-    #if !defined(_XBOX_ONE) || !defined(_TITLE)
+    #if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
     #endif
 
@@ -215,7 +215,7 @@ public:
         , m_peakBytes(0)
         , m_peakPages(0)
     {
-    #if defined(_XBOX_ONE) && defined(_TITLE)
+    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         if (s_graphicsMemory)
         {
             throw std::exception("GraphicsMemory is a singleton");
@@ -233,7 +233,7 @@ public:
 
     ~Impl()
     {
-    #if defined(_XBOX_ONE) && defined(_TITLE)
+    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         s_graphicsMemory = nullptr;
     #else
         if (mDeviceAllocator && mDeviceAllocator->GetDevice())
@@ -248,7 +248,7 @@ public:
     {
         mDeviceAllocator = std::make_unique<DeviceAllocator>(device);
 
-    #if !defined(_XBOX_ONE) || !defined(_TITLE)
+    #if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
         if (s_graphicsMemory.find(device) != s_graphicsMemory.cend())
         {
             throw std::exception("GraphicsMemory is a per-device singleton");
@@ -303,7 +303,7 @@ public:
 }
 
     GraphicsMemory* mOwner;
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     static GraphicsMemory::Impl* s_graphicsMemory;
 #else
     static std::map<ID3D12Device*, GraphicsMemory::Impl*> s_graphicsMemory;
@@ -317,7 +317,7 @@ private:
     size_t  m_peakPages;
 };
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 GraphicsMemory::Impl* GraphicsMemory::Impl::s_graphicsMemory = nullptr;
 #else
 std::map<ID3D12Device*, GraphicsMemory::Impl*> GraphicsMemory::Impl::s_graphicsMemory;
@@ -377,7 +377,6 @@ void GraphicsMemory::GarbageCollect()
     pImpl->GarbageCollect();
 }
 
-
 GraphicsMemoryStatistics GraphicsMemory::GetStatistics()
 {
     GraphicsMemoryStatistics stats;
@@ -390,7 +389,7 @@ void GraphicsMemory::ResetStatistics()
     pImpl->ResetStatistics();
 }
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
 {
     if (!Impl::s_graphicsMemory || !Impl::s_graphicsMemory->mOwner)

@@ -81,7 +81,49 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasic.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVcNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicTxNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicTxVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicTxVcNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLighting.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasic.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicTxNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicVertexLighting.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicVertexLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_PSBasicPixelLightingTx.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasic.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicNoFog.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVc.inc"

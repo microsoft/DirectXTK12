@@ -9,6 +9,7 @@ set FXCOPTS=/nologo /WX /Ges /Zi /Zpc /Qstrip_reflect /Qstrip_debug
 
 if %1.==xbox. goto continuexbox
 if %1.==dxil. goto continuedxil
+if %1.==gxdk. goto continuegxdk
 if %1.==. goto continuepc
 echo usage: CompileShaders [xbox]
 exit /b
@@ -28,6 +29,15 @@ set XBOXFXC="%XboxOneXDKBuild%xdk\FXC\amd64\FXC.exe"
 if exist %XBOXFXC% goto continue
 set XBOXFXC="%DurangoXDK%xdk\FXC\amd64\FXC.exe"
 if not exist %XBOXFXC% goto needxdk
+goto continue
+
+:continuegxdk
+set XBOXPREFIX=XboxGamingXboxOne
+set XBOXDXC="%GameDKLatest%\GXDK\bin\XboxOne\DXC.exe"
+
+if exist %XBOXDXC% goto continue
+set XBOXDXC="%GameDKLatest%\GXDK\bin\DXC.exe"
+if not exist %XBOXDXC% goto needgxdk
 goto continue
 
 :continuedxil
@@ -216,14 +226,15 @@ call :CompileShader%1 ToneMap ps PSReinhard_SRGB
 call :CompileShader%1 ToneMap ps PSACESFilmic_SRGB
 call :CompileShader%1 ToneMap ps PSHDR10
 
-if NOT %1.==xbox. goto skipxboxonly
+if %1.==. goto skipxboxonly
+if %1.==dxil. goto skipxboxonly
 
-call :CompileShaderxbox ToneMap ps PSHDR10_Saturate
-call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard
-call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic
-call :CompileShaderxbox ToneMap ps PSHDR10_Saturate_SRGB
-call :CompileShaderxbox ToneMap ps PSHDR10_Reinhard_SRGB
-call :CompileShaderxbox ToneMap ps PSHDR10_ACESFilmic_SRGB
+call :CompileShader%1 ToneMap ps PSHDR10_Saturate
+call :CompileShader%1 ToneMap ps PSHDR10_Reinhard
+call :CompileShader%1 ToneMap ps PSHDR10_ACESFilmic
+call :CompileShader%1 ToneMap ps PSHDR10_Saturate_SRGB
+call :CompileShader%1 ToneMap ps PSHDR10_Reinhard_SRGB
+call :CompileShader%1 ToneMap ps PSHDR10_ACESFilmic_SRGB
 
 :skipxboxonly
 
@@ -280,7 +291,26 @@ echo %fxc%
 %fxc% || set error=1
 exit /b
 
+:CompileShadergxdk
+set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+echo.
+echo %dxc%
+%dxc% || set error=1
+exit /b
+
+:CompileComputeShadergxdk
+set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /FhCompiled\%XBOXPREFIX%%1_%2.inc /FdCompiled\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+echo.
+echo %dxc%
+%dxc% || set error=1
+exit /b
+
 :needxdk
 echo ERROR: CompileShaders xbox requires the Microsoft Xbox One XDK
 echo        (try re-running from the XDK Command Prompt)
+exit /b
+
+:needgxdk
+echo ERROR: CompileShaders gxdk requires the Microsoft Gaming SDK
+echo        (try re-running from the Gaming GXDK Command Prompt)
 exit /b

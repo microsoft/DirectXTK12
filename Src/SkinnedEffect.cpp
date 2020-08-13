@@ -80,7 +80,16 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
     #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"

@@ -16,11 +16,15 @@
 
 #pragma once
 
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
-#error This module only supports Xbox One exclusive apps
+#if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
+#error This module only supports Xbox exclusive apps
 #endif
 
 #include <d3d12_x.h>
+
+#ifdef _GAMING_XBOX
+#pragma comment(lib,"xmem.lib")
+#endif
 
 #include <cstdint>
 
