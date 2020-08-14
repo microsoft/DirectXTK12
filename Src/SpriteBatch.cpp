@@ -24,7 +24,12 @@ using Microsoft::WRL::ComPtr;
 namespace
 {
     // Include the precompiled shader code.
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpritePixelShader.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpritePixelShaderHeap.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpritePixelShader.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShaderHeap.inc"

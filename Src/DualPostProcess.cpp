@@ -42,7 +42,12 @@ namespace
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_VSQuadDual.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSMerge.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSBloomCombine.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_VSQuadDual.inc"
 
     #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSMerge.inc"

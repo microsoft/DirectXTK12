@@ -19,7 +19,9 @@ using Microsoft::WRL::ComPtr;
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettGenerateMips_main.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneGenerateMips_main.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneGenerateMips_main.inc"

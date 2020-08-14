@@ -20,7 +20,11 @@
 #error This module only supports Xbox exclusive apps
 #endif
 
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#else
 #include <d3d12_x.h>
+#endif
 
 #ifdef _GAMING_XBOX
 #pragma comment(lib,"xmem.lib")

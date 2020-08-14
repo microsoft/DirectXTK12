@@ -32,8 +32,13 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuegxdk
+if %2.==scarlett. (
+set XBOXPREFIX=XboxGamingScarlett
+set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
+) else (
 set XBOXPREFIX=XboxGamingXboxOne
 set XBOXDXC="%GameDKLatest%\GXDK\bin\XboxOne\DXC.exe"
+)
 
 if exist %XBOXDXC% goto continue
 set XBOXDXC="%GameDKLatest%\GXDK\bin\DXC.exe"

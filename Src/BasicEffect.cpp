@@ -81,7 +81,49 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasic.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVcNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicTxNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicTxVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicTxVcNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasic.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicTxNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicVertexLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicVertexLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicVertexLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicVertexLightingTxNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettBasicEffect_PSBasicPixelLightingTx.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasic.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicNoFog.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneBasicEffect_VSBasicVc.inc"

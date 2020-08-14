@@ -89,7 +89,34 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMap.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMapFresnel.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMapPixelLighting.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMapBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMapFresnelBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_VSEnvMapPixelLightingBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMap.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpecular.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneEnvironmentMapEffect_VSEnvMap.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc"

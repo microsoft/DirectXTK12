@@ -71,7 +71,15 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTexture.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureVcNoFog.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_PSDualTexture.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_PSDualTextureNoFog.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTexture.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTextureNoFog.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTextureVc.inc"

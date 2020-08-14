@@ -84,7 +84,22 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"

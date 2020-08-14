@@ -49,7 +49,25 @@ namespace
 // Include the precompiled shader code.
 namespace
 {
-#ifdef _GAMING_XBOX
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_VSQuad.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSCopy.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSSaturate.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSReinhard.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSACESFilmic.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PS_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSSaturate_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSReinhard_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSACESFilmic_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_Saturate.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_Reinhard.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_ACESFilmic.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_Saturate_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_Reinhard_SRGB.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettToneMap_PSHDR10_ACESFilmic_SRGB.inc"
+#elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneToneMap_VSQuad.inc"
 
     #include "Shaders/Compiled/XboxGamingXboxOneToneMap_PSCopy.inc"
