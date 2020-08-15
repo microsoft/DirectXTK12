@@ -6,6 +6,18 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### August 15, 2020
+* *breaking change* Converted default bool parameters on some effects to ``EffectFlags``:
+  * Added new effects flags ``Specular``, ``Emissive``, ``Fresnel``, and ``Velocity``
+  * Removed EnvironmentMapEffect ``fresnelEnabled``, ``specularEnabled`` parameters
+  * Removed NormalMapEffect ``specularMap`` parameter
+  * Removed PBREffect ``emissive``, ``generateVelocity`` parameters
+  * Removed SkinnedEffect ``weightsPerVertex`` parameter (always uses 4 bones)
+* EnvironmentMapEffect now supports cubemaps, spherical, and dual-parabola environment maps
+* Fixed bug with ScreenGrab with 'small alignment' textures
+* Code review and project updates
+* Added GDK projects
+
 ### July 2, 2020
 * Improved SpriteFont drawing performance in Debug builds
 * Regenerated shaders using Windows 10 May 2020 Update SDK (19041)
