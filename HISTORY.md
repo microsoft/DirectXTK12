@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### September 30, 2020
+* GamePad class updated with ``c_MostRecent`` constant for ``-1`` player index special behavior
+  * For GameInput API implementation, also added ``c_MergedInput``
+* Fixed bug in WICTextureLoader that resulted in ``WINCODEC_ERR_INSUFFICIENTBUFFER`` for some resize requests
+* Fixed ``.wav`` file reading of MIDILoop chunk
+* Minor code cleanup
+*
 ### August 15, 2020
 * *breaking change* Converted default bool parameters on some effects to ``EffectFlags``:
   * Added new effects flags ``Specular``, ``Emissive``, ``Fresnel``, and ``Velocity``
