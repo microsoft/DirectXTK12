@@ -1,13 +1,15 @@
-# DirectX Tool Kit for DirectX 12
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-#
-# http://go.microsoft.com/fwlink/?LinkID=615561
 
 cmake_minimum_required (VERSION 3.11)
 
-project (DirectXTK12 LANGUAGES CXX)
+set(DIRECTXTK12_VERSION 1.4.4)
+
+project (DirectXTK12
+  VERSION ${DIRECTXTK12_VERSION}
+  DESCRIPTION "DirectX Tool Kit for DirectX 12"
+  HOMEPAGE_URL "https://go.microsoft.com/fwlink/?LinkID=615561"
+  LANGUAGES CXX)
 
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
 
@@ -21,6 +23,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 
+#--- Library
 set(LIBRARY_SOURCES
     Inc/BufferHelpers.h
     Inc/CommonStates.h
@@ -160,11 +163,12 @@ source_group(Audio REGULAR_EXPRESSION Audio/*.*)
 source_group(Inc REGULAR_EXPRESSION Inc/*.*)
 source_group(Src REGULAR_EXPRESSION Src/*.*)
 
-target_include_directories(${PROJECT_NAME} PUBLIC Inc)
-target_include_directories(${PROJECT_NAME} PRIVATE Src)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Inc>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 if(BUILD_XAUDIO_WIN10)
-    target_include_directories(${PROJECT_NAME} PRIVATE Audio)
+    target_include_directories(${PROJECT_NAME} PRIVATE Src Audio)
 endif()
 
 if(MSVC)
@@ -177,6 +181,46 @@ if(MSVC)
 
     # Library needs /EHsc (Enable C++ exceptions)
 endif()
+
+#--- Package
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+  ${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}-config-version.cmake
+  VERSION ${DIRECTXTK12_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}-targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/.nuget/${PROJECT_NAME}-config.cmake.in
+  ${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}-config.cmake
+  INSTALL_DESTINATION cmake/})
+
+install(EXPORT ${PROJECT_NAME}-targets
+  FILE ${PROJECT_NAME}-targets.cmake
+  NAMESPACE Microsoft::
+  DESTINATION cmake/)
+
+if(BUILD_XAUDIO_WIN10)
+  install(DIRECTORY Inc/
+    DESTINATION include/${PROJECT_NAME}
+    PATTERN "XboxDDSTextureLoader.h" EXCLUDE)
+else()
+  install(DIRECTORY Inc/
+    DESTINATION include/${PROJECT_NAME}
+    PATTERN "Audio.h" EXCLUDE
+    PATTERN "XboxDDSTextureLoader.h" EXCLUDE)
+endif()
+
+install(
+  FILES
+    ${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}-config.cmake
+    ${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}-config-version.cmake
+  DESTINATION cmake/)
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)
