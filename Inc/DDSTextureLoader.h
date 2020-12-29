@@ -23,6 +23,7 @@
 #include <d3d12.h>
 #endif
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>

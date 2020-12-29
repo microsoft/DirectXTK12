@@ -17,15 +17,15 @@
 #include <d3d12.h>
 #endif
 
-#include <DirectXMath.h>
-
+#include <cassert>
+#include <cstddef>
 #include <initializer_list>
 #include <utility>
 #include <vector>
 
-#include <assert.h>
-
 #include <wrl/client.h>
+
+#include <DirectXMath.h>
 
 #ifndef _GAMING_XBOX
 #pragma comment(lib,"dxguid.lib")
@@ -74,7 +74,7 @@
 //  UpdateSubresources
 //  D3D12IsLayoutOpaque
 //  CommandListCast
-// 
+//
 
 
 namespace DirectX
@@ -173,7 +173,7 @@ namespace DirectX
 
         if (stateBefore == stateAfter)
             return;
-        
+
         D3D12_RESOURCE_BARRIER desc = {};
         desc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
         desc.Transition.pResource = resource;

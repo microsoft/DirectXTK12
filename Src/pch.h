@@ -149,17 +149,13 @@
 #pragma warning(pop)
 #endif
 
-#define _XM_NO_XMVECTOR_OVERLOADS_
-
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXCollision.h>
-
 #include <algorithm>
 #include <atomic>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <exception>
 #include <initializer_list>
 #include <iterator>
@@ -185,6 +181,12 @@
 #pragma warning(pop)
 
 #include <malloc.h>
+
+#define _XM_NO_XMVECTOR_OVERLOADS_
+
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <DirectXCollision.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4467 5038 5204 5220)

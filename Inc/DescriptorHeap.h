@@ -17,10 +17,10 @@
 #include <d3d12.h>
 #endif
 
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
-
-#include <assert.h>
 
 #include <wrl/client.h>
 

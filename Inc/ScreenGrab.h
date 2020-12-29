@@ -24,8 +24,9 @@
 #include <d3d12.h>
 #endif
 
-#include <OCIdl.h>
 #include <functional>
+
+#include <OCIdl.h>
 
 #pragma comment(lib,"uuid.lib")
 

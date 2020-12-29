@@ -17,9 +17,11 @@
 #include <d3d12.h>
 #endif
 
-#include <DirectXMath.h>
+#include <cstddef>
 #include <memory>
 #include <string>
+
+#include <DirectXMath.h>
 
 #include "RenderTargetState.h"
 #include "EffectPipelineStateDescription.h"
@@ -247,7 +249,7 @@ namespace DirectX
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
         void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
-        
+
         // Fog settings.
         void __cdecl SetFogStart(float value) override;
         void __cdecl SetFogEnd(float value) override;
@@ -293,7 +295,7 @@ namespace DirectX
         void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
         void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
-        
+
         // Fog settings.
         void __cdecl SetFogStart(float value) override;
         void __cdecl SetFogEnd(float value) override;
@@ -302,7 +304,7 @@ namespace DirectX
         // Texture settings.
         void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         void __cdecl SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        
+
     private:
         // Private implementation.
         class Impl;
@@ -346,7 +348,7 @@ namespace DirectX
         void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
         void __cdecl SetAlpha(float value);
         void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
-        
+
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
@@ -369,7 +371,7 @@ namespace DirectX
         void __cdecl SetEnvironmentMapAmount(float value);
         void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
         void __cdecl SetFresnelFactor(float value);
-        
+
     private:
         // Private implementation.
         class Impl;
@@ -411,7 +413,7 @@ namespace DirectX
         void __cdecl DisableSpecular();
         void __cdecl SetAlpha(float value);
         void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
-        
+
         // Light settings.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
@@ -429,7 +431,7 @@ namespace DirectX
 
         // Texture setting.
         void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        
+
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
         void __cdecl ResetBoneTransforms() override;
@@ -748,10 +750,10 @@ namespace DirectX
         };
 
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
-            const EffectInfo& info, 
+            const EffectInfo& info,
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
-            const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+            const D3D12_INPUT_LAYOUT_DESC& inputLayout,
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) = 0;
 
