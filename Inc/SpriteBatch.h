@@ -18,10 +18,12 @@
 #include <dxgi.h>
 #endif
 
-#include <DirectXMath.h>
-#include <DirectXColors.h>
+#include <cstdint>
 #include <functional>
 #include <memory>
+
+#include <DirectXMath.h>
+#include <DirectXColors.h>
 
 #include "RenderTargetState.h"
 

@@ -17,6 +17,8 @@
 #include <d3d12.h>
 #endif
 
+#include <cstddef>
+#include <cstring>
 #include <memory>
 
 
@@ -34,7 +36,7 @@ namespace DirectX
             _In_ LinearAllocatorPage* page,
             _In_ D3D12_GPU_VIRTUAL_ADDRESS gpuAddress,
             _In_ ID3D12Resource* resource,
-            _In_ void* memory, 
+            _In_ void* memory,
             _In_ size_t offset,
             _In_ size_t size) noexcept;
 
@@ -51,7 +53,7 @@ namespace DirectX
         void* Memory() const noexcept { return mMemory; }
         size_t ResourceOffset() const noexcept { return mBufferOffset; }
         size_t Size() const noexcept { return mSize; }
-        
+
         explicit operator bool () const noexcept { return mResource != nullptr; }
 
         // Clear the pointer. Using operator -> will produce bad results.
@@ -91,7 +93,7 @@ namespace DirectX
         void* Memory() const noexcept { return mSharedResource->Memory(); }
         size_t ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
         size_t Size() const noexcept { return mSharedResource->Size(); }
-        
+
         explicit operator bool () const noexcept { return mSharedResource != nullptr; }
 
         bool operator == (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() == other.mSharedResource.get(); }
@@ -102,7 +104,7 @@ namespace DirectX
         void __cdecl Reset(GraphicsResource&&);
         void __cdecl Reset(SharedGraphicsResource&&) noexcept;
         void __cdecl Reset(const SharedGraphicsResource& resource) noexcept;
-        
+
     private:
         std::shared_ptr<GraphicsResource> mSharedResource;
     };
@@ -151,11 +153,11 @@ namespace DirectX
             return alloc;
         }
 
-        // Submits all the pending one-shot memory to the GPU. 
+        // Submits all the pending one-shot memory to the GPU.
         // The memory will be recycled once the GPU is done with it.
         void __cdecl Commit(_In_ ID3D12CommandQueue* commandQueue);
 
-        // This frees up any unused memory. 
+        // This frees up any unused memory.
         // If you want to make sure all memory is reclaimed, idle the GPU before calling this.
         // It is not recommended that you call this unless absolutely necessary (e.g. your
         // memory budget changes at run-time, or perhaps you're changing levels in your game.)
@@ -176,4 +178,3 @@ namespace DirectX
         std::unique_ptr<Impl> pImpl;
     };
 }
-

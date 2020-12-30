@@ -18,9 +18,8 @@
 #include <dxgiformat.h>
 #endif
 
-#include <DirectXMath.h>
-#include <DirectXCollision.h>
-
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <iterator>
@@ -30,9 +29,10 @@
 #include <utility>
 #include <vector>
 
-#include <assert.h>
-
 #include <wrl/client.h>
+
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
 
 #include "GraphicsMemory.h"
 #include "Effects.h"
@@ -106,7 +106,7 @@ namespace DirectX
         // Draw the mesh with a callback for each mesh part
         static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart::Collection& meshParts, DrawCallback callback);
 
-        // Draw the mesh with a range of effects that mesh parts will index into. 
+        // Draw the mesh with a range of effects that mesh parts will index into.
         // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         // The iterator passed to this method should have random access capabilities for best performance.
         template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
@@ -172,7 +172,7 @@ namespace DirectX
         void __cdecl DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const;
         void __cdecl DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const;
 
-        // Draw the mesh with a range of effects that mesh parts will index into. 
+        // Draw the mesh with a range of effects that mesh parts will index into.
         // TEffectPtr can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
@@ -208,10 +208,10 @@ namespace DirectX
 
         //
         // NOTE
-        // 
+        //
         // The Model::Draw functions use variadic templates and perfect-forwarding in order to support future overloads to the ModelMesh::Draw
         // family of functions. This means that a new ModelMesh::Draw overload can be added, removed or altered, but the Model::Draw* routines
-        // will still remain compatible. The correct ModelMesh::Draw overload will be selected by the compiler depending on the arguments you 
+        // will still remain compatible. The correct ModelMesh::Draw overload will be selected by the compiler depending on the arguments you
         // provide to Model::Draw*.
         //
 
@@ -301,7 +301,7 @@ namespace DirectX
             _In_z_ const wchar_t* szFileName,
             ModelLoaderFlags flags = ModelLoader_Default);
 
-        // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the 
+        // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
         // descriptor will be zero.
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
         {

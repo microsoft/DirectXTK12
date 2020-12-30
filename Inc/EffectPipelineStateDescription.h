@@ -19,6 +19,7 @@
 #endif
 
 #include <cstdint>
+#include <cstring>
 
 #include "RenderTargetState.h"
 

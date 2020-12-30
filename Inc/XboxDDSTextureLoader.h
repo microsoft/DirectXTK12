@@ -30,6 +30,7 @@
 #pragma comment(lib,"xmem.lib")
 #endif
 
+#include <cstddef>
 #include <cstdint>
 
 #ifndef DDS_ALPHA_MODE_DEFINED
@@ -52,7 +53,7 @@ namespace Xbox
     using DirectX::DDS_ALPHA_MODE;
 
     //
-    //  NOTE: Flush the GPU caches before using textures created 
+    //  NOTE: Flush the GPU caches before using textures created
     //  with these functions.
     //
     //  The simplest means of doing this is:
@@ -61,7 +62,7 @@ namespace Xbox
     //      CreateDDSTextureFrom...
     //      CreateDDSTextureFrom...
     //      CreateDDSTextureFrom...
-    //      
+    //
     //      // Flush the GPU caches
     //      ID3D12CommandList::FlushPipelineX(D3D12XBOX_FLUSH_IDLE, 0, 0);
     //
@@ -79,11 +80,11 @@ namespace Xbox
         _In_ size_t ddsDataSize,
         _Outptr_opt_ ID3D12Resource** texture,
         _Outptr_ void** grfxMemory,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr, 
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _In_ bool forceSRGB = false,
         _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
-    HRESULT __cdecl CreateDDSTextureFromFile( 
+    HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D12Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
         _Outptr_opt_ ID3D12Resource** texture,

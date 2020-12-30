@@ -17,8 +17,9 @@
 #include <d3d12.h>
 #endif
 
-#include <DirectXMath.h>
 #include <memory>
+
+#include <DirectXMath.h>
 
 #include "RenderTargetState.h"
 
