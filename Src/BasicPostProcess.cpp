@@ -121,7 +121,7 @@ namespace
         { PostProcess_PSBloomBlur,              sizeof(PostProcess_PSBloomBlur) },
     };
 
-    static_assert(_countof(pixelShaders) == BasicPostProcess::Effect_Max, "array/max mismatch");
+    static_assert(static_cast<unsigned int>(std::size(pixelShaders)) == BasicPostProcess::Effect_Max, "array/max mismatch");
 
     // Factory for lazily instantiating shared root signatures.
     class DeviceResources
@@ -284,7 +284,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
             rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
             // use all parameters
-            rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+            rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
             mRootSignature = mDeviceResources->GetRootSignature(1, rsigDesc);
         }

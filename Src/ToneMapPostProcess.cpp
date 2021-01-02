@@ -146,7 +146,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaders) == PixelShaderCount, "array/max mismatch");
+    static_assert(std::size(pixelShaders) == PixelShaderCount, "array/max mismatch");
 
     const int pixelShaderIndices[] =
     {
@@ -189,7 +189,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaderIndices) == ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(pixelShaderIndices)) == ShaderPermutationCount, "array/max mismatch");
 
     // Factory for lazily instantiating shared root signatures.
     class DeviceResources
@@ -317,7 +317,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
         // Constant buffer
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
         mRootSignature = mDeviceResources->GetRootSignature(rsigDesc);
     }

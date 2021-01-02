@@ -550,8 +550,8 @@ void Model::Transition(
     {
         for (auto& pit : mit->opaqueMeshParts)
         {
-            assert(count < _countof(barrier));
-            _Analysis_assume_(count < _countof(barrier));
+            assert(count < std::size(barrier));
+            _Analysis_assume_(count < std::size(barrier));
 
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
@@ -562,7 +562,7 @@ void Model::Transition(
                 barrier[count].Transition.StateAfter = stateAfterIB;
                 ++count;
 
-                if (count >= _countof(barrier))
+                if (count >= std::size(barrier))
                 {
                     commandList->ResourceBarrier(count, barrier);
                     count = 0;
@@ -578,7 +578,7 @@ void Model::Transition(
                 barrier[count].Transition.StateAfter = stateAfterVB;
                 ++count;
 
-                if (count >= _countof(barrier))
+                if (count >= std::size(barrier))
                 {
                     commandList->ResourceBarrier(count, barrier);
                     count = 0;
@@ -588,8 +588,8 @@ void Model::Transition(
 
         for (auto& pit : mit->alphaMeshParts)
         {
-            assert(count < _countof(barrier));
-            _Analysis_assume_(count < _countof(barrier));
+            assert(count < std::size(barrier));
+            _Analysis_assume_(count < std::size(barrier));
 
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
@@ -600,7 +600,7 @@ void Model::Transition(
                 barrier[count].Transition.StateAfter = stateAfterIB;
                 ++count;
 
-                if (count >= _countof(barrier))
+                if (count >= std::size(barrier))
                 {
                     commandList->ResourceBarrier(count, barrier);
                     count = 0;
@@ -616,7 +616,7 @@ void Model::Transition(
                 barrier[count].Transition.StateAfter = stateAfterVB;
                 ++count;
 
-                if (count >= _countof(barrier))
+                if (count >= std::size(barrier))
                 {
                     commandList->ResourceBarrier(count, barrier);
                     count = 0;
