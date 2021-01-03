@@ -32,7 +32,7 @@ namespace
     constexpr int RootSignatureCount = 2;
 
     // Constant buffer layout. Must match the shader!
-    __declspec(align(16)) struct PostProcessConstants
+    XM_ALIGNED_STRUCT(16) PostProcessConstants
     {
         XMVECTOR sampleOffsets[c_MaxSamples];
         XMVECTOR sampleWeights[c_MaxSamples];
