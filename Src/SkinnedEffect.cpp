@@ -532,7 +532,7 @@ void SkinnedEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_
 void SkinnedEffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
 {
     if (count > MaxBones)
-        throw std::out_of_range("count parameter out of range");
+        throw std::invalid_argument("count parameter exceeds MaxBones");
 
     auto boneConstant = pImpl->constants.bones;
 

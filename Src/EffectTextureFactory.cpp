@@ -317,7 +317,7 @@ _Use_decl_annotations_
 void EffectTextureFactory::GetResource(size_t slot, ID3D12Resource** resource, bool* isCubeMap)
 {
     if (slot >= pImpl->mResources.size())
-        throw std::out_of_range("Accessing resource out of range.");
+        throw std::invalid_argument("Resource slot is invalid");
 
     const auto& textureEntry = pImpl->mResources[slot];
 
