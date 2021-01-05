@@ -230,7 +230,7 @@ SkinnedEffect::Impl::Impl(
     if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: SkinnedEffect does not implement EffectFlags::VertexColor\n");
-        throw std::invalid_argument("SkinnedEffect");
+        throw std::invalid_argument("VertexColor effect flag is invalid");
     }
 
     // Create pipeline state.

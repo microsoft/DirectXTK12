@@ -321,7 +321,7 @@ public:
 
         default:
             DebugTrace("ResourceUploadBatch only supports Direct, Compute, and Copy command queues\n");
-            throw std::invalid_argument("ResourceUploadBatch");
+            throw std::invalid_argument("commandType parameter is invalid");
         }
 
         ThrowIfFailed(mDevice->CreateCommandAllocator(commandType, IID_GRAPHICS_PPV_ARGS(mCmdAlloc.ReleaseAndGetAddressOf())));

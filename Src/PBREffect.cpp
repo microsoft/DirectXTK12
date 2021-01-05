@@ -230,7 +230,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         if (effectFlags & (EffectFlags::Emissive | EffectFlags::Velocity))
         {
             DebugTrace("ERROR: PBREffect does not support emissive or velocity without surface textures\n");
-            throw std::invalid_argument("PBREffect");
+            throw std::invalid_argument("Specified effects flags requires Texture");
         }
     }
 
@@ -286,12 +286,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     if (effectFlags & EffectFlags::Fog)
     {
         DebugTrace("ERROR: PBEffect does not implement EffectFlags::Fog\n");
-        throw std::invalid_argument("PBREffect");
+        throw std::invalid_argument("Fog effect flag is invalid");
     }
     else  if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: PBEffect does not implement EffectFlags::VertexColor\n");
-        throw std::invalid_argument("PBREffect");
+        throw std::invalid_argument("VertexColor effect flag is invalid");
     }
 
     // Create pipeline state.

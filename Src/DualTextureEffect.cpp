@@ -206,12 +206,12 @@ DualTextureEffect::Impl::Impl(
     if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::PerPixelLighting\n");
-        throw std::invalid_argument("DualTextureEffect");
+        throw std::invalid_argument("PerPixelLighting effect flag is invalid");
     }
     else if (effectFlags & EffectFlags::Lighting)
     {
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
-        throw std::invalid_argument("DualTextureEffect");
+        throw std::invalid_argument("Lighting effect flag is invalid");
     }
 
     // Create pipeline state.

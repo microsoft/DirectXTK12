@@ -75,12 +75,12 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     if (!mTextureDescriptors)
     {
         DebugTrace("ERROR: PBREffectFactory created without texture descriptor heap!\n");
-        throw std::invalid_argument("PBREffectFactory");
+        throw std::logic_error("PBREffectFactory");
     }
     if (!mSamplerDescriptors)
     {
         DebugTrace("ERROR: PBREffectFactory created without sampler descriptor heap!\n");
-        throw std::invalid_argument("PBREffectFactory");
+        throw std::logic_error("PBREffectFactory");
     }
 
     int albetoTextureIndex = (info.diffuseTextureIndex != -1) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
