@@ -197,7 +197,7 @@ void DescriptorPile::AllocateRange(size_t numDescriptors, _Out_ IndexType& start
     // make sure we didn't allocate zero
     if (numDescriptors == 0)
     {
-        throw std::out_of_range("Can't allocate zero descriptors");
+        throw std::invalid_argument("Can't allocate zero descriptors");
     }
 
     // get the current top

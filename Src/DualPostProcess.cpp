@@ -176,7 +176,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx >= Effect_Max)
-        throw std::out_of_range("Effect not defined");
+        throw std::invalid_argument("Effect not defined");
    
     // Create root signature.
     {
