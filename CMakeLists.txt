@@ -61,7 +61,7 @@ set(LIBRARY_SOURCES
     Src/BufferHelpers.cpp
     Src/CommonStates.cpp
     Src/d3dx12.h
-    Src/DDS.h
+    Src/dds.h
     Src/DDSTextureLoader.cpp
     Src/DebugEffect.cpp
     Src/DemandCreate.h
