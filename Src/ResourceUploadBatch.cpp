@@ -538,7 +538,7 @@ public:
 
         HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
         if (!gpuCompletedEvent)
-            throw std::system_error(std::error_code(GetLastError(), std::system_category()), "CreateEventEx");
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
 
         ThrowIfFailed(commandQueue->Signal(fence.Get(), 1ULL));
         ThrowIfFailed(fence->SetEventOnCompletion(1ULL, gpuCompletedEvent));
@@ -561,7 +561,7 @@ public:
             {
                 if (wr == WAIT_FAILED)
                 {
-                    throw std::system_error(std::error_code(GetLastError(), std::system_category()), "WaitForSingleObject");
+                    throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObject");
                 }
                 else
                 {
