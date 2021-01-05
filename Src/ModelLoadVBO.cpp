@@ -64,7 +64,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
     auto header = reinterpret_cast<const VBO::header_t*>(meshData);
 
     if (!header->numVertices || !header->numIndices)
-        throw std::exceruntime_errorption("No vertices or indices found");
+        throw std::runtime_error("No vertices or indices found");
 
     uint64_t sizeInBytes = uint64_t(header->numVertices) * sizeof(VertexPositionNormalTexture);
     if (sizeInBytes > UINT32_MAX)
