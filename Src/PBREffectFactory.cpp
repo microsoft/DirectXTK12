@@ -75,12 +75,12 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     if (!mTextureDescriptors)
     {
         DebugTrace("ERROR: PBREffectFactory created without texture descriptor heap!\n");
-        throw std::exception("PBREffectFactory");
+        throw std::logic_error("PBREffectFactory");
     }
     if (!mSamplerDescriptors)
     {
         DebugTrace("ERROR: PBREffectFactory created without sampler descriptor heap!\n");
-        throw std::exception("PBREffectFactory");
+        throw std::logic_error("PBREffectFactory");
     }
 
     int albetoTextureIndex = (info.diffuseTextureIndex != -1) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
@@ -167,20 +167,20 @@ PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors
 {
     if (!textureDescriptors)
     {
-        throw std::exception("Texture descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
+        throw std::invalid_argument("Texture descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
     }
     if (!samplerDescriptors)
     {
-        throw std::exception("Descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
+        throw std::invalid_argument("Descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
     }
 
     if (textureDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
     {
-        throw std::exception("PBREffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
+        throw std::invalid_argument("PBREffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
     }
     if (samplerDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
     {
-        throw std::exception("PBREffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
+        throw std::invalid_argument("PBREffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
     }
 
     ComPtr<ID3D12Device> device;

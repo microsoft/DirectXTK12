@@ -559,7 +559,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         if (!texture.ptr || !sampler.ptr)
         {
             DebugTrace("ERROR: Missing texture or sampler for BasicEffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
-            throw std::exception("BasicEffect");
+            throw std::runtime_error("BasicEffect");
         }
 
         // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

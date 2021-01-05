@@ -176,7 +176,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx >= Effect_Max)
-        throw std::out_of_range("Effect not defined");
+        throw std::invalid_argument("Effect not defined");
    
     // Create root signature.
     {
@@ -251,7 +251,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture.ptr || !texture2.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for DualPostProcess (%llu, %llu)\n", texture.ptr, texture2.ptr);
-        throw std::exception("DualPostProcess");
+        throw std::runtime_error("DualPostProcess");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV2, texture2);

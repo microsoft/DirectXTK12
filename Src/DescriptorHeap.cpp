@@ -71,7 +71,7 @@ DescriptorHeap::DescriptorHeap(
     m_increment(0)
 {
     if (count > UINT32_MAX)
-        throw std::exception("Too many descriptors");
+        throw std::invalid_argument("Too many descriptors");
 
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
     desc.Flags = flags;
@@ -197,7 +197,7 @@ void DescriptorPile::AllocateRange(size_t numDescriptors, _Out_ IndexType& start
     // make sure we didn't allocate zero
     if (numDescriptors == 0)
     {
-        throw std::out_of_range("Can't allocate zero descriptors");
+        throw std::invalid_argument("Can't allocate zero descriptors");
     }
 
     // get the current top
@@ -211,6 +211,6 @@ void DescriptorPile::AllocateRange(size_t numDescriptors, _Out_ IndexType& start
     if (m_top > Count())
     {
         DebugTrace("DescriptorPile has %zu of %zu descriptors; failed request for %zu more\n", start, Count(), numDescriptors);
-        throw std::exception("Can't allocate more descriptors");
+        throw std::runtime_error("Can't allocate more descriptors");
     }
 }

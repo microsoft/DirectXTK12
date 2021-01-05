@@ -78,12 +78,12 @@ void DirectX::CreateShaderResourceView(
 
         case D3D12_RESOURCE_DIMENSION_BUFFER:
             DebugTrace("ERROR: CreateShaderResourceView cannot be used with DIMENSION_BUFFER.\n");
-            throw std::exception("buffer resources not supported");
+            throw std::invalid_argument("buffer resources not supported");
 
         case D3D12_RESOURCE_DIMENSION_UNKNOWN:
         default:
             DebugTrace("ERROR: CreateShaderResourceView cannot be used with DIMENSION_UNKNOWN (%d).\n", desc.Dimension);
-            throw std::exception("unknown resource dimension");
+            throw std::invalid_argument("unknown resource dimension");
     }
 
     device->CreateShaderResourceView(tex, &srvDesc, srvDescriptor);

@@ -403,7 +403,7 @@ EnvironmentMapEffect::Impl::Impl(
     if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
-        throw std::invalid_argument("EnvironmentMapEffect");
+        throw std::invalid_argument("VertexColor effect flag is invalid");
     }
 
     constants.environmentMapAmount = 1;
@@ -518,12 +518,12 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
     if (!texture.ptr || !environmentMap.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for EnvironmentMapEffect (texture %llu, environmentMap %llu)\n", texture.ptr, environmentMap.ptr);
-        throw std::exception("EnvironmentMapEffect");
+        throw std::runtime_error("EnvironmentMapEffect");
     }
     if (!textureSampler.ptr || !environmentMapSampler.ptr)
     {
         DebugTrace("ERROR: Missing sampler(s) for EnvironmentMapEffect (sampler %llu, environmentMap %llu)\n", textureSampler.ptr, environmentMapSampler.ptr);
-        throw std::exception("EnvironmentMapEffect");
+        throw std::runtime_error("EnvironmentMapEffect");
     }
 
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

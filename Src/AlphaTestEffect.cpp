@@ -215,12 +215,12 @@ AlphaTestEffect::Impl::Impl(
     if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
         DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::PerPixelLighting\n");
-        throw std::invalid_argument("AlphaTestEffect");
+        throw std::invalid_argument("PerPixelLighting effect flag is invalid");
     }
     else if (effectFlags & EffectFlags::Lighting)
     {
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
-        throw std::invalid_argument("AlphaTestEffect");
+        throw std::invalid_argument("Lighting effect flag is invalid");
     }
 
     // Create pipeline state.
@@ -353,7 +353,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
                 break;
 
             default:
-                throw std::exception("Unknown alpha test function");
+                throw std::runtime_error("Unknown alpha test function");
         }
 
         // x = compareTo, y = threshold, zw = resultSelector.
@@ -370,7 +370,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture.ptr || !textureSampler.ptr)
     {
         DebugTrace("ERROR: Missing texture or sampler for AlphaTestEffect (texture %llu, sampler %llu)\n", texture.ptr, textureSampler.ptr);
-        throw std::exception("AlphaTestEffect");
+        throw std::runtime_error("AlphaTestEffect");
     }
 
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

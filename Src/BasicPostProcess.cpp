@@ -231,7 +231,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx >= Effect_Max)
-        throw std::out_of_range("Effect not defined");
+        throw std::invalid_argument("Effect not defined");
    
     switch (ifx)
     {
@@ -328,7 +328,7 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
     if (!texture.ptr)
     {
         DebugTrace("ERROR: Missing texture for BasicPostProcess (texture %llu)\n", texture.ptr);
-        throw std::exception("BasicPostProcess");
+        throw std::runtime_error("BasicPostProcess");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
 
@@ -391,7 +391,7 @@ void BasicPostProcess::Impl::DownScale2x2()
 
     if (!texWidth || !texHeight)
     {
-        throw std::exception("Call SetSourceTexture before setting post-process effect");
+        throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
     float tu = 1.0f / float(texWidth);
@@ -418,7 +418,7 @@ void BasicPostProcess::Impl::DownScale4x4()
 
     if (!texWidth || !texHeight)
     {
-        throw std::exception("Call SetSourceTexture before setting post-process effect");
+        throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
     float tu = 1.0f / float(texWidth);
@@ -446,7 +446,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
 
     if (!texWidth || !texHeight)
     {
-        throw std::exception("Call SetSourceTexture before setting post-process effect");
+        throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
     float tu = 1.0f / float(texWidth);
@@ -502,7 +502,7 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
 
     if (!texWidth || !texHeight)
     {
-        throw std::exception("Call SetSourceTexture before setting post-process effect");
+        throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
     float tu = 0.f;
