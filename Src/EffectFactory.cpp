@@ -87,27 +87,27 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     {
         DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, normal %d, emissive %d)!\n",
             info.diffuseTextureIndex, info.specularTextureIndex, info.normalTextureIndex, info.emissiveTextureIndex);
-        throw std::exception("EffectFactory");
+        throw std::runtime_error("EffectFactory");
     }
     if (!mSamplerDescriptors && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
     {
         DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
             info.samplerIndex, info.samplerIndex2);
-        throw std::exception("EffectFactory");
+        throw std::runtime_error("EffectFactory");
     }
 
     // If we have descriptors, make sure we have both texture and sampler descriptors
     if ((mTextureDescriptors == nullptr) != (mSamplerDescriptors == nullptr))
     {
         DebugTrace("ERROR: A texture or sampler descriptor heap was provided, but both are required.\n");
-        throw std::exception("EffectFactory");
+        throw std::runtime_error("EffectFactory");
     }
 
     // Validate the we have either both texture and sampler descriptors, or neither
     if ((info.diffuseTextureIndex == -1) != (info.samplerIndex == -1))
     {
         DebugTrace("ERROR: Material provides either a texture or sampler, but both are required.\n");
-        throw std::exception("EffectFactory");
+        throw std::runtime_error("EffectFactory");
     }
 
     int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
@@ -240,7 +240,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             if (samplerIndex2 == -1)
             {
                 DebugTrace("ERROR: Dual-texture requires a second sampler (emissive %d)\n", emissiveTextureIndex);
-                throw std::exception("EffectFactory");
+                throw std::runtime_error("EffectFactory");
             }
 
             effect->SetTexture2(
@@ -253,7 +253,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             if (samplerIndex2 == -1)
             {
                 DebugTrace("ERROR: Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
-                throw std::exception("EffectFactory");
+                throw std::runtime_error("EffectFactory");
             }
 
             effect->SetTexture2(
@@ -468,20 +468,20 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
 {
     if (!textureDescriptors)
     {
-        throw std::exception("Texture descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::invalid_argument("Texture descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
     if (!samplerDescriptors)
     {
-        throw std::exception("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::invalid_argument("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
 
     if (textureDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
     {
-        throw std::exception("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
+        throw std::invalid_argument("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
     }
     if (samplerDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
     {
-        throw std::exception("EffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
+        throw std::invalid_argument("EffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
     }
 
     ComPtr<ID3D12Device> device;

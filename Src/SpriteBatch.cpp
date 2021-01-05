@@ -502,7 +502,7 @@ void XM_CALLCONV SpriteBatch::Impl::Begin(
     if (mInBeginEndPair)
     {
         DebugTrace("ERROR: Cannot nest Begin calls on a single SpriteBatch\n");
-        throw std::exception("SpriteBatch::Begin");
+        throw std::logic_error("SpriteBatch::Begin");
     }
 
     mSortMode = sortMode;
@@ -524,7 +524,7 @@ void SpriteBatch::Impl::End()
     if (!mInBeginEndPair)
     {
         DebugTrace("ERROR: Begin must be called before End\n");
-        throw std::exception("SpriteBatch::End");
+        throw std::logic_error("SpriteBatch::End");
     }
 
     if (mSortMode != SpriteSortMode_Immediate)
@@ -556,11 +556,11 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     if (!mInBeginEndPair)
     {
         DebugTrace("ERROR: Begin must be called before Draw\n");
-        throw std::exception("SpriteBatch::Draw");
+        throw std::logic_error("SpriteBatch::Draw");
     }
 
     if (!texture.ptr)
-        throw std::exception("Invalid texture for Draw");
+        throw std::invalid_argument("Invalid texture for Draw");
 
     // Get a pointer to the output sprite.
     if (mSpriteQueueCount >= mSpriteQueueArraySize)
@@ -979,7 +979,7 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
     if (!mSetViewport)
     {
         DebugTrace("ERROR: SpriteBatch requires viewport information via SetViewport\n");
-        throw std::exception("Viewport not set.");
+        throw std::runtime_error("Viewport not set.");
     }
 
     // Compute the matrix.
@@ -1076,12 +1076,12 @@ void XM_CALLCONV SpriteBatch::Begin(
     FXMMATRIX transformMatrix)
 {
     if (!sampler.ptr)
-        throw std::exception("Invalid heap-based sampler for Begin");
+        throw std::invalid_argument("Invalid heap-based sampler for Begin");
 
     if (!pImpl->mSampler.ptr)
     {
         DebugTrace("ERROR: sampler version of Begin requires SpriteBatch was created with a heap-based sampler\n");
-        throw std::exception("SpriteBatch::Begin");
+        throw std::runtime_error("SpriteBatch::Begin");
     }
 
     pImpl->mSampler = sampler;

@@ -59,15 +59,15 @@ void GeometricPrimitive::Impl::Initialize(
     _In_opt_ ID3D12Device* device)
 {
     if (vertices.size() >= USHRT_MAX)
-        throw std::exception("Too many vertices for 16-bit index buffer");
+        throw std::invalid_argument("Too many vertices for 16-bit index buffer");
 
     if (indices.size() > UINT32_MAX)
-        throw std::exception("Too many indices");
+        throw std::invalid_argument("Too many indices");
 
     // Vertex data
     uint64_t sizeInBytes = uint64_t(vertices.size()) * sizeof(vertices[0]);
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-        throw std::exception("VB too large for DirectX 12");
+        throw std::invalid_argument("VB too large for DirectX 12");
 
     auto vertSizeBytes = static_cast<size_t>(sizeInBytes);
 
@@ -79,7 +79,7 @@ void GeometricPrimitive::Impl::Initialize(
     // Index data
     sizeInBytes = uint64_t(indices.size()) * sizeof(indices[0]);
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
-        throw std::exception("IB too large for DirectX 12");
+        throw std::invalid_argument("IB too large for DirectX 12");
 
     auto indSizeBytes = static_cast<size_t>(sizeInBytes);
 
@@ -673,20 +673,20 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(
 {
     // Extra validation
     if (vertices.empty() || indices.empty())
-        throw std::exception("Requires both vertices and indices");
+        throw std::invalid_argument("Requires both vertices and indices");
 
     if (indices.size() % 3)
-        throw std::exception("Expected triangular faces");
+        throw std::invalid_argument("Expected triangular faces");
 
     size_t nVerts = vertices.size();
     if (nVerts >= USHRT_MAX)
-        throw std::exception("Too many vertices for 16-bit index buffer");
+        throw std::invalid_argument("Too many vertices for 16-bit index buffer");
 
     for (auto it = indices.cbegin(); it != indices.cend(); ++it)
     {
         if (*it >= nVerts)
         {
-            throw std::exception("Index not in vertices list");
+            throw std::out_of_range("Index not in vertices list");
         }
     }
     // Create the primitive object.

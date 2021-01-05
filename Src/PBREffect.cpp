@@ -392,13 +392,13 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (!descriptors[RadianceTexture].ptr || !descriptors[RadianceSampler].ptr)
     {
         DebugTrace("ERROR: Missing radiance texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[RadianceTexture].ptr, descriptors[RadianceSampler].ptr);
-        throw std::exception("PBREffect");
+        throw std::runtime_error("PBREffect");
     }
 
     if (!descriptors[IrradianceTexture].ptr)
     {
         DebugTrace("ERROR: Missing irradiance texture for PBREffect (texture %llu)\n", descriptors[IrradianceTexture].ptr);
-        throw std::exception("PBREffect");
+        throw std::runtime_error("PBREffect");
     }
 
     // Set the root parameters
@@ -423,19 +423,19 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         if (!descriptors[AlbedoTexture].ptr || !descriptors[SurfaceSampler].ptr)
         {
             DebugTrace("ERROR: Missing albedo texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[AlbedoTexture].ptr, descriptors[SurfaceSampler].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         if (!descriptors[NormalTexture].ptr)
         {
             DebugTrace("ERROR: Missing normal map texture for PBREffect (texture %llu)\n", descriptors[NormalTexture].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         if (!descriptors[RMATexture].ptr)
         {
             DebugTrace("ERROR: Missing roughness/metalness texture for PBREffect (texture %llu)\n", descriptors[RMATexture].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         for (unsigned i = 0; i < ConstantBuffer; i++)
@@ -452,7 +452,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
             if (!descriptors[EmissiveTexture].ptr)
             {
                 DebugTrace("ERROR: Missing emissive map texture for PBREffect (texture %llu)\n", descriptors[NormalTexture].ptr);
-                throw std::exception("PBREffect");
+                throw std::runtime_error("PBREffect");
             }
 
             commandList->SetGraphicsRootDescriptorTable(EmissiveTexture, descriptors[EmissiveTexture]);

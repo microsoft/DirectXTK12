@@ -277,12 +277,12 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture1.ptr || !texture2.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
-        throw std::exception("DualTextureEffect");
+        throw std::runtime_error("DualTextureEffect");
     }
     if (!texture1Sampler.ptr || !texture2Sampler.ptr)
     {
         DebugTrace("ERROR: Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
-        throw std::exception("DualTextureEffect");
+        throw std::runtime_error("DualTextureEffect");
     }
 
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

@@ -251,7 +251,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture.ptr || !texture2.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for DualPostProcess (%llu, %llu)\n", texture.ptr, texture2.ptr);
-        throw std::exception("DualPostProcess");
+        throw std::runtime_error("DualPostProcess");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV2, texture2);

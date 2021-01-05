@@ -55,19 +55,19 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
     if (!indexBufferSize || !vertexBufferSize)
     {
         DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n", indexBufferSize, vertexBufferSize);
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     if (!staticIndexBuffer && !indexBuffer)
     {
         DebugTrace("ERROR: Model part missing index buffer!\n");
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     if (!staticVertexBuffer && !vertexBuffer)
     {
         DebugTrace("ERROR: Model part missing vertex buffer!\n");
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     D3D12_VERTEX_BUFFER_VIEW vbv;
@@ -94,19 +94,19 @@ void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, u
     if (!indexBufferSize || !vertexBufferSize)
     {
         DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n", indexBufferSize, vertexBufferSize);
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     if (!staticIndexBuffer && !indexBuffer)
     {
         DebugTrace("ERROR: Model part missing index buffer!\n");
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     if (!staticVertexBuffer && !vertexBuffer)
     {
         DebugTrace("ERROR: Model part missing vertex buffer!\n");
-        throw std::exception("ModelMeshPart");
+        throw std::runtime_error("ModelMeshPart");
     }
 
     D3D12_VERTEX_BUFFER_VIEW vbv;
@@ -301,7 +301,7 @@ void Model::LoadStaticBuffers(
             if (!part->vertexBuffer)
             {
                 DebugTrace("ERROR: Model part missing vertex buffer!\n");
-                throw std::exception("ModelMeshPart");
+                throw std::runtime_error("ModelMeshPart");
             }
 
             part->vertexBufferSize = static_cast<uint32_t>(part->vertexBuffer.Size());
@@ -357,7 +357,7 @@ void Model::LoadStaticBuffers(
             if (!part->indexBuffer)
             {
                 DebugTrace("ERROR: Model part missing index buffer!\n");
-                throw std::exception("ModelMeshPart");
+                throw std::runtime_error("ModelMeshPart");
             }
 
             part->indexBufferSize = static_cast<uint32_t>(part->indexBuffer.Size());
@@ -421,7 +421,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     if (materials.empty())
     {
         DebugTrace("ERROR: Model has no material information to create effects!\n");
-        throw std::exception("CreateEffects");
+        throw std::runtime_error("CreateEffects");
     }
 
     std::vector<std::shared_ptr<IEffect>> effects;
@@ -492,10 +492,10 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     const auto& m = materials[part->materialIndex];
 
     if (!part->vbDecl || part->vbDecl->empty())
-        throw std::exception("Model mesh part missing vertex buffer input elements data");
+        throw std::runtime_error("Model mesh part missing vertex buffer input elements data");
 
     if (part->vbDecl->size() > D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT)
-        throw std::exception("Model mesh part input layout size is too large for DirectX 12");
+        throw std::runtime_error("Model mesh part input layout size is too large for DirectX 12");
 
     D3D12_INPUT_LAYOUT_DESC il = {};
     il.NumElements = static_cast<UINT>(part->vbDecl->size());

@@ -103,6 +103,6 @@ void EffectPipelineStateDescription::CreatePipelineState(
     if (FAILED(hr))
     { 
         DebugTrace("ERROR: CreatePipelineState failed to create a PSO. Enable the Direct3D Debug Layer for more information (%08X)\n", static_cast<unsigned int>(hr));
-        throw std::exception("CreateGraphicsPipelineState");
+        throw std::runtime_error("CreateGraphicsPipelineState");
     }
 }

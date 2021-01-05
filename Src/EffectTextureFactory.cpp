@@ -99,7 +99,7 @@ _Use_decl_annotations_
 size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot)
 {
     if (!name)
-        throw std::exception("invalid arguments");
+        throw std::invalid_argument("name required for CreateTexture");
 
     auto it = mTextureCache.find(name);
 
@@ -123,7 +123,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
             if (!GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr))
             {
                 DebugTrace("ERROR: EffectTextureFactory could not find texture file '%ls'\n", name);
-                throw std::exception("CreateTexture");
+                throw std::runtime_error("EffectTextureFactory::CreateTexture");
             }
         }
 
@@ -157,7 +157,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
             {
                 DebugTrace("ERROR: CreateDDSTextureFromFile failed (%08X) for '%ls'\n",
                     static_cast<unsigned int>(hr), fullName);
-                throw std::exception("CreateDDSTextureFromFile");
+                throw std::runtime_error("EffectTextureFactory::CreateDDSTextureFromFile");
             }
         }
         else
@@ -176,7 +176,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
             {
                 DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n",
                     static_cast<unsigned int>(hr), fullName);
-                throw std::exception("CreateWICTextureFromFile");
+                throw std::runtime_error("EffectTextureFactory::CreateWICTextureFromFile");
             }
         }
 
@@ -317,7 +317,7 @@ _Use_decl_annotations_
 void EffectTextureFactory::GetResource(size_t slot, ID3D12Resource** resource, bool* isCubeMap)
 {
     if (slot >= pImpl->mResources.size())
-        throw std::exception("Accessing resource out of range.");
+        throw std::out_of_range("Accessing resource out of range.");
 
     const auto& textureEntry = pImpl->mResources[slot];
 
