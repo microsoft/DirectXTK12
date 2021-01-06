@@ -49,8 +49,8 @@ public:
         , mSharing(true)
         , mForceSRGB(false)
         , mAutoGenMips(false)
-    { 
-        *mPath = 0; 
+    {
+        *mPath = 0;
     }
 
     Impl(
@@ -192,7 +192,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
 
     assert(textureEntry.mResource != nullptr);
 
-    // bind a new descriptor in slot 
+    // bind a new descriptor in slot
     auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
     DirectX::CreateShaderResourceView(mDevice.Get(), textureEntry.mResource.Get(), textureDescriptor, textureEntry.mIsCubeMap);
 
