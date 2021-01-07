@@ -157,6 +157,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <cwchar>
 #include <exception>
 #include <initializer_list>
 #include <iterator>
