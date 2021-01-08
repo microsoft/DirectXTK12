@@ -200,7 +200,7 @@ private:
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignatureStatic;
-        ComPtr<ID3D12RootSignature> rootSignatureHeap; 
+        ComPtr<ID3D12RootSignature> rootSignatureHeap;
         ID3D12Device* mDevice;
 
     private:
@@ -445,7 +445,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     d3dDesc.DSVFormat = psoDesc.renderTargetState.dsvFormat;
     d3dDesc.NodeMask = psoDesc.renderTargetState.nodeMask;
     d3dDesc.NumRenderTargets = psoDesc.renderTargetState.numRenderTargets;
-    memcpy_s(d3dDesc.RTVFormats, sizeof(d3dDesc.RTVFormats), psoDesc.renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+    memcpy(d3dDesc.RTVFormats, psoDesc.renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
     d3dDesc.SampleDesc = psoDesc.renderTargetState.sampleDesc;
     d3dDesc.SampleMask = psoDesc.renderTargetState.sampleMask;
     d3dDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
@@ -1110,7 +1110,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
-    XMFLOAT2 const& position, 
+    XMFLOAT2 const& position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
@@ -1128,7 +1128,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 
 _Use_decl_annotations_
-void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
+void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
     XMFLOAT2 const& position,
     RECT const* sourceRectangle,
@@ -1158,7 +1158,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
-    FXMVECTOR position, 
+    FXMVECTOR position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
@@ -1199,7 +1199,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 }
 
 
-void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
+void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
     RECT const& destinationRectangle,
     FXMVECTOR color)
@@ -1217,8 +1217,8 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
-    XMFLOAT2 const& origin, 
-    SpriteEffects effects, 
+    XMFLOAT2 const& origin,
+    SpriteEffects effects,
     float layerDepth)
 {
     XMVECTOR destination = LoadRect(&destinationRectangle); // x, y, w, h

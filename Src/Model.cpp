@@ -19,7 +19,7 @@
 
 using namespace DirectX;
 
-#ifndef _CPPRTTI 
+#if !defined(_CPPRTTI) && !defined(__GXX_RTTI)
 #error Model requires RTTI
 #endif
 
