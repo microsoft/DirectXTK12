@@ -53,11 +53,26 @@ namespace
         // 4 - 16k allocator
         // etc...
         // Need to convert to an index.
-        DWORD bitIndex = 0;
+
+#ifdef _MSC_VER
+        unsigned long bitIndex = 0;
+
 #ifdef _WIN64
         return _BitScanForward64(&bitIndex, allocatorPageSize) ? bitIndex + 1 : 0;
 #else
-        return _BitScanForward(&bitIndex, static_cast<DWORD>(allocatorPageSize)) ? bitIndex + 1 : 0;
+        return _BitScanForward(&bitIndex, static_cast<unsigned long>(allocatorPageSize)) ? bitIndex + 1 : 0;
+#endif
+
+#elif defined(__GNUC__)
+
+#ifdef __LP64__
+        return static_cast<size_t>(__builtin_ffsll(static_cast<long long>(allocatorPageSize)));
+#else
+        return static_cast<size_t>(__builtin_ffs(static_cast<int>(allocatorPageSize)));
+#endif
+
+#else
+#error Unknown forward bit-scan syntax
 #endif
     }
 
@@ -171,7 +186,7 @@ namespace
             size_t totalPageCount = 0;
             size_t committedMemoryUsage = 0;
             size_t totalMemoryUsage = 0;
-           
+
             ScopedLock lock(mMutex);
 
             for (auto& i : mPools)
@@ -346,7 +361,7 @@ GraphicsMemory::GraphicsMemory(GraphicsMemory&& moveFrom) noexcept
 
 // Move assignment.
 GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
-{ 
+{
     pImpl = std::move(moveFrom.pImpl);
     pImpl->mOwner = this;
     return *this;
@@ -586,4 +601,3 @@ void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource) noexc
 {
     mSharedResource = resource.mSharedResource;
 }
-

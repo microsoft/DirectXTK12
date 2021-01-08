@@ -15,7 +15,7 @@
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
-#include <dxgi.h>
+#include <dxgi1_4.h>
 #endif
 
 #include <cstdint>
@@ -58,7 +58,8 @@ namespace DirectX
             rtvFormats[0] = rtFormat;
         }
 
-        // Convenience constructor converting from DXGI_SWAPCHAIN_DESC
+        // Convenience constructors converting from DXGI_SWAPCHAIN_DESC
+#if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         RenderTargetState(
             _In_ const DXGI_SWAP_CHAIN_DESC* desc,
             _In_ DXGI_FORMAT dsFormat) noexcept
@@ -72,6 +73,23 @@ namespace DirectX
             rtvFormats[0] = desc->BufferDesc.Format;
             sampleDesc = desc->SampleDesc;
         }
+#endif
+
+#if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+        RenderTargetState(
+            _In_ const DXGI_SWAP_CHAIN_DESC1* desc,
+            _In_ DXGI_FORMAT dsFormat) noexcept
+            : sampleMask(UINT_MAX)
+            , numRenderTargets(1)
+            , rtvFormats{}
+            , dsvFormat(dsFormat)
+            , sampleDesc{}
+            , nodeMask(0)
+        {
+            rtvFormats[0] = desc->Format;
+            sampleDesc = desc->SampleDesc;
+        }
+#endif
 
         uint32_t            sampleMask;
         uint32_t            numRenderTargets;

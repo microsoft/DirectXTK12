@@ -127,8 +127,9 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
             }
         }
 
-        wchar_t ext[_MAX_EXT];
+        wchar_t ext[_MAX_EXT] = {};
         _wsplitpath_s(name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
+        bool isdds = _wcsicmp(ext, L".dds") == 0;
 
         DDS_LOADER_FLAGS loadFlags = DDS_LOADER_DEFAULT;
         if (mForceSRGB)
@@ -136,12 +137,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
         if (mAutoGenMips)
             loadFlags |= DDS_LOADER_MIP_AUTOGEN;
 
-        static_assert(static_cast<int>(DDS_LOADER_DEFAULT) == static_cast<int>(WIC_LOADER_DEFAULT), "DDS/WIC Load flags mismatch");
-        static_assert(static_cast<int>(DDS_LOADER_FORCE_SRGB) == static_cast<int>(WIC_LOADER_FORCE_SRGB), "DDS/WIC Load flags mismatch");
-        static_assert(static_cast<int>(DDS_LOADER_MIP_AUTOGEN) == static_cast<int>(WIC_LOADER_MIP_AUTOGEN), "DDS/WIC Load flags mismatch");
-        static_assert(static_cast<int>(DDS_LOADER_MIP_RESERVE) == static_cast<int>(WIC_LOADER_MIP_RESERVE), "DDS/WIC Load flags mismatch");
-
-        if (_wcsicmp(ext, L".dds") == 0)
+        if (isdds)
         {
             HRESULT hr = CreateDDSTextureFromFileEx(
                 mDevice.Get(),
@@ -162,6 +158,11 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
         }
         else
         {
+            static_assert(static_cast<int>(DDS_LOADER_DEFAULT) == static_cast<int>(WIC_LOADER_DEFAULT), "DDS/WIC Load flags mismatch");
+            static_assert(static_cast<int>(DDS_LOADER_FORCE_SRGB) == static_cast<int>(WIC_LOADER_FORCE_SRGB), "DDS/WIC Load flags mismatch");
+            static_assert(static_cast<int>(DDS_LOADER_MIP_AUTOGEN) == static_cast<int>(WIC_LOADER_MIP_AUTOGEN), "DDS/WIC Load flags mismatch");
+            static_assert(static_cast<int>(DDS_LOADER_MIP_RESERVE) == static_cast<int>(WIC_LOADER_MIP_RESERVE), "DDS/WIC Load flags mismatch");
+
             textureEntry.mIsCubeMap = false;
 
             HRESULT hr = CreateWICTextureFromFileEx(
