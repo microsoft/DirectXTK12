@@ -225,7 +225,7 @@ install(FILES
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)
 
-    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
+    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4" AND (NOT ${CMAKE_VS_PLATFORM_NAME} MATCHES "arm"))
         target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
     endif()
 endif()
