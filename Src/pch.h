@@ -165,6 +165,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <new>
 #include <set>
 #include <stdexcept>
 #include <string>
