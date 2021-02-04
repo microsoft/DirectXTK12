@@ -189,6 +189,12 @@ if(MSVC)
     # Library needs /EHsc (Enable C++ exceptions)
 endif()
 
+if (VCPKG_TOOLCHAIN)
+    message("INFO: Using VCPKG for DirectXMath.")
+    find_package(directxmath CONFIG REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectXMath)
+endif()
+
 #--- Package
 include(CMakePackageConfigHelpers)
 
