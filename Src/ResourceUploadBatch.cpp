@@ -994,7 +994,7 @@ private:
         std::vector<ComPtr<ID3D12DeviceChild>>  TrackedObjects;
         std::vector<SharedGraphicsResource>     TrackedMemoryResources;
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
-        ComPtr<ID3D12Fence>  			        Fence;
+        ComPtr<ID3D12Fence>                     Fence;
         HANDLE                                  GpuCompleteEvent;
 
         UploadBatch() noexcept : GpuCompleteEvent(nullptr) {}
