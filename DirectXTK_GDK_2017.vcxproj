@@ -576,7 +576,6 @@
   <ItemGroup>
     <None Include="Inc\SimpleMath.inl" />
     <None Include="README.md" />
-    <None Include="Readme.txt" />
     <None Include="Src\Shaders\Common.fxh" />
     <None Include="Src\Shaders\CompileShaders.cmd" />
     <None Include="Src\Shaders\Lighting.fxh" />

@@ -367,9 +367,6 @@
     <None Include="Src\Shaders\PostProcess.fx">
       <Filter>Src\Shaders</Filter>
     </None>
-    <None Include="Readme.txt">
-      <Filter>Src\Shaders</Filter>
-    </None>
     <None Include="Src\Shaders\SkinnedEffect.fx">
       <Filter>Src\Shaders</Filter>
     </None>
