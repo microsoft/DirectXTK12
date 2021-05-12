@@ -125,8 +125,14 @@
 #endif
 #endif
 
-#include <dxgi1_4.h>
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/dxgiformat.h>
+#include <directx/d3d12.h>
+#else
 #include <d3d12.h>
+#endif
+
+#include <dxgi1_4.h>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -135,7 +141,11 @@
 #endif
 
 #define D3DX12_NO_STATE_OBJECT_HELPERS
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/d3dx12.h>
+#else
 #include "d3dx12.h"
+#endif
 #endif
 
 #ifdef __clang__
