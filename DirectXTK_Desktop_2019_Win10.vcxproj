@@ -304,6 +304,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -326,6 +331,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -349,6 +359,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -370,6 +385,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -393,6 +413,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -417,6 +442,11 @@
       <DisableSpecificWarnings>4711;5045;26812</DisableSpecificWarnings>
       <ExternalWarningLevel>Level4</ExternalWarningLevel>
     </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -433,7 +463,7 @@
       <_ATGFXCPath>$(_ATGFXCPath.Replace("x64",""))</_ATGFXCPath>
       <_ATGFXCPath Condition="'$(_ATGFXCPath)' != '' and !HasTrailingSlash('$(_ATGFXCPath)')">$(_ATGFXCPath)\</_ATGFXCPath>
     </PropertyGroup>
-    <Exec Condition="!Exists('src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders" EnvironmentVariables="WindowsSdkVerBinPath=$(_ATGFXCPath)" />
+    <Exec Condition="!Exists('src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders dxil" EnvironmentVariables="WindowsSdkVerBinPath=$(_ATGFXCPath)" />
     <PropertyGroup>
       <_ATGFXCPath />
     </PropertyGroup>
