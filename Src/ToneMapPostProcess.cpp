@@ -378,6 +378,8 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
         pixelShaders[shaderIndex],
         mPipelineState.GetAddressOf());
 
+    memcpy(constants.colorRotation, c_from709to2020, sizeof(float) * 12);
+
     SetDebugObjectName(mPipelineState.Get(), L"ToneMapPostProcess");
 }
 
