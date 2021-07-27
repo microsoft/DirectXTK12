@@ -171,7 +171,7 @@ namespace
 #endif
     };
 
-    static_assert(std::size(pixelShaders) == PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(pixelShaders)) == PixelShaderCount, "array/max mismatch");
 
     const int pixelShaderIndices[] =
     {
@@ -380,7 +380,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
         pixelShaders[shaderIndex],
         mPipelineState.GetAddressOf());
 
-    memcpy(constants.colorRotation, c_from709to2020, std::size(c_from709to2020));
+    memcpy(constants.colorRotation, c_from709to2020, sizeof(c_from709to2020));
 
     SetDebugObjectName(mPipelineState.Get(), L"ToneMapPostProcess");
 }
@@ -477,9 +477,9 @@ void ToneMapPostProcess::SetColorRotation(ColorPrimaryRotation value)
 {
     switch (value)
     {
-    case DCI_P3_D65_to_UHDTV:   memcpy(pImpl->constants.colorRotation, c_fromP3D65to2020, std::size(c_fromP3D65to2020)); break;
-    case HDTV_to_DCI_P3_D65:    memcpy(pImpl->constants.colorRotation, c_from709toP3D65, std::size(c_from709toP3D65)); break;
-    default:                    memcpy(pImpl->constants.colorRotation, c_from709to2020, std::size(c_from709to2020)); break;
+    case DCI_P3_D65_to_UHDTV:   memcpy(pImpl->constants.colorRotation, c_fromP3D65to2020, sizeof(c_fromP3D65to2020)); break;
+    case HDTV_to_DCI_P3_D65:    memcpy(pImpl->constants.colorRotation, c_from709toP3D65, sizeof(c_from709toP3D65)); break;
+    default:                    memcpy(pImpl->constants.colorRotation, c_from709to2020, sizeof(c_from709to2020)); break;
     }
 
     pImpl->SetDirtyFlag();
