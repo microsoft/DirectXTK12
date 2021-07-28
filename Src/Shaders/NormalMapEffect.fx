@@ -83,6 +83,7 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecBn(VSInputNmTx vin)
     return VSNormalPixelLightingTxBn(vin);
 }
 
+
 // Vertex shader: pixel lighting + texture + vertex color.
 [RootSignature(NormalMapRS)]
 VSOutputPixelLightingTx VSNormalPixelLightingTxVc(VSInputNmTxVc vin)
@@ -104,6 +105,7 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpec(VSInputNmTxVc vin)
 {
     return VSNormalPixelLightingTxVc(vin);
 }
+
 
 // Vertex shader: pixel lighting + texture + vertex color (biased normal).
 [RootSignature(NormalMapRS)]
@@ -129,6 +131,110 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecBn(VSInputNmTxVc vin)
     return VSNormalPixelLightingTxVcBn(vin);
 }
 
+
+// Vertex shader: pixel lighting + texture + instancing.
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxInst(VSInputNmTxInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecInst(VSInputNmTxInst vin)
+{
+    return VSNormalPixelLightingTxInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + instancing (biased normal).
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxBnInst(VSInputNmTxInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecBnInst(VSInputNmTxInst vin)
+{
+    return VSNormalPixelLightingTxBnInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + vertex color + instancing.
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcInst(VSInputNmTxVcInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse.rgb = vin.Color.rgb;
+    vout.Diffuse.a = vin.Color.a * DiffuseColor.a;
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecInst(VSInputNmTxVcInst vin)
+{
+    return VSNormalPixelLightingTxVcInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + vertex color + instancing (biased normal).
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcBnInst(VSInputNmTxVcInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse.rgb = vin.Color.rgb;
+    vout.Diffuse.a = vin.Color.a * DiffuseColor.a;
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecBnInst(VSInputNmTxVcInst vin)
+{
+    return VSNormalPixelLightingTxVcBnInst(vin);
+}
+
+
+
 // Pixel shader: pixel lighting + texture + no fog
 [RootSignature(NormalMapRS)]
 float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTx pin) : SV_Target0
@@ -152,6 +258,7 @@ float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTx pin) : SV_Target0
 
     return color;
 }
+
 
 // Pixel shader: pixel lighting + texture
 [RootSignature(NormalMapRS)]
@@ -201,6 +308,7 @@ float4 PSNormalPixelLightingTxNoFogSpec(PSInputPixelLightingTx pin) : SV_Target0
 
     return color;
 }
+
 
 // Pixel shader: pixel lighting + texture + no specular
 [RootSignature(NormalMapRSNoSpec)]

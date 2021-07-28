@@ -405,6 +405,11 @@ EnvironmentMapEffect::Impl::Impl(
         DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
         throw std::invalid_argument("VertexColor effect flag is invalid");
     }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
+    }
 
     constants.environmentMapAmount = 1;
     constants.fresnelFactor = 1;

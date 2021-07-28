@@ -226,6 +226,12 @@ DebugEffect::Impl::Impl(
 
     assert(mRootSignature != nullptr);
 
+    if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: DebugEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
+    }
+
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0,

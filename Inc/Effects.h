@@ -154,6 +154,7 @@ namespace DirectX
         constexpr uint32_t PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
         constexpr uint32_t VertexColor         = 0x08;
         constexpr uint32_t Texture             = 0x10;
+        constexpr uint32_t Instancing          = 0x20;
 
         constexpr uint32_t Specular            = 0x100; // enable optional specular/specularMap feature
         constexpr uint32_t Emissive            = 0x200; // enable optional emissive/emissiveMap feature

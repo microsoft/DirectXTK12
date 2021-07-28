@@ -219,8 +219,13 @@ AlphaTestEffect::Impl::Impl(
     }
     else if (effectFlags & EffectFlags::Lighting)
     {
-        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::Lighting\n");
         throw std::invalid_argument("Lighting effect flag is invalid");
+    }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
     }
 
     // Create pipeline state.
