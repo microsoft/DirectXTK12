@@ -64,7 +64,7 @@ namespace DirectX
             Effect_Max
         };
 
-        explicit BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+        BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
         BasicPostProcess(BasicPostProcess&& moveFrom) noexcept;
         BasicPostProcess& operator= (BasicPostProcess&& moveFrom) noexcept;
 
@@ -108,7 +108,7 @@ namespace DirectX
             Effect_Max
         };
 
-        explicit DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+        DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
         DualPostProcess(DualPostProcess&& moveFrom) noexcept;
         DualPostProcess& operator= (DualPostProcess&& moveFrom) noexcept;
 
@@ -162,7 +162,15 @@ namespace DirectX
             TransferFunction_Max
         };
 
-        explicit ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
+        // Color Rotation Transform for HDR10
+        enum ColorPrimaryRotation : unsigned int
+        {
+            HDTV_to_UHDTV,       // Rec.709 to Rec.2020
+            DCI_P3_D65_to_UHDTV, // DCI-P3-D65 (a.k.a Display P3 or P3D65) to Rec.2020
+            HDTV_to_DCI_P3_D65,  // Rec.709 to DCI-P3-D65 (a.k.a Display P3 or P3D65)
+        };
+
+        ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
             Operator op, TransferFunction func
         #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
             , bool mrt = false
@@ -183,11 +191,15 @@ namespace DirectX
         // Properties
         void __cdecl SetHDRSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
+        // Sets the Color Rotation Transform for HDR10 signal output
+        void __cdecl SetColorRotation(ColorPrimaryRotation value);
+        void XM_CALLCONV SetColorRotation(FXMMATRIX value);
+
         // Sets exposure value for LDR tonemap operators
-        void SetExposure(float exposureValue);
+        void __cdecl SetExposure(float exposureValue);
 
         // Sets ST.2084 parameter for how bright white should be in nits
-        void SetST2084Parameter(float paperWhiteNits);
+        void __cdecl SetST2084Parameter(float paperWhiteNits);
 
     private:
         // Private implementation.
