@@ -361,7 +361,7 @@ int PBREffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noe
         // Vertex shader needs to use vertex matrix transform.
         permutation = (textureEnabled) ? 6 : 5;
     }
-    if (effectFlags & EffectFlags::Velocity)
+    else if (effectFlags & EffectFlags::Velocity)
     {
         // Optional velocity buffer (implies textured RMA)?
         permutation = 3;
