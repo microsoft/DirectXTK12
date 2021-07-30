@@ -205,6 +205,11 @@ call :CompileShader%1 DebugEffect vs VSDebugBn
 call :CompileShader%1 DebugEffect vs VSDebugVc
 call :CompileShader%1 DebugEffect vs VSDebugVcBn
 
+call :CompileShader%1 DebugEffect vs VSDebugInst
+call :CompileShader%1 DebugEffect vs VSDebugBnInst
+call :CompileShader%1 DebugEffect vs VSDebugVcInst
+call :CompileShader%1 DebugEffect vs VSDebugVcBnInst
+
 call :CompileShader%1 DebugEffect ps PSHemiAmbient
 call :CompileShader%1 DebugEffect ps PSRGBNormals
 call :CompileShader%1 DebugEffect ps PSRGBTangents

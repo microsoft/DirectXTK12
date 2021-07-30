@@ -33,9 +33,9 @@ namespace
     {
         using ConstantBufferType = DebugEffectConstants;
 
-        static constexpr int VertexShaderCount = 4;
+        static constexpr int VertexShaderCount = 8;
         static constexpr int PixelShaderCount = 4;
-        static constexpr int ShaderPermutationCount = 16;
+        static constexpr int ShaderPermutationCount = 32;
         static constexpr int RootSignatureCount = 1;
     };
 }
@@ -53,7 +53,7 @@ public:
         RootParameterCount
     };
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(DebugEffect::Mode debugMode, uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -64,10 +64,16 @@ namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugInst.inc"
+
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcInst.inc"
 
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugBnInst.inc"
+
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcBnInst.inc"
 
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSHemiAmbient.inc"
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBNormals.inc"
@@ -75,10 +81,16 @@ namespace
     #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBBiTangents.inc"
 #elif defined(_GAMING_XBOX)
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugInst.inc"
+
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcInst.inc"
 
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugBnInst.inc"
+
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcBnInst.inc"
 
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSHemiAmbient.inc"
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBNormals.inc"
@@ -86,10 +98,16 @@ namespace
     #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBBiTangents.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugInst.inc"
+
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVc.inc"
+    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcInst.inc"
 
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugBnInst.inc"
+
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcBn.inc"
+    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcBnInst.inc"
 
     #include "Shaders/Compiled/XboxOneDebugEffect_PSHemiAmbient.inc"
     #include "Shaders/Compiled/XboxOneDebugEffect_PSRGBNormals.inc"
@@ -97,10 +115,16 @@ namespace
     #include "Shaders/Compiled/XboxOneDebugEffect_PSRGBBiTangents.inc"
 #else    
     #include "Shaders/Compiled/DebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/DebugEffect_VSDebugInst.inc"
+
     #include "Shaders/Compiled/DebugEffect_VSDebugVc.inc"
+    #include "Shaders/Compiled/DebugEffect_VSDebugVcInst.inc"
 
     #include "Shaders/Compiled/DebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/DebugEffect_VSDebugBnInst.inc"
+
     #include "Shaders/Compiled/DebugEffect_VSDebugVcBn.inc"
+    #include "Shaders/Compiled/DebugEffect_VSDebugVcBnInst.inc"
 
     #include "Shaders/Compiled/DebugEffect_PSHemiAmbient.inc"
     #include "Shaders/Compiled/DebugEffect_PSRGBNormals.inc"
@@ -113,17 +137,20 @@ namespace
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<DebugEffectTraits>::VertexShaderBytecode[] =
 {    
-    { DebugEffect_VSDebug,      sizeof(DebugEffect_VSDebug)     },
-    { DebugEffect_VSDebugVc,    sizeof(DebugEffect_VSDebugVc)   },
-
-    { DebugEffect_VSDebugBn,    sizeof(DebugEffect_VSDebugBn)   },
-    { DebugEffect_VSDebugVcBn,  sizeof(DebugEffect_VSDebugVcBn) },
+    { DebugEffect_VSDebug,         sizeof(DebugEffect_VSDebug)         },
+    { DebugEffect_VSDebugVc,       sizeof(DebugEffect_VSDebugVc)       },
+    { DebugEffect_VSDebugBn,       sizeof(DebugEffect_VSDebugBn)       },
+    { DebugEffect_VSDebugVcBn,     sizeof(DebugEffect_VSDebugVcBn)     },
+    { DebugEffect_VSDebugInst,     sizeof(DebugEffect_VSDebugInst)     },
+    { DebugEffect_VSDebugVcInst,   sizeof(DebugEffect_VSDebugVcInst)   },
+    { DebugEffect_VSDebugBnInst,   sizeof(DebugEffect_VSDebugBnInst)   },
+    { DebugEffect_VSDebugVcBnInst, sizeof(DebugEffect_VSDebugVcBnInst) },
 };
 
 
 template<>
 const int EffectBase<DebugEffectTraits>::VertexShaderIndices[] =
-{    
+{
     0,      // default
     0,      // normals
     0,      // tangents
@@ -143,22 +170,41 @@ const int EffectBase<DebugEffectTraits>::VertexShaderIndices[] =
     3,      // vertex color (biased vertex normal) + normals
     3,      // vertex color (biased vertex normal) + tangents
     3,      // vertex color (biased vertex normal) + bitangents
-};
 
+    4,      // instancing
+    4,      // instancing + normals
+    4,      // instancing + tangents
+    4,      // instancing + bitangents
+
+    5,      // instancing + vertex color + default
+    5,      // instancing + vertex color + normals
+    5,      // instancing + vertex color + tangents
+    5,      // instancing + vertex color + bitangents
+
+    6,      // instancing (biased vertex normal)
+    6,      // instancing + normals (biased vertex normal)
+    6,      // instancing + tangents (biased vertex normal)
+    6,      // instancing + bitangents (biased vertex normal)
+
+    7,      // instancing + vertex color (biased vertex normal)
+    7,      // instancing + vertex color (biased vertex normal) + normals
+    7,      // instancing + vertex color (biased vertex normal) + tangents
+    7,      // instancing + vertex color (biased vertex normal) + bitangents};
+};
 
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<DebugEffectTraits>::PixelShaderBytecode[] =
 {
-    { DebugEffect_PSHemiAmbient,    sizeof(DebugEffect_PSHemiAmbient)          },
-    { DebugEffect_PSRGBNormals,     sizeof(DebugEffect_PSRGBNormals)     },
-    { DebugEffect_PSRGBTangents,    sizeof(DebugEffect_PSRGBTangents)    },
+    { DebugEffect_PSHemiAmbient,    sizeof(DebugEffect_PSHemiAmbient)   },
+    { DebugEffect_PSRGBNormals,     sizeof(DebugEffect_PSRGBNormals)    },
+    { DebugEffect_PSRGBTangents,    sizeof(DebugEffect_PSRGBTangents)   },
     { DebugEffect_PSRGBBiTangents,  sizeof(DebugEffect_PSRGBBiTangents) },
 };
 
 
 template<>
 const int EffectBase<DebugEffectTraits>::PixelShaderIndices[] =
-{    
+{
     0,      // default
     1,      // normals
     2,      // tangents
@@ -178,6 +224,26 @@ const int EffectBase<DebugEffectTraits>::PixelShaderIndices[] =
     1,      // vertex color (biased vertex normal) + normals
     2,      // vertex color (biased vertex normal) + tangents
     3,      // vertex color (biased vertex normal) + bitangents
+
+    0,      // instancing
+    1,      // instancing + normals
+    2,      // instancing + tangents
+    3,      // instancing + bitangents
+
+    0,      // instancing + vertex color + default
+    1,      // instancing + vertex color + normals
+    2,      // instancing + vertex color + tangents
+    3,      // instancing + vertex color + bitangents
+
+    0,      // instancing (biased vertex normal)
+    1,      // instancing + normals (biased vertex normal)
+    2,      // instancing + tangents (biased vertex normal)
+    3,      // instancing + bitangents (biased vertex normal)
+
+    0,      // instancing + vertex color (biased vertex normal)
+    1,      // instancing + vertex color (biased vertex normal) + normals
+    2,      // instancing + vertex color (biased vertex normal) + tangents
+    3,      // instancing + vertex color (biased vertex normal) + bitangents
 };
 
 
@@ -226,17 +292,8 @@ DebugEffect::Impl::Impl(
 
     assert(mRootSignature != nullptr);
 
-    if (effectFlags & EffectFlags::Instancing)
-    {
-        DebugTrace("ERROR: DebugEffect does not implement EffectFlags::Instancing\n");
-        throw std::invalid_argument("Instancing effect flag is invalid");
-    }
-
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0,
-        debugMode,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(debugMode, effectFlags);
     assert(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
 
@@ -258,20 +315,26 @@ DebugEffect::Impl::Impl(
 }
 
 
-int DebugEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, DebugEffect::Mode debugMode, bool biasedVertexNormals) const noexcept
+int DebugEffect::Impl::GetPipelineStatePermutation(DebugEffect::Mode debugMode, uint32_t effectFlags) const noexcept
 {
     int permutation = static_cast<int>(debugMode);
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 4;
     }
 
-    if (biasedVertexNormals)
+    if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 8;
+    }
+
+    if (effectFlags & EffectFlags::Instancing)
+    {
+        // Vertex shader needs to use vertex matrix transform.
+        permutation += 16;
     }
 
     return permutation;
