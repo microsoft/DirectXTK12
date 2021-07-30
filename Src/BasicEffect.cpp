@@ -72,7 +72,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -476,10 +476,7 @@ BasicEffect::Impl::Impl(
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
-        (effectFlags & EffectFlags::VertexColor) != 0,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
 
@@ -501,7 +498,7 @@ BasicEffect::Impl::Impl(
 }
 
 
-int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled, bool biasedVertexNormals) const noexcept
+int BasicEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -512,7 +509,7 @@ int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, 
     }
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 2;
     }
@@ -525,7 +522,7 @@ int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, 
 
     if (lightingEnabled)
     {
-        if (preferPerPixelLighting)
+        if (effectFlags & EffectFlags::PerPixelLightingBit)
         {
             // Do lighting in the pixel shader.
             permutation += 16;
@@ -535,7 +532,7 @@ int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, 
             permutation += 8;
         }
 
-        if (biasedVertexNormals)
+        if (effectFlags & EffectFlags::BiasedVertexNormals)
         {
             // Compressed normals need to be scaled and biased in the vertex shader.
             permutation += 16;
