@@ -40,7 +40,7 @@ public:
         D3D12_RESOURCE_STATES stateBeforeIB,
         D3D12_RESOURCE_STATES stateAfterIB);
 
-    void Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
+    void DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const;
     
     UINT                        mIndexCount;
     SharedGraphicsResource      mIndexBuffer;
@@ -216,13 +216,13 @@ void GeometricPrimitive::Impl::Transition(
 
 // Draws the primitive.
 _Use_decl_annotations_
-void GeometricPrimitive::Impl::Draw(ID3D12GraphicsCommandList* commandList) const
+void GeometricPrimitive::Impl::DrawInstanced(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const
 {
     commandList->IASetVertexBuffers(0, 1, &mVertexBufferView);
     commandList->IASetIndexBuffer(&mIndexBufferView);
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    commandList->DrawIndexedInstanced(mIndexCount, 1, 0, 0, 0);
+    commandList->DrawIndexedInstanced(mIndexCount, instanceCount, 0, 0, startInstanceLocation);
 }
 
 //--------------------------------------------------------------------------------------
@@ -265,7 +265,14 @@ void GeometricPrimitive::Transition(
 _Use_decl_annotations_
 void GeometricPrimitive::Draw(ID3D12GraphicsCommandList* commandList) const
 {
-    pImpl->Draw(commandList);
+    pImpl->DrawInstanced(commandList, 1, 0);
+}
+
+
+_Use_decl_annotations_
+void GeometricPrimitive::DrawInstanced(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const
+{
+    pImpl->DrawInstanced(commandList, instanceCount, startInstanceLocation);
 }
 
 
