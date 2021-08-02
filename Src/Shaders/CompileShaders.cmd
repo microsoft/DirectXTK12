@@ -172,14 +172,26 @@ call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecBn
 call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpec
 call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecBn
 
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxBnInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcBnInst
+
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecBnInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecBnInst
+
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTx
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFog
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoSpec
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFogSpec
 
 call :CompileShader%1 PBREffect vs VSConstant
+call :CompileShader%1 PBREffect vs VSConstantInst
 call :CompileShader%1 PBREffect vs VSConstantVelocity
 call :CompileShader%1 PBREffect vs VSConstantBn
+call :CompileShader%1 PBREffect vs VSConstantBnInst
 call :CompileShader%1 PBREffect vs VSConstantVelocityBn
 
 call :CompileShader%1 PBREffect ps PSConstant
@@ -192,6 +204,11 @@ call :CompileShader%1 DebugEffect vs VSDebug
 call :CompileShader%1 DebugEffect vs VSDebugBn
 call :CompileShader%1 DebugEffect vs VSDebugVc
 call :CompileShader%1 DebugEffect vs VSDebugVcBn
+
+call :CompileShader%1 DebugEffect vs VSDebugInst
+call :CompileShader%1 DebugEffect vs VSDebugBnInst
+call :CompileShader%1 DebugEffect vs VSDebugVcInst
+call :CompileShader%1 DebugEffect vs VSDebugVcBnInst
 
 call :CompileShader%1 DebugEffect ps PSHemiAmbient
 call :CompileShader%1 DebugEffect ps PSRGBNormals

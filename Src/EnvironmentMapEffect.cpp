@@ -405,6 +405,11 @@ EnvironmentMapEffect::Impl::Impl(
         DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
         throw std::invalid_argument("VertexColor effect flag is invalid");
     }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
+    }
 
     constants.environmentMapAmount = 1;
     constants.fresnelFactor = 1;
@@ -415,9 +420,9 @@ EnvironmentMapEffect::Impl::Impl(
 
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(mapping, effectFlags);
-
     assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);

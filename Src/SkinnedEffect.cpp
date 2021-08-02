@@ -71,7 +71,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -232,11 +232,14 @@ SkinnedEffect::Impl::Impl(
         DebugTrace("ERROR: SkinnedEffect does not implement EffectFlags::VertexColor\n");
         throw std::invalid_argument("VertexColor effect flag is invalid");
     }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: SkinnedEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
+    }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
 
@@ -258,7 +261,7 @@ SkinnedEffect::Impl::Impl(
 }
 
 
-int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool biasedVertexNormals) const noexcept
+int SkinnedEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -268,13 +271,13 @@ int SkinnedEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting
         permutation += 1;
     }
 
-    if (preferPerPixelLighting)
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
         // Do lighting in the pixel shader.
         permutation += 2;
     }
 
-    if (biasedVertexNormals)
+    if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 4;
