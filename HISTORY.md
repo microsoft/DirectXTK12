@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### August 1, 2021
+* DebugEffect, NormalMapEffect, and PBREffect updated with instancing support
+* GeometricPrimitive updated with DrawInstanced method
+* ToneMapPostProcess updated with SetColorRotation method
+* Added VS 2022 Preview projects
+* Minor code review
+
 ### June 9, 2021
 * VS 2019 projects now use Shader Model 6 to build shaders (CMake has build option)
 * DirectX Tool Kit for Audio updates:
