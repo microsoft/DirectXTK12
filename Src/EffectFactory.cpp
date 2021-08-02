@@ -28,12 +28,13 @@ public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
+        , mSharing(true)
         , mUseNormalMapEffect(true)
         , mEnablePerPixelLighting(true)
         , mEnableFog(false)
+        , mEnableInstancing(false)
         , mDevice(device)
-        , mSharing(true)
-    { 
+    {
         if (textureDescriptors)
             mTextureDescriptors = std::make_unique<DescriptorHeap>(textureDescriptors);
         if (samplerDescriptors)
@@ -49,14 +50,15 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing(bool enabled) noexcept { mSharing = enabled; }
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
 
+    bool mSharing;
     bool mUseNormalMapEffect;
     bool mEnablePerPixelLighting;
     bool mEnableFog;
+    bool mEnableInstancing;
 
 private:
     ComPtr<ID3D12Device> mDevice;
@@ -67,8 +69,6 @@ private:
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
     EffectCache  mEffectCacheNormalMap;
-
-    bool mSharing;
 
     std::mutex mutex;
 };
@@ -278,6 +278,11 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         if (mEnableFog)
         {
             effectflags |= EffectFlags::Fog;
+        }
+
+        if (mEnableInstancing)
+        {
+            effectflags |= EffectFlags::Instancing;
         }
 
         if (info.perVertexColor)
@@ -532,7 +537,7 @@ void EffectFactory::ReleaseCache()
 
 void EffectFactory::SetSharing(bool enabled) noexcept
 {
-    pImpl->SetSharing(enabled);
+    pImpl->mSharing = enabled;
 }
 
 void EffectFactory::EnablePerPixelLighting(bool enabled) noexcept
@@ -543,6 +548,11 @@ void EffectFactory::EnablePerPixelLighting(bool enabled) noexcept
 void EffectFactory::EnableFogging(bool enabled) noexcept
 {
     pImpl->mEnableFog = enabled;
+}
+
+void EffectFactory::EnableInstancing(bool enabled) noexcept
+{
+    pImpl->mEnableInstancing = enabled;
 }
 
 void EffectFactory::EnableNormalMapEffect(bool enabled) noexcept

@@ -800,6 +800,8 @@ namespace DirectX
 
         void __cdecl EnableFogging(bool enabled) noexcept;
 
+        void __cdecl EnableInstancing(bool enabled) noexcept;
+
     private:
         // Private implementation.
         class Impl;
@@ -838,6 +840,8 @@ namespace DirectX
         void __cdecl ReleaseCache();
 
         void __cdecl SetSharing(bool enabled) noexcept;
+
+        void __cdecl EnableInstancing(bool enabled) noexcept;
 
     private:
         // Private implementation.

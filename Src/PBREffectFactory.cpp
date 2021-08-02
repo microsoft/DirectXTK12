@@ -28,9 +28,10 @@ public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
-        , mDevice(device)
         , mSharing(true)
-    { 
+        , mEnableInstancing(false)
+        , mDevice(device)
+    {
         if (textureDescriptors)
             mTextureDescriptors = std::make_unique<DescriptorHeap>(textureDescriptors);
         if (samplerDescriptors)
@@ -46,7 +47,9 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing(bool enabled) noexcept { mSharing = enabled; }
+
+    bool mSharing;
+    bool mEnableInstancing;
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
@@ -57,8 +60,6 @@ private:
     using EffectCache = std::map< std::wstring, std::shared_ptr<IEffect> >;
 
     EffectCache  mEffectCache;
-
-    bool mSharing;
 
     std::mutex mutex;
 };
@@ -104,6 +105,11 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     if (emissiveTextureIndex != -1)
     {
         effectflags |= EffectFlags::Emissive;
+    }
+
+    if (mEnableInstancing)
+    {
+        effectflags |= EffectFlags::Instancing;
     }
 
     std::wstring cacheName;
@@ -231,5 +237,10 @@ void PBREffectFactory::ReleaseCache()
 
 void PBREffectFactory::SetSharing(bool enabled) noexcept
 {
-    pImpl->SetSharing(enabled);
+    pImpl->mSharing = enabled;
+}
+
+void PBREffectFactory::EnableInstancing(bool enabled) noexcept
+{
+    pImpl->mEnableInstancing = enabled;
 }
