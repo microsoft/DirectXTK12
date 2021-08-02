@@ -26,10 +26,10 @@ class PBREffectFactory::Impl
 {
 public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
-        : mTextureDescriptors(nullptr)
-        , mSamplerDescriptors(nullptr)
-        , mSharing(true)
+        : mSharing(true)
         , mEnableInstancing(false)
+        , mTextureDescriptors(nullptr)
+        , mSamplerDescriptors(nullptr)
         , mDevice(device)
     {
         if (textureDescriptors)
