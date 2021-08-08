@@ -547,7 +547,7 @@ public:
         auto uploadBatch = new UploadBatch();
         uploadBatch->CommandList = mList;
         uploadBatch->Fence = fence;
-        uploadBatch->GpuCompleteEvent = gpuCompletedEvent;
+        uploadBatch->GpuCompleteEvent.reset(gpuCompletedEvent);
         std::swap(mTrackedObjects, uploadBatch->TrackedObjects);
         std::swap(mTrackedMemoryResources, uploadBatch->TrackedMemoryResources);
 
@@ -556,7 +556,7 @@ public:
         std::future<void> future = std::async(std::launch::async, [uploadBatch]()
         {
             // Wait on the GPU-complete notification
-            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent, INFINITE);
+            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent.get(), INFINITE);
             if (wr != WAIT_OBJECT_0)
             {
                 if (wr == WAIT_FAILED)
@@ -995,7 +995,7 @@ private:
         std::vector<SharedGraphicsResource>     TrackedMemoryResources;
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
         ComPtr<ID3D12Fence>                     Fence;
-        HANDLE                                  GpuCompleteEvent;
+        ScopedHandle GpuCompleteEvent;
 
         UploadBatch() noexcept : GpuCompleteEvent(nullptr) {}
     };
