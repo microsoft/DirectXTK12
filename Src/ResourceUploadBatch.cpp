@@ -536,7 +536,7 @@ public:
 
         SetDebugObjectName(fence.Get(), L"ResourceUploadBatch");
 
-        HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+        HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
         if (!gpuCompletedEvent)
             throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
 
@@ -995,9 +995,9 @@ private:
         std::vector<SharedGraphicsResource>     TrackedMemoryResources;
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
         ComPtr<ID3D12Fence>                     Fence;
-        ScopedHandle GpuCompleteEvent;
+        ScopedHandle                            GpuCompleteEvent;
 
-        UploadBatch() noexcept : GpuCompleteEvent(nullptr) {}
+        UploadBatch() noexcept {}
     };
 
     ComPtr<ID3D12Device>                        mDevice;
