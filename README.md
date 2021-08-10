@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/microsoft/DirectXTK12)
+
 ![DirectX Logo](https://github.com/Microsoft/DirectXTK12/wiki/X_jpg.jpg)
 
 # DirectX Tool Kit for DirectX 12
