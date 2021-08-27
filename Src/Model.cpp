@@ -130,9 +130,9 @@ void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, u
 _Use_decl_annotations_
 void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
 {
-    for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
+    for (const auto& it : meshParts)
     {
-        auto part = (*it).get();
+        auto part = it.get();
         assert(part != nullptr);
 
         part->Draw(commandList);
@@ -146,9 +146,9 @@ void ModelMeshPart::DrawMeshParts(
     const ModelMeshPart::Collection& meshParts,
     ModelMeshPart::DrawCallback callback)
 {
-    for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
+    for (const auto& it : meshParts)
     {
-        auto part = (*it).get();
+        auto part = it.get();
         assert(part != nullptr);
 
         callback(commandList, *part);
@@ -291,7 +291,7 @@ void Model::LoadStaticBuffers(
 
     CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
-    for(auto it = uniqueParts.cbegin(); it != uniqueParts.cend(); ++it)
+    for (auto it = uniqueParts.cbegin(); it != uniqueParts.cend(); ++it)
     {
         auto part = *it;
 

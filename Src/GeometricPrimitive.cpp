@@ -689,9 +689,9 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(
     if (nVerts >= USHRT_MAX)
         throw std::invalid_argument("Too many vertices for 16-bit index buffer");
 
-    for (auto it = indices.cbegin(); it != indices.cend(); ++it)
+    for (auto it : indices)
     {
-        if (*it >= nVerts)
+        if (it >= nVerts)
         {
             throw std::out_of_range("Index not in vertices list");
         }
