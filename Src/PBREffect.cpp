@@ -32,7 +32,7 @@ namespace
         float    Roughness;
         int      numRadianceMipLevels;
 
-        // Size of render target 
+        // Size of render target
         float   targetWidth;
         float   targetHeight;
     };
@@ -56,7 +56,7 @@ namespace
 class PBREffect::Impl : public EffectBase<PBREffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, 
+    Impl(_In_ ID3D12Device* device,
         uint32_t effectFlags,
         const EffectPipelineStateDescription& pipelineDescription);
 
@@ -135,7 +135,7 @@ namespace
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissive.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedVelocity.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
-#else    
+#else
     #include "Shaders/Compiled/PBREffect_VSConstant.inc"
     #include "Shaders/Compiled/PBREffect_VSConstantBn.inc"
 
@@ -395,7 +395,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     constants.prevWorldViewProj = constants.worldViewProj;
 
     // Compute derived parameter values.
-    matrices.SetConstants(dirtyFlags, constants.worldViewProj);        
+    matrices.SetConstants(dirtyFlags, constants.worldViewProj);
 
     // World inverse transpose matrix.
     if (dirtyFlags & EffectDirtyFlags::WorldInverseTranspose)
