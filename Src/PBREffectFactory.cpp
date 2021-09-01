@@ -84,7 +84,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         throw std::logic_error("PBREffectFactory");
     }
 
-    int albetoTextureIndex = (info.diffuseTextureIndex != -1) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
+    int albedoTextureIndex = (info.diffuseTextureIndex != -1) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
     int rmaTextureIndex = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
     int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
     int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
@@ -132,7 +132,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     effect->SetAlpha(info.alphaValue);
 
     effect->SetSurfaceTextures(
-        mTextureDescriptors->GetGpuHandle(static_cast<size_t>(albetoTextureIndex)),
+        mTextureDescriptors->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
         mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
         mTextureDescriptors->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
         mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
