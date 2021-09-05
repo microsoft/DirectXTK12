@@ -200,6 +200,32 @@ namespace DirectX
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }
 
+        ScopedBarrier(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            _In_reads_(count) const D3D12_RESOURCE_BARRIER *barriers,
+            size_t count) noexcept(false)
+            : mCommandList(commandList),
+            mBarriers(barriers, barriers + count)
+        {
+            assert(count <= UINT32_MAX);
+
+            // Set barriers
+            mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
+        }
+
+        template<size_t TBarrierLength>
+        ScopedBarrier(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            const D3D12_RESOURCE_BARRIER(&barriers)[TBarrierLength]) noexcept(false)
+            : mCommandList(commandList),
+            mBarriers(barriers, barriers + TBarrierLength)
+        {
+            assert(TBarrierLength <= UINT32_MAX);
+
+            // Set barriers
+            mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
+        }
+
         ScopedBarrier(ScopedBarrier&&) = default;
         ScopedBarrier& operator= (ScopedBarrier&&) = default;
 
