@@ -100,7 +100,10 @@
 #endif
 
 #ifdef _GAMING_XBOX_SCARLETT
+#pragma warning(push)
+#pragma warning(disable: 5249)
 #include <d3d12_xs.h>
+#pragma warning(pop)
 #include <d3dx12_xs.h>
 #else
 #include <d3d12_x.h>
