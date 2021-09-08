@@ -101,12 +101,15 @@
 
 #ifdef _GAMING_XBOX_SCARLETT
 #pragma warning(push)
-#pragma warning(disable: 5249)
+#pragma warning(disable: 5204 5249)
 #include <d3d12_xs.h>
 #pragma warning(pop)
 #include <d3dx12_xs.h>
 #else
+#pragma warning(push)
+#pragma warning(disable: 5204)
 #include <d3d12_x.h>
+#pragma warning(pop)
 #include <d3dx12_x.h>
 #endif
 #elif defined(_XBOX_ONE) && defined(_TITLE)
