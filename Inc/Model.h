@@ -29,6 +29,8 @@
 #include <utility>
 #include <vector>
 
+#include <malloc.h>
+
 #include <wrl/client.h>
 
 #include <DirectXMath.h>
@@ -51,6 +53,48 @@ namespace DirectX
         ModelLoader_Default             = 0x0,
         ModelLoader_MaterialColorsSRGB  = 0x1,
         ModelLoader_AllowLargeModels    = 0x2,
+        ModelLoader_IncludeBones        = 0x4,
+    };
+
+    //----------------------------------------------------------------------------------
+    // Frame hierarchy for rigid body and skeletal animation
+    struct ModelBone
+    {
+        ModelBone() noexcept :
+            parentIndex(c_Invalid),
+            childIndex(c_Invalid),
+            siblingIndex(c_Invalid),
+            animIndex(c_Invalid)
+        {}
+
+        ModelBone(uint32_t parent, uint32_t child, uint32_t sibling, uint32_t anim) noexcept :
+            parentIndex(parent),
+            childIndex(child),
+            siblingIndex(sibling),
+            animIndex(anim)
+        {}
+
+        uint32_t            parentIndex;
+        uint32_t            childIndex;
+        uint32_t            siblingIndex;
+        uint32_t            animIndex;
+        std::wstring        name;
+
+        using Collection = std::vector<ModelBone>;
+
+        static constexpr uint32_t c_Invalid = uint32_t(-1);
+
+        struct aligned_deleter { void operator()(void* p) noexcept { _aligned_free(p); } };
+
+        using TransformArray = std::unique_ptr<XMMATRIX[], aligned_deleter>;
+
+        static TransformArray MakeArray(size_t count)
+        {
+            void* temp = _aligned_malloc(sizeof(XMMATRIX) * count, 16);
+            if (!temp)
+                throw std::bad_alloc();
+            return TransformArray(static_cast<XMMATRIX*>(temp));
+        }
     };
 
     //----------------------------------------------------------------------------------
@@ -68,7 +112,7 @@ namespace DirectX
 
         virtual ~ModelMeshPart();
 
-        uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
+        uint32_t                                                partIndex;      // Unique index assigned per-part in a model.
         uint32_t                                                materialIndex;  // Index of the material spec to use
         uint32_t                                                indexCount;
         uint32_t                                                startIndex;
@@ -91,20 +135,20 @@ namespace DirectX
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
-        void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation = 0) const;
+        void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstance = 0) const;
 
         //
         // Utilities for drawing multiple mesh parts
         //
 
         // Draw the mesh
-        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart::Collection& meshParts);
+        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const Collection& meshParts);
 
         // Draw the mesh with an effect
-        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart::Collection& meshParts, _In_ IEffect* effect);
+        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const Collection& meshParts, _In_ IEffect* effect);
 
         // Draw the mesh with a callback for each mesh part
-        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart::Collection& meshParts, DrawCallback callback);
+        static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, _In_ const Collection& meshParts, DrawCallback callback);
 
         // Draw the mesh with a range of effects that mesh parts will index into.
         // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
@@ -112,7 +156,7 @@ namespace DirectX
         template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         static void DrawMeshParts(
             _In_ ID3D12GraphicsCommandList* commandList,
-            _In_ const ModelMeshPart::Collection& meshParts,
+            _In_ const Collection& meshParts,
             TEffectIterator partEffects)
         {
             // This assert is here to prevent accidental use of containers that would cause undesirable performance penalties.
@@ -120,9 +164,9 @@ namespace DirectX
                 std::is_base_of<std::random_access_iterator_tag, TEffectIteratorCategory>::value,
                 "Providing an iterator without random access capabilities -- such as from std::list -- is not supported.");
 
-            for (auto it = std::begin(meshParts); it != std::end(meshParts); ++it)
+            for (const auto& it : meshParts)
             {
-                auto part = it->get();
+                auto part = it.get();
                 assert(part != nullptr);
 
                 // Get the effect at the location specified by the part's material
@@ -156,6 +200,8 @@ namespace DirectX
         BoundingBox                 boundingBox;
         ModelMeshPart::Collection   opaqueMeshParts;
         ModelMeshPart::Collection   alphaMeshParts;
+        uint32_t                    boneIndex;
+        std::vector<uint32_t>       boneInfluences;
         std::wstring                name;
 
         using Collection = std::vector<std::shared_ptr<ModelMesh>>;
@@ -184,6 +230,9 @@ namespace DirectX
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, effects);
         }
+
+        // TODO: Draw rigid-body with bones
+        // TODO: DrawSkinned
     };
 
 
@@ -248,6 +297,8 @@ namespace DirectX
             DrawAlpha(commandList, std::forward<TForwardArgs>(args)...);
         }
 
+        // TODO: DrawSkinned
+
         // Load texture resources into an existing Effect Texture Factory
         int __cdecl LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset = 0) const;
 
@@ -280,6 +331,26 @@ namespace DirectX
             const EffectPipelineStateDescription& alphaPipelineState,
             int textureDescriptorOffset = 0,
             int samplerDescriptorOffset = 0) const;
+
+        // Compute bone positions based on heirarchy and transform matrices
+        void __cdecl CopyAbsoluteBoneTransformsTo(
+            size_t nbones,
+            _Out_writes_(nbones) XMMATRIX* boneTransforms) const;
+
+        void __cdecl CopyAbsoluteBoneTransforms(
+            size_t nbones,
+            _In_reads_(nbones) const XMMATRIX* inBoneTransforms,
+            _Out_writes_(nbones) XMMATRIX* outBoneTransforms) const;
+
+        // Set bone matrices to a set of relative tansforms
+        void __cdecl CopyBoneTransformsFrom(
+            size_t nbones,
+            _In_reads_(nbones) const XMMATRIX* boneTransforms);
+
+        // Copies the relative bone matrices to a transform array
+        void __cdecl CopyBoneTransformsTo(
+            size_t nbones,
+            _Out_writes_(nbones) XMMATRIX* boneTransforms) const;
 
         // Loads a model from a DirectX SDK .SDKMESH file
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
@@ -339,6 +410,9 @@ namespace DirectX
         ModelMesh::Collection           meshes;
         ModelMaterialInfoCollection     materials;
         TextureCollection               textureNames;
+        ModelBone::Collection           bones;
+        ModelBone::TransformArray       boneMatrices;
+        ModelBone::TransformArray       invBindPoseMatrices;
         std::wstring                    name;
 
     private:
@@ -349,6 +423,12 @@ namespace DirectX
             int textureDescriptorOffset,
             int samplerDescriptorOffset,
             _In_ const ModelMeshPart* part) const;
+
+        void XM_CALLCONV ComputeAbsolute(uint32_t index,
+            FXMMATRIX local, size_t nbones,
+            _In_reads_(nbones) const XMMATRIX* inBoneTransforms,
+            _Inout_updates_(nbones) XMMATRIX* outBoneTransforms,
+            size_t& visited) const;
     };
 
 #ifdef __clang__

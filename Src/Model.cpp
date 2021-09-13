@@ -89,7 +89,7 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const
+void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstance) const
 {
     if (!indexBufferSize || !vertexBufferSize)
     {
@@ -123,7 +123,7 @@ void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, u
 
     commandList->IASetPrimitiveTopology(primitiveType);
 
-    commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, startInstanceLocation);
+    commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, startInstance);
 }
 
 
@@ -171,7 +171,8 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
 // ModelMesh
 //--------------------------------------------------------------------------------------
 
-ModelMesh::ModelMesh() noexcept
+ModelMesh::ModelMesh() noexcept :
+    boneIndex(ModelBone::c_Invalid)
 {
 }
 
@@ -229,7 +230,7 @@ Model::~Model()
 }
 
 
-// Load texture resources
+// Load texture resources.
 int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset) const
 {
     for (size_t i = 0; i < textureNames.size(); ++i)
@@ -241,7 +242,7 @@ int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescri
 }
 
 
-// Load texture resources (helper function)
+// Load texture resources (helper function).
 _Use_decl_annotations_
 std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
     ID3D12Device* device,
@@ -268,7 +269,7 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
 }
 
 
-// Load VB/IB resources for static geometry
+// Load VB/IB resources for static geometry.
 _Use_decl_annotations_
 void Model::LoadStaticBuffers(
     ID3D12Device* device,
@@ -410,7 +411,7 @@ void Model::LoadStaticBuffers(
 }
 
 
-// Create effects for each mesh piece
+// Create effects for each mesh piece.
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     IEffectFactory& fxFactory,
     const EffectPipelineStateDescription& opaquePipelineState,
@@ -478,7 +479,8 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     return effects;
 }
 
-// Creates an effect for a mesh part
+
+// Private helper for creating an effect for a mesh part.
 _Use_decl_annotations_
 std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     IEffectFactory& fxFactory,
@@ -504,7 +506,8 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
-// Create effects for each mesh piece with the default factory
+
+// Create effects for each mesh piece with the default factory.
 _Use_decl_annotations_
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
@@ -518,7 +521,158 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
-// Updates effect matrices (if applicable)
+
+// Compute using bone hierarchy from model bone matrices to an array.
+_Use_decl_annotations_
+void Model::CopyAbsoluteBoneTransformsTo(
+    size_t nbones,
+    XMMATRIX* boneTransforms) const
+{
+    if (!nbones || !boneTransforms)
+    {
+        throw std::invalid_argument("Bone transforms array required");
+    }
+
+    if (nbones < bones.size())
+    {
+        throw std::invalid_argument("Bone transforms array is too small");
+    }
+
+    if (bones.empty() || !boneMatrices)
+    {
+        throw std::runtime_error("Model is missing bones");
+    }
+
+    memset(boneTransforms, 0, sizeof(XMMATRIX) * nbones);
+
+    XMMATRIX id = XMMatrixIdentity();
+    size_t visited = 0;
+    ComputeAbsolute(0, id, bones.size(), boneMatrices.get(), boneTransforms, visited);
+}
+
+
+// Compute using bone hierarchy from one array to another array.
+_Use_decl_annotations_
+void Model::CopyAbsoluteBoneTransforms(
+    size_t nbones,
+    const XMMATRIX* inBoneTransforms,
+    XMMATRIX* outBoneTransforms) const
+{
+    if (!nbones || !inBoneTransforms || !outBoneTransforms)
+    {
+        throw std::invalid_argument("Bone transforms arrays required");
+    }
+
+    if (nbones < bones.size())
+    {
+        throw std::invalid_argument("Bone transforms arrays are too small");
+    }
+
+    if (bones.empty())
+    {
+        throw std::runtime_error("Model is missing bones");
+    }
+
+    memset(outBoneTransforms, 0, sizeof(XMMATRIX) * nbones);
+
+    XMMATRIX id = XMMatrixIdentity();
+    size_t visited = 0;
+    ComputeAbsolute(0, id, bones.size(), inBoneTransforms, outBoneTransforms, visited);
+}
+
+
+// Private helper for computing hierarchical transforms using bones via recursion.
+_Use_decl_annotations_
+void Model::ComputeAbsolute(
+    uint32_t index,
+    FXMMATRIX parent,
+    size_t nbones,
+    const XMMATRIX* inBoneTransforms,
+    XMMATRIX* outBoneTransforms,
+    size_t& visited) const
+{
+    if (index == ModelBone::c_Invalid || index >= nbones)
+        return;
+
+    assert(inBoneTransforms != nullptr && outBoneTransforms != nullptr);
+
+    ++visited; // Cycle detection safety!
+    if (visited > bones.size())
+    {
+        DebugTrace("ERROR: Model::CopyAbsoluteBoneTransformsTo encountered a cycle in the bones!\n");
+        throw std::runtime_error("Model bones form an invalid graph");
+    }
+
+    XMMATRIX local = inBoneTransforms[index];
+    local = XMMatrixMultiply(local, parent);
+    outBoneTransforms[index] = local;
+
+    if (bones[index].siblingIndex != ModelBone::c_Invalid)
+    {
+        ComputeAbsolute(bones[index].siblingIndex, parent, nbones,
+            inBoneTransforms, outBoneTransforms, visited);
+    }
+
+    if (bones[index].childIndex != ModelBone::c_Invalid)
+    {
+        ComputeAbsolute(bones[index].childIndex, local, nbones,
+            inBoneTransforms, outBoneTransforms, visited);
+    }
+}
+
+
+// Copy the model bone matrices from an array.
+_Use_decl_annotations_
+void Model::CopyBoneTransformsFrom(size_t nbones, const XMMATRIX* boneTransforms)
+{
+    if (!nbones || !boneTransforms)
+    {
+        throw std::invalid_argument("Bone transforms array required");
+    }
+
+    if (nbones < bones.size())
+    {
+        throw std::invalid_argument("Bone transforms array is too small");
+    }
+
+    if (bones.empty())
+    {
+        throw std::runtime_error("Model is missing bones");
+    }
+
+    if (!boneMatrices)
+    {
+        boneMatrices = ModelBone::MakeArray(bones.size());
+    }
+
+    memcpy(boneMatrices.get(), boneTransforms, bones.size() * sizeof(XMMATRIX));
+}
+
+
+// Copy the model bone matrices to an array.
+_Use_decl_annotations_
+void Model::CopyBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
+{
+    if (!nbones || !boneTransforms)
+    {
+        throw std::invalid_argument("Bone transforms array required");
+    }
+
+    if (nbones < bones.size())
+    {
+        throw std::invalid_argument("Bone transforms array is too small");
+    }
+
+    if (bones.empty())
+    {
+        throw std::runtime_error("Model is missing bones");
+    }
+
+    memcpy(boneTransforms, boneMatrices.get(), bones.size() * sizeof(XMMATRIX));
+}
+
+
+// Updates effect matrices (if applicable).
 void XM_CALLCONV Model::UpdateEffectMatrices(
     _In_ std::vector<std::shared_ptr<IEffect>>& effectList,
     DirectX::FXMMATRIX world,
@@ -535,7 +689,8 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
     }
 }
 
-// Transition static VB/IB resources (if applicable)
+
+// Transition static VB/IB resources (if applicable).
 void Model::Transition(
     _In_ ID3D12GraphicsCommandList* commandList,
     D3D12_RESOURCE_STATES stateBeforeVB,
