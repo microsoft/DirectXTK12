@@ -220,15 +220,53 @@ void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, M
 //--------------------------------------------------------------------------------------
 // Model
 //--------------------------------------------------------------------------------------
+
 Model::Model() noexcept
 {
 }
-
 
 Model::~Model()
 {
 }
 
+Model::Model(Model const& other) :
+    meshes(other.meshes),
+    materials(other.materials),
+    textureNames(other.textureNames),
+    bones(other.bones),
+    name(other.name)
+{
+    const size_t nbones = other.bones.size();
+    if (nbones > 0)
+    {
+        if (other.boneMatrices)
+        {
+            boneMatrices = ModelBone::MakeArray(nbones);
+            memcpy(boneMatrices.get(), other.boneMatrices.get(), sizeof(XMMATRIX) * nbones);
+        }
+        if (other.invBindPoseMatrices)
+        {
+            invBindPoseMatrices = ModelBone::MakeArray(nbones);
+            memcpy(invBindPoseMatrices.get(), other.invBindPoseMatrices.get(), sizeof(XMMATRIX) * nbones);
+        }
+    }
+}
+
+Model& Model::operator= (Model const& rhs)
+{
+    if (this != &rhs)
+    {
+        Model tmp(rhs);
+        std::swap(meshes, tmp.meshes);
+        std::swap(materials, tmp.materials);
+        std::swap(textureNames, tmp.textureNames);
+        std::swap(bones, tmp.bones);
+        std::swap(boneMatrices, tmp.boneMatrices);
+        std::swap(invBindPoseMatrices, tmp.invBindPoseMatrices);
+        std::swap(name, tmp.name);
+    }
+    return *this;
+}
 
 // Load texture resources.
 int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset) const

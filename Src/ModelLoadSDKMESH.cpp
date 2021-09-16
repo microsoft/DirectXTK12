@@ -227,7 +227,7 @@ namespace
 
         bool posfound = false;
 
-        for (uint32_t index = 0; index < DXUT::MAX_VERTEX_ELEMENTS; ++index)
+        for (size_t index = 0; index < DXUT::MAX_VERTEX_ELEMENTS; ++index)
         {
             if (decl[index].Usage == 0xFF)
                 break;
@@ -462,7 +462,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     {
         if (dataSize < header->FrameDataOffset
             || (dataSize < (header->FrameDataOffset + uint64_t(header->NumFrames) * sizeof(DXUT::SDKMESH_FRAME))))
-            throw std::exception("End of file");
+            throw std::runtime_error("End of file");
 
         if (flags & ModelLoader_IncludeBones)
         {
@@ -500,7 +500,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     materialFlags.resize(header->NumVertexBuffers);
 
     bool dec3nwarning = false;
-    for (UINT j = 0; j < header->NumVertexBuffers; ++j)
+    for (size_t j = 0; j < header->NumVertexBuffers; ++j)
     {
         auto& vh = vbArray[j];
 
@@ -544,7 +544,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     }
 
     // Validate index buffers
-    for (UINT j = 0; j < header->NumIndexBuffers; ++j)
+    for (size_t j = 0; j < header->NumIndexBuffers; ++j)
     {
         auto& ih = ibArray[j];
 
@@ -576,7 +576,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
 
     uint32_t partCount = 0;
 
-    for (UINT meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex)
+    for (size_t meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex)
     {
         auto& mh = meshArray[meshIndex];
 
@@ -589,21 +589,21 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         // mh.NumVertexBuffers is sometimes not what you'd expect, so we skip validating it
 
         if (dataSize < mh.SubsetOffset
-            || (dataSize < mh.SubsetOffset + uint64_t(mh.NumSubsets) * sizeof(UINT)))
+            || (dataSize < mh.SubsetOffset + uint64_t(mh.NumSubsets) * sizeof(uint32_t)))
             throw std::runtime_error("End of file");
 
-        auto subsets = reinterpret_cast<const UINT*>(meshData + mh.SubsetOffset);
+        auto subsets = reinterpret_cast<const uint32_t*>(meshData + mh.SubsetOffset);
 
-        const UINT* influences = nullptr;
+        const uint32_t* influences = nullptr;
         if (mh.NumFrameInfluences > 0)
         {
             if (dataSize < mh.FrameInfluenceOffset
-                || (dataSize < mh.FrameInfluenceOffset + uint64_t(mh.NumFrameInfluences) * sizeof(UINT)))
+                || (dataSize < mh.FrameInfluenceOffset + uint64_t(mh.NumFrameInfluences) * sizeof(uint32_t)))
                 throw std::runtime_error("End of file");
 
             if (flags & ModelLoader_IncludeBones)
             {
-                influences = reinterpret_cast<const UINT*>(meshData + mh.FrameInfluenceOffset);
+                influences = reinterpret_cast<const uint32_t*>(meshData + mh.FrameInfluenceOffset);
             }
         }
 
@@ -621,11 +621,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         if (influences)
         {
             mesh->boneInfluences.resize(mh.NumFrameInfluences);
-            memcpy(mesh->boneInfluences.data(), influences, sizeof(UINT) * mh.NumFrameInfluences);
+            memcpy(mesh->boneInfluences.data(), influences, sizeof(uint32_t) * mh.NumFrameInfluences);
         }
 
         // Create subsets
-        for (UINT j = 0; j < mh.NumSubsets; ++j)
+        for (size_t j = 0; j < mh.NumSubsets; ++j)
         {
             auto sIndex = subsets[j];
             if (sIndex >= header->NumTotalSubsets)
