@@ -114,7 +114,7 @@ namespace DirectX
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
         using DrawCallback = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;
-        using InputLayoutList = std::vector<D3D12_INPUT_ELEMENT_DESC>;
+        using InputLayoutCollection = std::vector<D3D12_INPUT_ELEMENT_DESC>;
 
         uint32_t                                                partIndex;      // Unique index assigned per-part in a model.
         uint32_t                                                materialIndex;  // Index of the material spec to use
@@ -131,7 +131,7 @@ namespace DirectX
         SharedGraphicsResource                                  vertexBuffer;
         Microsoft::WRL::ComPtr<ID3D12Resource>                  staticIndexBuffer;
         Microsoft::WRL::ComPtr<ID3D12Resource>                  staticVertexBuffer;
-        std::shared_ptr<InputLayoutList>                        vbDecl;
+        std::shared_ptr<InputLayoutCollection>                  vbDecl;
 
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
@@ -252,7 +252,7 @@ namespace DirectX
 
         virtual ~Model();
 
-        using EffectsList = std::vector<std::shared_ptr<IEffect>>;
+        using EffectCollection = std::vector<std::shared_ptr<IEffect>>;
         using ModelMaterialInfo = IEffectFactory::EffectInfo;
         using ModelMaterialInfoCollection = std::vector<ModelMaterialInfo>;
         using TextureCollection = std::vector<std::wstring>;
@@ -318,7 +318,7 @@ namespace DirectX
             bool keepMemory = false);
 
         // Create effects using the default effect factory
-        EffectsList __cdecl CreateEffects(
+        EffectCollection __cdecl CreateEffects(
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             _In_ ID3D12DescriptorHeap* textureDescriptorHeap,
@@ -327,7 +327,7 @@ namespace DirectX
             int samplerDescriptorOffset = 0) const;
 
         // Create effects using a custom effect factory
-        EffectsList __cdecl CreateEffects(
+        EffectCollection __cdecl CreateEffects(
             IEffectFactory& fxFactory,
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
@@ -396,7 +396,7 @@ namespace DirectX
         // Utility function for updating the matrices in a list of effects. This will SetWorld, SetView and SetProjection
         // on any effect in the list that derives from IEffectMatrices.
         static void XM_CALLCONV UpdateEffectMatrices(
-            EffectsList& effects,
+            EffectCollection& effects,
             DirectX::FXMMATRIX world,
             DirectX::CXMMATRIX view,
             DirectX::CXMMATRIX proj);
