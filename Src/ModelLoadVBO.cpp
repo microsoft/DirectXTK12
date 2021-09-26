@@ -29,7 +29,7 @@ namespace
     //--------------------------------------------------------------------------------------
     // Shared VB input element description
     INIT_ONCE g_InitOnce = INIT_ONCE_STATIC_INIT;
-    std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>> g_vbdecl;
+    std::shared_ptr<ModelMeshPart::InputLayoutList> g_vbdecl;
 
     BOOL CALLBACK InitializeDecl(PINIT_ONCE initOnce, PVOID Parameter, PVOID *lpContext)
     {
@@ -37,7 +37,7 @@ namespace
         UNREFERENCED_PARAMETER(Parameter);
         UNREFERENCED_PARAMETER(lpContext);
 
-        g_vbdecl = std::make_shared<std::vector<D3D12_INPUT_ELEMENT_DESC>>(VertexPositionNormalTexture::InputLayout.pInputElementDescs,
+        g_vbdecl = std::make_shared<ModelMeshPart::InputLayoutList>(VertexPositionNormalTexture::InputLayout.pInputElementDescs,
             VertexPositionNormalTexture::InputLayout.pInputElementDescs + VertexPositionNormalTexture::InputLayout.NumElements);
 
         return TRUE;
