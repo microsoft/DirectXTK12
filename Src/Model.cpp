@@ -411,7 +411,7 @@ void Model::LoadStaticBuffers(
 
 
 // Create effects for each mesh piece.
-Model::EffectsList Model::CreateEffects(
+Model::EffectCollection Model::CreateEffects(
     IEffectFactory& fxFactory,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
@@ -424,7 +424,7 @@ Model::EffectsList Model::CreateEffects(
         throw std::runtime_error("CreateEffects");
     }
 
-    EffectsList effects;
+    EffectCollection effects;
 
     // Count the number of parts
     uint32_t partCount = 0;
@@ -506,7 +506,7 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
 
 // Create effects for each mesh piece with the default factory.
 _Use_decl_annotations_
-Model::EffectsList Model::CreateEffects(
+Model::EffectCollection Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
     ID3D12DescriptorHeap* textureDescriptorHeap,
@@ -520,7 +520,7 @@ Model::EffectsList Model::CreateEffects(
 
 // Updates effect matrices (if applicable)
 void XM_CALLCONV Model::UpdateEffectMatrices(
-    Model::EffectsList& effects,
+    Model::EffectCollection& effects,
     DirectX::FXMMATRIX world,
     DirectX::CXMMATRIX view,
     DirectX::CXMMATRIX proj)
