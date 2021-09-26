@@ -68,6 +68,10 @@ namespace DirectX
 
         virtual ~ModelMeshPart();
 
+        using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
+        using DrawCallback = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;
+        using InputLayoutList = std::vector<D3D12_INPUT_ELEMENT_DESC>;
+
         uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
         uint32_t                                                materialIndex;  // Index of the material spec to use
         uint32_t                                                indexCount;
@@ -83,10 +87,7 @@ namespace DirectX
         SharedGraphicsResource                                  vertexBuffer;
         Microsoft::WRL::ComPtr<ID3D12Resource>                  staticIndexBuffer;
         Microsoft::WRL::ComPtr<ID3D12Resource>                  staticVertexBuffer;
-        std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
-
-        using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
-        using DrawCallback = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, _In_ const ModelMeshPart& part)>;
+        std::shared_ptr<InputLayoutList>                        vbDecl;
 
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
