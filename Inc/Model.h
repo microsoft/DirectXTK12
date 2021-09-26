@@ -251,6 +251,7 @@ namespace DirectX
 
         virtual ~Model();
 
+        using EffectsList = std::vector<std::shared_ptr<IEffect>>;
         using ModelMaterialInfo = IEffectFactory::EffectInfo;
         using ModelMaterialInfoCollection = std::vector<ModelMaterialInfo>;
         using TextureCollection = std::vector<std::wstring>;
@@ -316,7 +317,7 @@ namespace DirectX
             bool keepMemory = false);
 
         // Create effects using the default effect factory
-        std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
+        EffectsList __cdecl CreateEffects(
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
             _In_ ID3D12DescriptorHeap* textureDescriptorHeap,
@@ -325,7 +326,7 @@ namespace DirectX
             int samplerDescriptorOffset = 0) const;
 
         // Create effects using a custom effect factory
-        std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
+        EffectsList __cdecl CreateEffects(
             IEffectFactory& fxFactory,
             const EffectPipelineStateDescription& opaquePipelineState,
             const EffectPipelineStateDescription& alphaPipelineState,
@@ -394,7 +395,7 @@ namespace DirectX
         // Utility function for updating the matrices in a list of effects. This will SetWorld, SetView and SetProjection
         // on any effect in the list that derives from IEffectMatrices.
         static void XM_CALLCONV UpdateEffectMatrices(
-            _In_ std::vector<std::shared_ptr<IEffect>>& effectList,
+            EffectsList& effects,
             DirectX::FXMMATRIX world,
             DirectX::CXMMATRIX view,
             DirectX::CXMMATRIX proj);
