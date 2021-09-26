@@ -365,7 +365,7 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateSphere(
 
 void GeometricPrimitive::CreateSphere(
     VertexCollection& vertices,
-    IndexCollection& indices, 
+    IndexCollection& indices,
     float diameter,
     size_t tessellation,
     bool rhcoords,
