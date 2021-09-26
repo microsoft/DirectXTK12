@@ -410,8 +410,8 @@ void Model::LoadStaticBuffers(
 }
 
 
-// Create effects for each mesh piece
-std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
+// Create effects for each mesh piece.
+Model::EffectsList Model::CreateEffects(
     IEffectFactory& fxFactory,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
@@ -424,7 +424,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
         throw std::runtime_error("CreateEffects");
     }
 
-    std::vector<std::shared_ptr<IEffect>> effects;
+    EffectsList effects;
 
     // Count the number of parts
     uint32_t partCount = 0;
@@ -504,9 +504,9 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
-// Create effects for each mesh piece with the default factory
+// Create effects for each mesh piece with the default factory.
 _Use_decl_annotations_
-std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
+Model::EffectsList Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
     ID3D12DescriptorHeap* textureDescriptorHeap,
@@ -520,17 +520,17 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
 
 // Updates effect matrices (if applicable)
 void XM_CALLCONV Model::UpdateEffectMatrices(
-    _In_ std::vector<std::shared_ptr<IEffect>>& effectList,
+    Model::EffectsList& effects,
     DirectX::FXMMATRIX world,
     DirectX::CXMMATRIX view,
     DirectX::CXMMATRIX proj)
 {
-    for (auto& fx : effectList)
+    for (auto& fx : effects)
     {
-        auto matFx = dynamic_cast<IEffectMatrices*>(fx.get());
-        if (matFx)
+        auto imatrices = dynamic_cast<IEffectMatrices*>(fx.get());
+        if (imatrices)
         {
-            matFx->SetMatrices(world, view, proj);
+            imatrices->SetMatrices(world, view, proj);
         }
     }
 }
