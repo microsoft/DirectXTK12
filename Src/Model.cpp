@@ -89,7 +89,10 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstance) const
+void ModelMeshPart::DrawInstanced(
+    ID3D12GraphicsCommandList* commandList,
+    uint32_t instanceCount,
+    uint32_t startInstance) const
 {
     if (!indexBufferSize || !vertexBufferSize)
     {
@@ -128,7 +131,9 @@ void ModelMeshPart::DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, u
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
+void ModelMeshPart::DrawMeshParts(
+    ID3D12GraphicsCommandList* commandList,
+    const ModelMeshPart::Collection& meshParts)
 {
     for (const auto& it : meshParts)
     {
@@ -158,7 +163,8 @@ void ModelMeshPart::DrawMeshParts(
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
+void ModelMeshPart::DrawMeshParts(
+    ID3D12GraphicsCommandList* commandList,
     const ModelMeshPart::Collection& meshParts,
     IEffect* effect)
 {
@@ -267,6 +273,7 @@ Model& Model::operator= (Model const& rhs)
     }
     return *this;
 }
+
 
 // Load texture resources.
 int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset) const
@@ -712,10 +719,10 @@ void Model::CopyBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
 
 // Updates effect matrices (if applicable).
 void XM_CALLCONV Model::UpdateEffectMatrices(
-    Model::EffectCollection& effects,
-    DirectX::FXMMATRIX world,
-    DirectX::CXMMATRIX view,
-    DirectX::CXMMATRIX proj)
+    EffectCollection& effects,
+    FXMMATRIX world,
+    CXMMATRIX view,
+    CXMMATRIX proj)
 {
     for (auto& fx : effects)
     {
