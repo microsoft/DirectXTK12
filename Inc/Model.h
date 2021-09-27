@@ -179,6 +179,38 @@ namespace DirectX
                 part->Draw(commandList);
             }
         }
+
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
+        static void XM_CALLCONV DrawMeshParts(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            _In_ const Collection& meshParts,
+            FXMMATRIX world,
+            TEffectIterator partEffects)
+        {
+            // This assert is here to prevent accidental use of containers that would cause undesirable performance penalties.
+            static_assert(
+                std::is_base_of<std::random_access_iterator_tag, TEffectIteratorCategory>::value,
+                "Providing an iterator without random access capabilities -- such as from std::list -- is not supported.");
+
+            for (const auto& it : meshParts)
+            {
+                auto part = it.get();
+                assert(part != nullptr);
+
+                // Get the effect at the location specified by the part's material
+                TEffectIterator effect_iterator = partEffects;
+                std::advance(effect_iterator, part->partIndex);
+
+                // Apply the effect and draw
+                auto imatrices = dynamic_cast<IEffectMatrices*>((*effect_iterator).get());
+                if (imatrices)
+                {
+                    imatrices->SetWorld(world);
+                }
+                (*effect_iterator)->Apply(commandList);
+                part->Draw(commandList);
+            }
+        }
     };
 
 
@@ -232,7 +264,35 @@ namespace DirectX
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, effects);
         }
 
-        // TODO: Draw rigid-body with bones
+        // Draw rigid-body with bones.
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
+        void XM_CALLCONV DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList,
+            size_t nbones,
+            const XMMATRIX* boneTransforms,
+            FXMMATRIX world,
+            TEffectIterator effects) const
+        {
+            XMMATRIX bm = (boneIndex != ModelBone::c_Invalid && boneIndex < nbones)
+                ? boneTransforms[boneIndex] : XMMatrixIdentity();
+
+            XMMATRIX local = XMMatrixMultiply(bm, world);
+            ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, opaqueMeshParts, local, effects);
+        }
+
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
+        void XM_CALLCONV DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList,
+            size_t nbones,
+            const XMMATRIX* boneTransforms,
+            FXMMATRIX world,
+            TEffectIterator effects) const
+        {
+            XMMATRIX bm = (boneIndex != ModelBone::c_Invalid && boneIndex < nbones)
+                ? boneTransforms[boneIndex] : XMMatrixIdentity();
+
+            XMMATRIX local = XMMatrixMultiply(bm, world);
+            ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, local, effects);
+        }
+
         // TODO: DrawSkinned
     };
 
