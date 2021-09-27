@@ -116,6 +116,8 @@ The _DirectX Tool Kit for DirectX 11_ is the work of Shawn Hargreaves and Chuck 
 
 The _DirectX Tool Kit for DirectX 12_ is the work of Pete Lewis, Justin Saunders, and Chuck Walbourn based heavily on the DirectX Tool Kit for DirectX 11.
 
+Thanks to Shanon Drone for the SDKMESH file format.
+
 Thanks to Adrian Tsai for the geodesic sphere implementation.
 
 Thanks to Garrett Serack for his help in creating the NuGet packages for DirectX Tool Kit.
