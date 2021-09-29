@@ -371,5 +371,8 @@
     <ClCompile Include="Src\BufferHelpers.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\ModelLoadCMO.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

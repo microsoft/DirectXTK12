@@ -484,6 +484,18 @@ namespace DirectX
             size_t nbones,
             _Out_writes_(nbones) XMMATRIX* boneTransforms) const;
 
+        // Loads a model from a Visual Studio Starter Kit .CMO file
+        static std::unique_ptr<Model> __cdecl CreateFromCMO(
+            _In_opt_ ID3D12Device* device,
+            _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
+            ModelLoaderFlags flags = ModelLoader_Default,
+            _Out_opt_ size_t* animsOffset = nullptr);
+        static std::unique_ptr<Model> __cdecl CreateFromCMO(
+            _In_opt_ ID3D12Device* device,
+            _In_z_ const wchar_t* szFileName,
+            ModelLoaderFlags flags = ModelLoader_Default,
+            _Out_opt_ size_t* animsOffset = nullptr);
+
         // Loads a model from a DirectX SDK .SDKMESH file
         static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
             _In_opt_ ID3D12Device* device,
