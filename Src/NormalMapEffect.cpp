@@ -495,25 +495,9 @@ NormalMapEffect::NormalMapEffect(
 }
 
 
-// Move constructor.
-NormalMapEffect::NormalMapEffect(NormalMapEffect&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-NormalMapEffect& NormalMapEffect::operator= (NormalMapEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-NormalMapEffect::~NormalMapEffect()
-{
-}
+NormalMapEffect::NormalMapEffect(NormalMapEffect&&) noexcept = default;
+NormalMapEffect& NormalMapEffect::operator= (NormalMapEffect&&) noexcept = default;
+NormalMapEffect::~NormalMapEffect() = default;
 
 
 // IEffect methods

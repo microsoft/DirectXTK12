@@ -369,9 +369,7 @@ GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
 
 
 // Public destructor.
-GraphicsMemory::~GraphicsMemory()
-{
-}
+GraphicsMemory::~GraphicsMemory() = default;
 
 
 GraphicsResource GraphicsMemory::Allocate(size_t size, size_t alignment)

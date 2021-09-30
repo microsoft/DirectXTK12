@@ -427,26 +427,9 @@ SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize,
 }
 
 
-// Move constructor.
-SpriteFont::SpriteFont(SpriteFont&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-SpriteFont& SpriteFont::operator= (SpriteFont&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-SpriteFont::~SpriteFont()
-{
-}
-
+SpriteFont::SpriteFont(SpriteFont&&) noexcept = default;
+SpriteFont& SpriteFont::operator= (SpriteFont&&) noexcept = default;
+SpriteFont::~SpriteFont() = default;
 
 // Wide-character / UTF-16LE
 void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, float scale, SpriteEffects effects, float layerDepth) const

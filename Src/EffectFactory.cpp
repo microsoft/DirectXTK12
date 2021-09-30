@@ -503,21 +503,11 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
     pImpl = std::make_shared<Impl>(device.Get(), textureDescriptors, samplerDescriptors);
 }
 
-EffectFactory::~EffectFactory()
-{
-}
 
+EffectFactory::EffectFactory(EffectFactory&&) noexcept = default;
+EffectFactory& EffectFactory::operator= (EffectFactory&&) noexcept = default;
+EffectFactory::~EffectFactory() = default;
 
-EffectFactory::EffectFactory(EffectFactory&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
 
 std::shared_ptr<IEffect> EffectFactory::CreateEffect(
     const EffectInfo& info, 
@@ -530,11 +520,14 @@ std::shared_ptr<IEffect> EffectFactory::CreateEffect(
     return pImpl->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
+
 void EffectFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
 
+
+// Properties.
 void EffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->mSharing = enabled;

@@ -126,8 +126,8 @@ namespace DirectX
     public:
         explicit GraphicsMemory(_In_ ID3D12Device* device);
 
-        GraphicsMemory(GraphicsMemory&& moveFrom) noexcept;
-        GraphicsMemory& operator= (GraphicsMemory&& moveFrom) noexcept;
+        GraphicsMemory(GraphicsMemory&&) noexcept;
+        GraphicsMemory& operator= (GraphicsMemory&&) noexcept;
 
         GraphicsMemory(GraphicsMemory const&) = delete;
         GraphicsMemory& operator=(GraphicsMemory const&) = delete;
