@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
+#include "CommonStates.h"
 #include "Model.h"
 #include "DirectXHelpers.h"
 #include "BinaryReader.h"
@@ -914,6 +915,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             info.specularColor = GetMaterialColor(m.pMaterial->Specular.x, m.pMaterial->Specular.y, m.pMaterial->Specular.z, srgb);
             info.emissiveColor = GetMaterialColor(m.pMaterial->Emissive.x, m.pMaterial->Emissive.y, m.pMaterial->Emissive.z, srgb);
             info.diffuseTextureIndex = GetUniqueTextureIndex(m.texture[0].c_str(), textureDictionary);
+            info.samplerIndex = (info.diffuseTextureIndex == -1) ? -1 : static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap);
 
             modelmats.emplace_back(info);
         }
