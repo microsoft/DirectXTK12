@@ -87,6 +87,7 @@ set(LIBRARY_SOURCES
     Src/LinearAllocator.h
     Src/LoaderHelpers.h
     Src/Model.cpp
+    Src/ModelLoadCMO.cpp
     Src/ModelLoadSDKMESH.cpp
     Src/ModelLoadVBO.cpp
     Src/Mouse.cpp
