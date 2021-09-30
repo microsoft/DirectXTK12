@@ -9,10 +9,7 @@
 
 #include "pch.h"
 #include "Model.h"
-//#include "DDSTextureLoader.h"
 #include "DirectXHelpers.h"
-//#include "Effects.h"
-//#include "VertexTypes.h"
 #include "BinaryReader.h"
 #include "PlatformHelpers.h"
 
@@ -21,9 +18,11 @@ using Microsoft::WRL::ComPtr;
 
 
 //--------------------------------------------------------------------------------------
-// .CMO files are built by Visual Studio 2012 and an example renderer is provided
-// in the VS Direct3D Starter Kit
-// http://aka.ms/vs3dkitwin
+// .CMO files are built by Visual Studio's MeshContentTask and an example renderer was
+// provided in the VS Direct3D Starter Kit
+// https://devblogs.microsoft.com/cppblog/developing-an-app-with-the-visual-studio-3d-starter-kit-part-1-of-3/
+// https://devblogs.microsoft.com/cppblog/developing-an-app-with-the-visual-studio-3d-starter-kit-part-2-of-3/
+// https://devblogs.microsoft.com/cppblog/developing-an-app-with-the-visual-studio-3d-starter-kit-part-3-of-3/
 //--------------------------------------------------------------------------------------
 
 namespace VSD3DStarter
@@ -112,69 +111,6 @@ namespace VSD3DStarter
 
     constexpr uint32_t NUM_BONE_INFLUENCES = 4;
 
-    struct VertexPositionNormalTangentColorTexture
-    {
-        XMFLOAT3 position;
-        XMFLOAT3 normal;
-        XMFLOAT4 tangent;
-        uint32_t color;
-        XMFLOAT2 textureCoordinate;
-
-        static const D3D12_INPUT_LAYOUT_DESC InputLayout;
-
-    private:
-        static constexpr unsigned int InputElementCount = 5;
-        static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
-    };
-
-    const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTangentColorTexture::InputElements[] =
-    {
-        { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "TANGENT",     0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR",       0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-    };
-
-    static_assert(sizeof(VertexPositionNormalTangentColorTexture) == 52, "mismatch with CMO vertex type");
-
-    const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTangentColorTexture::InputLayout =
-    {
-        VertexPositionNormalTangentColorTexture::InputElements,
-        VertexPositionNormalTangentColorTexture::InputElementCount
-    };
-
-    struct VertexPositionNormalTangentColorTextureSkinning : public VertexPositionNormalTangentColorTexture
-    {
-        uint32_t indices;
-        uint32_t weights;
-
-        static const D3D12_INPUT_LAYOUT_DESC InputLayout;
-
-    private:
-        static constexpr unsigned int InputElementCount = 7;
-        static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
-    };
-
-    const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTangentColorTextureSkinning::InputElements[] =
-    {
-        { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "TANGENT",     0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR",       0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "BLENDINDICES",0, DXGI_FORMAT_R8G8B8A8_UINT,      0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "BLENDWEIGHT", 0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-    };
-
-    static_assert(sizeof(VertexPositionNormalTangentColorTextureSkinning) == 60, "Vertex struct/layout mismatch");
-
-    const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTangentColorTextureSkinning::InputLayout =
-    {
-        VertexPositionNormalTangentColorTextureSkinning::InputElements,
-        VertexPositionNormalTangentColorTextureSkinning::InputElementCount
-    };
-
     struct SkinningVertex
     {
         uint32_t boneIndex[NUM_BONE_INFLUENCES];
@@ -192,7 +128,7 @@ namespace VSD3DStarter
 
     struct Bone
     {
-        INT ParentIndex;
+        int32_t ParentIndex;
         DirectX::XMFLOAT4X4 InvBindPos;
         DirectX::XMFLOAT4X4 BindPos;
         DirectX::XMFLOAT4X4 LocalTransform;
@@ -238,42 +174,116 @@ static_assert(sizeof(VSD3DStarter::Keyframe) == 72, "CMO Mesh structure size inc
 
 namespace
 {
+    int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
+    {
+        if (textureName == nullptr || !textureName[0])
+            return -1;
+
+        auto i = textureDictionary.find(textureName);
+        if (i == std::cend(textureDictionary))
+        {
+            int index = static_cast<int>(textureDictionary.size());
+            textureDictionary[textureName] = index;
+            return index;
+        }
+        else
+        {
+            return i->second;
+        }
+    }
+
+    struct VertexPositionNormalTangentColorTexture
+    {
+        XMFLOAT3 position;
+        XMFLOAT3 normal;
+        XMFLOAT4 tangent;
+        uint32_t color;
+        XMFLOAT2 textureCoordinate;
+
+        static const D3D12_INPUT_LAYOUT_DESC InputLayout;
+
+    private:
+        static constexpr unsigned int InputElementCount = 5;
+        static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
+    };
+
+    const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTangentColorTexture::InputElements[] =
+    {
+        { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TANGENT",     0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "COLOR",       0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+    };
+
+    static_assert(sizeof(VertexPositionNormalTangentColorTexture) == 52, "mismatch with CMO vertex type");
+
+    const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTangentColorTexture::InputLayout =
+    {
+        VertexPositionNormalTangentColorTexture::InputElements,
+        VertexPositionNormalTangentColorTexture::InputElementCount
+    };
+
+    struct VertexPositionNormalTangentColorTextureSkinning : public VertexPositionNormalTangentColorTexture
+    {
+        uint32_t indices;
+        uint32_t weights;
+
+        void SetBlendIndices(XMUINT4 const& iindices) noexcept
+        {
+            this->indices = ((iindices.w & 0xff) << 24) | ((iindices.z & 0xff) << 16) | ((iindices.y & 0xff) << 8) | (iindices.x & 0xff);
+        }
+
+        void SetBlendWeights(XMFLOAT4 const& iweights) noexcept { SetBlendWeights(XMLoadFloat4(&iweights)); }
+        void XM_CALLCONV SetBlendWeights(FXMVECTOR iweights) noexcept
+        {
+            using namespace DirectX::PackedVector;
+
+            XMUBYTEN4 packed;
+            XMStoreUByteN4(&packed, iweights);
+            this->weights = packed.v;
+        }
+
+        static const D3D12_INPUT_LAYOUT_DESC InputLayout;
+
+    private:
+        static constexpr unsigned int InputElementCount = 7;
+        static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
+    };
+
+    const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTangentColorTextureSkinning::InputElements[] =
+    {
+        { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TANGENT",     0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "COLOR",       0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "BLENDINDICES",0, DXGI_FORMAT_R8G8B8A8_UINT,      0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "BLENDWEIGHT", 0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+    };
+
+    static_assert(sizeof(VertexPositionNormalTangentColorTextureSkinning) == 60, "Vertex struct/layout mismatch");
+
+    const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTangentColorTextureSkinning::InputLayout =
+    {
+        VertexPositionNormalTangentColorTextureSkinning::InputElements,
+        VertexPositionNormalTangentColorTextureSkinning::InputElementCount
+    };
+
     //----------------------------------------------------------------------------------
     struct MaterialRecordCMO
     {
         const VSD3DStarter::Material*   pMaterial;
+        uint32_t                        materialIndex;
         std::wstring                    name;
         std::wstring                    pixelShader;
         std::wstring                    texture[VSD3DStarter::MAX_TEXTURE];
-        std::shared_ptr<IEffect>        effect;
-        ComPtr<ID3D11InputLayout>       il;
 
         MaterialRecordCMO() noexcept :
             pMaterial(nullptr),
+            materialIndex(0),
             texture{} {}
     };
-
-    // Helper for creating a D3D input layout.
-    void CreateCMOInputLayout(_In_ ID3D11Device* device, _In_ IEffect* effect, _Outptr_ ID3D11InputLayout** pInputLayout, bool skinning)
-    {
-        if (skinning)
-        {
-            ThrowIfFailed(
-                CreateInputLayoutFromEffect<VertexPositionNormalTangentColorTextureSkinning>(device, effect, pInputLayout)
-            );
-        }
-        else
-        {
-            ThrowIfFailed(
-                CreateInputLayoutFromEffect<VertexPositionNormalTangentColorTexture>(device, effect, pInputLayout)
-            );
-        }
-
-        assert(pInputLayout != nullptr && *pInputLayout != nullptr);
-        _Analysis_assume_(pInputLayout != nullptr && *pInputLayout != nullptr);
-
-        SetDebugObjectName(*pInputLayout, "ModelCMO");
-    }
 
     // Shared VB input element description
     INIT_ONCE g_InitOnce = INIT_ONCE_STATIC_INIT;
@@ -287,12 +297,14 @@ namespace
         UNREFERENCED_PARAMETER(lpContext);
 
         g_vbdecl = std::make_shared<ModelMeshPart::InputLayoutCollection>(
-            VertexPositionNormalTangentColorTexture::InputElements,
-            VertexPositionNormalTangentColorTexture::InputElements + VertexPositionNormalTangentColorTexture::InputElementCount);
+            VertexPositionNormalTangentColorTexture::InputLayout.pInputElementDescs,
+            VertexPositionNormalTangentColorTexture::InputLayout.pInputElementDescs
+            + VertexPositionNormalTangentColorTexture::InputLayout.NumElements);
 
         g_vbdeclSkinning = std::make_shared<ModelMeshPart::InputLayoutCollection>(
-            VertexPositionNormalTangentColorTextureSkinning::InputElements,
-            VertexPositionNormalTangentColorTextureSkinning::InputElements + VertexPositionNormalTangentColorTextureSkinning::InputElementCount);
+            VertexPositionNormalTangentColorTextureSkinning::InputLayout.pInputElementDescs,
+            VertexPositionNormalTangentColorTextureSkinning::InputLayout.pInputElementDescs
+            + VertexPositionNormalTangentColorTextureSkinning::InputLayout.NumElements);
         return TRUE;
     }
 
@@ -337,8 +349,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
     if (!device || !meshData)
         throw std::invalid_argument("Device and meshData cannot be null");
 
-    auto fxFactoryDGSL = dynamic_cast<DGSLEffectFactory*>(&fxFactory);
-
     // Meshes
     auto nMesh = reinterpret_cast<const uint32_t*>(meshData);
     size_t usedSize = sizeof(uint32_t);
@@ -348,7 +358,13 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
     if (!*nMesh)
         throw std::runtime_error("No meshes found");
 
+    std::map<std::wstring, int> textureDictionary;
+    std::vector<ModelMaterialInfo> modelmats;
+
     auto model = std::make_unique<Model>();
+    model->meshes.reserve(*nMesh);
+
+    uint32_t partCount = 0;
 
     for (size_t meshIndex = 0; meshIndex < *nMesh; ++meshIndex)
     {
@@ -366,8 +382,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
         auto mesh = std::make_shared<ModelMesh>();
         mesh->name.assign(meshName, *nName);
-        mesh->ccw = (flags & ModelLoader_CounterClockwise) != 0;
-        mesh->pmalpha = (flags & ModelLoader_PremultipledAlpha) != 0;
 
         // Materials
         auto nMats = reinterpret_cast<const uint32_t*>(meshData + usedSize);
@@ -377,9 +391,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
         std::vector<MaterialRecordCMO> materials;
         materials.reserve(*nMats);
+        size_t baseMaterialIndex = modelmats.size();
         for (size_t j = 0; j < *nMats; ++j)
         {
             MaterialRecordCMO m;
+            m.materialIndex = static_cast<uint32_t>(baseMaterialIndex + j);
 
             // Material name
             nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
@@ -442,6 +458,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         {
             // Add default material if none defined
             MaterialRecordCMO m;
+            m.materialIndex = static_cast<uint32_t>(baseMaterialIndex);
             m.pMaterial = &VSD3DStarter::s_defMaterial;
             m.name = L"Default";
             materials.emplace_back(m);
@@ -479,13 +496,13 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         struct IBData
         {
             size_t          nIndices;
-            const USHORT*   ptr;
+            const uint16_t* ptr;
         };
 
         std::vector<IBData> ibData;
         ibData.reserve(*nIBs);
 
-        std::vector<ComPtr<ID3D11Buffer>> ibs;
+        std::vector<SharedGraphicsResource> ibs;
         ibs.resize(*nIBs);
 
         for (size_t j = 0; j < *nIBs; ++j)
@@ -498,7 +515,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             if (!*nIndexes)
                 throw std::runtime_error("Empty index buffer found\n");
 
-            uint64_t sizeInBytes = uint64_t(*(nIndexes)) * sizeof(USHORT);
+            const uint64_t sizeInBytes = uint64_t(*(nIndexes)) * sizeof(uint16_t);
 
             if (sizeInBytes > UINT32_MAX)
                 throw std::runtime_error("IB too large");
@@ -511,7 +528,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
             auto ibBytes = static_cast<size_t>(sizeInBytes);
 
-            auto indexes = reinterpret_cast<const USHORT*>(meshData + usedSize);
+            auto indexes = reinterpret_cast<const uint16_t*>(meshData + usedSize);
             usedSize += ibBytes;
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -521,18 +538,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             ib.ptr = indexes;
             ibData.emplace_back(ib);
 
-            D3D11_BUFFER_DESC desc = {};
-            desc.Usage = D3D11_USAGE_DEFAULT;
-            desc.ByteWidth = static_cast<UINT>(ibBytes);
-            desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-            D3D11_SUBRESOURCE_DATA initData = { indexes, 0, 0 };
-
-            ThrowIfFailed(
-                device->CreateBuffer(&desc, &initData, &ibs[j])
-            );
-
-            SetDebugObjectName(ibs[j].Get(), "ModelCMO");
+            ibs[j] = GraphicsMemory::Get(device).Allocate(ibBytes);
+            memcpy(ibs[j].Memory(), indexes, ibBytes);
         }
 
         assert(ibData.size() == *nIBs);
@@ -566,7 +573,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             if (!*nVerts)
                 throw std::runtime_error("Empty vertex buffer found\n");
 
-            size_t vbBytes = sizeof(VertexPositionNormalTangentColorTexture) * (*(nVerts));
+            const size_t vbBytes = sizeof(VertexPositionNormalTangentColorTexture) * (*(nVerts));
 
             auto verts = reinterpret_cast<const VertexPositionNormalTangentColorTexture*>(meshData + usedSize);
             usedSize += vbBytes;
@@ -606,7 +613,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
                 if (vbData[j].nVerts != *nVerts)
                     throw std::runtime_error("Mismatched number of verts for skin VBs");
 
-                size_t vbBytes = sizeof(VSD3DStarter::SkinningVertex) * (*(nVerts));
+                const size_t vbBytes = sizeof(VSD3DStarter::SkinningVertex) * (*(nVerts));
 
                 auto verts = reinterpret_cast<const VSD3DStarter::SkinningVertex*>(meshData + usedSize);
                 usedSize += vbBytes;
@@ -768,7 +775,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         bool enableSkinning = (*nSkinVBs) != 0;
 
         // Build vertex buffers
-        std::vector<ComPtr<ID3D11Buffer>> vbs;
+        std::vector<SharedGraphicsResource> vbs;
         vbs.resize(*nVBs);
 
         const size_t stride = enableSkinning ? sizeof(VertexPositionNormalTangentColorTextureSkinning)
@@ -776,9 +783,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
         for (size_t j = 0; j < *nVBs; ++j)
         {
-            size_t nVerts = vbData[j].nVerts;
+            const size_t nVerts = vbData[j].nVerts;
 
-            uint64_t sizeInBytes = uint64_t(stride) * uint64_t(nVerts);
+            const uint64_t sizeInBytes = uint64_t(stride) * uint64_t(nVerts);
 
             if (sizeInBytes > UINT32_MAX)
                 throw std::runtime_error("VB too large");
@@ -789,23 +796,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
                     throw std::runtime_error("VB too large for DirectX 12");
             }
 
-            size_t bytes = static_cast<size_t>(sizeInBytes);
+            const size_t bytes = static_cast<size_t>(sizeInBytes);
 
-            D3D11_BUFFER_DESC desc = {};
-            desc.Usage = D3D11_USAGE_DEFAULT;
-            desc.ByteWidth = static_cast<UINT>(bytes);
-            desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-            if (fxFactoryDGSL && !enableSkinning)
-            {
-                // Can use CMO vertex data directly
-                D3D11_SUBRESOURCE_DATA initData = { vbData[j].ptr, 0, 0 };
-
-                ThrowIfFailed(
-                    device->CreateBuffer(&desc, &initData, &vbs[j])
-                );
-            }
-            else
             {
                 auto temp = std::make_unique<uint8_t[]>(bytes + (sizeof(uint32_t) * nVerts));
 
@@ -840,7 +832,6 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
                     memcpy(temp.get(), vbData[j].ptr, bytes);
                 }
 
-                if (!fxFactoryDGSL)
                 {
                     // Need to fix up VB tex coords for UV transform which is not supported by basic effects
                     for (size_t k = 0; k < *nSubmesh; ++k)
@@ -858,7 +849,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
                         auto ib = ibData[sm.IndexBufferIndex].ptr;
 
-                        size_t count = ibData[sm.IndexBufferIndex].nIndices;
+                        const size_t count = ibData[sm.IndexBufferIndex].nIndices;
 
                         for (size_t q = 0; q < count; ++q)
                         {
@@ -898,73 +889,33 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
                     }
                 }
 
-                // Create vertex buffer from temporary buffer
-                D3D11_SUBRESOURCE_DATA initData = { temp.get(), 0, 0 };
-
-                ThrowIfFailed(
-                    device->CreateBuffer(&desc, &initData, &vbs[j])
-                );
+                vbs[j] = GraphicsMemory::Get(device).Allocate(bytes);
+                memcpy(vbs[j].Memory(), temp.get(), bytes);
             }
-
-            SetDebugObjectName(vbs[j].Get(), "ModelCMO");
         }
 
         assert(vbs.size() == *nVBs);
 
-        // Create Effects
+        // Create model materials
         bool srgb = (flags & ModelLoader_MaterialColorsSRGB) != 0;
 
         for (size_t j = 0; j < materials.size(); ++j)
         {
             auto& m = materials[j];
 
-            if (fxFactoryDGSL)
-            {
-                DGSLEffectFactory::DGSLEffectInfo info;
-                info.name = m.name.c_str();
-                info.specularPower = m.pMaterial->SpecularPower;
-                info.perVertexColor = true;
-                info.enableSkinning = enableSkinning;
-                info.alpha = m.pMaterial->Diffuse.w;
-                info.ambientColor = GetMaterialColor(m.pMaterial->Ambient.x, m.pMaterial->Ambient.y, m.pMaterial->Ambient.z, srgb);
-                info.diffuseColor = GetMaterialColor(m.pMaterial->Diffuse.x, m.pMaterial->Diffuse.y, m.pMaterial->Diffuse.z, srgb);
-                info.specularColor = GetMaterialColor(m.pMaterial->Specular.x, m.pMaterial->Specular.y, m.pMaterial->Specular.z, srgb);
-                info.emissiveColor = GetMaterialColor(m.pMaterial->Emissive.x, m.pMaterial->Emissive.y, m.pMaterial->Emissive.z, srgb);
-                info.diffuseTexture = m.texture[0].empty() ? nullptr : m.texture[0].c_str();
-                info.specularTexture = m.texture[1].empty() ? nullptr : m.texture[1].c_str();
-                info.normalTexture = m.texture[2].empty() ? nullptr : m.texture[2].c_str();
-                info.emissiveTexture = m.texture[3].empty() ? nullptr : m.texture[3].c_str();
-                info.pixelShader = m.pixelShader.c_str();
+            ModelMaterialInfo info;
+            info.name = m.name.c_str();
+            info.specularPower = m.pMaterial->SpecularPower;
+            info.perVertexColor = true;
+            info.enableSkinning = enableSkinning;
+            info.alphaValue = m.pMaterial->Diffuse.w;
+            info.ambientColor = GetMaterialColor(m.pMaterial->Ambient.x, m.pMaterial->Ambient.y, m.pMaterial->Ambient.z, srgb);
+            info.diffuseColor = GetMaterialColor(m.pMaterial->Diffuse.x, m.pMaterial->Diffuse.y, m.pMaterial->Diffuse.z, srgb);
+            info.specularColor = GetMaterialColor(m.pMaterial->Specular.x, m.pMaterial->Specular.y, m.pMaterial->Specular.z, srgb);
+            info.emissiveColor = GetMaterialColor(m.pMaterial->Emissive.x, m.pMaterial->Emissive.y, m.pMaterial->Emissive.z, srgb);
+            info.diffuseTextureIndex = GetUniqueTextureIndex(m.texture[0].c_str(), textureDictionary);
 
-                constexpr int offset = DGSLEffectFactory::DGSLEffectInfo::BaseTextureOffset;
-                for (int i = 0; i < (DGSLEffect::MaxTextures - offset); ++i)
-                {
-                    info.textures[i] = m.texture[i + offset].empty() ? nullptr : m.texture[i + offset].c_str();
-                }
-
-                m.effect = fxFactoryDGSL->CreateDGSLEffect(info, nullptr);
-
-                auto dgslEffect = static_cast<DGSLEffect*>(m.effect.get());
-                dgslEffect->SetUVTransform(XMLoadFloat4x4(&m.pMaterial->UVTransform));
-            }
-            else
-            {
-                EffectFactory::EffectInfo info;
-                info.name = m.name.c_str();
-                info.specularPower = m.pMaterial->SpecularPower;
-                info.perVertexColor = true;
-                info.enableSkinning = enableSkinning;
-                info.alpha = m.pMaterial->Diffuse.w;
-                info.ambientColor = GetMaterialColor(m.pMaterial->Ambient.x, m.pMaterial->Ambient.y, m.pMaterial->Ambient.z, srgb);
-                info.diffuseColor = GetMaterialColor(m.pMaterial->Diffuse.x, m.pMaterial->Diffuse.y, m.pMaterial->Diffuse.z, srgb);
-                info.specularColor = GetMaterialColor(m.pMaterial->Specular.x, m.pMaterial->Specular.y, m.pMaterial->Specular.z, srgb);
-                info.emissiveColor = GetMaterialColor(m.pMaterial->Emissive.x, m.pMaterial->Emissive.y, m.pMaterial->Emissive.z, srgb);
-                info.diffuseTexture = m.texture[0].c_str();
-
-                m.effect = fxFactory.CreateEffect(info, nullptr);
-            }
-
-            CreateCMOInputLayout(device, m.effect.get(), &m.il, enableSkinning);
+            modelmats.emplace_back(info);
         }
 
         // Build mesh parts
@@ -979,24 +930,37 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
             auto& mat = materials[sm.MaterialIndex];
 
-            auto part = new ModelMeshPart();
-
-            if (mat.pMaterial->Diffuse.w < 1)
-                part->isAlpha = true;
+            auto part = new ModelMeshPart(partCount++);
 
             part->indexCount = sm.PrimCount * 3;
+            part->materialIndex = mat.materialIndex;
             part->startIndex = sm.StartIndex;
             part->vertexStride = static_cast<UINT>(stride);
-            part->inputLayout = mat.il;
             part->indexBuffer = ibs[sm.IndexBufferIndex];
+            part->indexBufferSize = static_cast<uint32_t>(ibs[sm.IndexBufferIndex].Size());
             part->vertexBuffer = vbs[sm.VertexBufferIndex];
-            part->effect = mat.effect;
+            part->vertexBufferSize = static_cast<uint32_t>(vbs[sm.VertexBufferIndex].Size());
             part->vbDecl = enableSkinning ? g_vbdeclSkinning : g_vbdecl;
 
-            mesh->meshParts.emplace_back(part);
+            if (mat.pMaterial->Diffuse.w < 1)
+            {
+                mesh->alphaMeshParts.emplace_back(part);
+            }
+            else
+            {
+                mesh->opaqueMeshParts.emplace_back(part);
+            }
         }
 
         model->meshes.emplace_back(mesh);
+    }
+
+    // Copy the materials and texture names into contiguous arrays
+    model->materials = std::move(modelmats);
+    model->textureNames.resize(textureDictionary.size());
+    for (auto texture = std::cbegin(textureDictionary); texture != std::cend(textureDictionary); ++texture)
+    {
+        model->textureNames[static_cast<size_t>(texture->second)] = texture->first;
     }
 
     return model;
@@ -1026,7 +990,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         throw std::runtime_error("CreateFromCMO");
     }
 
-    auto model = CreateFromCMO(device, data.get(), dataSize, fxFactory, flags, animsOffset);
+    auto model = CreateFromCMO(device, data.get(), dataSize, flags, animsOffset);
 
     model->name = szFileName;
 
