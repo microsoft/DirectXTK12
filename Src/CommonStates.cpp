@@ -523,18 +523,10 @@ CommonStates::CommonStates(ID3D12Device* device)
     pImpl = std::make_unique<Impl>(device);
 }
 
-CommonStates::CommonStates(CommonStates&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
+CommonStates::CommonStates(CommonStates&&) noexcept = default;
+CommonStates& CommonStates::operator = (CommonStates&&) noexcept = default;
+CommonStates::~CommonStates() = default;
 
-CommonStates::~CommonStates() {}
-
-CommonStates& CommonStates::operator = (CommonStates&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
 
 D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::PointWrap() const { return pImpl->Get(SamplerIndex::PointWrap); }
 D3D12_GPU_DESCRIPTOR_HANDLE CommonStates::PointClamp() const { return pImpl->Get(SamplerIndex::PointClamp); }

@@ -248,25 +248,9 @@ PrimitiveBatchBase::PrimitiveBatchBase(_In_ ID3D12Device* device, size_t maxIndi
 }
 
 
-// Move constructor.
-PrimitiveBatchBase::PrimitiveBatchBase(PrimitiveBatchBase&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-PrimitiveBatchBase& PrimitiveBatchBase::operator= (PrimitiveBatchBase&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-PrimitiveBatchBase::~PrimitiveBatchBase()
-{
-}
+PrimitiveBatchBase::PrimitiveBatchBase(PrimitiveBatchBase&&) noexcept = default;
+PrimitiveBatchBase& PrimitiveBatchBase::operator= (PrimitiveBatchBase&&) noexcept = default;
+PrimitiveBatchBase::~PrimitiveBatchBase() = default;
 
 
 void PrimitiveBatchBase::Begin(_In_ ID3D12GraphicsCommandList* cmdList)

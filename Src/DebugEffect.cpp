@@ -386,25 +386,9 @@ DebugEffect::DebugEffect(
 }
 
 
-// Move constructor.
-DebugEffect::DebugEffect(DebugEffect&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-DebugEffect& DebugEffect::operator= (DebugEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-DebugEffect::~DebugEffect()
-{
-}
+DebugEffect::DebugEffect(DebugEffect&&) noexcept = default;
+DebugEffect& DebugEffect::operator= (DebugEffect&&) noexcept = default;
+DebugEffect::~DebugEffect() = default;
 
 
 // IEffect methods.

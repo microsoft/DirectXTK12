@@ -231,21 +231,11 @@ EffectTextureFactory::EffectTextureFactory(
     pImpl = std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags);
 }
 
-EffectTextureFactory::~EffectTextureFactory()
-{
-}
 
+EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&&) noexcept = default;
+EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&&) noexcept = default;
+EffectTextureFactory::~EffectTextureFactory() = default;
 
-EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
 
 _Use_decl_annotations_
 size_t EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex)
@@ -253,11 +243,14 @@ size_t EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descr
     return pImpl->CreateTexture(name, descriptorIndex);
 }
 
+
 void EffectTextureFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
 
+
+// Properties.
 void EffectTextureFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->SetSharing(enabled);

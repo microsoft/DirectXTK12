@@ -1038,25 +1038,10 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
 }
 
 
-// Move constructor.
-SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
+SpriteBatch::SpriteBatch(SpriteBatch&&) noexcept = default;
+SpriteBatch& SpriteBatch::operator= (SpriteBatch&&) noexcept = default;
+SpriteBatch::~SpriteBatch() = default;
 
-
-// Move assignment.
-SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-SpriteBatch::~SpriteBatch()
-{
-}
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Begin(

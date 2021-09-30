@@ -1023,25 +1023,9 @@ ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(fal
 }
 
 
-// Public destructor.
-ResourceUploadBatch::~ResourceUploadBatch()
-{
-}
-
-
-// Move constructor.
-ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
+ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept = default;
+ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&&) noexcept = default;
+ResourceUploadBatch::~ResourceUploadBatch() = default;
 
 
 void ResourceUploadBatch::Begin(D3D12_COMMAND_LIST_TYPE commandType)

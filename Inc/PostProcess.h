@@ -36,13 +36,12 @@ namespace DirectX
         IPostProcess(const IPostProcess&) = delete;
         IPostProcess& operator=(const IPostProcess&) = delete;
 
-        IPostProcess(IPostProcess&&) = delete;
-        IPostProcess& operator=(IPostProcess&&) = delete;
-
         virtual void __cdecl Process(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
     protected:
         IPostProcess() = default;
+        IPostProcess(IPostProcess&&) = default;
+        IPostProcess& operator=(IPostProcess&&) = default;
     };
 
 
@@ -65,8 +64,9 @@ namespace DirectX
         };
 
         BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
-        BasicPostProcess(BasicPostProcess&& moveFrom) noexcept;
-        BasicPostProcess& operator= (BasicPostProcess&& moveFrom) noexcept;
+
+        BasicPostProcess(BasicPostProcess&&) noexcept;
+        BasicPostProcess& operator= (BasicPostProcess&&) noexcept;
 
         BasicPostProcess(BasicPostProcess const&) = delete;
         BasicPostProcess& operator= (BasicPostProcess const&) = delete;
@@ -109,8 +109,9 @@ namespace DirectX
         };
 
         DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
-        DualPostProcess(DualPostProcess&& moveFrom) noexcept;
-        DualPostProcess& operator= (DualPostProcess&& moveFrom) noexcept;
+
+        DualPostProcess(DualPostProcess&&) noexcept;
+        DualPostProcess& operator= (DualPostProcess&&) noexcept;
 
         DualPostProcess(DualPostProcess const&) = delete;
         DualPostProcess& operator= (DualPostProcess const&) = delete;
@@ -177,8 +178,8 @@ namespace DirectX
         #endif
         );
 
-        ToneMapPostProcess(ToneMapPostProcess&& moveFrom) noexcept;
-        ToneMapPostProcess& operator= (ToneMapPostProcess&& moveFrom) noexcept;
+        ToneMapPostProcess(ToneMapPostProcess&&) noexcept;
+        ToneMapPostProcess& operator= (ToneMapPostProcess&&) noexcept;
 
         ToneMapPostProcess(ToneMapPostProcess const&) = delete;
         ToneMapPostProcess& operator= (ToneMapPostProcess const&) = delete;

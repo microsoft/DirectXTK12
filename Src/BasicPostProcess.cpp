@@ -550,24 +550,9 @@ BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTarget
 
 
 // Move constructor.
-BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-BasicPostProcess::~BasicPostProcess()
-{
-}
+BasicPostProcess::BasicPostProcess(BasicPostProcess&&) noexcept = default;
+BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&&) noexcept = default;
+BasicPostProcess::~BasicPostProcess() = default;
 
 
 // IPostProcess methods.

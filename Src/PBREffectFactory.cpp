@@ -203,21 +203,11 @@ PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors
     pImpl = std::make_shared<Impl>(device.Get(), textureDescriptors, samplerDescriptors);
 }
 
-PBREffectFactory::~PBREffectFactory()
-{
-}
 
+PBREffectFactory::PBREffectFactory(PBREffectFactory&&) noexcept = default;
+PBREffectFactory& PBREffectFactory::operator= (PBREffectFactory&&) noexcept = default;
+PBREffectFactory::~PBREffectFactory() = default;
 
-PBREffectFactory::PBREffectFactory(PBREffectFactory&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-PBREffectFactory& PBREffectFactory::operator= (PBREffectFactory&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
 
 std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(
     const EffectInfo& info, 
@@ -230,11 +220,14 @@ std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(
     return pImpl->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
+
 void PBREffectFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
 
+
+// Properties.
 void PBREffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->mSharing = enabled;

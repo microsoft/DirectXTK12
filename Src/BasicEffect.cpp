@@ -589,24 +589,9 @@ BasicEffect::BasicEffect(
 
 
 // Move constructor.
-BasicEffect::BasicEffect(BasicEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-BasicEffect& BasicEffect::operator= (BasicEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-BasicEffect::~BasicEffect()
-{
-}
+BasicEffect::BasicEffect(BasicEffect&&) noexcept = default;
+BasicEffect& BasicEffect::operator= (BasicEffect&&) noexcept = default;
+BasicEffect::~BasicEffect() = default;
 
 
 // IEffect methods
