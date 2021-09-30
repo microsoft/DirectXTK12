@@ -32,7 +32,7 @@ These components are designed to work without requiring any content from the leg
     * GeometricPrimitive.h - draws basic shapes such as cubes and spheres
     * GraphicsMemory.h - helper for managing dynamic graphics memory allocation
     * Keyboard.h - keyboard state tracking helper
-    * Model.h - draws meshes loaded from .SDKMESH or .VBO files
+    * Model.h - draws meshes loaded from .CMO, .SDKMESH, or .VBO files
     * Mouse.h - mouse helper
     * PostProcess.h - set of built-in shaders for common post-processing operations
     * PrimitiveBatch.h - simple and efficient way to draw user primitives
@@ -68,7 +68,7 @@ For the latest version of DirectXTK12, bug reports, etc. please visit the projec
 
 ## Comparisons to DirectX 11 Version
 
-* No support for loading ``.CMO`` models or DGSL effect shaders (i.e. *DGSLEffect*)
+* No support for Visual Studio Directed Graph Shader Language (DGSL) effect shaders (i.e. *DGSLEffect*). CMO files are loaded using BasicEffect or SkinnedEffect materials.
 
 * VertexTypes does not include VertexPositionNormalTangentColorTexture or VertexPositionNormalTangentColorTextureSkinning which were intended for use with the DGSL pipeline.
 
