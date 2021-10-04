@@ -367,8 +367,8 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
         int xPos = static_cast<short>(LOWORD(lParam)); // GET_X_LPARAM(lParam);
         int yPos = static_cast<short>(HIWORD(lParam)); // GET_Y_LPARAM(lParam);
 
-        pImpl->mState.x = static_cast<int>(xPos * pImpl->mScale);
-        pImpl->mState.y = static_cast<int>(yPos * pImpl->mScale);
+        pImpl->mState.x = static_cast<int>(static_cast<float>(xPos) * pImpl->mScale);
+        pImpl->mState.y = static_cast<int>(static_cast<float>(yPos) * pImpl->mScale);
     }
 }
 
