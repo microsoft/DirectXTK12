@@ -20,13 +20,13 @@ using Microsoft::WRL::ComPtr;
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettGenerateMips_main.inc"
+    #include "XboxGamingScarlettGenerateMips_main.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneGenerateMips_main.inc"
+    #include "XboxGamingXboxOneGenerateMips_main.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneGenerateMips_main.inc"
+    #include "XboxOneGenerateMips_main.inc"
 #else
-    #include "Shaders/Compiled/GenerateMips_main.inc"
+    #include "GenerateMips_main.inc"
 #endif
 
     bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept

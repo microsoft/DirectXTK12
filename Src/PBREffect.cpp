@@ -91,65 +91,65 @@ public:
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstant.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantBn.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstant.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstantBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantInst.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantBnInst.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstantInst.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstantBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
+    #include "XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSConstant.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTextured.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedVelocity.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedEmissiveVelocity.inc"
+    #include "XboxGamingScarlettPBREffect_PSConstant.inc"
+    #include "XboxGamingScarlettPBREffect_PSTextured.inc"
+    #include "XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
+    #include "XboxGamingScarlettPBREffect_PSTexturedVelocity.inc"
+    #include "XboxGamingScarlettPBREffect_PSTexturedEmissiveVelocity.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstant.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantBn.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstant.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstantBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantInst.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantBnInst.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstantInst.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstantBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
+    #include "XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSConstant.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTextured.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+    #include "XboxGamingXboxOnePBREffect_PSConstant.inc"
+    #include "XboxGamingXboxOnePBREffect_PSTextured.inc"
+    #include "XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
+    #include "XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
+    #include "XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstant.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantBn.inc"
+    #include "XboxOnePBREffect_VSConstant.inc"
+    #include "XboxOnePBREffect_VSConstantBn.inc"
 
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantInst.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantBnInst.inc"
+    #include "XboxOnePBREffect_VSConstantInst.inc"
+    #include "XboxOnePBREffect_VSConstantBnInst.inc"
 
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocity.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocityBn.inc"
+    #include "XboxOnePBREffect_VSConstantVelocity.inc"
+    #include "XboxOnePBREffect_VSConstantVelocityBn.inc"
 
-    #include "Shaders/Compiled/XboxOnePBREffect_PSConstant.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_PSTextured.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissive.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedVelocity.inc"
-    #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+    #include "XboxOnePBREffect_PSConstant.inc"
+    #include "XboxOnePBREffect_PSTextured.inc"
+    #include "XboxOnePBREffect_PSTexturedEmissive.inc"
+    #include "XboxOnePBREffect_PSTexturedVelocity.inc"
+    #include "XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
 #else
-    #include "Shaders/Compiled/PBREffect_VSConstant.inc"
-    #include "Shaders/Compiled/PBREffect_VSConstantBn.inc"
+    #include "PBREffect_VSConstant.inc"
+    #include "PBREffect_VSConstantBn.inc"
 
-    #include "Shaders/Compiled/PBREffect_VSConstantInst.inc"
-    #include "Shaders/Compiled/PBREffect_VSConstantBnInst.inc"
+    #include "PBREffect_VSConstantInst.inc"
+    #include "PBREffect_VSConstantBnInst.inc"
 
-    #include "Shaders/Compiled/PBREffect_VSConstantVelocity.inc"
-    #include "Shaders/Compiled/PBREffect_VSConstantVelocityBn.inc"
+    #include "PBREffect_VSConstantVelocity.inc"
+    #include "PBREffect_VSConstantVelocityBn.inc"
 
-    #include "Shaders/Compiled/PBREffect_PSConstant.inc"
-    #include "Shaders/Compiled/PBREffect_PSTextured.inc"
-    #include "Shaders/Compiled/PBREffect_PSTexturedEmissive.inc"
-    #include "Shaders/Compiled/PBREffect_PSTexturedVelocity.inc"
-    #include "Shaders/Compiled/PBREffect_PSTexturedEmissiveVelocity.inc"
+    #include "PBREffect_PSConstant.inc"
+    #include "PBREffect_PSTextured.inc"
+    #include "PBREffect_PSTexturedEmissive.inc"
+    #include "PBREffect_PSTexturedVelocity.inc"
+    #include "PBREffect_PSTexturedEmissiveVelocity.inc"
 #endif
 }
 

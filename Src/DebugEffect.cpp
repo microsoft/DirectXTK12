@@ -63,73 +63,73 @@ public:
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebug.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugInst.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebug.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVc.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcInst.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugVc.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugVcInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugBn.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugBnInst.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugBn.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcBn.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcBnInst.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugVcBn.inc"
+    #include "XboxGamingScarlettDebugEffect_VSDebugVcBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSHemiAmbient.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBNormals.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBTangents.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBBiTangents.inc"
+    #include "XboxGamingScarlettDebugEffect_PSHemiAmbient.inc"
+    #include "XboxGamingScarlettDebugEffect_PSRGBNormals.inc"
+    #include "XboxGamingScarlettDebugEffect_PSRGBTangents.inc"
+    #include "XboxGamingScarlettDebugEffect_PSRGBBiTangents.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebug.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugInst.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebug.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVc.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcInst.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugVc.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugVcInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugBn.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugBnInst.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugBn.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcBn.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcBnInst.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugVcBn.inc"
+    #include "XboxGamingXboxOneDebugEffect_VSDebugVcBnInst.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSHemiAmbient.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBNormals.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBTangents.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBBiTangents.inc"
+    #include "XboxGamingXboxOneDebugEffect_PSHemiAmbient.inc"
+    #include "XboxGamingXboxOneDebugEffect_PSRGBNormals.inc"
+    #include "XboxGamingXboxOneDebugEffect_PSRGBTangents.inc"
+    #include "XboxGamingXboxOneDebugEffect_PSRGBBiTangents.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebug.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugInst.inc"
+    #include "XboxOneDebugEffect_VSDebug.inc"
+    #include "XboxOneDebugEffect_VSDebugInst.inc"
 
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVc.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcInst.inc"
+    #include "XboxOneDebugEffect_VSDebugVc.inc"
+    #include "XboxOneDebugEffect_VSDebugVcInst.inc"
 
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugBn.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugBnInst.inc"
+    #include "XboxOneDebugEffect_VSDebugBn.inc"
+    #include "XboxOneDebugEffect_VSDebugBnInst.inc"
 
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcBn.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVcBnInst.inc"
+    #include "XboxOneDebugEffect_VSDebugVcBn.inc"
+    #include "XboxOneDebugEffect_VSDebugVcBnInst.inc"
 
-    #include "Shaders/Compiled/XboxOneDebugEffect_PSHemiAmbient.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_PSRGBNormals.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_PSRGBTangents.inc"
-    #include "Shaders/Compiled/XboxOneDebugEffect_PSRGBBiTangents.inc"
+    #include "XboxOneDebugEffect_PSHemiAmbient.inc"
+    #include "XboxOneDebugEffect_PSRGBNormals.inc"
+    #include "XboxOneDebugEffect_PSRGBTangents.inc"
+    #include "XboxOneDebugEffect_PSRGBBiTangents.inc"
 #else    
-    #include "Shaders/Compiled/DebugEffect_VSDebug.inc"
-    #include "Shaders/Compiled/DebugEffect_VSDebugInst.inc"
+    #include "DebugEffect_VSDebug.inc"
+    #include "DebugEffect_VSDebugInst.inc"
 
-    #include "Shaders/Compiled/DebugEffect_VSDebugVc.inc"
-    #include "Shaders/Compiled/DebugEffect_VSDebugVcInst.inc"
+    #include "DebugEffect_VSDebugVc.inc"
+    #include "DebugEffect_VSDebugVcInst.inc"
 
-    #include "Shaders/Compiled/DebugEffect_VSDebugBn.inc"
-    #include "Shaders/Compiled/DebugEffect_VSDebugBnInst.inc"
+    #include "DebugEffect_VSDebugBn.inc"
+    #include "DebugEffect_VSDebugBnInst.inc"
 
-    #include "Shaders/Compiled/DebugEffect_VSDebugVcBn.inc"
-    #include "Shaders/Compiled/DebugEffect_VSDebugVcBnInst.inc"
+    #include "DebugEffect_VSDebugVcBn.inc"
+    #include "DebugEffect_VSDebugVcBnInst.inc"
 
-    #include "Shaders/Compiled/DebugEffect_PSHemiAmbient.inc"
-    #include "Shaders/Compiled/DebugEffect_PSRGBNormals.inc"
-    #include "Shaders/Compiled/DebugEffect_PSRGBTangents.inc"
-    #include "Shaders/Compiled/DebugEffect_PSRGBBiTangents.inc"
+    #include "DebugEffect_PSHemiAmbient.inc"
+    #include "DebugEffect_PSRGBNormals.inc"
+    #include "DebugEffect_PSRGBTangents.inc"
+    #include "DebugEffect_PSRGBBiTangents.inc"
 #endif
 }
 
