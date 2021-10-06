@@ -92,6 +92,9 @@
 #define _WIN32_WINNT_WIN10 0x0A00
 #endif
 
+#define D3DX12_NO_STATE_OBJECT_HELPERS
+#define D3DX12_NO_CHECK_FEATURE_SUPPORT_CLASS
+
 #ifdef _GAMING_XBOX
 #include <gxdk.h>
 
@@ -146,7 +149,6 @@
 #pragma clang diagnostic ignored "-Wtautological-type-limit-compare"
 #endif
 
-#define D3DX12_NO_STATE_OBJECT_HELPERS
 #ifdef USING_DIRECTX_HEADERS
 #include <directx/d3dx12.h>
 #else
