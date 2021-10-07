@@ -54,6 +54,7 @@ namespace DirectX
         ModelLoader_MaterialColorsSRGB  = 0x1,
         ModelLoader_AllowLargeModels    = 0x2,
         ModelLoader_IncludeBones        = 0x4,
+        ModelLoader_DisableSkinning     = 0x8,
     };
 
     //----------------------------------------------------------------------------------

@@ -773,7 +773,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             }
         }
 
-        bool enableSkinning = (*nSkinVBs) != 0;
+        bool enableSkinning = (*nSkinVBs) != 0 && !(flags & ModelLoader_DisableSkinning);
 
         // Build vertex buffers
         std::vector<SharedGraphicsResource> vbs;
