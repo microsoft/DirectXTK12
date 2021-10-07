@@ -40,6 +40,7 @@
 "DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )," \
 "DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL )," \
 "CBV(b0)," \
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )," \
 "DescriptorTable ( SRV(t2), visibility = SHADER_VISIBILITY_PIXEL )"
 
 #define NormalMapRSNoSpec \
@@ -50,7 +51,8 @@
 "DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL )," \
 "DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )," \
 "DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL )," \
-"CBV(b0)"
+"CBV(b0)," \
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
 
 #define GenerateMipsRS \
 "RootFlags ( DENY_VERTEX_SHADER_ROOT_ACCESS   |" \

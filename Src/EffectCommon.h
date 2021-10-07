@@ -173,6 +173,11 @@ namespace DirectX
             return mDeviceResources->GetRootSignature(slot, rootSig);
         }
 
+        ID3D12Device* GetDevice() const noexcept
+        {
+            return mDeviceResources->GetDevice();
+        }
+
         // Fields.
         EffectMatrices matrices;
         EffectFog fog;

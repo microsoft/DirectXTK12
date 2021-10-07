@@ -20,6 +20,39 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
+namespace
+{
+    template<typename T>
+    void SetMaterialProperties(T* effect, const EffectFactory::EffectInfo& info)
+    {
+        effect->EnableDefaultLighting();
+
+        effect->SetAlpha(info.alphaValue);
+
+        // Most DirectX Tool Kit effects do not have an ambient material color.
+
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
+
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
+        }
+        else
+        {
+            effect->DisableSpecular();
+        }
+
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
+        }
+    }
+}
+
 // Internal EffectFactory implementation class. Only one of these helpers is allocated
 // per D3D device, even if there are multiple public facing EffectFactory instances.
 class EffectFactory::Impl
@@ -69,6 +102,7 @@ private:
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
     EffectCache  mEffectCacheNormalMap;
+    EffectCache  mEffectCacheNormalMapSkinned;
 
     std::mutex mutex;
 };
@@ -124,7 +158,6 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     std::wstring cacheName;
     if (info.enableSkinning)
     {
-        // SkinnedEffect
         int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
 
         if (mEnableFog)
@@ -137,61 +170,91 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
-        if (mSharing && !info.name.empty())
+        if (info.enableNormalMaps && mUseNormalMapEffect)
         {
-            uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-
-            auto it = mEffectCacheSkinning.find(cacheName);
-            if (mSharing && it != mEffectCacheSkinning.end())
+            // SkinnedNormalMapEffect
+            if (specularTextureIndex != -1)
             {
-                return it->second;
+                effectflags |= EffectFlags::Specular;
             }
-        }
 
-        auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
+            if (mSharing && !info.name.empty())
+            {
+                uint32_t hash = derivedPSD.ComputeHash();
+                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-        effect->EnableDefaultLighting();
+                auto it = mEffectCacheNormalMapSkinned.find(cacheName);
+                if (mSharing && it != mEffectCacheNormalMapSkinned.end())
+                {
+                    return it->second;
+                }
+            }
 
-        effect->SetAlpha(info.alphaValue);
+            auto effect = std::make_shared<SkinnedNormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        // Skinned Effect does not have an ambient material color, or per-vertex color support
+            SetMaterialProperties(effect.get(), info);
 
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
+            if (diffuseTextureIndex != -1)
+            {
+                effect->SetTexture(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            }
 
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
+            if (specularTextureIndex != -1)
+            {
+                effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)));
+            }
+
+            if (normalTextureIndex != -1)
+            {
+                effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)));
+            }
+
+            if (mSharing && !info.name.empty())
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                EffectCache::value_type v(cacheName, effect);
+                mEffectCacheNormalMapSkinned.insert(v);
+            }
+
+            return std::move(effect);
         }
         else
         {
-            effect->DisableSpecular();
-        }
+            // SkinnedEffect
+            if (mSharing && !info.name.empty())
+            {
+                uint32_t hash = derivedPSD.ComputeHash();
+                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+                auto it = mEffectCacheSkinning.find(cacheName);
+                if (mSharing && it != mEffectCacheSkinning.end())
+                {
+                    return it->second;
+                }
+            }
 
-        if (diffuseTextureIndex != -1)
-        {
-            effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
-                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
-        }
+            auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        if (mSharing && !info.name.empty())
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            EffectCache::value_type v(cacheName, effect);
-            mEffectCacheSkinning.insert(v);
-        }
+            SetMaterialProperties(effect.get(), info);
 
-        return std::move(effect);
+            if (diffuseTextureIndex != -1)
+            {
+                effect->SetTexture(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            }
+
+            if (mSharing && !info.name.empty())
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                EffectCache::value_type v(cacheName, effect);
+                mEffectCacheSkinning.insert(v);
+            }
+
+            return std::move(effect);
+        }
     }
     else if (info.enableDualTexture)
     {
@@ -314,31 +377,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        effect->EnableDefaultLighting();
-
-        effect->SetAlpha(info.alphaValue);
-
-        // NormalMap Effect does not have an ambient material color
-
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
-
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
-        }
-        else
-        {
-            effect->DisableSpecular();
-        }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+        SetMaterialProperties(effect.get(), info);
 
         if (diffuseTextureIndex != -1)
         {
@@ -406,30 +445,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<BasicEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        effect->EnableDefaultLighting();
-
-        effect->SetAlpha(info.alphaValue);
-
-        // Basic Effect does not have an ambient material color
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
-
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
-        }
-        else
-        {
-            effect->DisableSpecular();
-        }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+        SetMaterialProperties(effect.get(), info);
 
         if (diffuseTextureIndex != -1)
         {
@@ -456,6 +472,7 @@ void EffectFactory::Impl::ReleaseCache()
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
     mEffectCacheNormalMap.clear();
+    mEffectCacheNormalMapSkinned.clear();
 }
 
 
