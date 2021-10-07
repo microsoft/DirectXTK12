@@ -81,41 +81,41 @@ public:
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSkinnedEffect_PSSkinnedPixelLighting.inc"
+    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLighting.inc"
+    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedPixelLighting.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+    #include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+    #include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+    #include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+    #include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
+    #include "XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
+    #include "XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+    #include "XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
 #else
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "Shaders/Compiled/SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+    #include "SkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+    #include "SkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+    #include "SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+    #include "SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "Shaders/Compiled/SkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "Shaders/Compiled/SkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "Shaders/Compiled/SkinnedEffect_PSSkinnedPixelLighting.inc"
+    #include "SkinnedEffect_PSSkinnedVertexLighting.inc"
+    #include "SkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+    #include "SkinnedEffect_PSSkinnedPixelLighting.inc"
 #endif
 }
 

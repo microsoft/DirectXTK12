@@ -15,6 +15,8 @@ option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
 
 option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 
+option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
+
 option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -151,8 +153,16 @@ if(BUILD_XAUDIO_WIN10)
         Audio/WAVFileReader.h)
 endif()
 
+if (NOT COMPILED_SHADERS)
+    if (USE_PREBUILT_SHADERS)
+        message(FATAL_ERROR "ERROR: Using prebuilt shaders requires the COMPILED_SHADERS variable is set")
+    endif()
+    set(COMPILED_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/Shaders/Compiled)
+    file(MAKE_DIRECTORY ${COMPILED_SHADERS})
+endif()
+
 set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
-    Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc)
+    ${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc)
 
 if(BUILD_DXIL_SHADERS)
     message("INFO: Using Shader Model 6.0 (DXC.EXE) for shaders.")
@@ -161,16 +171,21 @@ else()
     message("INFO: Using Shader Model 5.1 (FXC.EXE) for shaders.")
 endif()
 
-add_custom_command(
-    OUTPUT "${PROJECT_SOURCE_DIR}/Src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
-    MAIN_DEPENDENCY "${PROJECT_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"
-    DEPENDS ${SHADER_SOURCES}
-    COMMENT "Generating HLSL shaders..."
-    COMMAND "CompileShaders.cmd" ${ShaderOpts}
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
-    USES_TERMINAL)
+if (NOT USE_PREBUILT_SHADERS)
+    add_custom_command(
+        OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
+        MAIN_DEPENDENCY "${PROJECT_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"
+        DEPENDS ${SHADER_SOURCES}
+        COMMENT "Generating HLSL shaders..."
+        COMMAND set CompileShadersOutput=${COMPILED_SHADERS}
+        COMMAND CompileShaders.cmd ARGS ${ShaderOpts}
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
+        USES_TERMINAL)
+endif()
 
 add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMPILED_SHADERS})
 
 if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16")
     target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
