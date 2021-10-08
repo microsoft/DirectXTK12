@@ -20,6 +20,39 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
+namespace
+{
+    template<typename T>
+    void SetMaterialProperties(T* effect, const EffectFactory::EffectInfo& info)
+    {
+        effect->EnableDefaultLighting();
+
+        effect->SetAlpha(info.alphaValue);
+
+        // Most DirectX Tool Kit effects do not have an ambient material color.
+
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
+
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
+        }
+        else
+        {
+            effect->DisableSpecular();
+        }
+
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
+        }
+    }
+}
+
 // Internal EffectFactory implementation class. Only one of these helpers is allocated
 // per D3D device, even if there are multiple public facing EffectFactory instances.
 class EffectFactory::Impl
@@ -151,31 +184,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        effect->EnableDefaultLighting();
-
-        effect->SetAlpha(info.alphaValue);
-
-        // Skinned Effect does not have an ambient material color, or per-vertex color support
-
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
-
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
-        }
-        else
-        {
-            effect->DisableSpecular();
-        }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+        SetMaterialProperties(effect.get(), info);
 
         if (diffuseTextureIndex != -1)
         {
@@ -314,31 +323,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        effect->EnableDefaultLighting();
-
-        effect->SetAlpha(info.alphaValue);
-
-        // NormalMap Effect does not have an ambient material color
-
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
-
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
-        }
-        else
-        {
-            effect->DisableSpecular();
-        }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+        SetMaterialProperties(effect.get(), info);
 
         if (diffuseTextureIndex != -1)
         {
@@ -406,30 +391,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<BasicEffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        effect->EnableDefaultLighting();
-
-        effect->SetAlpha(info.alphaValue);
-
-        // Basic Effect does not have an ambient material color
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
-        effect->SetDiffuseColor(color);
-
-        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.specularColor);
-            effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
-        }
-        else
-        {
-            effect->DisableSpecular();
-        }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
+        SetMaterialProperties(effect.get(), info);
 
         if (diffuseTextureIndex != -1)
         {
