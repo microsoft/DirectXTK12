@@ -58,9 +58,9 @@ namespace
     {
         using ConstantBufferType = NormalMapEffectConstants;
 
-        static constexpr int VertexShaderCount = 16; // TODO !
+        static constexpr int VertexShaderCount = 20;
         static constexpr int PixelShaderCount = 4;
-        static constexpr int ShaderPermutationCount = 32;
+        static constexpr int ShaderPermutationCount = 40;
         static constexpr int RootSignatureCount = 2;
     };
 }
@@ -112,7 +112,6 @@ private:
 // Include the precompiled shader code.
 namespace
 {
-    // TODO -
 #ifdef _GAMING_XBOX_SCARLETT
     #include "XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVc.inc"
@@ -133,6 +132,11 @@ namespace
     #include "XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc"
     #include "XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.inc"
     #include "XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.inc"
+
+    #include "XboxGamingScarlettNormalMapEffect_VSSkinnedPixelLightingTx.inc"
+    #include "XboxGamingScarlettNormalMapEffect_VSSkinnedPixelLightingTxBn.inc"
+    #include "XboxGamingScarlettNormalMapEffect_VSSkinnedPixelLightingTxNoSpec.inc"
+    #include "XboxGamingScarlettNormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.inc"
 
     #include "XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
@@ -159,6 +163,11 @@ namespace
     #include "XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.inc"
     #include "XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.inc"
 
+    #include "XboxGamingXboxOneNormalMapEffect_VSSkinnedPixelLightingTx.inc"
+    #include "XboxGamingXboxOneNormalMapEffect_VSSkinnedPixelLightingTxBn.inc"
+    #include "XboxGamingXboxOneNormalMapEffect_VSSkinnedPixelLightingTxNoSpec.inc"
+    #include "XboxGamingXboxOneNormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.inc"
+
     #include "XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
     #include "XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
@@ -184,6 +193,11 @@ namespace
     #include "XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.inc"
     #include "XboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.inc"
 
+    #include "XboxOneNormalMapEffect_VSSkinnedPixelLightingTx.inc"
+    #include "XboxOneNormalMapEffect_VSSkinnedPixelLightingTxBn.inc"
+    #include "XboxOneNormalMapEffect_VSSkinnedPixelLightingTxNoSpec.inc"
+    #include "XboxOneNormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.inc"
+
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
@@ -208,6 +222,11 @@ namespace
     #include "NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc"
     #include "NormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.inc"
     #include "NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.inc"
+
+    #include "NormalMapEffect_VSSkinnedPixelLightingTx.inc"
+    #include "NormalMapEffect_VSSkinnedPixelLightingTxBn.inc"
+    #include "NormalMapEffect_VSSkinnedPixelLightingTxNoSpec.inc"
+    #include "NormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.inc"
 
     #include "NormalMapEffect_PSNormalPixelLightingTx.inc"
     #include "NormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
@@ -243,6 +262,11 @@ const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytec
 
     { NormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst,   sizeof(NormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst)   },
     { NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst, sizeof(NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst) },
+
+    { NormalMapEffect_VSSkinnedPixelLightingTx,              sizeof(NormalMapEffect_VSSkinnedPixelLightingTx)              },
+    { NormalMapEffect_VSSkinnedPixelLightingTxBn,            sizeof(NormalMapEffect_VSSkinnedPixelLightingTxBn)            },
+    { NormalMapEffect_VSSkinnedPixelLightingTxNoSpec,        sizeof(NormalMapEffect_VSSkinnedPixelLightingTxNoSpec)        },
+    { NormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn,      sizeof(NormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn)      },
 };
 
 
@@ -251,43 +275,53 @@ const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
 {
     0,     // pixel lighting + texture
     0,     // pixel lighting + texture, no fog
-    1,     // pixel lighting + texture + vertex color
-    1,     // pixel lighting + texture + vertex color, no fog
-
     4,     // pixel lighting + texture, no specular
     4,     // pixel lighting + texture, no fog or specular
-    5,     // pixel lighting + texture + vertex color, no specular
-    5,     // pixel lighting + texture + vertex color, no fog or specular
 
     2,     // pixel lighting (biased vertex normal) + texture
     2,     // pixel lighting (biased vertex normal) + texture, no fog
-    3,     // pixel lighting (biased vertex normal) + texture + vertex color
-    3,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog
-
     6,     // pixel lighting (biased vertex normal) + texture, no specular
     6,     // pixel lighting (biased vertex normal) + texture, no fog or specular
+
+    1,     // pixel lighting + texture + vertex color
+    1,     // pixel lighting + texture + vertex color, no fog
+    5,     // pixel lighting + texture + vertex color, no specular
+    5,     // pixel lighting + texture + vertex color, no fog or specular
+
+    3,     // pixel lighting (biased vertex normal) + texture + vertex color
+    3,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog
     7,     // pixel lighting (biased vertex normal) + texture + vertex color, no specular
     7,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
 
     8,     // instancing + pixel lighting + texture
     8,     // instancing + pixel lighting + texture, no fog
-    9,     // instancing + pixel lighting + texture + vertex color
-    9,     // instancing + pixel lighting + texture + vertex color, no fog
-
     12,    // instancing + pixel lighting + texture, no specular
     12,    // instancing + pixel lighting + texture, no fog or specular
-    13,    // instancing + pixel lighting + texture + vertex color, no specular
-    13,    // instancing + pixel lighting + texture + vertex color, no fog or specular
 
     10,    // instancing + pixel lighting (biased vertex normal) + texture
     10,    // instancing + pixel lighting (biased vertex normal) + texture, no fog
-    11,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color
-    11,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog
-
     14,    // instancing + pixel lighting (biased vertex normal) + texture, no specular
     14,    // instancing + pixel lighting (biased vertex normal) + texture, no fog or specular
+
+    9,     // instancing + pixel lighting + texture + vertex color
+    9,     // instancing + pixel lighting + texture + vertex color, no fog
+    13,    // instancing + pixel lighting + texture + vertex color, no specular
+    13,    // instancing + pixel lighting + texture + vertex color, no fog or specular
+
+    11,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color
+    11,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog
     15,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no specular
     15,    // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
+
+    16,    // skinning + pixel lighting + texture
+    16,    // skinning + pixel lighting + texture, no fog
+    18,    // skinning + pixel lighting + texture, no specular
+    18,    // skinning + pixel lighting + texture, no fog or specular
+
+    17,    // skinning + pixel lighting (biased vertex normal) + texture
+    17,    // skinning + pixel lighting (biased vertex normal) + texture, no fog
+    19,    // skinning + pixel lighting (biased vertex normal) + texture, no specular
+    19,    // skinning + pixel lighting (biased vertex normal) + texture, no fog or specular
 };
 
 
@@ -306,43 +340,53 @@ const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
 {
     0,     // pixel lighting + texture
     1,     // pixel lighting + texture, no fog
-    0,     // pixel lighting + texture + vertex color
-    1,     // pixel lighting + texture + vertex color, no fog
-
     2,     // pixel lighting + texture, no specular
     3,     // pixel lighting + texture, no fog or specular
-    2,     // pixel lighting + texture + vertex color, no specular
-    3,     // pixel lighting + texture + vertex color, no fog or specular
 
     0,     // pixel lighting (biased vertex normal) + texture
     1,     // pixel lighting (biased vertex normal) + texture, no fog
-    0,     // pixel lighting (biased vertex normal) + texture + vertex color
-    1,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog
-
     2,     // pixel lighting (biased vertex normal) + texture, no specular
     3,     // pixel lighting (biased vertex normal) + texture, no fog or specular
+
+    0,     // pixel lighting + texture + vertex color
+    1,     // pixel lighting + texture + vertex color, no fog
+    2,     // pixel lighting + texture + vertex color, no specular
+    3,     // pixel lighting + texture + vertex color, no fog or specular
+
+    0,     // pixel lighting (biased vertex normal) + texture + vertex color
+    1,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog
     2,     // pixel lighting (biased vertex normal) + texture + vertex color, no specular
     3,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
 
     0,     // instancing + pixel lighting + texture
     1,     // instancing + pixel lighting + texture, no fog
-    0,     // instancing + pixel lighting + texture + vertex color
-    1,     // instancing + pixel lighting + texture + vertex color, no fog
-
     2,     // instancing + pixel lighting + texture, no specular
     3,     // instancing + pixel lighting + texture, no fog or specular
-    2,     // instancing + pixel lighting + texture + vertex color, no specular
-    3,     // instancing + pixel lighting + texture + vertex color, no fog or specular
 
     0,     // instancing + pixel lighting (biased vertex normal) + texture
     1,     // instancing + pixel lighting (biased vertex normal) + texture, no fog
-    0,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color
-    1,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog
-
     2,     // instancing + pixel lighting (biased vertex normal) + texture, no specular
     3,     // instancing + pixel lighting (biased vertex normal) + texture, no fog or specular
+
+    0,     // instancing + pixel lighting + texture + vertex color
+    1,     // instancing + pixel lighting + texture + vertex color, no fog
+    2,     // instancing + pixel lighting + texture + vertex color, no specular
+    3,     // instancing + pixel lighting + texture + vertex color, no fog or specular
+
+    0,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color
+    1,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog
     2,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no specular
     3,     // instancing + pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
+
+    0,      // skinning + pixel lighting + texture
+    1,      // skinning + pixel lighting + texture, no fog
+    2,      // skinning + pixel lighting + texture, no specular
+    3,      // skinning + pixel lighting + texture, no fog or specular
+
+    0,      // skinning + pixel lighting (biased vertex normal) + texture
+    1,      // skinning + pixel lighting (biased vertex normal) + texture, no fog
+    2,      // skinning + pixel lighting (biased vertex normal) + texture, no specular
+    3,      // skinning + pixel lighting (biased vertex normal) + texture, no fog or specular
 };
 
 // Global pool of per-device NormalMapEffect resources.
@@ -477,31 +521,34 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) con
         permutation += 1;
     }
 
-    // Support vertex coloring?
-    if (effectFlags & EffectFlags::VertexColor)
-    {
-        permutation += 2;
-    }
-
     if (!specularMap)
     {
-        permutation += 4;
+        permutation += 2;
     }
 
     if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
-        permutation += 8;
+        permutation += 4;
     }
 
     if (weightsPerVertex > 0)
     {
-        // TODO - 
+        permutation += 32;
     }
-    else if (effectFlags & EffectFlags::Instancing)
+    else
     {
-        // Vertex shader needs to use vertex matrix transform.
-        permutation += 16;
+        // Support vertex coloring?
+        if (effectFlags & EffectFlags::VertexColor)
+        {
+            permutation += 8;
+        }
+
+        if (effectFlags & EffectFlags::Instancing)
+        {
+            // Vertex shader needs to use vertex matrix transform.
+            permutation += 16;
+        }
     }
 
     return permutation;
