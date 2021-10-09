@@ -92,8 +92,8 @@ public:
     bool specularMap;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
-    D3D12_GPU_DESCRIPTOR_HANDLE specular;
     D3D12_GPU_DESCRIPTOR_HANDLE normal;
+    D3D12_GPU_DESCRIPTOR_HANDLE specular;
     D3D12_GPU_DESCRIPTOR_HANDLE sampler;
 
     EffectLights lights;
@@ -401,8 +401,8 @@ NormalMapEffect::Impl::Impl(
         weightsPerVertex(0),
         specularMap(false),
         texture{},
-        specular{},
         normal{},
+        specular{},
         sampler{},
         boneConstants{}
 {
