@@ -102,6 +102,7 @@ private:
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
     EffectCache  mEffectCacheNormalMap;
+    EffectCache  mEffectCacheNormalMapSkinned;
 
     std::mutex mutex;
 };
@@ -157,7 +158,6 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     std::wstring cacheName;
     if (info.enableSkinning)
     {
-        // SkinnedEffect
         int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
 
         if (mEnableFog)
@@ -170,37 +170,91 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
-        if (mSharing && !info.name.empty())
+        if (info.enableNormalMaps && mUseNormalMapEffect)
         {
-            uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-
-            auto it = mEffectCacheSkinning.find(cacheName);
-            if (mSharing && it != mEffectCacheSkinning.end())
+            // SkinnedNormalMapEffect
+            if (specularTextureIndex != -1)
             {
-                return it->second;
+                effectflags |= EffectFlags::Specular;
             }
+
+            if (mSharing && !info.name.empty())
+            {
+                uint32_t hash = derivedPSD.ComputeHash();
+                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+                auto it = mEffectCacheNormalMapSkinned.find(cacheName);
+                if (mSharing && it != mEffectCacheNormalMapSkinned.end())
+                {
+                    return it->second;
+                }
+            }
+
+            auto effect = std::make_shared<SkinnedNormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
+
+            SetMaterialProperties(effect.get(), info);
+
+            if (diffuseTextureIndex != -1)
+            {
+                effect->SetTexture(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            }
+
+            if (specularTextureIndex != -1)
+            {
+                effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)));
+            }
+
+            if (normalTextureIndex != -1)
+            {
+                effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)));
+            }
+
+            if (mSharing && !info.name.empty())
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                EffectCache::value_type v(cacheName, effect);
+                mEffectCacheNormalMapSkinned.insert(v);
+            }
+
+            return std::move(effect);
         }
-
-        auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
-
-        SetMaterialProperties(effect.get(), info);
-
-        if (diffuseTextureIndex != -1)
+        else
         {
-            effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
-                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
-        }
+            // SkinnedEffect
+            if (mSharing && !info.name.empty())
+            {
+                uint32_t hash = derivedPSD.ComputeHash();
+                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
-        if (mSharing && !info.name.empty())
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            EffectCache::value_type v(cacheName, effect);
-            mEffectCacheSkinning.insert(v);
-        }
+                auto it = mEffectCacheSkinning.find(cacheName);
+                if (mSharing && it != mEffectCacheSkinning.end())
+                {
+                    return it->second;
+                }
+            }
 
-        return std::move(effect);
+            auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
+
+            SetMaterialProperties(effect.get(), info);
+
+            if (diffuseTextureIndex != -1)
+            {
+                effect->SetTexture(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            }
+
+            if (mSharing && !info.name.empty())
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                EffectCache::value_type v(cacheName, effect);
+                mEffectCacheSkinning.insert(v);
+            }
+
+            return std::move(effect);
+        }
     }
     else if (info.enableDualTexture)
     {
@@ -418,6 +472,7 @@ void EffectFactory::Impl::ReleaseCache()
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
     mEffectCacheNormalMap.clear();
+    mEffectCacheNormalMapSkinned.clear();
 }
 
 
