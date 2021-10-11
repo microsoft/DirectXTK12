@@ -164,9 +164,9 @@ void PBREffectFactory::Impl::ReleaseCache()
 // PBREffectFactory
 //--------------------------------------------------------------------------------------
 
-PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device) noexcept(false)
+PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device) noexcept(false) :
+    pImpl(std::make_shared<Impl>(device, nullptr, nullptr))
 {
-    pImpl = std::make_shared<Impl>(device, nullptr, nullptr);
 }
 
 PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)

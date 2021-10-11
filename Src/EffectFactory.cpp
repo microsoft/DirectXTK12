@@ -481,9 +481,9 @@ void EffectFactory::Impl::ReleaseCache()
 // EffectFactory
 //--------------------------------------------------------------------------------------
 
-EffectFactory::EffectFactory(_In_ ID3D12Device* device)
+EffectFactory::EffectFactory(_In_ ID3D12Device* device) :
+    pImpl(std::make_shared<Impl>(device, nullptr, nullptr))
 {
-    pImpl = std::make_shared<Impl>(device, nullptr, nullptr);
 }
 
 EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)

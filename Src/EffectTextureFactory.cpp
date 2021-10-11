@@ -216,9 +216,9 @@ _Use_decl_annotations_
 EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
-    ID3D12DescriptorHeap* descriptorHeap) noexcept(false)
+    ID3D12DescriptorHeap* descriptorHeap) noexcept(false) :
+        pImpl(std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap))
 {
-    pImpl = std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap);
 }
 
 _Use_decl_annotations_
@@ -226,9 +226,9 @@ EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
     size_t numDescriptors,
-    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false)
+    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false) :
+        pImpl(std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags))
 {
-    pImpl = std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags);
 }
 
 
