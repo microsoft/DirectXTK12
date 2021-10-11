@@ -152,9 +152,9 @@ namespace
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
     protected:
-        ComPtr<ID3D12Device>                        mDevice;
-        Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature[RootSignatureCount];
-        std::mutex                                  mMutex;
+        ComPtr<ID3D12Device>        mDevice;
+        ComPtr<ID3D12RootSignature> mRootSignature[RootSignatureCount];
+        std::mutex                  mMutex;
     };
 }
 
@@ -199,7 +199,7 @@ private:
     GraphicsResource mConstantBuffer;
 
     // Per instance cache of PSOs, populated with variants for each shader & layout
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> mPipelineState;
+    ComPtr<ID3D12PipelineState> mPipelineState;
 
     // Per instance root signature
     ID3D12RootSignature* mRootSignature;

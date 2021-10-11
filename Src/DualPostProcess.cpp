@@ -102,9 +102,9 @@ namespace
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
     protected:
-        ComPtr<ID3D12Device>                        mDevice;
-        Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
-        std::mutex                                  mMutex;
+        ComPtr<ID3D12Device>        mDevice;
+        ComPtr<ID3D12RootSignature> mRootSignature;
+        std::mutex                  mMutex;
     };
 }
 

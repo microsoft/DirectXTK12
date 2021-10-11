@@ -409,7 +409,7 @@ public:
 
     static const D3D12_SAMPLER_DESC SamplerDescs[static_cast<int>(SamplerIndex::Count)];
 
-    Impl(_In_ ID3D12Device* device)
+    explicit Impl(_In_ ID3D12Device* device)
         : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, static_cast<size_t>(SamplerIndex::Count))
     {
         SetDebugObjectName(mDescriptors.Heap(), L"CommonStates");
