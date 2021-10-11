@@ -161,7 +161,8 @@
 "DescriptorTable ( SRV(t5) ),"\
 "DescriptorTable ( Sampler(s0) ),"\
 "DescriptorTable ( Sampler(s1) ),"\
-"CBV(b0)"
+"CBV(b0)," \
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
 
 #define DebugEffectRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
