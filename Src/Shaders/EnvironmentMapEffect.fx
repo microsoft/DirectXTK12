@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
-// http://create.msdn.com/en-US/education/catalog/sample/stock_effects
 
 
 Texture2D<float4>   Texture             : register(t0);
