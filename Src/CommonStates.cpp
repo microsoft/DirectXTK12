@@ -518,9 +518,9 @@ const D3D12_SAMPLER_DESC CommonStates::Impl::SamplerDescs[] =
 
 
 _Use_decl_annotations_
-CommonStates::CommonStates(ID3D12Device* device)
+CommonStates::CommonStates(ID3D12Device* device) :
+    pImpl(std::make_unique<Impl>(device))
 {
-    pImpl = std::make_unique<Impl>(device);
 }
 
 CommonStates::CommonStates(CommonStates&&) noexcept = default;
