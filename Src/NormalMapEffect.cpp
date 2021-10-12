@@ -507,7 +507,14 @@ void NormalMapEffect::Impl::Initialize(
         EffectBase<NormalMapEffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.GetAddressOf());
 
-    SetDebugObjectName(mPipelineState.Get(), L"NormalMapEffect");
+    if (enableSkinning)
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"SkinnedNormalMapEffect");
+    }
+    else
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"NormalMapEffect");
+    }
 }
 
 

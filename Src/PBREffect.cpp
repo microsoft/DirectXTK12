@@ -110,7 +110,6 @@ public:
 
 private:
     GraphicsResource mBones;
-
 };
 
 
@@ -449,7 +448,14 @@ void PBREffect::Impl::Initialize(
         EffectBase<PBREffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
 
-    SetDebugObjectName(mPipelineState.Get(), L"PBREffect");
+    if (enableSkinning)
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"SkinnedPBREffect");
+    }
+    else
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"PBREffect");
+    }
 }
 
 
@@ -532,6 +538,15 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
     // Set constants to GPU
     UpdateConstants();
+
+    if (weightsPerVertex > 0)
+    {
+        if (dirtyFlags & EffectDirtyFlags::ConstantBufferBones)
+        {
+            mBones = GraphicsMemory::Get(GetDevice()).AllocateConstant(boneConstants);
+            dirtyFlags &= ~EffectDirtyFlags::ConstantBufferBones;
+        }
+    }
 
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature);
