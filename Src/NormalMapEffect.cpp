@@ -534,6 +534,7 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) con
 
     if (weightsPerVertex > 0)
     {
+        // Vertex skinning.
         permutation += 32;
     }
     else
