@@ -24,7 +24,7 @@ namespace
 {
     template<typename T>
     void SetPBRProperties(
-        T* effect,
+        _In_ T* effect,
         const EffectFactory::EffectInfo& info,
         _In_ DescriptorHeap* textures,
         int textureDescriptorOffset,
