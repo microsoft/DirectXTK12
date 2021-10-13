@@ -35,17 +35,21 @@ namespace
 
         effect->SetAlpha(info.alphaValue);
 
-        const int albedoTextureIndex = (info.diffuseTextureIndex != -1) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
-        const int rmaTextureIndex = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
-        const int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
-        const int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
-        const int samplerIndex = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
+        if (info.diffuseTextureIndex != -1)
+        {
+            const int albedoTextureIndex = info.diffuseTextureIndex + textureDescriptorOffset;
+            const int rmaTextureIndex = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+            const int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
+            const int samplerIndex = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
 
-        effect->SetSurfaceTextures(
-            textures->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
-            textures->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
-            textures->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
-            samplers->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            effect->SetSurfaceTextures(
+                textures->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
+                textures->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
+                textures->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
+                samplers->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+        }
+
+        const int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
 
         if (emissiveTextureIndex != -1)
         {
@@ -124,7 +128,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     derivedPSD.inputLayout = inputLayoutDesc;
 
     // set effect flags for creation
-    int effectflags = EffectFlags::Texture;
+    uint32_t effectflags = (info.diffuseTextureIndex != -1) ? EffectFlags::Texture : EffectFlags::None;
 
     if (info.biasedVertexNormals)
     {
