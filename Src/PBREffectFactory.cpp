@@ -37,6 +37,7 @@ namespace
 
         if (info.diffuseTextureIndex != -1)
         {
+            // Textured PBR material
             const int albedoTextureIndex = info.diffuseTextureIndex + textureDescriptorOffset;
             const int rmaTextureIndex = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
             const int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
@@ -47,13 +48,21 @@ namespace
                 textures->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
                 textures->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
                 samplers->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+
+            const int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
+
+            if (emissiveTextureIndex != -1)
+            {
+                effect->SetEmissiveTexture(textures->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)));
+            }
         }
-
-        const int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
-
-        if (emissiveTextureIndex != -1)
+        else
         {
-            effect->SetEmissiveTexture(textures->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)));
+            // Untextured material (for PBR this still requires texture coordinates)
+            XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+            effect->SetConstantAlbedo(color);
+
+            // info.ambientColor, info.specularPower, info.specularColor, and info.emissiveColor are unused by PBR.
         }
     }
 }
@@ -140,8 +149,11 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         effectflags |= EffectFlags::Emissive;
     }
 
+    // info.perVertexColor and info.enableDualTexture are ignored by PBREffectFactory
+
     if (info.enableSkinning)
     {
+        // SkinnedPBREffect
         std::wstring cacheName;
         if (mSharing && !info.name.empty())
         {
@@ -172,6 +184,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
     }
     else
     {
+        // PBREffect
         if (mEnableInstancing)
         {
             effectflags |= EffectFlags::Instancing;

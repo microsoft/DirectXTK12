@@ -49,7 +49,7 @@ namespace
 
     XM_ALIGNED_STRUCT(16) BoneConstants
     {
-        XMVECTOR Bones[SkinnedNormalMapEffect::MaxBones][3];
+        XMVECTOR Bones[SkinnedPBREffect::MaxBones][3];
     };
 
     static_assert((sizeof(BoneConstants) % 16) == 0, "CB size not padded correctly");
@@ -361,7 +361,7 @@ void PBREffect::Impl::Initialize(
 
         weightsPerVertex = 4;
 
-        for (size_t j = 0; j < SkinnedNormalMapEffect::MaxBones; ++j)
+        for (size_t j = 0; j < SkinnedPBREffect::MaxBones; ++j)
         {
             boneConstants.Bones[j][0] = g_XMIdentityR0;
             boneConstants.Bones[j][1] = g_XMIdentityR1;
