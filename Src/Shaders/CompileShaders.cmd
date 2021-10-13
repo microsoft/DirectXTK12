@@ -199,6 +199,8 @@ call :CompileShader%1 PBREffect vs VSConstantVelocity
 call :CompileShader%1 PBREffect vs VSConstantBn
 call :CompileShader%1 PBREffect vs VSConstantBnInst
 call :CompileShader%1 PBREffect vs VSConstantVelocityBn
+call :CompileShader%1 PBREffect vs VSSkinned
+call :CompileShader%1 PBREffect vs VSSkinnedBn
 
 call :CompileShader%1 PBREffect ps PSConstant
 call :CompileShader%1 PBREffect ps PSTextured

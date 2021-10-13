@@ -10,6 +10,14 @@
 #include "pch.h"
 #include "EffectCommon.h"
 
+namespace DirectX
+{
+    namespace EffectDirtyFlags
+    {
+        constexpr int ConstantBufferBones = 0x100000;
+    }
+}
+
 using namespace DirectX;
 
 namespace
@@ -39,15 +47,22 @@ namespace
 
     static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
 
+    XM_ALIGNED_STRUCT(16) BoneConstants
+    {
+        XMVECTOR Bones[SkinnedPBREffect::MaxBones][3];
+    };
+
+    static_assert((sizeof(BoneConstants) % 16) == 0, "CB size not padded correctly");
+
 
     // Traits type describes our characteristics to the EffectBase template.
     struct PBREffectTraits
     {
         using ConstantBufferType = PBREffectConstants;
 
-        static constexpr int VertexShaderCount = 6;
+        static constexpr int VertexShaderCount = 8;
         static constexpr int PixelShaderCount = 5;
-        static constexpr int ShaderPermutationCount = 16;
+        static constexpr int ShaderPermutationCount = 22;
         static constexpr int RootSignatureCount = 1;
     };
 }
@@ -56,16 +71,13 @@ namespace
 class PBREffect::Impl : public EffectBase<PBREffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device,
+    explicit Impl(_In_ ID3D12Device* device);
+
+    void Initialize(
+        _In_ ID3D12Device* device,
         uint32_t effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription);
-
-    void Apply(_In_ ID3D12GraphicsCommandList* commandList);
-
-    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
-
-    bool textureEnabled;
-    bool emissiveMap;
+        const EffectPipelineStateDescription& pipelineDescription,
+        bool enableSkinning);
 
     enum RootParameterIndex
     {
@@ -78,12 +90,26 @@ public:
         SurfaceSampler,
         RadianceSampler,
         ConstantBuffer,
+        ConstantBufferBones,
         RootParametersCount
     };
+
+    int weightsPerVertex;
+    bool textureEnabled;
+    bool emissiveMap;
 
     D3D12_GPU_DESCRIPTOR_HANDLE descriptors[RootParametersCount];
 
     XMVECTOR lightColor[MaxDirectionalLights];
+
+    void Apply(_In_ ID3D12GraphicsCommandList* commandList);
+
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
+
+    BoneConstants boneConstants;
+
+private:
+    GraphicsResource mBones;
 };
 
 
@@ -100,6 +126,9 @@ namespace
     #include "XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
     #include "XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
 
+    #include "XboxGamingScarlettPBREffect_VSSkinned.inc"
+    #include "XboxGamingScarlettPBREffect_VSSkinnedBn.inc"
+
     #include "XboxGamingScarlettPBREffect_PSConstant.inc"
     #include "XboxGamingScarlettPBREffect_PSTextured.inc"
     #include "XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
@@ -114,6 +143,9 @@ namespace
 
     #include "XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
     #include "XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
+
+    #include "XboxGamingXboxOnePBREffect_VSSkinned.inc"
+    #include "XboxGamingXboxOnePBREffect_VSSkinnedBn.inc"
 
     #include "XboxGamingXboxOnePBREffect_PSConstant.inc"
     #include "XboxGamingXboxOnePBREffect_PSTextured.inc"
@@ -130,6 +162,9 @@ namespace
     #include "XboxOnePBREffect_VSConstantVelocity.inc"
     #include "XboxOnePBREffect_VSConstantVelocityBn.inc"
 
+    #include "XboxOnePBREffect_VSSkinned.inc"
+    #include "XboxOnePBREffect_VSSkinnedBn.inc"
+
     #include "XboxOnePBREffect_PSConstant.inc"
     #include "XboxOnePBREffect_PSTextured.inc"
     #include "XboxOnePBREffect_PSTexturedEmissive.inc"
@@ -144,6 +179,9 @@ namespace
 
     #include "PBREffect_VSConstantVelocity.inc"
     #include "PBREffect_VSConstantVelocityBn.inc"
+
+    #include "PBREffect_VSSkinned.inc"
+    #include "PBREffect_VSSkinnedBn.inc"
 
     #include "PBREffect_PSConstant.inc"
     #include "PBREffect_PSTextured.inc"
@@ -161,8 +199,12 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::VertexShaderBytecode[] 
     { PBREffect_VSConstantVelocity,   sizeof(PBREffect_VSConstantVelocity)   },
     { PBREffect_VSConstantBn,         sizeof(PBREffect_VSConstantBn)         },
     { PBREffect_VSConstantVelocityBn, sizeof(PBREffect_VSConstantVelocityBn) },
+
     { PBREffect_VSConstantInst,       sizeof(PBREffect_VSConstantInst)       },
     { PBREffect_VSConstantBnInst,     sizeof(PBREffect_VSConstantBnInst)     },
+
+    { PBREffect_VSSkinned,            sizeof(PBREffect_VSSkinned)            },
+    { PBREffect_VSSkinnedBn,          sizeof(PBREffect_VSSkinnedBn)          },
 };
 
 
@@ -172,20 +214,32 @@ const int EffectBase<PBREffectTraits>::VertexShaderIndices[] =
     0,      // constant
     0,      // textured
     0,      // textured + emissive
-    1,      // textured + velocity
-    1,      // textured + emissive + velocity
+
     4,      // instancing + constant
     4,      // instancing + textured
     4,      // instancing + textured + emissive
 
+    6,      // skinning + constant
+    6,      // skinning + textured
+    6,      // skinning + textured + emissive
+
+    1,      // textured + velocity
+    1,      // textured + emissive + velocity
+
     2,      // constant (biased vertex normals)
     2,      // textured (biased vertex normals)
     2,      // textured + emissive (biased vertex normals)
-    3,      // textured + velocity (biased vertex normals)
-    3,      // textured + emissive + velocity (biasoed vertex normals)
+
     5,      // instancing + constant (biased vertex normals)
     5,      // instancing + textured (biased vertex normals)
     5,      // instancing + textured + emissive (biased vertex normals)
+
+    7,      // skinning + constant (biased vertex normals)
+    7,      // skinning + textured (biased vertex normals)
+    7,      // skinning + textured + emissive (biased vertex normals)
+
+    3,      // textured + velocity (biased vertex normals)
+    3,      // textured + emissive + velocity (biasoed vertex normals)
 };
 
 
@@ -206,20 +260,32 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
     0,      // constant
     1,      // textured
     2,      // textured + emissive
-    3,      // textured + velocity
-    4,      // textured + emissive + velocity
+
     0,      // instancing + constant
     1,      // instancing + textured
     2,      // instancing + textured + emissive
 
+    0,      // skinning + constant
+    1,      // skinning + textured
+    2,      // skinning + textured + emissive
+
+    3,      // textured + velocity
+    4,      // textured + emissive + velocity
+
     0,      // constant (biased vertex normals)
     1,      // textured (biased vertex normals)
     2,      // textured + emissive (biased vertex normals)
-    3,      // textured + velocity (biased vertex normals)
-    4,      // textured + emissive + velocity (biased vertex normals)
+
     0,      // instancing + constant (biased vertex normals)
     1,      // instancing + textured (biased vertex normals)
     2,      // instancing + textured + emissive (biased vertex normals)
+
+    0,      // skinning + constant (biased vertex normals)
+    1,      // skinning + textured (biased vertex normals)
+    2,      // skinning + textured + emissive (biased vertex normals)
+
+    3,      // textured + velocity (biased vertex normals)
+    4,      // textured + emissive + velocity (biased vertex normals)
 };
 
 // Global pool of per-device PBREffect resources. Required by EffectBase<>, but not used.
@@ -227,18 +293,28 @@ template<>
 SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool = {};
 
 // Constructor.
-PBREffect::Impl::Impl(_In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription)
+PBREffect::Impl::Impl(_In_ ID3D12Device* device)
     : EffectBase(device),
-        emissiveMap((effectFlags & EffectFlags::Emissive) != 0),
+        weightsPerVertex(0),
+        textureEnabled(false),
+        emissiveMap(false),
         descriptors{},
-        lightColor{}
+        lightColor{},
+        boneConstants{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderBytecode)) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderBytecode)) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+}
+
+void PBREffect::Impl::Initialize(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool enableSkinning)
+{
+    emissiveMap = (effectFlags & EffectFlags::Emissive) != 0;
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { { { 0, -1, 0, 0 } } };
@@ -269,6 +345,29 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     constants.Metallic = 0.5f;
     constants.Roughness = 0.2f;
     constants.numRadianceMipLevels = 1;
+
+    if (enableSkinning)
+    {
+        if (effectFlags & EffectFlags::Instancing)
+        {
+            DebugTrace("ERROR: SkinnedPBREffect does not implement EffectFlags::Instancing\n");
+            throw std::invalid_argument("Instancing effect flag is invalid");
+        }
+        else if (effectFlags & EffectFlags::Velocity)
+        {
+            DebugTrace("ERROR: SkinnedPBREffect does not implement EffectFlags::Velocity\n");
+            throw std::invalid_argument("Velocity generation effect flag is invalid");
+        }
+
+        weightsPerVertex = 4;
+
+        for (size_t j = 0; j < SkinnedPBREffect::MaxBones; ++j)
+        {
+            boneConstants.Bones[j][0] = g_XMIdentityR0;
+            boneConstants.Bones[j][1] = g_XMIdentityR1;
+            boneConstants.Bones[j][2] = g_XMIdentityR2;
+        }
+    }
 
     // Create root signature
     {
@@ -304,6 +403,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         }
 
         rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+        rootParameters[RootParameterIndex::ConstantBufferBones].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
         rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
@@ -348,29 +448,20 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         EffectBase<PBREffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.ReleaseAndGetAddressOf());
 
-    SetDebugObjectName(mPipelineState.Get(), L"PBREffect");
+    if (enableSkinning)
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"SkinnedPBREffect");
+    }
+    else
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"PBREffect");
+    }
 }
 
 
 int PBREffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
-
-    if (effectFlags & EffectFlags::Instancing)
-    {
-        // Vertex shader needs to use vertex matrix transform.
-        permutation = (textureEnabled) ? 6 : 5;
-    }
-    else if (effectFlags & EffectFlags::Velocity)
-    {
-        // Optional velocity buffer (implies textured RMA)?
-        permutation = 3;
-    }
-    else if (textureEnabled)
-    {
-        // Textured RMA vs. constant albedo/roughness/metalness?
-        permutation = 1;
-    }
 
     // Using an emissive texture?
     if (emissiveMap)
@@ -381,7 +472,29 @@ int PBREffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noe
     if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
-        permutation += 8;
+        permutation += 11;
+    }
+
+    if (weightsPerVertex > 0)
+    {
+        // Vertex skinning.
+        permutation += 6;
+    }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        // Vertex shader needs to use vertex matrix transform.
+        permutation += 3;
+    }
+    else if (effectFlags & EffectFlags::Velocity)
+    {
+        // Optional velocity buffer (implies textured).
+        permutation += 9;
+    }
+
+    if (textureEnabled && !(effectFlags & EffectFlags::Velocity))
+    {
+        // Textured RMA vs. constant albedo/roughness/metalness.
+        permutation += 1;
     }
 
     return permutation;
@@ -425,6 +538,15 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
     // Set constants to GPU
     UpdateConstants();
+
+    if (weightsPerVertex > 0)
+    {
+        if (dirtyFlags & EffectDirtyFlags::ConstantBufferBones)
+        {
+            mBones = GraphicsMemory::Get(GetDevice()).AllocateConstant(boneConstants);
+            dirtyFlags &= ~EffectDirtyFlags::ConstantBufferBones;
+        }
+    }
 
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature);
@@ -506,20 +628,29 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    commandList->SetGraphicsRootConstantBufferView(ConstantBuffer, GetConstantBufferGpuAddress());
+    auto cbuffer = GetConstantBufferGpuAddress();
+    commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
+    commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
+        (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);
 
     // Set the pipeline state
     commandList->SetPipelineState(EffectBase::mPipelineState.Get());
 }
 
-// Public constructor.
-PBREffect::PBREffect(_In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription)
-    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
-{
-}
 
+//--------------------------------------------------------------------------------------
+// PBREffect
+//--------------------------------------------------------------------------------------
+
+PBREffect::PBREffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool skinningEnabled)
+    : pImpl(std::make_unique<Impl>(device))
+{
+    pImpl->Initialize(device, effectFlags, pipelineDescription, skinningEnabled);
+}
 
 PBREffect::PBREffect(PBREffect&&) noexcept = default;
 PBREffect& PBREffect::operator= (PBREffect&&) noexcept = default;
@@ -720,4 +851,49 @@ void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
     pImpl->constants.targetHeight = static_cast<float>(height);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+
+//--------------------------------------------------------------------------------------
+// SkinnedPBREffect
+//--------------------------------------------------------------------------------------
+
+// Animation settings.
+void SkinnedPBREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
+{
+    if (count > MaxBones)
+        throw std::invalid_argument("count parameter exceeds MaxBones");
+
+    auto boneConstant = pImpl->boneConstants.Bones;
+
+    for (size_t i = 0; i < count; i++)
+    {
+#if DIRECTX_MATH_VERSION >= 313
+        XMStoreFloat3x4A(reinterpret_cast<XMFLOAT3X4A*>(&boneConstant[i]), value[i]);
+#else
+        // Xbox One XDK has an older version of DirectXMath
+        XMMATRIX boneMatrix = XMMatrixTranspose(value[i]);
+
+        boneConstant[i][0] = boneMatrix.r[0];
+        boneConstant[i][1] = boneMatrix.r[1];
+        boneConstant[i][2] = boneMatrix.r[2];
+#endif
+    }
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;
+}
+
+
+void SkinnedPBREffect::ResetBoneTransforms()
+{
+    auto boneConstant = pImpl->boneConstants.Bones;
+
+    for (size_t i = 0; i < MaxBones; ++i)
+    {
+        boneConstant[i][0] = g_XMIdentityR0;
+        boneConstant[i][1] = g_XMIdentityR1;
+        boneConstant[i][2] = g_XMIdentityR2;
+    }
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;
 }

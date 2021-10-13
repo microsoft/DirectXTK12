@@ -533,7 +533,8 @@ namespace DirectX
     {
     public:
         PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
-            const EffectPipelineStateDescription& pipelineDescription);
+            const EffectPipelineStateDescription& pipelineDescription) :
+            PBREffect(device, effectFlags, pipelineDescription, false) {}
 
         PBREffect(PBREffect&&) noexcept;
         PBREffect& operator= (PBREffect&&) noexcept;
@@ -587,15 +588,30 @@ namespace DirectX
         // Render target size, required for velocity buffer output.
         void __cdecl SetRenderTargetSizeInPixels(int width, int height);
 
-    private:
+    protected:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
 
+        PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription, bool skinningEnabled);
+
         // Unsupported interface methods.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
         void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+    };
+
+    class SkinnedPBREffect : public PBREffect, public IEffectSkinning
+    {
+    public:
+        SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription) :
+            PBREffect(device, effectFlags, pipelineDescription, true) {}
+
+        // Animation settings.
+        void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+        void __cdecl ResetBoneTransforms() override;
     };
 
 
