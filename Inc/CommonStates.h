@@ -45,6 +45,8 @@ namespace DirectX
         static const D3D12_DEPTH_STENCIL_DESC DepthNone;
         static const D3D12_DEPTH_STENCIL_DESC DepthDefault;
         static const D3D12_DEPTH_STENCIL_DESC DepthRead;
+        static const D3D12_DEPTH_STENCIL_DESC DepthReverseZ;
+        static const D3D12_DEPTH_STENCIL_DESC DepthReadReverseZ;
 
         // Rasterizer states.
         static const D3D12_RASTERIZER_DESC CullNone;
