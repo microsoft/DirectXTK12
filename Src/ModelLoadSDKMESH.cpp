@@ -174,7 +174,7 @@ namespace
         m = {};
         m.name = matName;
         m.perVertexColor = false;
-        m.enableSkinning = false;
+        m.enableSkinning = (flags & SKINNING) != 0;
         m.enableDualTexture = false;
         m.enableNormalMaps = true;
         m.biasedVertexNormals = (flags & BIASED_VERTEX_NORMALS) != 0;
