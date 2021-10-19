@@ -18,11 +18,11 @@ using ScopedLock = std::lock_guard<std::mutex>;
 
 namespace
 {
-    static const size_t MinPageSize = 64 * 1024;
-    static const size_t MinAllocSize = 4 * 1024;
-    static const size_t AllocatorIndexShift = 12; // start block sizes at 4KB
-    static const size_t AllocatorPoolCount = 21; // allocation sizes up to 2GB supported
-    static const size_t PoolIndexScale = 1; // multiply the allocation size this amount to push large values into the next bucket
+    constexpr size_t MinPageSize = 64 * 1024;
+    constexpr size_t MinAllocSize = 4 * 1024;
+    constexpr size_t AllocatorIndexShift = 12; // start block sizes at 4KB
+    constexpr size_t AllocatorPoolCount = 21; // allocation sizes up to 2GB supported
+    constexpr size_t PoolIndexScale = 1; // multiply the allocation size this amount to push large values into the next bucket
 
     static_assert((1 << AllocatorIndexShift) == MinAllocSize, "1 << AllocatorIndexShift must == MinPageSize (in KiB)");
     static_assert((MinPageSize & (MinPageSize - 1)) == 0, "MinPageSize size must be a power of 2");

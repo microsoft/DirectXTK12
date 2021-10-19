@@ -66,7 +66,7 @@ namespace
         uint32_t    xdkVer; // matching _XDK_VER / _GXDK_VER
     };
 
-    static const uint32_t XBOX_TILEMODE_SCARLETT = 0x1000000;
+    constexpr uint32_t XBOX_TILEMODE_SCARLETT = 0x1000000;
 
     static_assert(sizeof(DDS_HEADER_XBOX) == 36, "DDS XBOX Header size mismatch");
 

@@ -139,11 +139,11 @@ private:
     XMMATRIX GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation);
 
     // Constants.
-    static const size_t MaxBatchSize = 2048;
-    static const size_t MinBatchSize = 128;
-    static const size_t InitialQueueSize = 64;
-    static const size_t VerticesPerSprite = 4;
-    static const size_t IndicesPerSprite = 6;
+    static constexpr size_t MaxBatchSize = 2048;
+    static constexpr size_t MinBatchSize = 128;
+    static constexpr size_t InitialQueueSize = 64;
+    static constexpr size_t VerticesPerSprite = 4;
+    static constexpr size_t IndicesPerSprite = 6;
 
     //
     // The following functions and members are used to create the default pipeline state objects.

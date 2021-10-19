@@ -64,7 +64,7 @@ namespace DirectX
     template<typename TVertex>
     class PrimitiveBatch : public Internal::PrimitiveBatchBase
     {
-        static const size_t DefaultBatchSize = 4096;
+        static constexpr size_t DefaultBatchSize = 4096;
 
     public:
         explicit PrimitiveBatch(_In_ ID3D12Device* device,

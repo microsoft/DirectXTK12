@@ -142,7 +142,7 @@ namespace DirectX
     {
     public:
         using IndexType = size_t;
-        static const IndexType INVALID_INDEX = size_t(-1);
+        static constexpr IndexType INVALID_INDEX = size_t(-1);
 
         DescriptorPile(
             _In_ ID3D12DescriptorHeap* pExistingHeap,
