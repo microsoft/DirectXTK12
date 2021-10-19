@@ -6,6 +6,10 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### October 18, 2021
+* Fixed loading of skinned PBR models from SDKMESH v2
+* Minor code review updates
+
 ### October 13, 2021
 * Added skinning support for **NormalMapEffect** and **PBREffect**
 * Common states updated with support for reverse z-buffer rendering with **DepthReverseZ** and **DepthReadReverseZ** methods.
