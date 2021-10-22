@@ -521,6 +521,12 @@ namespace DirectX
             const EffectPipelineStateDescription& pipelineDescription) :
             NormalMapEffect(device, effectFlags, pipelineDescription, true) {}
 
+        SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
+        SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
+
+        SkinnedNormalMapEffect(SkinnedNormalMapEffect const&) = delete;
+        SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect const&) = delete;
+
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
         void __cdecl ResetBoneTransforms() override;
@@ -608,6 +614,12 @@ namespace DirectX
         SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
             const EffectPipelineStateDescription& pipelineDescription) :
             PBREffect(device, effectFlags, pipelineDescription, true) {}
+
+        SkinnedPBREffect(SkinnedPBREffect&&) = default;
+        SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;
+
+        SkinnedPBREffect(SkinnedPBREffect const&) = delete;
+        SkinnedPBREffect& operator= (SkinnedPBREffect const&) = delete;
 
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
