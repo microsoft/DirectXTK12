@@ -24,6 +24,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <new>
 #include <string>
 #include <type_traits>
 #include <utility>

@@ -18,6 +18,7 @@
 #include <dxgiformat.h>
 #endif
 
+#include <cstdint>
 #include <future>
 #include <memory>
 
