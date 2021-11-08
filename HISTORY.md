@@ -6,6 +6,11 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### November 8, 2021
+* VS 2022 support
+* Updated D3DX12 internal copy with latest change from GitHub
+* Minor code and project review
+
 ### October 18, 2021
 * Fixed loading of skinned PBR models from SDKMESH v2
 * Minor code review updates
