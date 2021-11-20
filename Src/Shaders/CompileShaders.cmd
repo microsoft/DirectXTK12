@@ -71,7 +71,7 @@ if not defined CompileShadersOutput set CompileShadersOutput=Compiled
 set StrTrim=%CompileShadersOutput%##
 set StrTrim=%StrTrim: ##=%
 set CompileShadersOutput=%StrTrim:##=%
-@if not exist %CompileShadersOutput% mkdir %CompileShadersOutput%
+@if not exist "%CompileShadersOutput%" mkdir "%CompileShadersOutput%"
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTest
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestNoFog
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestVc
@@ -283,56 +283,56 @@ endlocal
 exit /b
 
 :CompileShader
-set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 /Fh%CompileShadersOutput%\%1_%3.inc /Fd%CompileShadersOutput%\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 /Fh%CompileShadersOutput%\%1_%2.inc /Fd%CompileShadersOutput%\%1_%2.pdb /Vn%1_%2
+set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderdxil
-set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /Fh%CompileShadersOutput%\%1_%3.inc /Fd%CompileShadersOutput%\%1_%3.pdb /Vn%1_%3
+set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShaderdxil
-set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /Fh%CompileShadersOutput%\%1_%2.inc /Fd%CompileShadersOutput%\%1_%2.pdb /Vn%1_%2
+set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileShaderxbox
-set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShaderxbox
-set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
