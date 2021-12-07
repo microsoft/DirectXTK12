@@ -40,7 +40,7 @@ namespace DirectX
         static const D3D12_BLEND_DESC AlphaBlend;
         static const D3D12_BLEND_DESC Additive;
         static const D3D12_BLEND_DESC NonPremultiplied;
-        
+
         // Depth stencil states.
         static const D3D12_DEPTH_STENCIL_DESC DepthNone;
         static const D3D12_DEPTH_STENCIL_DESC DepthDefault;

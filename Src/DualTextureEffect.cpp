@@ -44,7 +44,7 @@ class DualTextureEffect::Impl : public EffectBase<DualTextureEffectTraits>
 {
 public:
     Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-    
+
     enum RootParameterIndex
     {
         Texture1SRV,

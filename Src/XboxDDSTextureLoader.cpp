@@ -570,7 +570,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT Xbox::CreateDDSTextureFromFile( 
+HRESULT Xbox::CreateDDSTextureFromFile(
     ID3D12Device* d3dDevice,
     const wchar_t* fileName,
     ID3D12Resource** texture,

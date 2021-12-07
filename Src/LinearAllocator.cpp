@@ -49,7 +49,7 @@ size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
 
 void LinearAllocatorPage::Release() noexcept
 {
-    assert(mRefCount > 0); 
+    assert(mRefCount > 0);
 
     if (mRefCount.fetch_sub(1) == 1)
     {
@@ -496,4 +496,3 @@ void LinearAllocator::SetPageDebugName(LinearAllocatorPage* list) noexcept
     }
 }
 #endif
-

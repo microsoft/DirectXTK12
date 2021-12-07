@@ -239,7 +239,7 @@ namespace DirectX
 
         VertexPositionNormalColor(VertexPositionNormalColor&&) = default;
         VertexPositionNormalColor& operator=(VertexPositionNormalColor&&) = default;
-    
+
         VertexPositionNormalColor(XMFLOAT3 const& iposition, XMFLOAT3 const& inormal, XMFLOAT4 const& icolor) noexcept
             : position(iposition),
             normal(inormal),

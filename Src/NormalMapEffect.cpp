@@ -202,7 +202,7 @@ namespace
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
     #include "XboxOneNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc"
-#else    
+#else
     #include "NormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "NormalMapEffect_VSNormalPixelLightingTxVc.inc"
     #include "NormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
@@ -719,7 +719,7 @@ void NormalMapEffect::DisableSpecular()
     // Set specular color to black, power to 1
     // Note: Don't use a power of 0 or the shader will generate strange highlights on non-specular materials
 
-    pImpl->constants.specularColorAndPower = g_XMIdentityR3; 
+    pImpl->constants.specularColorAndPower = g_XMIdentityR3;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }

@@ -177,7 +177,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
 {
     if (ifx >= Effect_Max)
         throw std::invalid_argument("Effect not defined");
-   
+
     // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =

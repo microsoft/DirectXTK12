@@ -61,7 +61,7 @@ public:
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
-    
+
     int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
@@ -132,7 +132,7 @@ const int EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] =
     1,      // lt/gt, no fog
     2,      // lt/gt, vertex color
     3,      // lt/gt, vertex color, no fog
-    
+
     0,      // eq/ne
     1,      // eq/ne, no fog
     2,      // eq/ne, vertex color
@@ -157,7 +157,7 @@ const int EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] =
     1,      // lt/gt, no fog
     0,      // lt/gt, vertex color
     1,      // lt/gt, vertex color, no fog
-    
+
     2,      // eq/ne
     3,      // eq/ne, no fog
     2,      // eq/ne, vertex color
@@ -283,7 +283,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     // Compute derived parameter values.
     matrices.SetConstants(dirtyFlags, constants.worldViewProj);
-    fog.SetConstants(dirtyFlags, matrices.worldView, constants.fogVector);            
+    fog.SetConstants(dirtyFlags, matrices.worldView, constants.fogVector);
     color.SetConstants(dirtyFlags, constants.diffuseColor);
 
     UpdateConstants();
@@ -293,7 +293,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         // Convert reference alpha from 8 bit integer to 0-1 float format.
         auto reference = static_cast<float>(referenceAlpha) / 255.0f;
-                
+
         // Comparison tolerance of half the 8 bit integer precision.
         const float threshold = 0.5f / 255.0f;
 
@@ -362,7 +362,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
         // x = compareTo, y = threshold, zw = resultSelector.
         constants.alphaTest = XMVectorPermute<0, 1, 4, 5>(XMVectorSet(compareTo, threshold, 0, 0), resultSelector);
-                
+
         dirtyFlags &= ~EffectDirtyFlags::AlphaTest;
         dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
     }

@@ -232,7 +232,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
 {
     if (ifx >= Effect_Max)
         throw std::invalid_argument("Effect not defined");
-   
+
     switch (ifx)
     {
     case Copy:

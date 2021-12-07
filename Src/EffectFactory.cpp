@@ -527,10 +527,10 @@ EffectFactory::~EffectFactory() = default;
 
 
 std::shared_ptr<IEffect> EffectFactory::CreateEffect(
-    const EffectInfo& info, 
+    const EffectInfo& info,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
-    const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+    const D3D12_INPUT_LAYOUT_DESC& inputLayout,
     int textureDescriptorOffset,
     int samplerDescriptorOffset)
 {

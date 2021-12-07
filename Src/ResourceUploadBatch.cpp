@@ -417,7 +417,7 @@ public:
 
         if (desc.MipLevels == 1)
         {
-            // Nothing to do 
+            // Nothing to do
             return;
         }
         if (desc.MipLevels == 0)
@@ -447,7 +447,7 @@ public:
         }
 
         // If the texture's format doesn't support UAVs we'll have to copy it to a texture that does first.
-        // This is true of BGRA or sRGB textures, for example. 
+        // This is true of BGRA or sRGB textures, for example.
         if (uavCompat)
         {
             GenerateMips_UnorderedAccessPath(resource);
@@ -813,7 +813,7 @@ private:
         mTrackedObjects.push_back(resource);
         mTrackedObjects.push_back(descriptorHeap);
     }
-    
+
     // Resource is not UAV compatible
     void GenerateMips_TexturePath(
         _In_ ID3D12Resource* resource)
@@ -851,7 +851,7 @@ private:
         mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
         TransitionResource(mList.Get(), resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, originalState);
-        
+
         // Generate the mips
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 

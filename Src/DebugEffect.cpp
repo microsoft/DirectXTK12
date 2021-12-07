@@ -113,7 +113,7 @@ namespace
     #include "XboxOneDebugEffect_PSRGBNormals.inc"
     #include "XboxOneDebugEffect_PSRGBTangents.inc"
     #include "XboxOneDebugEffect_PSRGBBiTangents.inc"
-#else    
+#else
     #include "DebugEffect_VSDebug.inc"
     #include "DebugEffect_VSDebugInst.inc"
 
@@ -136,7 +136,7 @@ namespace
 
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<DebugEffectTraits>::VertexShaderBytecode[] =
-{    
+{
     { DebugEffect_VSDebug,         sizeof(DebugEffect_VSDebug)         },
     { DebugEffect_VSDebugVc,       sizeof(DebugEffect_VSDebugVc)       },
     { DebugEffect_VSDebugBn,       sizeof(DebugEffect_VSDebugBn)       },

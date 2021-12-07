@@ -41,7 +41,7 @@ public:
         D3D12_RESOURCE_STATES stateAfterIB);
 
     void DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const;
-    
+
     UINT                        mIndexCount;
     SharedGraphicsResource      mIndexBuffer;
     SharedGraphicsResource      mVertexBuffer;
@@ -468,7 +468,7 @@ void GeometricPrimitive::CreateCone(
     VertexCollection& vertices,
     IndexCollection& indices,
     float diameter,
-    float height, 
+    float height,
     size_t tessellation,
     bool rhcoords)
 {
@@ -487,7 +487,7 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTorus(
     size_t tessellation,
     bool rhcoords,
     _In_opt_ ID3D12Device* device)
-{	
+{
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
 

@@ -2,31 +2,31 @@
 // LinearAllocator.h
 //
 // A linear allocator. When Allocate is called it will try to return you a pointer into
-// existing graphics memory. If there is no space left from what is allocated, more 
+// existing graphics memory. If there is no space left from what is allocated, more
 // pages are allocated on-the-fly.
 //
 // Each allocation must be smaller or equal to pageSize. It is not necessary but is most
-// efficient for the sizes to be some fraction of pageSize. pageSize does not determine 
+// efficient for the sizes to be some fraction of pageSize. pageSize does not determine
 // the size of the physical pages underneath the virtual memory (that's given by the
-// XMemAttributes) but is how much additional memory the allocator should allocate 
+// XMemAttributes) but is how much additional memory the allocator should allocate
 // each time you run out of space.
 //
-// preallocatePages specifies how many pages to initially allocate. Specifying zero will 
+// preallocatePages specifies how many pages to initially allocate. Specifying zero will
 // preallocate two pages by default.
 //
 // This class is NOT thread safe. You should protect this with the appropriate sync
 // primitives or, even better, use one linear allocator per thread.
 //
-// Pages are freed once the GPU is done with them. As such, you need to specify when a 
-// page is in use and when it is no longer in use. Use RetirePages to prompt the 
+// Pages are freed once the GPU is done with them. As such, you need to specify when a
+// page is in use and when it is no longer in use. Use RetirePages to prompt the
 // allocator to check if pages are no longer being used by the GPU. Use InsertFences to
-// mark all used pages as in-use by the GPU, removing them from the available pages 
+// mark all used pages as in-use by the GPU, removing them from the available pages
 // list. It is recommended you call RetirePages and InsertFences once a frame, usually
 // just before Present().
 //
-// Why is RetirePages decoupled from InsertFences? It's possible that you might want to 
-// reclaim pages more frequently than locking used pages. For example, if you find the 
-// allocator is burning through pages too quickly you can call RetirePages to reclaim 
+// Why is RetirePages decoupled from InsertFences? It's possible that you might want to
+// reclaim pages more frequently than locking used pages. For example, if you find the
+// allocator is burning through pages too quickly you can call RetirePages to reclaim
 // some that the GPU has finished with. However, this adds additional CPU overhead so it
 // is left to you to decide. In most cases this is sufficient:
 //
@@ -89,7 +89,7 @@ namespace DirectX
 
     class LinearAllocator
     {
-    public:        
+    public:
         // These values will be rounded up to the nearest 64k.
         // You can specify zero for incrementalSizeBytes to increment
         // by 1 page (64k).
@@ -142,7 +142,7 @@ namespace DirectX
         uint64_t                                m_fenceCount;
         Microsoft::WRL::ComPtr<ID3D12Device>    m_device;
         Microsoft::WRL::ComPtr<ID3D12Fence>     m_fence;
-        
+
         LinearAllocatorPage* GetPageForAlloc(size_t sizeBytes, size_t alignment);
         LinearAllocatorPage* GetCleanPageForAlloc();
 
