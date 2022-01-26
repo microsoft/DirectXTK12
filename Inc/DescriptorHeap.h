@@ -118,7 +118,7 @@ namespace DirectX
         size_t Count() const noexcept { return m_desc.NumDescriptors; }
         unsigned int Flags() const noexcept { return m_desc.Flags; }
         D3D12_DESCRIPTOR_HEAP_TYPE Type() const noexcept { return m_desc.Type; }
-        size_t Increment() const noexcept { return m_increment; }
+        uint32_t Increment() const noexcept { return m_increment; }
         ID3D12DescriptorHeap* Heap() const noexcept { return m_pHeap.Get(); }
 
         static void __cdecl DefaultDesc(
