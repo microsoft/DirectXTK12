@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Gaming.Xbox.Scarlett.x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Gaming.Xbox.Scarlett.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Gaming.Xbox.Scarlett.x64">
+      <Configuration>Profile</Configuration>
+      <Platform>Gaming.Xbox.Scarlett.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Gaming.Xbox.Scarlett.x64">
+      <Configuration>Release</Configuration>
+      <Platform>Gaming.Xbox.Scarlett.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Gaming.Xbox.XboxOne.x64">
+      <Configuration>Release</Configuration>
+      <Platform>Gaming.Xbox.XboxOne.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Gaming.Xbox.XboxOne.x64">
+      <Configuration>Profile</Configuration>
+      <Platform>Gaming.Xbox.XboxOne.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Gaming.Xbox.XboxOne.x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Gaming.Xbox.XboxOne.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Gaming.Desktop.x64">
+      <Configuration>Release</Configuration>
+      <Platform>Gaming.Desktop.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Gaming.Desktop.x64">
+      <Configuration>Profile</Configuration>
+      <Platform>Gaming.Desktop.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Gaming.Desktop.x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Gaming.Desktop.x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>DirectXTK12</ProjectName>
+    <RootNamespace>DirectXTK12</RootNamespace>
+    <ProjectGuid>{052c4858-c76f-4cea-8a1a-e8e5559e67c2}</ProjectGuid>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <Keyword>Win32Proj</Keyword>
+    <!-- - - - -->
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <TargetRuntime>Native</TargetRuntime>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Condition="Exists($(ATGBuildProps))" Project="$(ATGBuildProps)" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'">
+    <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
+    <LibraryPath>$(Console_SdkLibPath)</LibraryPath>
+    <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
+    <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'">
+    <LibraryPath>$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(Console_SdkIncludeRoot);$(IncludePath)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'">
+    <LibraryPath>$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(Console_SdkIncludeRoot);$(IncludePath)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'">
+    <LibraryPath>$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(Console_SdkIncludeRoot);$(IncludePath)</IncludePath>
+    <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DirectXTK12</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalUsingDirectories />
+      <ForcedUsingFiles />
+      <Optimization>MaxSpeed</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
+      <ForcedUsingFiles>
+      </ForcedUsingFiles>
+      <Optimization>MaxSpeed</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalUsingDirectories />
+      <ForcedUsingFiles />
+      <Optimization>MaxSpeed</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>NDEBUG;_LIB;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
+      <ForcedUsingFiles>
+      </ForcedUsingFiles>
+      <Optimization>MaxSpeed</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>NDEBUG;_LIB;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'">
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalUsingDirectories />
+      <ForcedUsingFiles />
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode>false</SupportJustMyCode>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'">
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
+      <ForcedUsingFiles>
+      </ForcedUsingFiles>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode>false</SupportJustMyCode>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'">
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;_LIB;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'">
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <MinimalRebuild>false</MinimalRebuild>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;__WRL_NO_DEFAULT_LIB__;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode>false</SupportJustMyCode>
+    </ClCompile>
+    <FXCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <AdditionalOptions>/Fd "$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
+    </FXCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Audio\SoundCommon.h" />
+    <ClInclude Include="Audio\WaveBankReader.h" />
+    <ClInclude Include="Audio\WAVFileReader.h" />
+    <ClInclude Include="Inc\Audio.h" />
+    <ClInclude Include="Inc\BufferHelpers.h" />
+    <ClInclude Include="Inc\CommonStates.h" />
+    <ClInclude Include="Inc\DDSTextureLoader.h" />
+    <ClInclude Include="Inc\DescriptorHeap.h" />
+    <ClInclude Include="Inc\DirectXHelpers.h" />
+    <ClInclude Include="Inc\EffectPipelineStateDescription.h" />
+    <ClInclude Include="Inc\Effects.h" />
+    <ClInclude Include="Inc\GamePad.h" />
+    <ClInclude Include="Inc\GeometricPrimitive.h" />
+    <ClInclude Include="Inc\GraphicsMemory.h" />
+    <ClInclude Include="Inc\Keyboard.h" />
+    <ClInclude Include="Inc\Model.h" />
+    <ClInclude Include="Inc\Mouse.h" />
+    <ClInclude Include="Inc\PostProcess.h" />
+    <ClInclude Include="Inc\PrimitiveBatch.h" />
+    <ClInclude Include="Inc\RenderTargetState.h" />
+    <ClInclude Include="Inc\ResourceUploadBatch.h" />
+    <ClInclude Include="Inc\ScreenGrab.h" />
+    <ClInclude Include="Inc\SimpleMath.h" />
+    <ClInclude Include="Inc\SpriteBatch.h" />
+    <ClInclude Include="Inc\SpriteFont.h" />
+    <ClInclude Include="Inc\VertexTypes.h" />
+    <ClInclude Include="Inc\WICTextureLoader.h" />
+    <ClInclude Include="Inc\XboxDDSTextureLoader.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Src\AlignedNew.h" />
+    <ClInclude Include="Src\Bezier.h" />
+    <ClInclude Include="Src\BinaryReader.h" />
+    <ClInclude Include="Src\d3dx12.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Src\DDS.h" />
+    <ClInclude Include="Src\DemandCreate.h" />
+    <ClInclude Include="Src\EffectCommon.h" />
+    <ClInclude Include="Src\Geometry.h" />
+    <ClInclude Include="Src\LinearAllocator.h" />
+    <ClInclude Include="Src\LoaderHelpers.h" />
+    <ClInclude Include="Src\pch.h" />
+    <ClInclude Include="Src\PlatformHelpers.h" />
+    <ClInclude Include="Src\SDKMesh.h" />
+    <ClInclude Include="Src\SharedResourcePool.h" />
+    <ClInclude Include="Src\vbo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Audio\AudioEngine.cpp" />
+    <ClCompile Include="Audio\DynamicSoundEffectInstance.cpp" />
+    <ClCompile Include="Audio\SoundCommon.cpp" />
+    <ClCompile Include="Audio\SoundEffect.cpp" />
+    <ClCompile Include="Audio\SoundEffectInstance.cpp" />
+    <ClCompile Include="Audio\SoundStreamInstance.cpp" />
+    <ClCompile Include="Audio\WaveBank.cpp" />
+    <ClCompile Include="Audio\WaveBankReader.cpp" />
+    <ClCompile Include="Audio\WAVFileReader.cpp" />
+    <ClCompile Include="Src\AlphaTestEffect.cpp" />
+    <ClCompile Include="Src\BasicEffect.cpp" />
+    <ClCompile Include="Src\BasicPostProcess.cpp" />
+    <ClCompile Include="Src\BinaryReader.cpp" />
+    <ClCompile Include="Src\BufferHelpers.cpp" />
+    <ClCompile Include="Src\CommonStates.cpp" />
+    <ClCompile Include="Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="Src\DebugEffect.cpp" />
+    <ClCompile Include="Src\DescriptorHeap.cpp" />
+    <ClCompile Include="Src\DirectXHelpers.cpp" />
+    <ClCompile Include="Src\DualPostProcess.cpp" />
+    <ClCompile Include="Src\DualTextureEffect.cpp" />
+    <ClCompile Include="Src\EffectCommon.cpp" />
+    <ClCompile Include="Src\EffectFactory.cpp" />
+    <ClCompile Include="Src\EffectPipelineStateDescription.cpp" />
+    <ClCompile Include="Src\EffectTextureFactory.cpp" />
+    <ClCompile Include="Src\EnvironmentMapEffect.cpp" />
+    <ClCompile Include="Src\GamePad.cpp" />
+    <ClCompile Include="Src\GeometricPrimitive.cpp" />
+    <ClCompile Include="Src\Geometry.cpp" />
+    <ClCompile Include="Src\GraphicsMemory.cpp" />
+    <ClCompile Include="Src\Keyboard.cpp" />
+    <ClCompile Include="Src\LinearAllocator.cpp" />
+    <ClCompile Include="Src\Model.cpp" />
+    <ClCompile Include="Src\ModelLoadCMO.cpp" />
+    <ClCompile Include="Src\ModelLoadSDKMESH.cpp" />
+    <ClCompile Include="Src\ModelLoadVBO.cpp" />
+    <ClCompile Include="Src\Mouse.cpp" />
+    <ClCompile Include="Src\NormalMapEffect.cpp" />
+    <ClCompile Include="Src\PBREffect.cpp" />
+    <ClCompile Include="Src\PBREffectFactory.cpp" />
+    <ClCompile Include="Src\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.Scarlett.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.Scarlett.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.XboxOne.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Xbox.Scarlett.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Src\PrimitiveBatch.cpp" />
+    <ClCompile Include="Src\ResourceUploadBatch.cpp" />
+    <ClCompile Include="Src\ScreenGrab.cpp" />
+    <ClCompile Include="Src\SimpleMath.cpp" />
+    <ClCompile Include="Src\SkinnedEffect.cpp" />
+    <ClCompile Include="Src\SpriteBatch.cpp" />
+    <ClCompile Include="Src\SpriteFont.cpp" />
+    <ClCompile Include="Src\ToneMapPostProcess.cpp" />
+    <ClCompile Include="Src\VertexTypes.cpp" />
+    <ClCompile Include="Src\WICTextureLoader.cpp" />
+    <ClCompile Include="Src\XboxDDSTextureLoader.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Desktop.x64'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Inc\SimpleMath.inl" />
+    <None Include="README.md" />
+    <None Include="Src\Shaders\Common.fxh" />
+    <None Include="Src\Shaders\CompileShaders.cmd" />
+    <None Include="Src\Shaders\Lighting.fxh" />
+    <None Include="Src\Shaders\PBRCommon.fxh" />
+    <None Include="Src\Shaders\PixelPacking_Velocity.hlsli" />
+    <None Include="Src\Shaders\RootSig.fxh" />
+    <None Include="Src\Shaders\Skinning.fxh" />
+    <None Include="Src\Shaders\Structures.fxh" />
+    <None Include="Src\Shaders\Utilities.fxh" />
+    <None Include="Src\TeapotData.inc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\AlphaTestEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\BasicEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\DebugEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\DualTextureEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\EnvironmentMapEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\GenerateMips.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\NormalMapEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\PBREffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\PostProcess.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\SkinnedEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\SpriteEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Src\Shaders\ToneMap.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <Target Name="ATGEnsureShaders" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='Gaming.Desktop.x64'">
+    <PropertyGroup>
+      <_ATGFXCPath>$(WindowsSDK_ExecutablePath_x64.Split(';')[0])</_ATGFXCPath>
+      <_ATGFXCPath>$(_ATGFXCPath.Replace("x64",""))</_ATGFXCPath>
+      <_ATGFXCPath Condition="'$(_ATGFXCPath)' != '' and !HasTrailingSlash('$(_ATGFXCPath)')">$(_ATGFXCPath)\</_ATGFXCPath>
+    </PropertyGroup>
+    <Exec Condition="!Exists('src/Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders dxil" EnvironmentVariables="WindowsSdkVerBinPath=$(_ATGFXCPath)" />
+    <PropertyGroup>
+      <_ATGFXCPath />
+    </PropertyGroup>
+  </Target>
+  <Target Name="ATGDeleteShaders" AfterTargets="Clean" Condition="'$(Platform)'=='Gaming.Desktop.x64'">
+    <ItemGroup>
+      <_ATGShaderHeaders Include="$(ProjectDir)src/Shaders/Compiled/*.inc" Exclude="$(ProjectDir)src/Shaders/Compiled/*Xbox*.inc" />
+      <_ATGShaderSymbols Include="$(ProjectDir)src/Shaders/Compiled/*.pdb" Exclude="$(ProjectDir)src/Shaders/Compiled/*Xbox*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_ATGShaderHeaders)" />
+    <Delete Files="@(_ATGShaderSymbols)" />
+  </Target>
+  <Target Name="ATGEnsureShadersXbox" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
+    <Exec Condition="!Exists('src/Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders gxdk" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath)" />
+  </Target>
+  <Target Name="ATGDeleteShadersXbox" AfterTargets="Clean" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
+    <ItemGroup>
+      <_ATGShaderHeaders Include="$(ProjectDir)src/Shaders/Compiled/XboxGamingXboxOne*.inc" />
+      <_ATGShaderSymbols Include="$(ProjectDir)src/Shaders/Compiled/XboxGamingXboxOne*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_ATGShaderHeaders)" />
+    <Delete Files="@(_ATGShaderSymbols)" />
+  </Target>
+  <Target Name="ATGEnsureShadersXboxScarlett" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">
+    <Exec Condition="!Exists('src/Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)src/Shaders" Command="CompileShaders gxdk scarlett" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath)" />
+  </Target>
+  <Target Name="ATGDeleteShadersXboxScarlett" AfterTargets="Clean" Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">
+    <ItemGroup>
+      <_ATGShaderHeaders Include="$(ProjectDir)src/Shaders/Compiled/XboxGamingScarlett*.inc" />
+      <_ATGShaderSymbols Include="$(ProjectDir)src/Shaders/Compiled/XboxGamingScarlett*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_ATGShaderHeaders)" />
+    <Delete Files="@(_ATGShaderSymbols)" />
+  </Target>
+</Project>
