@@ -270,7 +270,10 @@ HRESULT DirectX::SaveDDSTextureToFile(
         return hr;
 
     // Create file
-    ScopedHandle hFile(safe_handle(CreateFile2(fileName, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(
+        fileName,
+        GENERIC_WRITE, 0, CREATE_ALWAYS,
+        nullptr)));
     if (!hFile)
         return HRESULT_FROM_WIN32(GetLastError());
 
@@ -427,7 +430,10 @@ HRESULT DirectX::SaveDDSTextureToFile(
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    extern IWICImagingFactory2* _GetWIC() noexcept;
+    namespace Internal
+    {
+        extern IWICImagingFactory2* GetWIC() noexcept;
+    }
 }
 
 _Use_decl_annotations_
@@ -442,6 +448,8 @@ HRESULT DirectX::SaveWICTextureToFile(
     std::function<void(IPropertyBag2*)> setCustomProps,
     bool forceSRGB)
 {
+    using namespace DirectX::Internal;
+
     if (!fileName)
         return E_INVALIDARG;
 
@@ -534,7 +542,7 @@ HRESULT DirectX::SaveWICTextureToFile(
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 

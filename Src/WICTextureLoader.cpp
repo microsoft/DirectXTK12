@@ -154,32 +154,36 @@ namespace
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    IWICImagingFactory2* _GetWIC() noexcept;
-        // Also used by ScreenGrab
-
-    IWICImagingFactory2* _GetWIC() noexcept
+    namespace Internal
     {
-        static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
-
-        IWICImagingFactory2* factory = nullptr;
-        if (!InitOnceExecuteOnce(
-            &s_initOnce,
-            InitializeWICFactory,
-            nullptr,
-            reinterpret_cast<LPVOID*>(&factory)))
-        {
-            return nullptr;
-        }
-
-        return factory;
+        IWICImagingFactory2* GetWIC() noexcept;
+        // Also used by ScreenGrab
     }
-} // namespace DirectX
+}
 
+IWICImagingFactory2* DirectX::Internal::GetWIC() noexcept
+{
+    static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
+
+    IWICImagingFactory2* factory = nullptr;
+    if (!InitOnceExecuteOnce(
+        &s_initOnce,
+        InitializeWICFactory,
+        nullptr,
+        reinterpret_cast<LPVOID*>(&factory)))
+    {
+        return nullptr;
+    }
+
+    return factory;
+}
+
+using namespace Internal;
 
 namespace
 {
     //---------------------------------------------------------------------------------
-    DXGI_FORMAT _WICToDXGI(const GUID& guid) noexcept
+    DXGI_FORMAT WICToDXGI(const GUID& guid) noexcept
     {
         for (size_t i = 0; i < std::size(g_WICFormats); ++i)
         {
@@ -191,9 +195,9 @@ namespace
     }
 
     //---------------------------------------------------------------------------------
-    size_t _WICBitsPerPixel(REFGUID targetGuid) noexcept
+    size_t WICBitsPerPixel(REFGUID targetGuid) noexcept
     {
-        auto pWIC = _GetWIC();
+        auto pWIC = GetWIC();
         if (!pWIC)
             return 0;
 
@@ -283,7 +287,7 @@ namespace
 
         size_t bpp = 0;
 
-        DXGI_FORMAT format = _WICToDXGI(pixelFormat);
+        DXGI_FORMAT format = WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
             for (size_t i = 0; i < std::size(g_WICConvert); ++i)
@@ -292,9 +296,9 @@ namespace
                 {
                     memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &g_WICConvert[i].target, sizeof(GUID));
 
-                    format = _WICToDXGI(g_WICConvert[i].target);
+                    format = WICToDXGI(g_WICConvert[i].target);
                     assert(format != DXGI_FORMAT_UNKNOWN);
-                    bpp = _WICBitsPerPixel(convertGUID);
+                    bpp = WICBitsPerPixel(convertGUID);
                     break;
                 }
             }
@@ -310,7 +314,7 @@ namespace
         }
         else
         {
-            bpp = _WICBitsPerPixel(pixelFormat);
+            bpp = WICBitsPerPixel(pixelFormat);
         }
 
         if (loadFlags & WIC_LOADER_FORCE_RGBA32)
@@ -427,7 +431,7 @@ namespace
         else if (twidth != width || theight != height)
         {
             // Resize
-            auto pWIC = _GetWIC();
+            auto pWIC = GetWIC();
             if (!pWIC)
                 return E_NOINTERFACE;
 
@@ -478,7 +482,7 @@ namespace
         else
         {
             // Format conversion but no resize
-            auto pWIC = _GetWIC();
+            auto pWIC = GetWIC();
             if (!pWIC)
                 return E_NOINTERFACE;
 
@@ -578,14 +582,14 @@ namespace
         if (FAILED(frame->GetPixelFormat(&pixelFormat)))
             return DXGI_FORMAT_UNKNOWN;
 
-        DXGI_FORMAT format = _WICToDXGI(pixelFormat);
+        DXGI_FORMAT format = WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
             for (size_t i = 0; i < std::size(g_WICConvert); ++i)
             {
                 if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
                 {
-                    return _WICToDXGI(g_WICConvert[i].target);
+                    return WICToDXGI(g_WICConvert[i].target);
                 }
             }
         }
@@ -667,7 +671,7 @@ HRESULT DirectX::LoadWICTextureFromMemoryEx(
     if (wicDataSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -730,7 +734,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     if (wicDataSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -861,7 +865,7 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
     if (!d3dDevice || !fileName || !texture)
         return E_INVALIDARG;
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -910,7 +914,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     if (!d3dDevice || !fileName || !texture)
         return E_INVALIDARG;
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
