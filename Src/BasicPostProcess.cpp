@@ -249,16 +249,16 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
         // Same as CommonStates::StaticLinearClamp
-        CD3DX12_STATIC_SAMPLER_DESC sampler(
+        const CD3DX12_STATIC_SAMPLER_DESC sampler(
             0, // register
             D3D12_FILTER_MIN_MAG_MIP_LINEAR,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
@@ -300,7 +300,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    EffectPipelineStateDescription psd(nullptr,
+    const EffectPipelineStateDescription psd(nullptr,
         CommonStates::Opaque,
         CommonStates::DepthNone,
         CommonStates::CullNone,
@@ -394,8 +394,8 @@ void BasicPostProcess::Impl::DownScale2x2()
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    float tu = 1.0f / float(texWidth);
-    float tv = 1.0f / float(texHeight);
+    const float tu = 1.0f / float(texWidth);
+    const float tv = 1.0f / float(texHeight);
 
     // Sample from the 4 surrounding points. Since the center point will be in the exact
     // center of 4 texels, a 0.5f offset is needed to specify a texel center.
@@ -421,8 +421,8 @@ void BasicPostProcess::Impl::DownScale4x4()
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    float tu = 1.0f / float(texWidth);
-    float tv = 1.0f / float(texHeight);
+    const float tu = 1.0f / float(texWidth);
+    const float tv = 1.0f / float(texHeight);
 
     // Sample from the 16 surrounding points. Since the center point will be in the
     // exact center of 16 texels, a 1.5f offset is needed to specify a texel center.
@@ -449,8 +449,8 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    float tu = 1.0f / float(texWidth);
-    float tv = 1.0f / float(texHeight);
+    const float tu = 1.0f / float(texWidth);
+    const float tv = 1.0f / float(texHeight);
 
     float totalWeight = 0.0f;
     size_t index = 0;
@@ -473,7 +473,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
             offsets[index].z = 0.0f;
             offsets[index].w = 0.0f;
 
-            float g = GaussianDistribution(float(x), float(y), 1.0f);
+            const float g = GaussianDistribution(float(x), float(y), 1.0f);
             weights[index] = XMVectorReplicate(g);
 
             totalWeight += XMVectorGetX(weights[index]);
@@ -486,11 +486,11 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
     // blur kernels add to 1.0f to ensure that the intensity of the image isn't
     // changed when the blur occurs. An optional multiplier variable is used to
     // add or remove image intensity during the blur.
-    XMVECTOR vtw = XMVectorReplicate(totalWeight);
-    XMVECTOR vm = XMVectorReplicate(multiplier);
+    const XMVECTOR vtw = XMVectorReplicate(totalWeight);
+    const XMVECTOR vm = XMVectorReplicate(multiplier);
     for (size_t i = 0; i < index; ++i)
     {
-        XMVECTOR w = XMVectorDivide(weights[i], vtw);
+        const XMVECTOR w = XMVectorDivide(weights[i], vtw);
         weights[i] = XMVectorMultiply(w, vm);
     }
 }

@@ -155,8 +155,8 @@ void PrimitiveBatchBase::Impl::Draw(D3D_PRIMITIVE_TOPOLOGY topology, bool isInde
     assert(pMappedVertices != nullptr);
 
     // Can we merge this primitive in with an existing batch, or must we flush first?
-    bool wrapIndexBuffer = (mIndexCount + indexCount > mMaxIndices);
-    bool wrapVertexBuffer = (mVertexCount + vertexCount > mMaxVertices);
+    const bool wrapIndexBuffer = (mIndexCount + indexCount > mMaxIndices);
+    const bool wrapVertexBuffer = (mVertexCount + vertexCount > mMaxVertices);
 
     if ((topology != mCurrentTopology) ||
         (isIndexed != mCurrentlyIndexed) ||

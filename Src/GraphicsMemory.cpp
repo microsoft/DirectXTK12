@@ -29,7 +29,7 @@ namespace
     static_assert((MinAllocSize & (MinAllocSize - 1)) == 0, "MinAllocSize size must be a power of 2");
     static_assert(MinAllocSize >= (4 * 1024), "MinAllocSize size must be greater than 4K");
 
-    inline size_t NextPow2(size_t x) noexcept
+    constexpr size_t NextPow2(size_t x) noexcept
     {
         x--;
         x |= x >> 1;
@@ -45,7 +45,7 @@ namespace
 
     inline size_t GetPoolIndexFromSize(size_t x) noexcept
     {
-        size_t allocatorPageSize = x >> AllocatorIndexShift;
+        const size_t allocatorPageSize = x >> AllocatorIndexShift;
         // gives a value from range:
         // 0 - sub-4k allocator
         // 1 - 4k allocator
@@ -112,7 +112,7 @@ namespace
         // Explicitly destroy LinearAllocators inside a critical section
         ~DeviceAllocator()
         {
-            ScopedLock lock(mMutex);
+            const ScopedLock lock(mMutex);
 
             for (auto& allocator : mPools)
             {
@@ -125,8 +125,8 @@ namespace
             ScopedLock lock(mMutex);
 
             // Which memory pool does it live in?
-            size_t poolSize = NextPow2((alignment + size) * PoolIndexScale);
-            size_t poolIndex = GetPoolIndexFromSize(poolSize);
+            const size_t poolSize = NextPow2((alignment + size) * PoolIndexScale);
+            const size_t poolIndex = GetPoolIndexFromSize(poolSize);
             assert(poolIndex < mPools.size());
 
             // If the allocator isn't initialized yet, do so now

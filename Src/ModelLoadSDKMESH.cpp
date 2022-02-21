@@ -385,14 +385,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     if (!meshData)
         throw std::invalid_argument("meshData cannot be null");
 
-    uint64_t dataSize = idataSize;
+    const uint64_t dataSize = idataSize;
 
     // File Headers
     if (dataSize < sizeof(DXUT::SDKMESH_HEADER))
         throw std::runtime_error("End of file");
     auto header = reinterpret_cast<const DXUT::SDKMESH_HEADER*>(meshData);
 
-    size_t headerSize = sizeof(DXUT::SDKMESH_HEADER)
+    const size_t headerSize = sizeof(DXUT::SDKMESH_HEADER)
         + header->NumVertexBuffers * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER)
         + header->NumIndexBuffers * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER);
     if (header->HeaderSize != headerSize)
@@ -472,7 +472,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     }
 
     // Buffer data
-    uint64_t bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
+    const uint64_t bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
     if ((dataSize < bufferDataOffset)
         || (dataSize < bufferDataOffset + header->BufferDataSize))
         throw std::runtime_error("End of file");
@@ -613,7 +613,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         // Create subsets
         for (size_t j = 0; j < mh.NumSubsets; ++j)
         {
-            auto sIndex = subsets[j];
+            auto const sIndex = subsets[j];
             if (sIndex >= header->NumTotalSubsets)
                 throw std::out_of_range("Invalid mesh found");
 
@@ -679,14 +679,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
 
             // Vertex data
             auto verts = bufferData + (vh.DataOffset - bufferDataOffset);
-            auto vbytes = static_cast<size_t>(vh.SizeBytes);
+            auto const vbytes = static_cast<size_t>(vh.SizeBytes);
             part->vertexBufferSize = static_cast<uint32_t>(vh.SizeBytes);
             part->vertexBuffer = GraphicsMemory::Get(device).Allocate(vbytes);
             memcpy(part->vertexBuffer.Memory(), verts, vbytes);
 
             // Index data
             auto indices = bufferData + (ih.DataOffset - bufferDataOffset);
-            auto ibytes = static_cast<size_t>(ih.SizeBytes);
+            auto const ibytes = static_cast<size_t>(ih.SizeBytes);
             part->indexBufferSize = static_cast<uint32_t>(ih.SizeBytes);
             part->indexBuffer = GraphicsMemory::Get(device).Allocate(ibytes);
             memcpy(part->indexBuffer.Memory(), indices, ibytes);
@@ -734,7 +734,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
 
             transforms[j] = XMLoadFloat4x4(&frameArray[j].Matrix);
 
-            uint32_t index = frameArray[j].Mesh;
+            const uint32_t index = frameArray[j].Mesh;
             if (index != DXUT::INVALID_MESH)
             {
                 if (index >= model->meshes.size())

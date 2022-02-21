@@ -251,7 +251,7 @@ namespace
         desc.SampleDesc.Quality = 0;
         desc.Dimension = resDim;
 
-        CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
+        const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         hr = d3dDevice->CreateCommittedResource(
             &defaultHeapProperties,
@@ -285,7 +285,7 @@ namespace
     {
         HRESULT hr = S_OK;
 
-        UINT width = header->width;
+        const UINT width = header->width;
         UINT height = header->height;
         UINT depth = header->depth;
 
@@ -473,7 +473,7 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
         }
 
-        UINT numberOfPlanes = D3D12GetFormatPlaneCount(d3dDevice, format);
+        const UINT numberOfPlanes = D3D12GetFormatPlaneCount(d3dDevice, format);
         if (!numberOfPlanes)
             return E_INVALIDARG;
 
@@ -845,7 +845,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
 
     if (loadFlags & DDS_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(header);
+        const DXGI_FORMAT fmt = GetPixelFormat(header);
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
@@ -963,7 +963,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
 
     if (loadFlags & DDS_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(header);
+        const DXGI_FORMAT fmt = GetPixelFormat(header);
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));

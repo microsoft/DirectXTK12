@@ -129,7 +129,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
 
         wchar_t ext[_MAX_EXT] = {};
         _wsplitpath_s(name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
-        bool isdds = _wcsicmp(ext, L".dds") == 0;
+        const bool isdds = _wcsicmp(ext, L".dds") == 0;
 
         DDS_LOADER_FLAGS loadFlags = DDS_LOADER_DEFAULT;
         if (mForceSRGB)
@@ -194,7 +194,7 @@ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int
     assert(textureEntry.mResource != nullptr);
 
     // bind a new descriptor in slot
-    auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
+    auto const textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
     DirectX::CreateShaderResourceView(mDevice.Get(), textureEntry.mResource.Get(), textureDescriptor, textureEntry.mIsCubeMap);
 
     return textureEntry.slot;

@@ -272,11 +272,11 @@ DebugEffect::Impl::Impl(
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         // Create root parameters and initialize first (constants)
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
@@ -293,14 +293,14 @@ DebugEffect::Impl::Impl(
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(debugMode, effectFlags);
+    const int sp = GetPipelineStatePermutation(debugMode, effectFlags);
     assert(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<DebugEffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<DebugEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
-    int pi = EffectBase<DebugEffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<DebugEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
 
@@ -352,7 +352,7 @@ void DebugEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         constants.world = XMMatrixTranspose(matrices.world);
 
-        XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
+        const XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
 
         constants.worldInverseTranspose[0] = worldInverse.r[0];
         constants.worldInverseTranspose[1] = worldInverse.r[1];

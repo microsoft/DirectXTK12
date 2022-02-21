@@ -335,7 +335,7 @@ void Model::LoadStaticBuffers(
         }
     }
 
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     for (auto it = uniqueParts.cbegin(); it != uniqueParts.cend(); ++it)
     {
@@ -352,7 +352,7 @@ void Model::LoadStaticBuffers(
 
             part->vertexBufferSize = static_cast<uint32_t>(part->vertexBuffer.Size());
 
-            auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
+            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,
@@ -408,7 +408,7 @@ void Model::LoadStaticBuffers(
 
             part->indexBufferSize = static_cast<uint32_t>(part->indexBuffer.Size());
 
-            auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
+            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,
@@ -590,7 +590,7 @@ void Model::CopyAbsoluteBoneTransformsTo(
 
     memset(boneTransforms, 0, sizeof(XMMATRIX) * nbones);
 
-    XMMATRIX id = XMMatrixIdentity();
+    const XMMATRIX id = XMMatrixIdentity();
     size_t visited = 0;
     ComputeAbsolute(0, id, bones.size(), boneMatrices.get(), boneTransforms, visited);
 }
@@ -620,7 +620,7 @@ void Model::CopyAbsoluteBoneTransforms(
 
     memset(outBoneTransforms, 0, sizeof(XMMATRIX) * nbones);
 
-    XMMATRIX id = XMMatrixIdentity();
+    const XMMATRIX id = XMMatrixIdentity();
     size_t visited = 0;
     ComputeAbsolute(0, id, bones.size(), inBoneTransforms, outBoneTransforms, visited);
 }

@@ -527,7 +527,7 @@ namespace DirectX
             if (materialIndex >= materials.size())
                 return handle;
 
-            int textureIndex = materials[materialIndex].diffuseTextureIndex;
+            const int textureIndex = materials[materialIndex].diffuseTextureIndex;
             if (textureIndex == -1)
                 return handle;
 

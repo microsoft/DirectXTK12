@@ -371,11 +371,11 @@ void PBREffect::Impl::Initialize(
 
     // Create root signature
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParametersCount] = {};
         CD3DX12_DESCRIPTOR_RANGE textureSRV[6] = {
@@ -430,14 +430,14 @@ void PBREffect::Impl::Initialize(
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(effectFlags);
+    const int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
-    int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
 
@@ -515,7 +515,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         constants.world = XMMatrixTranspose(matrices.world);
 
-        XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
+        const XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
 
         constants.worldInverseTranspose[0] = worldInverse.r[0];
         constants.worldInverseTranspose[1] = worldInverse.r[1];
@@ -528,7 +528,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Eye position vector.
     if (dirtyFlags & EffectDirtyFlags::EyePosition)
     {
-        XMMATRIX viewInverse = XMMatrixInverse(nullptr, matrices.view);
+        const XMMATRIX viewInverse = XMMatrixInverse(nullptr, matrices.view);
 
         constants.eyePosition = viewInverse.r[3];
 
@@ -628,7 +628,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    auto cbuffer = GetConstantBufferGpuAddress();
+    auto const cbuffer = GetConstantBufferGpuAddress();
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
         (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);

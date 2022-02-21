@@ -38,7 +38,7 @@ HRESULT DirectX::CreateStaticBuffer(
     if (!device || !ptr || !count || !stride)
         return E_INVALIDARG;
 
-    uint64_t sizeInbytes = uint64_t(count) * uint64_t(stride);
+    const uint64_t sizeInbytes = uint64_t(count) * uint64_t(stride);
 
     static constexpr uint64_t c_maxBytes = D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u;
 
@@ -48,9 +48,9 @@ HRESULT DirectX::CreateStaticBuffer(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
+    auto const desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
 
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
     HRESULT hr = device->CreateCommittedResource(
@@ -114,9 +114,9 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u, resFlags);
+    auto const desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u, resFlags);
 
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
     HRESULT hr = device->CreateCommittedResource(
@@ -190,10 +190,10 @@ HRESULT DirectX::CreateTextureFromMemory(
         }
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
+    auto const desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
         1u, mipCount, 1u, 0u, resFlags);
 
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
     HRESULT hr = device->CreateCommittedResource(
@@ -262,11 +262,11 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
+    auto const desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
         static_cast<UINT64>(width), static_cast<UINT>(height), static_cast<UINT16>(depth),
         1u, resFlags);
 
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
     HRESULT hr = device->CreateCommittedResource(

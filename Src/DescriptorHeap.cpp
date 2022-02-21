@@ -91,7 +91,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
 {
     assert((size_t(offsetIntoHeap) + size_t(totalDescriptorCount)) <= size_t(m_desc.NumDescriptors));
 
-    D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(offsetIntoHeap);
+    const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(offsetIntoHeap);
 
     device->CopyDescriptors(
         1,

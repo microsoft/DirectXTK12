@@ -144,12 +144,12 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         throw std::runtime_error("EffectFactory");
     }
 
-    int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
-    int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
-    int emissiveTextureIndex = (info.emissiveTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
-    int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
-    int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
-    int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
+    const int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
+    const int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+    const int emissiveTextureIndex = (info.emissiveTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
+    const int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
+    const int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
+    const int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
 
     // Modify base pipeline state
     EffectPipelineStateDescription derivedPSD = (info.alphaValue < 1.0f) ? alphaPipelineState : opaquePipelineState;
@@ -180,7 +180,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
             if (mSharing && !info.name.empty())
             {
-                uint32_t hash = derivedPSD.ComputeHash();
+                const uint32_t hash = derivedPSD.ComputeHash();
                 cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
                 auto it = mEffectCacheNormalMapSkinned.find(cacheName);
@@ -225,7 +225,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             // SkinnedEffect
             if (mSharing && !info.name.empty())
             {
-                uint32_t hash = derivedPSD.ComputeHash();
+                const uint32_t hash = derivedPSD.ComputeHash();
                 cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
                 auto it = mEffectCacheSkinning.find(cacheName);
@@ -268,7 +268,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         if (mSharing && !info.name.empty())
         {
-            uint32_t hash = derivedPSD.ComputeHash();
+            const uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheDualTexture.find(cacheName);
@@ -288,7 +288,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
         effect->SetAlpha(info.alphaValue);
 
-        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        const XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
         effect->SetDiffuseColor(color);
 
         if (diffuseTextureIndex != -1)
@@ -365,7 +365,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         if (mSharing && !info.name.empty())
         {
-            uint32_t hash = derivedPSD.ComputeHash();
+            const uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheNormalMap.find(cacheName);
@@ -433,7 +433,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         // BasicEffect
         if (mSharing && !info.name.empty())
         {
-            uint32_t hash = derivedPSD.ComputeHash();
+            const uint32_t hash = derivedPSD.ComputeHash();
             cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCache.find(cacheName);
@@ -510,11 +510,8 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     textureDescriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
 #else
-    HRESULT hresult = textureDescriptors->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
-    if (FAILED(hresult))
-    {
-        throw com_exception(hresult);
-    }
+    HRESULT hr = textureDescriptors->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
+    ThrowIfFailed(hr);
 #endif
 
     pImpl = std::make_shared<Impl>(device.Get(), textureDescriptors, samplerDescriptors);

@@ -437,11 +437,11 @@ BasicEffect::Impl::Impl(
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         // Create root parameters and initialize first (constants)
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
@@ -453,8 +453,8 @@ BasicEffect::Impl::Impl(
         if (textureEnabled)
         {
             // Include texture and srv
-            CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-            CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+            const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+            const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
             rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
             rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -476,14 +476,14 @@ BasicEffect::Impl::Impl(
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(effectFlags);
+    const int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
-    int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 

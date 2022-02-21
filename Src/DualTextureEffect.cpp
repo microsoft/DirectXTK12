@@ -170,24 +170,24 @@ DualTextureEffect::Impl::Impl(
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         // Texture 1
-        CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        CD3DX12_DESCRIPTOR_RANGE texture1SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE texture1SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
         rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &texture1Range, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::Texture1Sampler].InitAsDescriptorTable(1, &texture1SamplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
 
         // Texture 2
-        CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        CD3DX12_DESCRIPTOR_RANGE texture2SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
+        const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        const CD3DX12_DESCRIPTOR_RANGE texture2SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
         rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::Texture2Sampler].InitAsDescriptorTable(1, &texture2SamplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
 
@@ -220,14 +220,14 @@ DualTextureEffect::Impl::Impl(
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(effectFlags);
+    const int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
-    int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 

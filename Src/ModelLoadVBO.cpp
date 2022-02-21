@@ -76,7 +76,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
             throw std::runtime_error("VB too large for DirectX 12");
     }
 
-    auto vertSize = static_cast<size_t>(sizeInBytes);
+    auto const vertSize = static_cast<size_t>(sizeInBytes);
 
     if (dataSize < (vertSize + sizeof(VBO::header_t)))
         throw std::runtime_error("End of file");
@@ -92,7 +92,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
             throw std::runtime_error("IB too large for DirectX 12");
     }
 
-    auto indexSize = static_cast<size_t>(sizeInBytes);
+    auto const indexSize = static_cast<size_t>(sizeInBytes);
 
     if (dataSize < (sizeof(VBO::header_t) + vertSize + indexSize))
         throw std::runtime_error("End of file");

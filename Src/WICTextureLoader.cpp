@@ -256,7 +256,7 @@ namespace
         }
         else if (width > maxsize || height > maxsize)
         {
-            float ar = static_cast<float>(height) / static_cast<float>(width);
+            const float ar = static_cast<float>(height) / static_cast<float>(width);
             if (width > height)
             {
                 twidth = static_cast<UINT>(maxsize);
@@ -405,14 +405,14 @@ namespace
         }
 
         // Allocate memory for decoded image
-        uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
-        uint64_t numBytes = rowBytes * uint64_t(theight);
+        const uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
+        const uint64_t numBytes = rowBytes * uint64_t(theight);
 
         if (rowBytes > UINT32_MAX || numBytes > UINT32_MAX)
             return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
-        auto rowPitch = static_cast<size_t>(rowBytes);
-        auto imageSize = static_cast<size_t>(numBytes);
+        auto const rowPitch = static_cast<size_t>(rowBytes);
+        auto const imageSize = static_cast<size_t>(numBytes);
 
         decodedData.reset(new (std::nothrow) uint8_t[imageSize]);
         if (!decodedData)
@@ -508,7 +508,7 @@ namespace
         }
 
         // Count the number of mips
-        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
+        const uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
             ? LoaderHelpers::CountMips(twidth, theight) : 1u;
 
         // Create texture
@@ -523,7 +523,7 @@ namespace
         desc.Flags = resFlags;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
-        CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
+        const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         ID3D12Resource* tex = nullptr;
         hr = d3dDevice->CreateCommittedResource(
@@ -582,7 +582,7 @@ namespace
         if (FAILED(frame->GetPixelFormat(&pixelFormat)))
             return DXGI_FORMAT_UNKNOWN;
 
-        DXGI_FORMAT format = WICToDXGI(pixelFormat);
+        const DXGI_FORMAT format = WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
             for (size_t i = 0; i < std::size(g_WICConvert); ++i)
@@ -761,7 +761,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
@@ -935,7 +935,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));

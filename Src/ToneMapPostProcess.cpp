@@ -308,16 +308,16 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
         // Same as CommonStates::StaticPointClamp
-        CD3DX12_STATIC_SAMPLER_DESC sampler(
+        const CD3DX12_STATIC_SAMPLER_DESC sampler(
             0, // register
             D3D12_FILTER_MIN_MAG_MIP_POINT,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
@@ -333,7 +333,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
 
-        CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs, D3D12_SHADER_VISIBILITY_PIXEL);
 
         // Root parameter descriptor
@@ -355,18 +355,18 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     permutation += (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
 #else
     UNREFERENCED_PARAMETER(mrt);
-    int permutation = (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
+    const int permutation = (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
 #endif
 
     assert(permutation >= 0 && permutation < ShaderPermutationCount);
     _Analysis_assume_(permutation >= 0 && permutation < ShaderPermutationCount);
 
-    int shaderIndex = pixelShaderIndices[permutation];
+    const int shaderIndex = pixelShaderIndices[permutation];
     assert(shaderIndex >= 0 && shaderIndex < PixelShaderCount);
     _Analysis_assume_(shaderIndex >= 0 && shaderIndex < PixelShaderCount);
 
     // Create pipeline state.
-    EffectPipelineStateDescription psd(nullptr,
+    const EffectPipelineStateDescription psd(nullptr,
         CommonStates::Opaque,
         CommonStates::DepthNone,
         CommonStates::CullNone,
@@ -472,7 +472,7 @@ void ToneMapPostProcess::SetColorRotation(ColorPrimaryRotation value)
 
 void ToneMapPostProcess::SetColorRotation(CXMMATRIX value)
 {
-    XMMATRIX transpose = XMMatrixTranspose(value);
+    const XMMATRIX transpose = XMMatrixTranspose(value);
     pImpl->constants.colorRotation[0] = transpose.r[0];
     pImpl->constants.colorRotation[1] = transpose.r[1];
     pImpl->constants.colorRotation[2] = transpose.r[2];

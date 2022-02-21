@@ -447,20 +447,20 @@ void NormalMapEffect::Impl::Initialize(
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
-        CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        CD3DX12_DESCRIPTOR_RANGE textureSRV2(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        const CD3DX12_DESCRIPTOR_RANGE textureSRV2(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
         rootParameters[RootParameterIndex::TextureNormalSRV].InitAsDescriptorTable(1, &textureSRV2, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
         rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
         rootParameters[RootParameterIndex::ConstantBufferBones].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
@@ -469,7 +469,7 @@ void NormalMapEffect::Impl::Initialize(
 
         if (specularMap)
         {
-            CD3DX12_DESCRIPTOR_RANGE textureSRV3(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
+            const CD3DX12_DESCRIPTOR_RANGE textureSRV3(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
             rootParameters[RootParameterIndex::TextureSpecularSRV].InitAsDescriptorTable(1, &textureSRV3, D3D12_SHADER_VISIBILITY_PIXEL);
 
             rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
@@ -489,14 +489,14 @@ void NormalMapEffect::Impl::Initialize(
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(effectFlags);
+    const int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
-    int pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
 
@@ -608,7 +608,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    auto cbuffer = GetConstantBufferGpuAddress();
+    auto const cbuffer = GetConstantBufferGpuAddress();
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
         (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);
