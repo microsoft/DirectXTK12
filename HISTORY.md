@@ -6,6 +6,17 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### February 28, 2022
+* Minor fix to DescriptorHeap Increment() to return uint32_t instead of size_t
+* Updated D3DX12 internal copy with latest changes from GitHub
+* SimpleMath Matrix updated with ToEuler and Vector3 version of CreateFromYawPitchRoll methods
+* SimpleMath Quaternion updated with ToEuler, RotateTowards, FromToRotation, LookRotation, and Angle methods
+* Keyboard updated with new IME On/Off v-keys
+* Win32 Mouse now uses ``WM_ACTIVATE`` for more robust behavior
+* *DirectX Tool Kit for Audio* updated for Advanced Format (4Kn) wavebank streaming
+* Code and project review including fixing clang v13 warnings
+* Added CMakePresets.json
+
 ### November 8, 2021
 * VS 2022 support
 * Updated D3DX12 internal copy with latest change from GitHub
