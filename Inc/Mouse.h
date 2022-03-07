@@ -24,6 +24,7 @@ namespace ABI { namespace Windows { namespace UI { namespace Core { struct ICore
 
 #ifdef __clang__
 #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #endif
 
@@ -58,7 +59,8 @@ namespace DirectX
             bool    xButton2;
             int     x;
             int     y;
-            int     scrollWheelValue;
+            int     scrollWheelValueX;
+            int     scrollWheelValueY;
             Mode    positionMode;
         };
 
@@ -96,7 +98,13 @@ namespace DirectX
         State __cdecl GetState() const;
 
         // Resets the accumulated scroll wheel value
-        void __cdecl ResetScrollWheelValue() noexcept;
+        enum SCROLL_WHEEL : uint32_t
+        {
+            ScrollWheel_X       = 0x1,
+            ScrollWheel_Y       = 0x2,
+            ScrollWheel_Both    = 0x3,
+        };
+        void __cdecl ResetScrollWheelValue(SCROLL_WHEEL wheel = ScrollWheel_Both) noexcept;
 
         // Sets mouse mode (defaults to absolute)
         void __cdecl SetMode(Mode mode);
@@ -144,6 +152,8 @@ namespace DirectX
 
         std::unique_ptr<Impl> pImpl;
     };
+
+    DEFINE_ENUM_FLAG_OPERATORS(Mouse::SCROLL_WHEEL);
 }
 
 #ifdef __clang__

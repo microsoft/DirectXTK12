@@ -42,6 +42,7 @@ using Microsoft::WRL::ComPtr;
 //     case WM_MBUTTONDOWN:
 //     case WM_MBUTTONUP:
 //     case WM_MOUSEWHEEL:
+//     case WM_MOUSEHWHEEL:
 //     case WM_XBUTTONDOWN:
 //     case WM_XBUTTONUP:
 //         Mouse::ProcessMessage(message, wParam, lParam);
@@ -62,9 +63,11 @@ public:
         mDeviceToken(0),
         mWindow(nullptr),
         mMode(MODE_ABSOLUTE),
-        mScrollWheelCurrent(0),
+        mScrollWheelCurrentX(0),
+        mScrollWheelCurrentY(0),
         mRelativeX(INT64_MAX),
         mRelativeY(INT64_MAX),
+        mRelativeWheelX(INT64_MAX),
         mRelativeWheelY(INT64_MAX)
     {
         if (s_mouse)
@@ -85,8 +88,10 @@ public:
             OnGameInputDevice,
             &mDeviceToken));
 
-        mScrollWheelValue.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
-        if (!mScrollWheelValue)
+        mScrollWheelValueX.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        mScrollWheelValueY.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        if (!mScrollWheelValueX
+            || !mScrollWheelValueY)
         {
             throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
         }
@@ -121,14 +126,7 @@ public:
         memcpy(&state, &mState, sizeof(State));
         state.positionMode = mMode;
 
-        DWORD result = WaitForSingleObjectEx(mScrollWheelValue.get(), 0, FALSE);
-        if (result == WAIT_FAILED)
-            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
-
-        if (result == WAIT_OBJECT_0)
-        {
-            mScrollWheelCurrent = 0;
-        }
+        HandleWheelReset();
 
         if (state.positionMode == MODE_RELATIVE)
         {
@@ -150,23 +148,34 @@ public:
                     {
                         state.x = static_cast<int>(mouse.positionX - mRelativeX);
                         state.y = static_cast<int>(mouse.positionY - mRelativeY);
-                        int scrollDelta = static_cast<int>(mouse.wheelY - mRelativeWheelY);
-                        mScrollWheelCurrent += scrollDelta;
+                        int scrollDelta = static_cast<int>(mouse.wheelX - mRelativeWheelX);
+                        mScrollWheelCurrentX += scrollDelta;
+                        scrollDelta = static_cast<int>(mouse.wheelY - mRelativeWheelY);
+                        mScrollWheelCurrentY += scrollDelta;
                     }
 
                     mRelativeX = mouse.positionX;
                     mRelativeY = mouse.positionY;
+                    mRelativeWheelX = mouse.wheelX;
                     mRelativeWheelY = mouse.wheelY;
                 }
             }
         }
 
-        state.scrollWheelValue = mScrollWheelCurrent;
+        state.scrollWheelValueX = mScrollWheelCurrentX;
+        state.scrollWheelValueY = mScrollWheelCurrentY;
     }
 
-    void ResetScrollWheelValue() noexcept
+    void ResetScrollWheelValue(SCROLL_WHEEL wheel) noexcept
     {
-        SetEvent(mScrollWheelValue.get());
+        if (wheel & ScrollWheel_X)
+        {
+            SetEvent(mScrollWheelValueX.get());
+        }
+        if (wheel & ScrollWheel_Y)
+        {
+            SetEvent(mScrollWheelValueY.get());
+        }
     }
 
     void SetWindow(HWND window)
@@ -182,6 +191,7 @@ public:
         mMode = mode;
         mRelativeX = INT64_MAX;
         mRelativeY = INT64_MAX;
+        mRelativeWheelX = INT64_MAX;
         mRelativeWheelY = INT64_MAX;
 
         ShowCursor((mode == MODE_ABSOLUTE) ? TRUE : FALSE);
@@ -235,11 +245,14 @@ private:
 
     HWND                    mWindow;
     Mode                    mMode;
-    ScopedHandle            mScrollWheelValue;
+    ScopedHandle            mScrollWheelValueX;
+    ScopedHandle            mScrollWheelValueY;
 
-    mutable int             mScrollWheelCurrent;
+    mutable int             mScrollWheelCurrentX;
+    mutable int             mScrollWheelCurrentY;
     mutable int64_t         mRelativeX;
     mutable int64_t         mRelativeY;
+    mutable int64_t         mRelativeWheelX;
     mutable int64_t         mRelativeWheelY;
 
     friend void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam);
@@ -263,6 +276,35 @@ private:
             --impl->mConnected;
         }
     }
+
+    void HandleWheelReset() const
+    {
+        HANDLE evt = mScrollWheelValueX.get();
+        DWORD result = WaitForSingleObjectEx(evt, 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            mScrollWheelCurrentX = 0;
+            ResetEvent(evt);
+        }
+
+        evt = mScrollWheelValueY.get();
+        result = WaitForSingleObjectEx(evt, 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            mScrollWheelCurrentY = 0;
+            ResetEvent(evt);
+        }
+    }
 };
 
 
@@ -276,14 +318,7 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
     if (!pImpl)
         return;
 
-    DWORD result = WaitForSingleObjectEx(pImpl->mScrollWheelValue.get(), 0, FALSE);
-    if (result == WAIT_FAILED)
-        throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
-
-    if (result == WAIT_OBJECT_0)
-    {
-        pImpl->mScrollWheelCurrent = 0;
-    }
+    pImpl->HandleWheelReset();
 
     switch (message)
     {
@@ -335,7 +370,14 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEWHEEL:
         if (pImpl->mMode == MODE_ABSOLUTE)
         {
-            pImpl->mScrollWheelCurrent += GET_WHEEL_DELTA_WPARAM(wParam);
+            pImpl->mScrollWheelCurrentY += GET_WHEEL_DELTA_WPARAM(wParam);
+        }
+        return;
+
+    case WM_MOUSEHWHEEL:
+        if (pImpl->mMode == MODE_ABSOLUTE)
+        {
+            pImpl->mScrollWheelCurrentX += GET_WHEEL_DELTA_WPARAM(wParam);
         }
         return;
 
@@ -443,9 +485,11 @@ public:
 
         s_mouse = this;
 
-        mScrollWheelValue.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        mScrollWheelValueX.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        mScrollWheelValueY.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mRelativeRead.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
-        if (!mScrollWheelValue
+        if (!mScrollWheelValueX
+            || !mScrollWheelValueY
             || !mRelativeRead)
         {
             throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
@@ -462,19 +506,11 @@ public:
     void GetState(State& state) const
     {
         memcpy(&state, &mState, sizeof(State));
-
-        DWORD result = WaitForSingleObjectEx(mScrollWheelValue.get(), 0, FALSE);
-        if (result == WAIT_FAILED)
-            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
-
-        if (result == WAIT_OBJECT_0)
-        {
-            state.scrollWheelValue = 0;
-        }
+        HandleWheelReset(state);
 
         if (mMode == MODE_RELATIVE)
         {
-            result = WaitForSingleObjectEx(mRelativeRead.get(), 0, FALSE);
+            const DWORD result = WaitForSingleObjectEx(mRelativeRead.get(), 0, FALSE);
 
             if (result == WAIT_FAILED)
                 throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
@@ -493,9 +529,16 @@ public:
         state.positionMode = mMode;
     }
 
-    void ResetScrollWheelValue() noexcept
+    void ResetScrollWheelValue(SCROLL_WHEEL wheel) noexcept
     {
-        SetEvent(mScrollWheelValue.get());
+        if (wheel & ScrollWheel_X)
+        {
+            SetEvent(mScrollWheelValueX.get());
+        }
+        if (wheel & ScrollWheel_Y)
+        {
+            SetEvent(mScrollWheelValueY.get());
+        }
     }
 
     void SetMode(Mode mode)
@@ -661,7 +704,7 @@ public:
     }
 
     State           mState;
-    Mouse* mOwner;
+    Mouse*          mOwner;
     float           mDPI;
 
     static Mouse::Impl* s_mouse;
@@ -673,7 +716,8 @@ private:
     ComPtr<ABI::Windows::Devices::Input::IMouseDevice> mMouse;
     ComPtr<ABI::Windows::UI::Core::ICoreCursor> mCursor;
 
-    ScopedHandle    mScrollWheelValue;
+    ScopedHandle    mScrollWheelValueX;
+    ScopedHandle    mScrollWheelValueY;
     ScopedHandle    mRelativeRead;
 
     EventRegistrationToken mPointerPressedToken;
@@ -703,6 +747,31 @@ private:
         {
             std::ignore = mMouse->remove_MouseMoved(mPointerMouseMovedToken);
             mPointerMouseMovedToken.value = 0;
+        }
+    }
+
+    void HandleWheelReset(State& state) const
+    {
+        DWORD result = WaitForSingleObjectEx(mScrollWheelValueX.get(), 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            state.scrollWheelValueX = 0;
+        }
+
+        result = WaitForSingleObjectEx(mScrollWheelValueY.get(), 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            state.scrollWheelValueY = 0;
         }
     }
 
@@ -800,24 +869,33 @@ private:
             boolean ishorz;
             hr = props->get_IsHorizontalMouseWheel(&ishorz);
             ThrowIfFailed(hr);
-            if (ishorz)
-            {
-                // Mouse only exposes the vertical scroll wheel.
-                return S_OK;
-            }
 
             INT32 value;
             hr = props->get_MouseWheelDelta(&value);
             ThrowIfFailed(hr);
 
-            HANDLE evt = s_mouse->mScrollWheelValue.get();
-            if (WaitForSingleObjectEx(evt, 0, FALSE) == WAIT_OBJECT_0)
+            if (ishorz)
             {
-                s_mouse->mState.scrollWheelValue = 0;
-                ResetEvent(evt);
-            }
+                HANDLE evt = s_mouse->mScrollWheelValueX.get();
+                if (WaitForSingleObjectEx(evt, 0, FALSE) == WAIT_OBJECT_0)
+                {
+                    s_mouse->mState.scrollWheelValueX = 0;
+                    ResetEvent(evt);
+                }
 
-            s_mouse->mState.scrollWheelValue += value;
+                s_mouse->mState.scrollWheelValueX += value;
+            }
+            else
+            {
+                HANDLE evt = s_mouse->mScrollWheelValueY.get();
+                if (WaitForSingleObjectEx(evt, 0, FALSE) == WAIT_OBJECT_0)
+                {
+                    s_mouse->mState.scrollWheelValueY = 0;
+                    ResetEvent(evt);
+                }
+
+                s_mouse->mState.scrollWheelValueY += value;
+            }
 
             if (s_mouse->mMode == MODE_ABSOLUTE)
             {
@@ -907,6 +985,7 @@ void Mouse::SetDpi(float dpi)
 //     case WM_MBUTTONDOWN:
 //     case WM_MBUTTONUP:
 //     case WM_MOUSEWHEEL:
+//     case WM_MOUSEHWHEEL:
 //     case WM_XBUTTONDOWN:
 //     case WM_XBUTTONUP:
 //     case WM_MOUSEHOVER:
@@ -938,11 +1017,13 @@ public:
 
         s_mouse = this;
 
-        mScrollWheelValue.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        mScrollWheelValueX.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
+        mScrollWheelValueY.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mRelativeRead.reset(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mAbsoluteMode.reset(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
         mRelativeMode.reset(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
-        if (!mScrollWheelValue
+        if (!mScrollWheelValueX
+            || !mScrollWheelValueY
             || !mRelativeRead
             || !mAbsoluteMode
             || !mRelativeMode)
@@ -967,18 +1048,11 @@ public:
         memcpy(&state, &mState, sizeof(State));
         state.positionMode = mMode;
 
-        DWORD result = WaitForSingleObjectEx(mScrollWheelValue.get(), 0, FALSE);
-        if (result == WAIT_FAILED)
-            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
-
-        if (result == WAIT_OBJECT_0)
-        {
-            state.scrollWheelValue = 0;
-        }
+        HandleWheelReset(state);
 
         if (state.positionMode == MODE_RELATIVE)
         {
-            result = WaitForSingleObjectEx(mRelativeRead.get(), 0, FALSE);
+            const DWORD result = WaitForSingleObjectEx(mRelativeRead.get(), 0, FALSE);
 
             if (result == WAIT_FAILED)
                 throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObjectEx");
@@ -995,9 +1069,16 @@ public:
         }
     }
 
-    void ResetScrollWheelValue() noexcept
+    void ResetScrollWheelValue(SCROLL_WHEEL wheel) noexcept
     {
-        SetEvent(mScrollWheelValue.get());
+        if (wheel & ScrollWheel_X)
+        {
+            SetEvent(mScrollWheelValueX.get());
+        }
+        if (wheel & ScrollWheel_Y)
+        {
+            SetEvent(mScrollWheelValueY.get());
+        }
     }
 
     void SetMode(Mode mode)
@@ -1086,7 +1167,8 @@ private:
     HWND            mWindow;
     Mode            mMode;
 
-    ScopedHandle    mScrollWheelValue;
+    ScopedHandle    mScrollWheelValueX;
+    ScopedHandle    mScrollWheelValueY;
     ScopedHandle    mRelativeRead;
     ScopedHandle    mAbsoluteMode;
     ScopedHandle    mRelativeMode;
@@ -1126,6 +1208,31 @@ private:
 
         ClipCursor(&rect);
     }
+
+    void HandleWheelReset(State& state) const
+    {
+        DWORD result = WaitForSingleObjectEx(mScrollWheelValueX.get(), 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            state.scrollWheelValueX = 0;
+        }
+
+        result = WaitForSingleObjectEx(mScrollWheelValueY.get(), 0, FALSE);
+        if (result == WAIT_FAILED)
+        {
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
+        }
+
+        if (result == WAIT_OBJECT_0)
+        {
+            state.scrollWheelValueY = 0;
+        }
+    }
 };
 
 
@@ -1145,19 +1252,15 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
     if (!pImpl)
         return;
 
-    HANDLE events[3] = { pImpl->mScrollWheelValue.get(), pImpl->mAbsoluteMode.get(), pImpl->mRelativeMode.get() };
-    switch (WaitForMultipleObjectsEx(static_cast<DWORD>(std::size(events)), events, FALSE, 0, FALSE))
+    HANDLE events[2] = { pImpl->mAbsoluteMode.get(), pImpl->mRelativeMode.get() };
+    const DWORD result = WaitForMultipleObjectsEx(static_cast<DWORD>(std::size(events)), events, FALSE, 0, FALSE);
+    switch (result)
     {
         default:
         case WAIT_TIMEOUT:
             break;
 
         case WAIT_OBJECT_0:
-            pImpl->mState.scrollWheelValue = 0;
-            ResetEvent(events[0]);
-            break;
-
-        case (WAIT_OBJECT_0 + 1):
         {
             pImpl->mMode = MODE_ABSOLUTE;
             ClipCursor(nullptr);
@@ -1178,7 +1281,7 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
-        case (WAIT_OBJECT_0 + 2):
+        case (WAIT_OBJECT_0 + 1):
         {
             ResetEvent(pImpl->mRelativeRead.get());
 
@@ -1216,9 +1319,11 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
             }
             else
             {
-                const int scrollWheel = pImpl->mState.scrollWheelValue;
+                const int scrollWheelX = pImpl->mState.scrollWheelValueX;
+                const int scrollWheelY = pImpl->mState.scrollWheelValueY;
                 memset(&pImpl->mState, 0, sizeof(State));
-                pImpl->mState.scrollWheelValue = scrollWheel;
+                pImpl->mState.scrollWheelValueX = scrollWheelX;
+                pImpl->mState.scrollWheelValueY = scrollWheelY;
 
                 if (pImpl->mMode == MODE_RELATIVE)
                 {
@@ -1306,7 +1411,23 @@ void Mouse::ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_MOUSEWHEEL:
-            pImpl->mState.scrollWheelValue += GET_WHEEL_DELTA_WPARAM(wParam);
+            events[0] = pImpl->mScrollWheelValueY.get();
+            if (WaitForSingleObjectEx(events[0], 0, FALSE) == WAIT_OBJECT_0)
+            {
+                pImpl->mState.scrollWheelValueY = 0;
+                ResetEvent(events[0]);
+            }
+            pImpl->mState.scrollWheelValueY += GET_WHEEL_DELTA_WPARAM(wParam);
+            return;
+
+        case WM_MOUSEHWHEEL:
+            events[0] = pImpl->mScrollWheelValueX.get();
+            if (WaitForSingleObjectEx(events[0], 0, FALSE) == WAIT_OBJECT_0)
+            {
+                pImpl->mState.scrollWheelValueX = 0;
+                ResetEvent(events[0]);
+            }
+            pImpl->mState.scrollWheelValueX += GET_WHEEL_DELTA_WPARAM(wParam);
             return;
 
         case WM_XBUTTONDOWN:
@@ -1394,9 +1515,9 @@ Mouse::State Mouse::GetState() const
 }
 
 
-void Mouse::ResetScrollWheelValue() noexcept
+void Mouse::ResetScrollWheelValue(SCROLL_WHEEL wheel) noexcept
 {
-    pImpl->ResetScrollWheelValue();
+    pImpl->ResetScrollWheelValue(wheel);
 }
 
 
