@@ -27,6 +27,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 
+if (DEFINED VCPKG_TARGET_ARCHITECTURE)
+    set(DIRECTX_ARCH ${VCPKG_TARGET_ARCHITECTURE})
+endif()
+
 #--- Library
 set(LIBRARY_HEADERS
     Inc/BufferHelpers.h
@@ -260,7 +264,7 @@ install(FILES
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)
 
-    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4" AND (NOT ${CMAKE_VS_PLATFORM_NAME} MATCHES "arm"))
+    if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "arm"))
         target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
     endif()
 endif()
@@ -271,9 +275,13 @@ endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /permissive- /JMC- /Zc:__cplusplus)
 
-   if(ENABLE_CODE_ANALYSIS)
+    if(ENABLE_CODE_ANALYSIS)
       target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
-   endif()
+    endif()
+
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
+        target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
+    endif()
 
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
         target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
