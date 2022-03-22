@@ -338,7 +338,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
 
 void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device* device)
 {
-    constexpr D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+    const D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
