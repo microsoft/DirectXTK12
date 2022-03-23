@@ -8,10 +8,11 @@
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
-#include "DirectXHelpers.h"
-#include "PlatformHelpers.h"
 #include "ResourceUploadBatch.h"
+
+#include "DirectXHelpers.h"
 #include "LoaderHelpers.h"
+#include "PlatformHelpers.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -229,7 +230,7 @@ namespace
         static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(
             _In_ ID3D12Device* device)
         {
-            const D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
                 D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS

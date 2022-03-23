@@ -8,15 +8,16 @@
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
-
 #include "SpriteBatch.h"
-#include "CommonStates.h"
-#include "VertexTypes.h"
-#include "SharedResourcePool.h"
+
 #include "AlignedNew.h"
-#include "ResourceUploadBatch.h"
-#include "GraphicsMemory.h"
+#include "CommonStates.h"
 #include "DirectXHelpers.h"
+#include "GraphicsMemory.h"
+#include "PlatformHelpers.h"
+#include "ResourceUploadBatch.h"
+#include "SharedResourcePool.h"
+#include "VertexTypes.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -338,7 +339,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
 
 void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device* device)
 {
-    const D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+    ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
