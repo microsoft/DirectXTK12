@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.11)
 
 set(DIRECTXTK12_VERSION 1.4.9)
 
@@ -274,7 +274,6 @@ if(MSVC)
 
     if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "arm"))
         target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
-        target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
     endif()
 endif()
 
