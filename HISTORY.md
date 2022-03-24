@@ -6,6 +6,14 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+## March 24, 2022
+* Fixed bug in UWP implementation of Mouse that combined vertical/horizontal scroll-wheel input
+* Code refactoring for input classes (GamePad, Keyboard, and Mouse)
+* Update build switches for SDL recommendations
+* CMake project updates and UWP platform CMakePresets
+* Fixed constexpr compat issue with DEFINE_ENUM_FLAG_OPERATORS in legacy Xbox One XDK
+* Dropped support for legacy Xbox One XDK prior to April 2018
+
 ### February 28, 2022
 * Minor fix to DescriptorHeap Increment() to return uint32_t instead of size_t
 * Updated D3DX12 internal copy with latest changes from GitHub
