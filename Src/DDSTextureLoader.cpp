@@ -47,11 +47,11 @@ namespace
         case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
         case DXGI_FORMAT_D16_UNORM:
 
-#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+        #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         case DXGI_FORMAT_D16_UNORM_S8_UINT:
         case DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
         case DXGI_FORMAT_X16_TYPELESS_G8_UINT:
-#endif
+        #endif
             return true;
 
         default:
@@ -72,11 +72,11 @@ namespace
         case DXGI_FORMAT_P010:
         case DXGI_FORMAT_P016:
 
-#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+        #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         case DXGI_FORMAT_D16_UNORM_S8_UINT:
         case DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
         case DXGI_FORMAT_X16_TYPELESS_G8_UINT:
-#endif
+        #endif
             if (!slicePlane)
             {
                 // Plane 0
@@ -554,7 +554,7 @@ namespace
         _In_z_ const wchar_t* fileName,
         _In_ ID3D12Resource** texture) noexcept
     {
-#if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
+    #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
         if (texture && *texture)
         {
             const wchar_t* pstrName = wcsrchr(fileName, '\\');
@@ -569,10 +569,10 @@ namespace
 
             (*texture)->SetName(pstrName);
         }
-#else
+    #else
         UNREFERENCED_PARAMETER(fileName);
         UNREFERENCED_PARAMETER(texture);
-#endif
+    #endif
     }
 
     //--------------------------------------------------------------------------------------

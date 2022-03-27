@@ -77,45 +77,46 @@ public:
 };
 
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+#include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+#include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+#include "XboxGamingScarlettSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+#include "XboxGamingScarlettSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "XboxGamingScarlettSkinnedEffect_PSSkinnedPixelLighting.inc"
+#include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLighting.inc"
+#include "XboxGamingScarlettSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+#include "XboxGamingScarlettSkinnedEffect_PSSkinnedPixelLighting.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+#include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+#include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+#include "XboxGamingXboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+#include "XboxGamingXboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "XboxGamingXboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
+#include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
+#include "XboxGamingXboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+#include "XboxGamingXboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+#include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+#include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+#include "XboxOneSkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+#include "XboxOneSkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
+#include "XboxOneSkinnedEffect_PSSkinnedVertexLighting.inc"
+#include "XboxOneSkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+#include "XboxOneSkinnedEffect_PSSkinnedPixelLighting.inc"
 #else
-    #include "SkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
-    #include "SkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
-    #include "SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
-    #include "SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
+#include "SkinnedEffect_VSSkinnedVertexLightingFourBones.inc"
+#include "SkinnedEffect_VSSkinnedPixelLightingFourBones.inc"
+#include "SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc"
+#include "SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc"
 
-    #include "SkinnedEffect_PSSkinnedVertexLighting.inc"
-    #include "SkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
-    #include "SkinnedEffect_PSSkinnedPixelLighting.inc"
+#include "SkinnedEffect_PSSkinnedVertexLighting.inc"
+#include "SkinnedEffect_PSSkinnedVertexLightingNoFog.inc"
+#include "SkinnedEffect_PSSkinnedPixelLighting.inc"
 #endif
 }
 
@@ -171,7 +172,7 @@ const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] =
     2,      // pixel lighting (biased vertex normals), four bones
     2,      // pixel lighting (biased vertex normals), four bones, no fog
 };
-
+#pragma endregion
 
 // Global pool of per-device SkinnedEffect resources.
 template<>
@@ -184,8 +185,8 @@ SkinnedEffect::Impl::Impl(
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        texture{},
-        sampler{}
+    texture{},
+    sampler{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<SkinnedEffectTraits>::VertexShaderIndices)) == SkinnedEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<SkinnedEffectTraits>::VertexShaderBytecode)) == SkinnedEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -525,16 +526,16 @@ void SkinnedEffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, s
 
     for (size_t i = 0; i < count; i++)
     {
-#if DIRECTX_MATH_VERSION >= 313
+    #if DIRECTX_MATH_VERSION >= 313
         XMStoreFloat3x4A(reinterpret_cast<XMFLOAT3X4A*>(&boneConstant[i]), value[i]);
-#else
-        // Xbox One XDK has an older version of DirectXMath
+    #else
+            // Xbox One XDK has an older version of DirectXMath
         XMMATRIX boneMatrix = XMMatrixTranspose(value[i]);
 
         boneConstant[i][0] = boneMatrix.r[0];
         boneConstant[i][1] = boneMatrix.r[1];
         boneConstant[i][2] = boneMatrix.r[2];
-#endif
+    #endif
     }
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
@@ -545,7 +546,7 @@ void SkinnedEffect::ResetBoneTransforms()
 {
     auto boneConstant = pImpl->constants.bones;
 
-    for(size_t i = 0; i < MaxBones; ++i)
+    for (size_t i = 0; i < MaxBones; ++i)
     {
         boneConstant[i][0] = g_XMIdentityR0;
         boneConstant[i][1] = g_XMIdentityR1;

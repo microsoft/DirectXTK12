@@ -68,41 +68,42 @@ public:
 };
 
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettDualTextureEffect_VSDualTexture.inc"
-    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureVc.inc"
-    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureVcNoFog.inc"
+#include "XboxGamingScarlettDualTextureEffect_VSDualTexture.inc"
+#include "XboxGamingScarlettDualTextureEffect_VSDualTextureNoFog.inc"
+#include "XboxGamingScarlettDualTextureEffect_VSDualTextureVc.inc"
+#include "XboxGamingScarlettDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "XboxGamingScarlettDualTextureEffect_PSDualTexture.inc"
-    #include "XboxGamingScarlettDualTextureEffect_PSDualTextureNoFog.inc"
+#include "XboxGamingScarlettDualTextureEffect_PSDualTexture.inc"
+#include "XboxGamingScarlettDualTextureEffect_PSDualTextureNoFog.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOneDualTextureEffect_VSDualTexture.inc"
-    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVc.inc"
-    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
+#include "XboxGamingXboxOneDualTextureEffect_VSDualTexture.inc"
+#include "XboxGamingXboxOneDualTextureEffect_VSDualTextureNoFog.inc"
+#include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVc.inc"
+#include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "XboxGamingXboxOneDualTextureEffect_PSDualTexture.inc"
-    #include "XboxGamingXboxOneDualTextureEffect_PSDualTextureNoFog.inc"
+#include "XboxGamingXboxOneDualTextureEffect_PSDualTexture.inc"
+#include "XboxGamingXboxOneDualTextureEffect_PSDualTextureNoFog.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOneDualTextureEffect_VSDualTexture.inc"
-    #include "XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "XboxOneDualTextureEffect_VSDualTextureVc.inc"
-    #include "XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
+#include "XboxOneDualTextureEffect_VSDualTexture.inc"
+#include "XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
+#include "XboxOneDualTextureEffect_VSDualTextureVc.inc"
+#include "XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "XboxOneDualTextureEffect_PSDualTexture.inc"
-    #include "XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
+#include "XboxOneDualTextureEffect_PSDualTexture.inc"
+#include "XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
 #else
-    #include "DualTextureEffect_VSDualTexture.inc"
-    #include "DualTextureEffect_VSDualTextureNoFog.inc"
-    #include "DualTextureEffect_VSDualTextureVc.inc"
-    #include "DualTextureEffect_VSDualTextureVcNoFog.inc"
+#include "DualTextureEffect_VSDualTexture.inc"
+#include "DualTextureEffect_VSDualTextureNoFog.inc"
+#include "DualTextureEffect_VSDualTextureVc.inc"
+#include "DualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "DualTextureEffect_PSDualTexture.inc"
-    #include "DualTextureEffect_PSDualTextureNoFog.inc"
+#include "DualTextureEffect_PSDualTexture.inc"
+#include "DualTextureEffect_PSDualTextureNoFog.inc"
 #endif
 }
 
@@ -145,7 +146,7 @@ const int EffectBase<DualTextureEffectTraits>::PixelShaderIndices[] =
     0,      // vertex color
     1,      // vertex color, no fog
 };
-
+#pragma endregion
 
 // Global pool of per-device DualTextureEffect resources.
 template<>
@@ -158,10 +159,10 @@ DualTextureEffect::Impl::Impl(
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        texture1{},
-        texture1Sampler{},
-        texture2{},
-        texture2Sampler{}
+    texture1{},
+    texture1Sampler{},
+    texture2{},
+    texture2Sampler{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::VertexShaderIndices)) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode)) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");

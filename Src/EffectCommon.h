@@ -34,19 +34,19 @@ namespace DirectX
         constexpr int PerPixelLightingBit = 0x04;
     }
 
-    static_assert(((EffectFlags::PerPixelLighting) & EffectFlags::PerPixelLightingBit) != 0, "PerPixelLighting enum flags mismatch");
+    static_assert(((EffectFlags::PerPixelLighting)& EffectFlags::PerPixelLightingBit) != 0, "PerPixelLighting enum flags mismatch");
 
     // Bitfield tracks which derived parameter values need to be recomputed.
     namespace EffectDirtyFlags
     {
-        constexpr int ConstantBuffer        = 0x01;
-        constexpr int WorldViewProj         = 0x02;
+        constexpr int ConstantBuffer = 0x01;
+        constexpr int WorldViewProj = 0x02;
         constexpr int WorldInverseTranspose = 0x04;
-        constexpr int EyePosition           = 0x08;
-        constexpr int MaterialColor         = 0x10;
-        constexpr int FogVector             = 0x20;
-        constexpr int FogEnable             = 0x40;
-        constexpr int AlphaTest             = 0x80;
+        constexpr int EyePosition = 0x08;
+        constexpr int MaterialColor = 0x10;
+        constexpr int FogVector = 0x20;
+        constexpr int FogEnable = 0x40;
+        constexpr int AlphaTest = 0x80;
     }
 
     // Helper stores matrix parameter values, and computes derived matrices.
@@ -123,7 +123,8 @@ namespace DirectX
     public:
         EffectDeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
-        { }
+        {
+        }
 
         ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
 

@@ -59,7 +59,7 @@ namespace DirectX
         }
 
         // Convenience constructors converting from DXGI_SWAPCHAIN_DESC
-#if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+    #if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         RenderTargetState(
             _In_ const DXGI_SWAP_CHAIN_DESC* desc,
             _In_ DXGI_FORMAT dsFormat) noexcept
@@ -73,9 +73,9 @@ namespace DirectX
             rtvFormats[0] = desc->BufferDesc.Format;
             sampleDesc = desc->SampleDesc;
         }
-#endif
+    #endif
 
-#if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+    #if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         RenderTargetState(
             _In_ const DXGI_SWAP_CHAIN_DESC1* desc,
             _In_ DXGI_FORMAT dsFormat) noexcept
@@ -89,7 +89,7 @@ namespace DirectX
             rtvFormats[0] = desc->Format;
             sampleDesc = desc->SampleDesc;
         }
-#endif
+    #endif
 
         uint32_t            sampleMask;
         uint32_t            numRenderTargets;

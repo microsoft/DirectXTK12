@@ -125,12 +125,12 @@ namespace DirectX
         size_t TotalMemoryUsage() const noexcept { return m_totalPages * m_increment; }
         size_t PageSize() const noexcept { return m_increment; }
 
-#if defined(_DEBUG) || defined(PROFILE)
-        // Debug info
+    #if defined(_DEBUG) || defined(PROFILE)
+            // Debug info
         const wchar_t* GetDebugName() const noexcept { return m_debugName.c_str(); }
         void SetDebugName(const wchar_t* name);
         void SetDebugName(const char* name);
-#endif
+    #endif
 
     private:
         LinearAllocatorPage*                    m_pendingPages; // Pages in use by the GPU
@@ -156,13 +156,13 @@ namespace DirectX
         void ReleasePage(LinearAllocatorPage* page) noexcept;
         void FreePages(LinearAllocatorPage* list) noexcept;
 
-#if defined(_DEBUG) || defined(PROFILE)
+    #if defined(_DEBUG) || defined(PROFILE)
         std::wstring m_debugName;
 
         static void ValidateList(LinearAllocatorPage* list);
         void ValidatePageLists();
 
         void SetPageDebugName(LinearAllocatorPage* list) noexcept;
-#endif
+    #endif
     };
 }

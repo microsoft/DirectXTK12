@@ -46,7 +46,9 @@ namespace DirectX
             size_t count) noexcept(false) :
             DescriptorHeap(device,
                 D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-                D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, count) {}
+                D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, count)
+        {
+        }
 
         DescriptorHeap(DescriptorHeap&&) = default;
         DescriptorHeap& operator=(DescriptorHeap&&) = default;
@@ -190,7 +192,9 @@ namespace DirectX
             size_t reserve = 0) noexcept(false) :
             DescriptorPile(device,
                 D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-                D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, count, reserve) {}
+                D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, count, reserve)
+        {
+        }
 
         DescriptorPile(const DescriptorPile&) = delete;
         DescriptorPile& operator=(const DescriptorPile&) = delete;

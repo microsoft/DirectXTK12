@@ -71,7 +71,8 @@ namespace DirectX
             size_t maxIndices = DefaultBatchSize * 3,
             size_t maxVertices = DefaultBatchSize)
             : PrimitiveBatchBase(device, maxIndices, maxVertices, sizeof(TVertex))
-        { }
+        {
+        }
 
         PrimitiveBatch(PrimitiveBatch&&) = default;
         PrimitiveBatch& operator= (PrimitiveBatch&&) = default;

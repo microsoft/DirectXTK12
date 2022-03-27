@@ -128,7 +128,7 @@ namespace DirectX
         {
             hr = device->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
                 IID_GRAPHICS_PPV_ARGS(rootSignature)
-                );
+            );
         }
         return hr;
     }

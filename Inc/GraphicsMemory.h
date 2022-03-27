@@ -54,7 +54,7 @@ namespace DirectX
         size_t ResourceOffset() const noexcept { return mBufferOffset; }
         size_t Size() const noexcept { return mSize; }
 
-        explicit operator bool () const noexcept { return mResource != nullptr; }
+        explicit operator bool() const noexcept { return mResource != nullptr; }
 
         // Clear the pointer. Using operator -> will produce bad results.
         void __cdecl Reset() noexcept;
@@ -94,7 +94,7 @@ namespace DirectX
         size_t ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
         size_t Size() const noexcept { return mSharedResource->Size(); }
 
-        explicit operator bool () const noexcept { return mSharedResource != nullptr; }
+        explicit operator bool() const noexcept { return mSharedResource != nullptr; }
 
         bool operator == (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() == other.mSharedResource.get(); }
         bool operator != (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() != other.mSharedResource.get(); }
