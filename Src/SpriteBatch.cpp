@@ -26,25 +26,25 @@ namespace
 {
     // Include the precompiled shader code.
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc"
-    #include "XboxGamingScarlettSpriteEffect_SpritePixelShader.inc"
-    #include "XboxGamingScarlettSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "XboxGamingScarlettSpriteEffect_SpritePixelShaderHeap.inc"
+#include "XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc"
+#include "XboxGamingScarlettSpriteEffect_SpritePixelShader.inc"
+#include "XboxGamingScarlettSpriteEffect_SpriteVertexShaderHeap.inc"
+#include "XboxGamingScarlettSpriteEffect_SpritePixelShaderHeap.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc"
-    #include "XboxGamingXboxOneSpriteEffect_SpritePixelShader.inc"
-    #include "XboxGamingXboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "XboxGamingXboxOneSpriteEffect_SpritePixelShaderHeap.inc"
+#include "XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc"
+#include "XboxGamingXboxOneSpriteEffect_SpritePixelShader.inc"
+#include "XboxGamingXboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
+#include "XboxGamingXboxOneSpriteEffect_SpritePixelShaderHeap.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOneSpriteEffect_SpriteVertexShader.inc"
-    #include "XboxOneSpriteEffect_SpritePixelShader.inc"
-    #include "XboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "XboxOneSpriteEffect_SpritePixelShaderHeap.inc"
+#include "XboxOneSpriteEffect_SpriteVertexShader.inc"
+#include "XboxOneSpriteEffect_SpritePixelShader.inc"
+#include "XboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
+#include "XboxOneSpriteEffect_SpritePixelShaderHeap.inc"
 #else
-    #include "SpriteEffect_SpriteVertexShader.inc"
-    #include "SpriteEffect_SpritePixelShader.inc"
-    #include "SpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "SpriteEffect_SpritePixelShaderHeap.inc"
+#include "SpriteEffect_SpriteVertexShader.inc"
+#include "SpriteEffect_SpritePixelShader.inc"
+#include "SpriteEffect_SpriteVertexShaderHeap.inc"
+#include "SpriteEffect_SpritePixelShaderHeap.inc"
 #endif
 
     inline bool operator != (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b) noexcept
@@ -225,8 +225,8 @@ SharedResourcePool<ID3D12Device*, SpriteBatch::Impl::DeviceResources, ResourceUp
 const XMMATRIX SpriteBatch::MatrixIdentity = XMMatrixIdentity();
 const XMFLOAT2 SpriteBatch::Float2Zero(0, 0);
 
-const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCodeStatic = {SpriteEffect_SpriteVertexShader, sizeof(SpriteEffect_SpriteVertexShader)};
-const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeStatic = {SpriteEffect_SpritePixelShader, sizeof(SpriteEffect_SpritePixelShader)};
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCodeStatic = { SpriteEffect_SpriteVertexShader, sizeof(SpriteEffect_SpriteVertexShader) };
+const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeStatic = { SpriteEffect_SpritePixelShader, sizeof(SpriteEffect_SpritePixelShader) };
 
 const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultVertexShaderByteCodeHeap = { SpriteEffect_SpriteVertexShaderHeap, sizeof(SpriteEffect_SpriteVertexShaderHeap) };
 const D3D12_SHADER_BYTECODE SpriteBatch::Impl::s_DefaultPixelShaderByteCodeHeap = { SpriteEffect_SpritePixelShaderHeap, sizeof(SpriteEffect_SpritePixelShaderHeap) };
@@ -991,39 +991,39 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
     {
     case DXGI_MODE_ROTATION_ROTATE90:
         return XMMATRIX
-            (
-                0, -yScale, 0, 0,
-                -xScale, 0, 0, 0,
-                0, 0, 1, 0,
-                1, 1, 0, 1
-                );
+        (
+            0, -yScale, 0, 0,
+            -xScale, 0, 0, 0,
+            0, 0, 1, 0,
+            1, 1, 0, 1
+        );
 
     case DXGI_MODE_ROTATION_ROTATE270:
         return XMMATRIX
-            (
-                0, yScale, 0, 0,
-                xScale, 0, 0, 0,
-                0, 0, 1, 0,
-                -1, -1, 0, 1
-                );
+        (
+            0, yScale, 0, 0,
+            xScale, 0, 0, 0,
+            0, 0, 1, 0,
+            -1, -1, 0, 1
+        );
 
     case DXGI_MODE_ROTATION_ROTATE180:
         return XMMATRIX
-            (
-                -xScale, 0, 0, 0,
-                0, yScale, 0, 0,
-                0, 0, 1, 0,
-                1, -1, 0, 1
-                );
+        (
+            -xScale, 0, 0, 0,
+            0, yScale, 0, 0,
+            0, 0, 1, 0,
+            1, -1, 0, 1
+        );
 
     default:
         return XMMATRIX
-            (
-                xScale, 0, 0, 0,
-                0, -yScale, 0, 0,
-                0, 0, 1, 0,
-                -1, 1, 0, 1
-                );
+        (
+            xScale, 0, 0, 0,
+            0, -yScale, 0, 0,
+            0, 0, 1, 0,
+            -1, 1, 0, 1
+        );
     }
 }
 

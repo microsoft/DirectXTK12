@@ -113,81 +113,82 @@ private:
 };
 
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettPBREffect_VSConstant.inc"
-    #include "XboxGamingScarlettPBREffect_VSConstantBn.inc"
+#include "XboxGamingScarlettPBREffect_VSConstant.inc"
+#include "XboxGamingScarlettPBREffect_VSConstantBn.inc"
 
-    #include "XboxGamingScarlettPBREffect_VSConstantInst.inc"
-    #include "XboxGamingScarlettPBREffect_VSConstantBnInst.inc"
+#include "XboxGamingScarlettPBREffect_VSConstantInst.inc"
+#include "XboxGamingScarlettPBREffect_VSConstantBnInst.inc"
 
-    #include "XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
-    #include "XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
+#include "XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
+#include "XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
 
-    #include "XboxGamingScarlettPBREffect_VSSkinned.inc"
-    #include "XboxGamingScarlettPBREffect_VSSkinnedBn.inc"
+#include "XboxGamingScarlettPBREffect_VSSkinned.inc"
+#include "XboxGamingScarlettPBREffect_VSSkinnedBn.inc"
 
-    #include "XboxGamingScarlettPBREffect_PSConstant.inc"
-    #include "XboxGamingScarlettPBREffect_PSTextured.inc"
-    #include "XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
-    #include "XboxGamingScarlettPBREffect_PSTexturedVelocity.inc"
-    #include "XboxGamingScarlettPBREffect_PSTexturedEmissiveVelocity.inc"
+#include "XboxGamingScarlettPBREffect_PSConstant.inc"
+#include "XboxGamingScarlettPBREffect_PSTextured.inc"
+#include "XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
+#include "XboxGamingScarlettPBREffect_PSTexturedVelocity.inc"
+#include "XboxGamingScarlettPBREffect_PSTexturedEmissiveVelocity.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOnePBREffect_VSConstant.inc"
-    #include "XboxGamingXboxOnePBREffect_VSConstantBn.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstant.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstantBn.inc"
 
-    #include "XboxGamingXboxOnePBREffect_VSConstantInst.inc"
-    #include "XboxGamingXboxOnePBREffect_VSConstantBnInst.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstantInst.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstantBnInst.inc"
 
-    #include "XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
-    #include "XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
+#include "XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
 
-    #include "XboxGamingXboxOnePBREffect_VSSkinned.inc"
-    #include "XboxGamingXboxOnePBREffect_VSSkinnedBn.inc"
+#include "XboxGamingXboxOnePBREffect_VSSkinned.inc"
+#include "XboxGamingXboxOnePBREffect_VSSkinnedBn.inc"
 
-    #include "XboxGamingXboxOnePBREffect_PSConstant.inc"
-    #include "XboxGamingXboxOnePBREffect_PSTextured.inc"
-    #include "XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
-    #include "XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
-    #include "XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+#include "XboxGamingXboxOnePBREffect_PSConstant.inc"
+#include "XboxGamingXboxOnePBREffect_PSTextured.inc"
+#include "XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
+#include "XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
+#include "XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOnePBREffect_VSConstant.inc"
-    #include "XboxOnePBREffect_VSConstantBn.inc"
+#include "XboxOnePBREffect_VSConstant.inc"
+#include "XboxOnePBREffect_VSConstantBn.inc"
 
-    #include "XboxOnePBREffect_VSConstantInst.inc"
-    #include "XboxOnePBREffect_VSConstantBnInst.inc"
+#include "XboxOnePBREffect_VSConstantInst.inc"
+#include "XboxOnePBREffect_VSConstantBnInst.inc"
 
-    #include "XboxOnePBREffect_VSConstantVelocity.inc"
-    #include "XboxOnePBREffect_VSConstantVelocityBn.inc"
+#include "XboxOnePBREffect_VSConstantVelocity.inc"
+#include "XboxOnePBREffect_VSConstantVelocityBn.inc"
 
-    #include "XboxOnePBREffect_VSSkinned.inc"
-    #include "XboxOnePBREffect_VSSkinnedBn.inc"
+#include "XboxOnePBREffect_VSSkinned.inc"
+#include "XboxOnePBREffect_VSSkinnedBn.inc"
 
-    #include "XboxOnePBREffect_PSConstant.inc"
-    #include "XboxOnePBREffect_PSTextured.inc"
-    #include "XboxOnePBREffect_PSTexturedEmissive.inc"
-    #include "XboxOnePBREffect_PSTexturedVelocity.inc"
-    #include "XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+#include "XboxOnePBREffect_PSConstant.inc"
+#include "XboxOnePBREffect_PSTextured.inc"
+#include "XboxOnePBREffect_PSTexturedEmissive.inc"
+#include "XboxOnePBREffect_PSTexturedVelocity.inc"
+#include "XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
 #else
-    #include "PBREffect_VSConstant.inc"
-    #include "PBREffect_VSConstantBn.inc"
+#include "PBREffect_VSConstant.inc"
+#include "PBREffect_VSConstantBn.inc"
 
-    #include "PBREffect_VSConstantInst.inc"
-    #include "PBREffect_VSConstantBnInst.inc"
+#include "PBREffect_VSConstantInst.inc"
+#include "PBREffect_VSConstantBnInst.inc"
 
-    #include "PBREffect_VSConstantVelocity.inc"
-    #include "PBREffect_VSConstantVelocityBn.inc"
+#include "PBREffect_VSConstantVelocity.inc"
+#include "PBREffect_VSConstantVelocityBn.inc"
 
-    #include "PBREffect_VSSkinned.inc"
-    #include "PBREffect_VSSkinnedBn.inc"
+#include "PBREffect_VSSkinned.inc"
+#include "PBREffect_VSSkinnedBn.inc"
 
-    #include "PBREffect_PSConstant.inc"
-    #include "PBREffect_PSTextured.inc"
-    #include "PBREffect_PSTexturedEmissive.inc"
-    #include "PBREffect_PSTexturedVelocity.inc"
-    #include "PBREffect_PSTexturedEmissiveVelocity.inc"
+#include "PBREffect_PSConstant.inc"
+#include "PBREffect_PSTextured.inc"
+#include "PBREffect_PSTexturedEmissive.inc"
+#include "PBREffect_PSTexturedVelocity.inc"
+#include "PBREffect_PSTexturedEmissiveVelocity.inc"
 #endif
 }
 
@@ -287,6 +288,7 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
     3,      // textured + velocity (biased vertex normals)
     4,      // textured + emissive + velocity (biased vertex normals)
 };
+#pragma endregion
 
 // Global pool of per-device PBREffect resources. Required by EffectBase<>, but not used.
 template<>
@@ -295,12 +297,12 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device)
     : EffectBase(device),
-        weightsPerVertex(0),
-        textureEnabled(false),
-        emissiveMap(false),
-        descriptors{},
-        lightColor{},
-        boneConstants{}
+    weightsPerVertex(0),
+    textureEnabled(false),
+    emissiveMap(false),
+    descriptors{},
+    lightColor{},
+    boneConstants{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderBytecode)) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
@@ -821,9 +823,9 @@ void PBREffect::SetSurfaceTextures(
     D3D12_GPU_DESCRIPTOR_HANDLE roughnessMetallicAmbientOcclusion,
     D3D12_GPU_DESCRIPTOR_HANDLE sampler)
 {
-    pImpl->descriptors[Impl::RootParameterIndex::AlbedoTexture]  = albedo;
-    pImpl->descriptors[Impl::RootParameterIndex::NormalTexture]  = normal;
-    pImpl->descriptors[Impl::RootParameterIndex::RMATexture]     = roughnessMetallicAmbientOcclusion;
+    pImpl->descriptors[Impl::RootParameterIndex::AlbedoTexture] = albedo;
+    pImpl->descriptors[Impl::RootParameterIndex::NormalTexture] = normal;
+    pImpl->descriptors[Impl::RootParameterIndex::RMATexture] = roughnessMetallicAmbientOcclusion;
     pImpl->descriptors[Impl::RootParameterIndex::SurfaceSampler] = sampler;
 }
 
@@ -868,16 +870,16 @@ void SkinnedPBREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value
 
     for (size_t i = 0; i < count; i++)
     {
-#if DIRECTX_MATH_VERSION >= 313
+    #if DIRECTX_MATH_VERSION >= 313
         XMStoreFloat3x4A(reinterpret_cast<XMFLOAT3X4A*>(&boneConstant[i]), value[i]);
-#else
-        // Xbox One XDK has an older version of DirectXMath
+    #else
+            // Xbox One XDK has an older version of DirectXMath
         XMMATRIX boneMatrix = XMMatrixTranspose(value[i]);
 
         boneConstant[i][0] = boneMatrix.r[0];
         boneConstant[i][1] = boneMatrix.r[1];
         boneConstant[i][2] = boneMatrix.r[2];
-#endif
+    #endif
     }
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;

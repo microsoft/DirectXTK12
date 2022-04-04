@@ -55,7 +55,7 @@ namespace DirectX
         void __cdecl Upload(
             _In_ ID3D12Resource* resource,
             const SharedGraphicsResource& buffer
-            );
+        );
 
         // Asynchronously generate mips from a resource.
         // Resource must be in the PIXEL_SHADER_RESOURCE state

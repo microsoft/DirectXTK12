@@ -144,20 +144,31 @@ namespace DirectX
     //----------------------------------------------------------------------------------
     namespace EffectFlags
     {
-        constexpr uint32_t None                = 0x00;
-        constexpr uint32_t Fog                 = 0x01;
-        constexpr uint32_t Lighting            = 0x02;
-        constexpr uint32_t PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
-        constexpr uint32_t VertexColor         = 0x08;
-        constexpr uint32_t Texture             = 0x10;
-        constexpr uint32_t Instancing          = 0x20;
+        constexpr uint32_t None = 0x00;
+        constexpr uint32_t Fog = 0x01;
+        constexpr uint32_t Lighting = 0x02;
 
-        constexpr uint32_t Specular            = 0x100; // enable optional specular/specularMap feature
-        constexpr uint32_t Emissive            = 0x200; // enable optional emissive/emissiveMap feature
-        constexpr uint32_t Fresnel             = 0x400; // enable optional Fresnel feature
-        constexpr uint32_t Velocity            = 0x800; // enable optional velocity feature
+        constexpr uint32_t PerPixelLighting = 0x04 | Lighting;
+        // per pixel lighting implies lighting enabled
 
-        constexpr uint32_t BiasedVertexNormals = 0x10000; // compressed vertex normals need x2 bias
+        constexpr uint32_t VertexColor = 0x08;
+        constexpr uint32_t Texture = 0x10;
+        constexpr uint32_t Instancing = 0x20;
+
+        constexpr uint32_t Specular = 0x100;
+        // enable optional specular/specularMap feature
+
+        constexpr uint32_t Emissive = 0x200;
+        // enable optional emissive/emissiveMap feature
+
+        constexpr uint32_t Fresnel = 0x400;
+        // enable optional Fresnel feature
+
+        constexpr uint32_t Velocity = 0x800;
+        // enable optional velocity feature
+
+        constexpr uint32_t BiasedVertexNormals = 0x10000;
+        // compressed vertex normals need x2 bias
     }
 
 
@@ -457,7 +468,9 @@ namespace DirectX
     public:
         NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
             const EffectPipelineStateDescription& pipelineDescription) :
-            NormalMapEffect(device, effectFlags, pipelineDescription, false) {}
+            NormalMapEffect(device, effectFlags, pipelineDescription, false)
+        {
+        }
 
         NormalMapEffect(NormalMapEffect&&) noexcept;
         NormalMapEffect& operator= (NormalMapEffect&&) noexcept;
@@ -520,7 +533,9 @@ namespace DirectX
     public:
         SkinnedNormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
             const EffectPipelineStateDescription& pipelineDescription) :
-            NormalMapEffect(device, effectFlags, pipelineDescription, true) {}
+            NormalMapEffect(device, effectFlags, pipelineDescription, true)
+        {
+        }
 
         SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
         SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
@@ -541,7 +556,9 @@ namespace DirectX
     public:
         PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
             const EffectPipelineStateDescription& pipelineDescription) :
-            PBREffect(device, effectFlags, pipelineDescription, false) {}
+            PBREffect(device, effectFlags, pipelineDescription, false)
+        {
+        }
 
         PBREffect(PBREffect&&) noexcept;
         PBREffect& operator= (PBREffect&&) noexcept;
@@ -614,7 +631,9 @@ namespace DirectX
     public:
         SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
             const EffectPipelineStateDescription& pipelineDescription) :
-            PBREffect(device, effectFlags, pipelineDescription, true) {}
+            PBREffect(device, effectFlags, pipelineDescription, true)
+        {
+        }
 
         SkinnedPBREffect(SkinnedPBREffect&&) = default;
         SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;

@@ -78,177 +78,178 @@ public:
 };
 
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettBasicEffect_VSBasic.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicNoFog.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVc.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVcNoFog.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicTx.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicTxNoFog.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicTxVc.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicTxVcNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasic.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVcNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicTx.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicTxNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicTxVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicTxVcNoFog.inc"
 
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLighting.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingVc.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTx.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLighting.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTx.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVc.inc"
 
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLighting.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingVc.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTx.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLighting.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingVc.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTx.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVc.inc"
 
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingVcBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVcBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingVcBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicVertexLightingTxVcBn.inc"
 
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingVcBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxBn.inc"
-    #include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVcBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingVcBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxBn.inc"
+#include "XboxGamingScarlettBasicEffect_VSBasicPixelLightingTxVcBn.inc"
 
-    #include "XboxGamingScarlettBasicEffect_PSBasic.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicNoFog.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicTx.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicTxNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasic.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicTx.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicTxNoFog.inc"
 
-    #include "XboxGamingScarlettBasicEffect_PSBasicVertexLighting.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingNoFog.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingTx.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingTxNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicVertexLighting.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingNoFog.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingTx.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicVertexLightingTxNoFog.inc"
 
-    #include "XboxGamingScarlettBasicEffect_PSBasicPixelLighting.inc"
-    #include "XboxGamingScarlettBasicEffect_PSBasicPixelLightingTx.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicPixelLighting.inc"
+#include "XboxGamingScarlettBasicEffect_PSBasicPixelLightingTx.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOneBasicEffect_VSBasic.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicNoFog.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVc.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVcNoFog.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicTx.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicTxNoFog.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicTxVc.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicTxVcNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasic.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVcNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicTx.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicTxNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicTxVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicTxVcNoFog.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLighting.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVc.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTx.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLighting.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTx.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLighting.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVc.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTx.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLighting.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVc.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTx.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVc.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVcBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVcBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingVcBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicVertexLightingTxVcBn.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVcBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxBn.inc"
-    #include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVcBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingVcBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxBn.inc"
+#include "XboxGamingXboxOneBasicEffect_VSBasicPixelLightingTxVcBn.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_PSBasic.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicNoFog.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicTx.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicTxNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasic.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicTx.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicTxNoFog.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_PSBasicVertexLighting.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingNoFog.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTx.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicVertexLighting.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingNoFog.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTx.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc"
 
-    #include "XboxGamingXboxOneBasicEffect_PSBasicPixelLighting.inc"
-    #include "XboxGamingXboxOneBasicEffect_PSBasicPixelLightingTx.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicPixelLighting.inc"
+#include "XboxGamingXboxOneBasicEffect_PSBasicPixelLightingTx.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOneBasicEffect_VSBasic.inc"
-    #include "XboxOneBasicEffect_VSBasicNoFog.inc"
-    #include "XboxOneBasicEffect_VSBasicVc.inc"
-    #include "XboxOneBasicEffect_VSBasicVcNoFog.inc"
-    #include "XboxOneBasicEffect_VSBasicTx.inc"
-    #include "XboxOneBasicEffect_VSBasicTxNoFog.inc"
-    #include "XboxOneBasicEffect_VSBasicTxVc.inc"
-    #include "XboxOneBasicEffect_VSBasicTxVcNoFog.inc"
+#include "XboxOneBasicEffect_VSBasic.inc"
+#include "XboxOneBasicEffect_VSBasicNoFog.inc"
+#include "XboxOneBasicEffect_VSBasicVc.inc"
+#include "XboxOneBasicEffect_VSBasicVcNoFog.inc"
+#include "XboxOneBasicEffect_VSBasicTx.inc"
+#include "XboxOneBasicEffect_VSBasicTxNoFog.inc"
+#include "XboxOneBasicEffect_VSBasicTxVc.inc"
+#include "XboxOneBasicEffect_VSBasicTxVcNoFog.inc"
 
-    #include "XboxOneBasicEffect_VSBasicVertexLighting.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingVc.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingTx.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLighting.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingVc.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingTx.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
 
-    #include "XboxOneBasicEffect_VSBasicPixelLighting.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingVc.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingTx.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingTxVc.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLighting.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingVc.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingTx.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingTxVc.inc"
 
-    #include "XboxOneBasicEffect_VSBasicVertexLightingBn.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingVcBn.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingTxBn.inc"
-    #include "XboxOneBasicEffect_VSBasicVertexLightingTxVcBn.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingBn.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingVcBn.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingTxBn.inc"
+#include "XboxOneBasicEffect_VSBasicVertexLightingTxVcBn.inc"
 
-    #include "XboxOneBasicEffect_VSBasicPixelLightingBn.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingVcBn.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingTxBn.inc"
-    #include "XboxOneBasicEffect_VSBasicPixelLightingTxVcBn.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingBn.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingVcBn.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingTxBn.inc"
+#include "XboxOneBasicEffect_VSBasicPixelLightingTxVcBn.inc"
 
-    #include "XboxOneBasicEffect_PSBasic.inc"
-    #include "XboxOneBasicEffect_PSBasicNoFog.inc"
-    #include "XboxOneBasicEffect_PSBasicTx.inc"
-    #include "XboxOneBasicEffect_PSBasicTxNoFog.inc"
+#include "XboxOneBasicEffect_PSBasic.inc"
+#include "XboxOneBasicEffect_PSBasicNoFog.inc"
+#include "XboxOneBasicEffect_PSBasicTx.inc"
+#include "XboxOneBasicEffect_PSBasicTxNoFog.inc"
 
-    #include "XboxOneBasicEffect_PSBasicVertexLighting.inc"
-    #include "XboxOneBasicEffect_PSBasicVertexLightingNoFog.inc"
-    #include "XboxOneBasicEffect_PSBasicVertexLightingTx.inc"
-    #include "XboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc"
+#include "XboxOneBasicEffect_PSBasicVertexLighting.inc"
+#include "XboxOneBasicEffect_PSBasicVertexLightingNoFog.inc"
+#include "XboxOneBasicEffect_PSBasicVertexLightingTx.inc"
+#include "XboxOneBasicEffect_PSBasicVertexLightingTxNoFog.inc"
 
-    #include "XboxOneBasicEffect_PSBasicPixelLighting.inc"
-    #include "XboxOneBasicEffect_PSBasicPixelLightingTx.inc"
+#include "XboxOneBasicEffect_PSBasicPixelLighting.inc"
+#include "XboxOneBasicEffect_PSBasicPixelLightingTx.inc"
 #else
-    #include "BasicEffect_VSBasic.inc"
-    #include "BasicEffect_VSBasicNoFog.inc"
-    #include "BasicEffect_VSBasicVc.inc"
-    #include "BasicEffect_VSBasicVcNoFog.inc"
-    #include "BasicEffect_VSBasicTx.inc"
-    #include "BasicEffect_VSBasicTxNoFog.inc"
-    #include "BasicEffect_VSBasicTxVc.inc"
-    #include "BasicEffect_VSBasicTxVcNoFog.inc"
+#include "BasicEffect_VSBasic.inc"
+#include "BasicEffect_VSBasicNoFog.inc"
+#include "BasicEffect_VSBasicVc.inc"
+#include "BasicEffect_VSBasicVcNoFog.inc"
+#include "BasicEffect_VSBasicTx.inc"
+#include "BasicEffect_VSBasicTxNoFog.inc"
+#include "BasicEffect_VSBasicTxVc.inc"
+#include "BasicEffect_VSBasicTxVcNoFog.inc"
 
-    #include "BasicEffect_VSBasicVertexLighting.inc"
-    #include "BasicEffect_VSBasicVertexLightingVc.inc"
-    #include "BasicEffect_VSBasicVertexLightingTx.inc"
-    #include "BasicEffect_VSBasicVertexLightingTxVc.inc"
+#include "BasicEffect_VSBasicVertexLighting.inc"
+#include "BasicEffect_VSBasicVertexLightingVc.inc"
+#include "BasicEffect_VSBasicVertexLightingTx.inc"
+#include "BasicEffect_VSBasicVertexLightingTxVc.inc"
 
-    #include "BasicEffect_VSBasicPixelLighting.inc"
-    #include "BasicEffect_VSBasicPixelLightingVc.inc"
-    #include "BasicEffect_VSBasicPixelLightingTx.inc"
-    #include "BasicEffect_VSBasicPixelLightingTxVc.inc"
+#include "BasicEffect_VSBasicPixelLighting.inc"
+#include "BasicEffect_VSBasicPixelLightingVc.inc"
+#include "BasicEffect_VSBasicPixelLightingTx.inc"
+#include "BasicEffect_VSBasicPixelLightingTxVc.inc"
 
-    #include "BasicEffect_VSBasicVertexLightingBn.inc"
-    #include "BasicEffect_VSBasicVertexLightingVcBn.inc"
-    #include "BasicEffect_VSBasicVertexLightingTxBn.inc"
-    #include "BasicEffect_VSBasicVertexLightingTxVcBn.inc"
+#include "BasicEffect_VSBasicVertexLightingBn.inc"
+#include "BasicEffect_VSBasicVertexLightingVcBn.inc"
+#include "BasicEffect_VSBasicVertexLightingTxBn.inc"
+#include "BasicEffect_VSBasicVertexLightingTxVcBn.inc"
 
-    #include "BasicEffect_VSBasicPixelLightingBn.inc"
-    #include "BasicEffect_VSBasicPixelLightingVcBn.inc"
-    #include "BasicEffect_VSBasicPixelLightingTxBn.inc"
-    #include "BasicEffect_VSBasicPixelLightingTxVcBn.inc"
+#include "BasicEffect_VSBasicPixelLightingBn.inc"
+#include "BasicEffect_VSBasicPixelLightingVcBn.inc"
+#include "BasicEffect_VSBasicPixelLightingTxBn.inc"
+#include "BasicEffect_VSBasicPixelLightingTxVcBn.inc"
 
-    #include "BasicEffect_PSBasic.inc"
-    #include "BasicEffect_PSBasicNoFog.inc"
-    #include "BasicEffect_PSBasicTx.inc"
-    #include "BasicEffect_PSBasicTxNoFog.inc"
+#include "BasicEffect_PSBasic.inc"
+#include "BasicEffect_PSBasicNoFog.inc"
+#include "BasicEffect_PSBasicTx.inc"
+#include "BasicEffect_PSBasicTxNoFog.inc"
 
-    #include "BasicEffect_PSBasicVertexLighting.inc"
-    #include "BasicEffect_PSBasicVertexLightingNoFog.inc"
-    #include "BasicEffect_PSBasicVertexLightingTx.inc"
-    #include "BasicEffect_PSBasicVertexLightingTxNoFog.inc"
+#include "BasicEffect_PSBasicVertexLighting.inc"
+#include "BasicEffect_PSBasicVertexLightingNoFog.inc"
+#include "BasicEffect_PSBasicVertexLightingTx.inc"
+#include "BasicEffect_PSBasicVertexLightingTxNoFog.inc"
 
-    #include "BasicEffect_PSBasicPixelLighting.inc"
-    #include "BasicEffect_PSBasicPixelLightingTx.inc"
+#include "BasicEffect_PSBasicPixelLighting.inc"
+#include "BasicEffect_PSBasicPixelLightingTx.inc"
 #endif
 }
 
@@ -403,6 +404,7 @@ const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] =
     9,      // pixel lighting (biased vertex normals) + texture + vertex color
     9,      // pixel lighting (biased vertex normals) + texture + vertex color, no fog
 };
+#pragma endregion
 
 // Global pool of per-device BasicEffect resources.
 template<>
@@ -415,8 +417,8 @@ BasicEffect::Impl::Impl(
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-        texture{},
-        sampler{}
+    texture{},
+    sampler{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::VertexShaderIndices)) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::VertexShaderBytecode)) == BasicEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -583,7 +585,7 @@ BasicEffect::BasicEffect(
     _In_ ID3D12Device* device,
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
 

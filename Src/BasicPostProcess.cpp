@@ -27,8 +27,8 @@ namespace
 {
     constexpr int c_MaxSamples = 16;
 
-    constexpr int Dirty_ConstantBuffer  = 0x01;
-    constexpr int Dirty_Parameters      = 0x02;
+    constexpr int Dirty_ConstantBuffer = 0x01;
+    constexpr int Dirty_Parameters = 0x02;
 
     constexpr int RootSignatureCount = 2;
 
@@ -48,57 +48,58 @@ namespace
     }
 }
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "XboxGamingScarlettPostProcess_VSQuadNoCB.inc"
-    #include "XboxGamingScarlettPostProcess_VSQuad.inc"
+#include "XboxGamingScarlettPostProcess_VSQuadNoCB.inc"
+#include "XboxGamingScarlettPostProcess_VSQuad.inc"
 
-    #include "XboxGamingScarlettPostProcess_PSCopy.inc"
-    #include "XboxGamingScarlettPostProcess_PSMonochrome.inc"
-    #include "XboxGamingScarlettPostProcess_PSSepia.inc"
-    #include "XboxGamingScarlettPostProcess_PSDownScale2x2.inc"
-    #include "XboxGamingScarlettPostProcess_PSDownScale4x4.inc"
-    #include "XboxGamingScarlettPostProcess_PSGaussianBlur5x5.inc"
-    #include "XboxGamingScarlettPostProcess_PSBloomExtract.inc"
-    #include "XboxGamingScarlettPostProcess_PSBloomBlur.inc"
+#include "XboxGamingScarlettPostProcess_PSCopy.inc"
+#include "XboxGamingScarlettPostProcess_PSMonochrome.inc"
+#include "XboxGamingScarlettPostProcess_PSSepia.inc"
+#include "XboxGamingScarlettPostProcess_PSDownScale2x2.inc"
+#include "XboxGamingScarlettPostProcess_PSDownScale4x4.inc"
+#include "XboxGamingScarlettPostProcess_PSGaussianBlur5x5.inc"
+#include "XboxGamingScarlettPostProcess_PSBloomExtract.inc"
+#include "XboxGamingScarlettPostProcess_PSBloomBlur.inc"
 #elif defined(_GAMING_XBOX)
-    #include "XboxGamingXboxOnePostProcess_VSQuadNoCB.inc"
-    #include "XboxGamingXboxOnePostProcess_VSQuad.inc"
+#include "XboxGamingXboxOnePostProcess_VSQuadNoCB.inc"
+#include "XboxGamingXboxOnePostProcess_VSQuad.inc"
 
-    #include "XboxGamingXboxOnePostProcess_PSCopy.inc"
-    #include "XboxGamingXboxOnePostProcess_PSMonochrome.inc"
-    #include "XboxGamingXboxOnePostProcess_PSSepia.inc"
-    #include "XboxGamingXboxOnePostProcess_PSDownScale2x2.inc"
-    #include "XboxGamingXboxOnePostProcess_PSDownScale4x4.inc"
-    #include "XboxGamingXboxOnePostProcess_PSGaussianBlur5x5.inc"
-    #include "XboxGamingXboxOnePostProcess_PSBloomExtract.inc"
-    #include "XboxGamingXboxOnePostProcess_PSBloomBlur.inc"
+#include "XboxGamingXboxOnePostProcess_PSCopy.inc"
+#include "XboxGamingXboxOnePostProcess_PSMonochrome.inc"
+#include "XboxGamingXboxOnePostProcess_PSSepia.inc"
+#include "XboxGamingXboxOnePostProcess_PSDownScale2x2.inc"
+#include "XboxGamingXboxOnePostProcess_PSDownScale4x4.inc"
+#include "XboxGamingXboxOnePostProcess_PSGaussianBlur5x5.inc"
+#include "XboxGamingXboxOnePostProcess_PSBloomExtract.inc"
+#include "XboxGamingXboxOnePostProcess_PSBloomBlur.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "XboxOnePostProcess_VSQuadNoCB.inc"
-    #include "XboxOnePostProcess_VSQuad.inc"
+#include "XboxOnePostProcess_VSQuadNoCB.inc"
+#include "XboxOnePostProcess_VSQuad.inc"
 
-    #include "XboxOnePostProcess_PSCopy.inc"
-    #include "XboxOnePostProcess_PSMonochrome.inc"
-    #include "XboxOnePostProcess_PSSepia.inc"
-    #include "XboxOnePostProcess_PSDownScale2x2.inc"
-    #include "XboxOnePostProcess_PSDownScale4x4.inc"
-    #include "XboxOnePostProcess_PSGaussianBlur5x5.inc"
-    #include "XboxOnePostProcess_PSBloomExtract.inc"
-    #include "XboxOnePostProcess_PSBloomBlur.inc"
+#include "XboxOnePostProcess_PSCopy.inc"
+#include "XboxOnePostProcess_PSMonochrome.inc"
+#include "XboxOnePostProcess_PSSepia.inc"
+#include "XboxOnePostProcess_PSDownScale2x2.inc"
+#include "XboxOnePostProcess_PSDownScale4x4.inc"
+#include "XboxOnePostProcess_PSGaussianBlur5x5.inc"
+#include "XboxOnePostProcess_PSBloomExtract.inc"
+#include "XboxOnePostProcess_PSBloomBlur.inc"
 #else
-    #include "PostProcess_VSQuadNoCB.inc"
-    #include "PostProcess_VSQuad.inc"
+#include "PostProcess_VSQuadNoCB.inc"
+#include "PostProcess_VSQuad.inc"
 
-    #include "PostProcess_PSCopy.inc"
-    #include "PostProcess_PSMonochrome.inc"
-    #include "PostProcess_PSSepia.inc"
-    #include "PostProcess_PSDownScale2x2.inc"
-    #include "PostProcess_PSDownScale4x4.inc"
-    #include "PostProcess_PSGaussianBlur5x5.inc"
-    #include "PostProcess_PSBloomExtract.inc"
-    #include "PostProcess_PSBloomBlur.inc"
+#include "PostProcess_PSCopy.inc"
+#include "PostProcess_PSMonochrome.inc"
+#include "PostProcess_PSSepia.inc"
+#include "PostProcess_PSDownScale2x2.inc"
+#include "PostProcess_PSDownScale4x4.inc"
+#include "PostProcess_PSGaussianBlur5x5.inc"
+#include "PostProcess_PSBloomExtract.inc"
+#include "PostProcess_PSBloomBlur.inc"
 #endif
 }
 
@@ -140,14 +141,14 @@ namespace
             _Analysis_assume_(slot >= 0 && slot < RootSignatureCount);
 
             return DemandCreate(mRootSignature[slot], mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
-            {
-                HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
+                {
+                    HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
-                if (SUCCEEDED(hr))
-                    SetDebugObjectName(*pResult, L"BasicPostProcess");
+                    if (SUCCEEDED(hr))
+                        SetDebugObjectName(*pResult, L"BasicPostProcess");
 
-                return hr;
-            });
+                    return hr;
+                });
         }
 
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
@@ -158,6 +159,7 @@ namespace
         std::mutex                  mMutex;
     };
 }
+#pragma endregion
 
 class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
@@ -545,7 +547,7 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
 
 // Public constructor.
 BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
-  : pImpl(std::make_unique<Impl>(device, rtState, fx))
+    : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {
 }
 

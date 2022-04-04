@@ -37,9 +37,9 @@ namespace
         x |= x >> 4;
         x |= x >> 8;
         x |= x >> 16;
-#ifdef _WIN64
+    #ifdef _WIN64
         x |= x >> 32;
-#endif
+    #endif
         return ++x;
     }
 
@@ -54,26 +54,26 @@ namespace
         // etc...
         // Need to convert to an index.
 
-#ifdef _MSC_VER
+    #ifdef _MSC_VER
         unsigned long bitIndex = 0;
 
-#ifdef _WIN64
+    #ifdef _WIN64
         return _BitScanForward64(&bitIndex, allocatorPageSize) ? bitIndex + 1 : 0;
-#else
+    #else
         return _BitScanForward(&bitIndex, static_cast<unsigned long>(allocatorPageSize)) ? bitIndex + 1 : 0;
-#endif
+    #endif
 
-#elif defined(__GNUC__)
+    #elif defined(__GNUC__)
 
-#ifdef __LP64__
+    #ifdef __LP64__
         return static_cast<size_t>(__builtin_ffsll(static_cast<long long>(allocatorPageSize)));
-#else
+    #else
         return static_cast<size_t>(__builtin_ffs(static_cast<int>(allocatorPageSize)));
-#endif
+    #endif
 
-#else
-#error Unknown forward bit-scan syntax
-#endif
+    #else
+    #error Unknown forward bit-scan syntax
+    #endif
     }
 
     inline size_t GetPageSizeFromPoolIndex(size_t x) noexcept
@@ -315,7 +315,7 @@ public:
         m_peakCommited = 0;
         m_peakBytes = 0;
         m_peakPages = 0;
-}
+    }
 
     GraphicsMemory* mOwner;
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
@@ -443,7 +443,7 @@ GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device* device)
 
 GraphicsResource::GraphicsResource() noexcept
     : mPage(nullptr)
-    , mGpuAddress {}
+    , mGpuAddress{}
     , mResource(nullptr)
     , mMemory(nullptr)
     , mBufferOffset(0)

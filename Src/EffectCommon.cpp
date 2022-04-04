@@ -169,7 +169,7 @@ _Use_decl_annotations_ void EffectLights::InitializeConstants(XMVECTOR& specular
     {
         lightDirectionConstant[i] = defaultLightDirection;
 
-        lightDiffuseConstant[i]  = lightEnabled[i] ? lightDiffuseColor[i]  : g_XMZero;
+        lightDiffuseConstant[i] = lightEnabled[i] ? lightDiffuseColor[i] : g_XMZero;
         lightSpecularConstant[i] = lightEnabled[i] ? lightSpecularColor[i] : g_XMZero;
     }
 }
@@ -391,12 +391,12 @@ ID3D12RootSignature* EffectDeviceResources::DemandCreateRootSig(
     D3D12_ROOT_SIGNATURE_DESC const& desc)
 {
     return DemandCreate(rootSig, mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
-    {
-        HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
+        {
+            HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
-        if (SUCCEEDED(hr))
-            SetDebugObjectName(*pResult, L"DirectXTK:Effect");
+            if (SUCCEEDED(hr))
+                SetDebugObjectName(*pResult, L"DirectXTK:Effect");
 
-        return hr;
-    });
+            return hr;
+        });
 }

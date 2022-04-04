@@ -554,7 +554,7 @@ namespace
         _In_z_ const wchar_t* fileName,
         _In_ ID3D12Resource** texture) noexcept
     {
-#if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
+    #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
         if (texture && *texture)
         {
             const wchar_t* pstrName = wcsrchr(fileName, '\\');
@@ -569,10 +569,10 @@ namespace
 
             (*texture)->SetName(pstrName);
         }
-#else
+    #else
         UNREFERENCED_PARAMETER(fileName);
         UNREFERENCED_PARAMETER(texture);
-#endif
+    #endif
     }
 
     //--------------------------------------------------------------------------------------
