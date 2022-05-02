@@ -78,7 +78,7 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4005)
-#define NOMINMAX
+#define NOMINMAX 1
 #define NODRAWTEXT
 #define NOGDI
 #define NOBITMAP
@@ -88,6 +88,10 @@
 #pragma warning(pop)
 
 #include <Windows.h>
+
+#ifdef __MINGW32__
+#include <unknwn.h>
+#endif
 
 #ifndef _WIN32_WINNT_WIN10
 #define _WIN32_WINNT_WIN10 0x0A00
