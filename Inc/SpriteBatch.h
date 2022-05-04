@@ -14,7 +14,12 @@
 #elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/d3d12.h>
+#include <dxguids/dxguids.h>
+#else
 #include <d3d12.h>
+#endif
 #include <dxgi1_4.h>
 #endif
 
