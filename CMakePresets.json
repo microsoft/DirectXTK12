@@ -90,6 +90,16 @@
       },
       "hidden": true
     },
+    {
+      "name": "VCPKG",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "type": "FILEPATH"
+        }
+      },
+      "hidden": true
+    },
 
     { "name": "x64-Debug"        , "description": "MSVC for x64 (Debug) for Windows 10", "inherits": [ "base", "x64", "Debug", "MSVC" ] },
     { "name": "x64-Release"      , "description": "MSVC for x64 (Release) for Windows 10", "inherits": [ "base", "x64", "Release", "MSVC" ] },
@@ -106,6 +116,13 @@
     { "name": "arm-Release-UWP"  , "description": "MSVC for ARM (Release) for UWP", "inherits": [ "base", "ARM", "Release", "MSVC", "UWP" ] },
     { "name": "arm64-Debug-UWP"  , "description": "MSVC for ARM64 (Debug) for UWP", "inherits": [ "base", "ARM64", "Debug", "MSVC", "UWP" ] },
     { "name": "arm64-Release-UWP", "description": "MSVC for ARM64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "MSVC", "UWP" ] },
+
+    { "name": "x64-Debug-VCPKG"    , "description": "MSVC for x64 (Debug)", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG" ] },
+    { "name": "x64-Release-VCPKG"  , "description": "MSVC for x64 (Release)", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG" ] },
+    { "name": "x86-Debug-VCPKG"    , "description": "MSVC for x86 (Debug)", "inherits": [ "base", "x86", "Debug", "MSVC", "VCPKG" ] },
+    { "name": "x86-Release-VCPKG"  , "description": "MSVC for x86 (Release)", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG" ] },
+    { "name": "arm64-Debug-VCPKG"  , "description": "MSVC for ARM64 (Debug)", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG" ] },
+    { "name": "arm64-Release-VCPKG", "description": "MSVC for ARM64 (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG" ] },
 
     { "name": "x64-Debug-Clang"    , "description": "Clang/LLVM for x64 (Debug) for Windows 10", "inherits": [ "base", "x64", "Debug", "Clang" ] },
     { "name": "x64-Release-Clang"  , "description": "Clang/LLVM for x64 (Release) for Windows 10", "inherits": [ "base", "x64", "Release", "Clang" ] },

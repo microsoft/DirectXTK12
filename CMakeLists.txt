@@ -149,7 +149,7 @@ set(SHADER_SOURCES
     Src/Shaders/ToneMap.fx
     Src/Shaders/Utilities.fxh)
 
-if(BUILD_XAUDIO_WIN10)
+if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
         Inc/Audio.h)
 
@@ -193,7 +193,7 @@ if (NOT USE_PREBUILT_SHADERS)
         DEPENDS ${SHADER_SOURCES}
         COMMENT "Generating HLSL shaders..."
         COMMAND set CompileShadersOutput=${COMPILED_SHADERS}
-        COMMAND CompileShaders.cmd ARGS ${ShaderOpts}
+        COMMAND CompileShaders.cmd ARGS ${ShaderOpts} > ${COMPILED_SHADERS}/compileshaders.log
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
         USES_TERMINAL)
 endif()
@@ -214,8 +214,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Inc>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>)
 
-if(BUILD_XAUDIO_WIN10)
-    message("INFO: Using DirectX Tool Kit for Audio on XAudio 2.9.")
+if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
     target_include_directories(${PROJECT_NAME} PRIVATE Src Audio)
 endif()
 
@@ -273,9 +272,11 @@ install(FILES
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
+    target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT)
 
-    if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "arm"))
+    if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "^arm"))
         target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
+        target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
     endif()
 endif()
 
@@ -296,6 +297,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
         target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
     endif()
+
+    if ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
+        target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
+    endif()
 endif()
 
 if(WIN32)
@@ -304,6 +309,10 @@ if(WIN32)
 
     if(WINDOWS_STORE)
       target_compile_definitions(${PROJECT_NAME} PRIVATE WINAPI_FAMILY=WINAPI_FAMILY_APP)
+    endif()
+
+    if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
+        message("INFO: Using DirectX Tool Kit for Audio on XAudio 2.9 (Windows 10/Windows 11).")
     endif()
 endif()
 
