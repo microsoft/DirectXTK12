@@ -172,10 +172,12 @@
 #pragma warning(pop)
 #endif
 
+#define _USE_MATH_DEFINES
 #include <algorithm>
 #include <atomic>
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -222,11 +224,16 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4467 5038 5204 5220)
+#ifdef __MINGW32__
+#include <wrl/client.h>
+#else
 #include <wrl.h>
+#endif
 #pragma warning(pop)
 
 #include <wincodec.h>
 
+#ifndef __MINGW32__
 // DirectX Tool Kit for Audio is in all versions of DirectXTK12
 #include <mmreg.h>
 #include <Audioclient.h>
@@ -249,4 +256,5 @@
 #include <apu.h>
 #include <shapexmacontext.h>
 #include <xma2defs.h>
+#endif
 #endif

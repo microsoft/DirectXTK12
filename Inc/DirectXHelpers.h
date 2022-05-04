@@ -172,23 +172,23 @@ namespace DirectX
             resource->SetName(wname);
         }
     }
+
+    template<UINT TNameLength>
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength]) noexcept
+    {
+        resource->SetName(name);
+    }
     #else
     template<UINT TNameLength>
     inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const char(&)[TNameLength]) noexcept
     {
     }
-    #endif
 
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength]) noexcept
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const wchar_t(&)[TNameLength]) noexcept
     {
-    #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
-        resource->SetName(name);
-    #else
-        UNREFERENCED_PARAMETER(resource);
-        UNREFERENCED_PARAMETER(name);
-    #endif
     }
+    #endif
 
     // Helper for resource barrier.
     inline void TransitionResource(

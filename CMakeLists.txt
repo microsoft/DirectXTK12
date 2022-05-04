@@ -12,6 +12,7 @@ project (DirectXTK12
   LANGUAGES CXX)
 
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
+option(BUILD_XAUDIO_REDIST "Build for XAudio2Redist" OFF)
 
 option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 
@@ -149,7 +150,11 @@ set(SHADER_SOURCES
     Src/Shaders/ToneMap.fx
     Src/Shaders/Utilities.fxh)
 
-if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
+if(MINGW)
+   set(BUILD_XAUDIO_WIN10 OFF)
+endif()
+
+if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
         Inc/Audio.h)
 
@@ -202,7 +207,7 @@ add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPILED_SHADERS})
 
-if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16")
+if ((${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16") AND (NOT MINGW))
     target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
 endif()
 
@@ -214,7 +219,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Inc>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>)
 
-if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
+if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Src Audio)
 endif()
 
@@ -229,12 +234,20 @@ if(MSVC)
     # Library needs /EHsc (Enable C++ exceptions)
 endif()
 
-if (VCPKG_TOOLCHAIN)
+if (MINGW OR VCPKG_TOOLCHAIN)
     message("INFO: Using VCPKG for DirectX-Headers and DirectXMath.")
     find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectX-Headers Microsoft::DirectXMath)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
+endif()
+
+if (BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
+    message("INFO: Using XAudio2Redist for DirectX Tool Kit for Audio.")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
+
+    find_package(xaudio2redist CONFIG REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::XAudio2Redist)
 endif()
 
 #--- Package
@@ -275,19 +288,31 @@ if(MSVC)
     target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT)
 
     if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "^arm"))
-        target_compile_options(${PROJECT_NAME} PRIVATE /arch:SSE2)
         target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
     endif()
+endif()
+
+if(NOT ${DIRECTX_ARCH} MATCHES "^arm")
+    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
+        set(ARCH_SSE2 $<$<CXX_COMPILER_ID:MSVC>:/arch:SSE2> $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
+    else()
+        set(ARCH_SSE2 $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
+    endif()
+
+    target_compile_options(${PROJECT_NAME} PRIVATE ${ARCH_SSE2})
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${PROJECT_NAME} PRIVATE -Wpedantic -Wextra)
 endif()
+if(MINGW)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wno-ignored-attributes)
+endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus)
 
     if(ENABLE_CODE_ANALYSIS)
-      target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
+        target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
     endif()
 
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
