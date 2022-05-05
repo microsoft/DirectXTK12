@@ -81,6 +81,17 @@
         "strategy": "external"
       }
     },
+    {
+      "name": "GNUC",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++.exe"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      }
+    },
 
     {
       "name": "UWP",
@@ -97,6 +108,14 @@
           "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "type": "FILEPATH"
         }
+      },
+      "hidden": true
+    },
+    {
+      "name": "XAudio2Redist",
+      "cacheVariables": {
+        "BUILD_XAUDIO_WIN10": false,
+        "BUILD_XAUDIO_REDIST": true
       },
       "hidden": true
     },
@@ -117,10 +136,10 @@
     { "name": "arm64-Debug-UWP"  , "description": "MSVC for ARM64 (Debug) for UWP", "inherits": [ "base", "ARM64", "Debug", "MSVC", "UWP" ] },
     { "name": "arm64-Release-UWP", "description": "MSVC for ARM64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "MSVC", "UWP" ] },
 
-    { "name": "x64-Debug-VCPKG"    , "description": "MSVC for x64 (Debug)", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG" ] },
-    { "name": "x64-Release-VCPKG"  , "description": "MSVC for x64 (Release)", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG" ] },
-    { "name": "x86-Debug-VCPKG"    , "description": "MSVC for x86 (Debug)", "inherits": [ "base", "x86", "Debug", "MSVC", "VCPKG" ] },
-    { "name": "x86-Release-VCPKG"  , "description": "MSVC for x86 (Release)", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG" ] },
+    { "name": "x64-Debug-VCPKG"    , "description": "MSVC for x64 (Debug)", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG", "XAudio2Redist" ] },
+    { "name": "x64-Release-VCPKG"  , "description": "MSVC for x64 (Release)", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG", "XAudio2Redist" ] },
+    { "name": "x86-Debug-VCPKG"    , "description": "MSVC for x86 (Debug)", "inherits": [ "base", "x86", "Debug", "MSVC", "VCPKG", "XAudio2Redist" ] },
+    { "name": "x86-Release-VCPKG"  , "description": "MSVC for x86 (Release)", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG", "XAudio2Redist" ] },
     { "name": "arm64-Debug-VCPKG"  , "description": "MSVC for ARM64 (Debug)", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG" ] },
     { "name": "arm64-Release-VCPKG", "description": "MSVC for ARM64 (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG" ] },
 
@@ -136,6 +155,11 @@
     { "name": "x86-Debug-UWP-Clang"    , "description": "Clang/LLVM for x86 (Debug) for UWP", "inherits": [ "base", "x86", "Debug", "Clang", "UWP" ], "environment": { "CXXFLAGS": "-m32" } },
     { "name": "x86-Release-UWP-Clang"  , "description": "Clang/LLVM for x86 (Release) for UWP", "inherits": [ "base", "x86", "Release", "Clang", "UWP" ], "environment": { "CXXFLAGS": "-m32" } },
     { "name": "arm64-Debug-UWP-Clang"  , "description": "Clang/LLVM for AArch64 (Debug) for UWP", "inherits": [ "base", "ARM64", "Debug", "Clang", "UWP" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } },
-    { "name": "arm64-Release-UWP-Clang", "description": "Clang/LLVM for AArch64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "Clang", "UWP" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } }
+    { "name": "arm64-Release-UWP-Clang", "description": "Clang/LLVM for AArch64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "Clang", "UWP" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } },
+
+    { "name": "x64-Debug-MinGW"  , "description": "MinG-W64 (Debug)", "inherits": [ "base", "x64", "Debug", "GNUC", "VCPKG", "XAudio2Redist" ], "environment": { "PATH": "$penv{PATH};c:/mingw64/bin" } },
+    { "name": "x64-Release-MinGW", "description": "MinG-W64 (Release)", "inherits": [ "base", "x64", "Release", "GNUC", "VCPKG", "XAudio2Redist" ], "environment": { "PATH": "$penv{PATH};c:/mingw64/bin" } },
+    { "name": "x86-Debug-MinGW"  , "description": "MinG-W32 (Debug)", "inherits": [ "base", "x86", "Debug", "GNUC", "VCPKG", "XAudio2Redist" ], "environment": { "PATH": "$penv{PATH};c:/mingw32/bin" } },
+    { "name": "x86-Release-MinGW", "description": "MinG-W32 (Release)", "inherits": [ "base", "x86", "Release", "GNUC", "VCPKG", "XAudio2Redist" ], "environment": { "PATH": "$penv{PATH};c:/mingw32/bin" } }
   ]
 }

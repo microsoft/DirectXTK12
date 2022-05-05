@@ -3,7 +3,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake)
 include(CMakeFindDependencyMacro)
 
-if(VCPKG_TOOLCHAIN)
+if(MINGW OR VCPKG_TOOLCHAIN)
     find_dependency(directx-headers CONFIG)
     find_dependency(directxmath CONFIG)
 endif()

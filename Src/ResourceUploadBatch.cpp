@@ -17,6 +17,10 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
+#ifdef __MINGW32__
+const GUID IID_ID3D12Device = { 0x189819f1, 0x1db6, 0x4b57, { 0xbe, 0x54, 0x18, 0x21, 0x33, 0x9b, 0x85, 0xf7 } };
+#endif
+
 // Include the precompiled shader code.
 namespace
 {
