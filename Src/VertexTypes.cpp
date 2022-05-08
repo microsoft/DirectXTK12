@@ -86,6 +86,11 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormal::InputElements[] =
 
 static_assert(sizeof(VertexPositionNormal) == 24, "Vertex struct/layout mismatch");
 
+const D3D12_INPUT_LAYOUT_DESC VertexPositionNormal::InputLayout =
+{
+    VertexPositionNormal::InputElements,
+    VertexPositionNormal::InputElementCount
+};
 
 //--------------------------------------------------------------------------------------
 // Vertex struct holding position, color, and texture mapping information.
