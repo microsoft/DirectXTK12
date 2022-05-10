@@ -11,6 +11,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Fixed missing VertexPositionNormal::InputLayout
 * Minor updates for VS 2022 (17.2)
 * CMake project updates (now supports MSVC, clang/LLVM, and MinGW)
+* Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
 * Retired VS 2017 projects
 * Minor code review
 * Reformat source using updated .editorconfig settings
