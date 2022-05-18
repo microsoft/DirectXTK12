@@ -552,23 +552,19 @@ namespace
     //--------------------------------------------------------------------------------------
     void SetDebugTextureInfo(
         _In_z_ const wchar_t* fileName,
-        _In_ ID3D12Resource** texture) noexcept
+        _In_ ID3D12Resource* texture) noexcept
     {
     #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-        if (texture && *texture)
+        const wchar_t* pstrName = wcsrchr(fileName, '\\');
+        if (!pstrName)
         {
-            const wchar_t* pstrName = wcsrchr(fileName, '\\');
-            if (!pstrName)
-            {
-                pstrName = fileName;
-            }
-            else
-            {
-                pstrName++;
-            }
-
-            (*texture)->SetName(pstrName);
+            pstrName = fileName;
         }
+        else
+        {
+            pstrName++;
+        }
+        texture->SetName(pstrName);
     #else
         UNREFERENCED_PARAMETER(fileName);
         UNREFERENCED_PARAMETER(texture);
@@ -669,10 +665,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
         texture, subresources, isCubeMap);
     if (SUCCEEDED(hr))
     {
-        if (texture && *texture)
-        {
-            SetDebugObjectName(*texture, L"DDSTextureLoader");
-        }
+        SetDebugObjectName(*texture, L"DDSTextureLoader");
 
         if (alphaMode)
             *alphaMode = GetAlphaMode(header);
@@ -760,7 +753,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
 
     if (SUCCEEDED(hr))
     {
-        SetDebugTextureInfo(fileName, texture);
+        SetDebugTextureInfo(fileName, *texture);
 
         if (alphaMode)
             *alphaMode = GetAlphaMode(header);
@@ -861,10 +854,7 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
 
     if (SUCCEEDED(hr))
     {
-        if (texture && *texture)
-        {
-            SetDebugObjectName(*texture, L"DDSTextureLoader");
-        }
+        SetDebugObjectName(*texture, L"DDSTextureLoader");
 
         if (alphaMode)
             *alphaMode = GetAlphaMode(header);
@@ -979,7 +969,7 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
 
     if (SUCCEEDED(hr))
     {
-        SetDebugTextureInfo(fileName, texture);
+        SetDebugTextureInfo(fileName, *texture);
 
         if (alphaMode)
             *alphaMode = GetAlphaMode(header);
