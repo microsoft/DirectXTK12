@@ -46,6 +46,7 @@ if not exist %XBOXDXC% goto needgxdk
 goto continue
 
 :continuedxil
+if defined DirectXShaderCompiler goto dxcviaenv
 set PCDXC="%WindowsSdkVerBinPath%x86\dxc.exe"
 if exist %PCDXC% goto continue
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
@@ -53,6 +54,11 @@ if exist %PCDXC% goto continue
 
 set PCDXC=dxc.exe
 goto continue
+
+:dxcviaenv
+set PCDXC="%DirectXShaderCompiler%"
+if exist %PCDXC% goto continue
+goto needdxil
 
 :continuepc
 set PCOPTS=
@@ -342,9 +348,13 @@ exit /b
 :needxdk
 echo ERROR: CompileShaders xbox requires the Microsoft Xbox One XDK
 echo        (try re-running from the XDK Command Prompt)
-exit /b
+exit /b 1
 
 :needgxdk
 echo ERROR: CompileShaders gxdk requires the Microsoft Gaming SDK
 echo        (try re-running from the Gaming GXDK Command Prompt)
-exit /b
+exit /b 1
+
+:needdxil
+echo ERROR: CompileShaders dxil requires DXC.EXE
+exit /b 1

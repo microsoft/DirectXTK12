@@ -194,12 +194,16 @@ else()
 endif()
 
 if (NOT USE_PREBUILT_SHADERS)
+    if (BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
+        message("INFO: Using VCPKG for DirectXShaderCompiler.")
+        find_package(directx-dxc CONFIG REQUIRED)
+    endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
         MAIN_DEPENDENCY "${PROJECT_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"
         DEPENDS ${SHADER_SOURCES}
         COMMENT "Generating HLSL shaders..."
-        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
+        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" $<$<BOOL:${DIRECTX_DXC_TOOL}>:DirectXShaderCompiler=${DIRECTX_DXC_TOOL}> CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
         USES_TERMINAL)
 endif()
