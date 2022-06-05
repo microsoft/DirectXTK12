@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required (VERSION 3.18)
 
 set(DIRECTXTK12_VERSION 1.4.9)
 
@@ -195,8 +195,9 @@ endif()
 
 if (NOT USE_PREBUILT_SHADERS)
     if (BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
-        message("INFO: Using VCPKG for DirectXShaderCompiler.")
-        find_package(directx-dxc CONFIG REQUIRED)
+        message("INFO: Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
+        find_program(DIRECTX_DXC_TOOL DXC.EXE
+          REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH)
     endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
@@ -242,7 +243,7 @@ if(MSVC)
 endif()
 
 if (MINGW OR VCPKG_TOOLCHAIN)
-    message("INFO: Using VCPKG for DirectX-Headers and DirectXMath.")
+    message("INFO: Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
     find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectX-Headers Microsoft::DirectXMath)
