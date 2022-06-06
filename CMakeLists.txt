@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required (VERSION 3.18)
 
 set(DIRECTXTK12_VERSION 1.4.9)
 
@@ -194,12 +194,17 @@ else()
 endif()
 
 if (NOT USE_PREBUILT_SHADERS)
+    if (BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
+        message("INFO: Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
+        find_program(DIRECTX_DXC_TOOL DXC.EXE
+          REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH)
+    endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
         MAIN_DEPENDENCY "${PROJECT_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"
         DEPENDS ${SHADER_SOURCES}
         COMMENT "Generating HLSL shaders..."
-        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
+        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" $<$<BOOL:${DIRECTX_DXC_TOOL}>:DirectXShaderCompiler=${DIRECTX_DXC_TOOL}> CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
         USES_TERMINAL)
 endif()
@@ -238,7 +243,7 @@ if(MSVC)
 endif()
 
 if (MINGW OR VCPKG_TOOLCHAIN)
-    message("INFO: Using VCPKG for DirectX-Headers and DirectXMath.")
+    message("INFO: Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
     find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectX-Headers Microsoft::DirectXMath)
