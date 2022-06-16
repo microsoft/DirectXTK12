@@ -6,6 +6,11 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### June 15, 2022
+* GamePad, Keyboard, and Mouse updated to use GameInput on PC for the Gaming.Desktop.x64 platform
+* CMake project updates
+* Minor code review
+
 ### May 9, 2022
 * C++20 spaceship operator updates for SimpleMath
 * Fixed missing VertexPositionNormal::InputLayout
