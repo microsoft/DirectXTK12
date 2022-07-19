@@ -572,7 +572,12 @@ void BasicPostProcess::SetSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescripto
 
     if (resource)
     {
+    #if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
+    #else
+        D3D12_RESOURCE_DESC tmpDesc;
+        const auto& desc = *resource->GetDesc(&tmpDesc);
+    #endif
         pImpl->texWidth = static_cast<unsigned>(desc.Width);
         pImpl->texHeight = desc.Height;
     }

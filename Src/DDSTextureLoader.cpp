@@ -871,7 +871,14 @@ HRESULT DirectX::CreateDDSTextureFromMemoryEx(
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // If it's missing mips, let's generate them
-        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != (*texture)->GetDesc().MipLevels)
+    #if defined(_MSC_VER) || !defined(_WIN32)
+        const size_t mipLevels = (*texture)->GetDesc().MipLevels;
+    #else
+        D3D12_RESOURCE_DESC tmpDesc;
+        const size_t mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
+    #endif
+
+        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != mipLevels)
         {
             resourceUpload.GenerateMips(*texture);
         }
@@ -986,7 +993,14 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // If it's missing mips, let's generate them
-        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != (*texture)->GetDesc().MipLevels)
+    #if defined(_MSC_VER) || !defined(_WIN32)
+        const size_t mipLevels = (*texture)->GetDesc().MipLevels;
+    #else
+        D3D12_RESOURCE_DESC tmpDesc;
+        const size_t mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
+    #endif
+
+        if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != mipLevels)
         {
             resourceUpload.GenerateMips(*texture);
         }

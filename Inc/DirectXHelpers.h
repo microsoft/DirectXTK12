@@ -139,7 +139,12 @@ namespace DirectX
     // Helper for obtaining texture size
     inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
     {
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = tex->GetDesc();
+#else
+        D3D12_RESOURCE_DESC tmpDesc;
+        const auto& desc = *tex->GetDesc(&tmpDesc);
+#endif
         return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
     }
 
