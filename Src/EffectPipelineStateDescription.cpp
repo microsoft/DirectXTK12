@@ -91,7 +91,13 @@ void EffectPipelineStateDescription::CreatePipelineState(
     const D3D12_SHADER_BYTECODE& pixelShader,
     _Outptr_ ID3D12PipelineState** pPipelineState) const
 {
+#if defined(_MSC_VER) || !defined(_WIN32)
     auto psoDesc = GetDesc();
+#else
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC tmpPSODesc;
+    auto& psoDesc = *GetDesc(&tmpPSODesc);
+#endif
+
     psoDesc.pRootSignature = rootSignature;
     psoDesc.VS = vertexShader;
     psoDesc.PS = pixelShader;

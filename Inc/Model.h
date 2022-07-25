@@ -538,7 +538,11 @@ namespace DirectX
             if (textureIndex == -1)
                 return handle;
 
+        #if defined(_MSC_VER) || !defined(_WIN32)
             handle = heap->GetGPUDescriptorHandleForHeapStart();
+        #else
+            std::ignore = heap->GetGPUDescriptorHandleForHeapStart(&handle);
+        #endif
             handle.ptr += static_cast<UINT64>(descriptorSize * (UINT64(textureIndex) + UINT64(descriptorOffset)));
 
             return handle;

@@ -37,9 +37,15 @@ DescriptorHeap::DescriptorHeap(
     ID3D12DescriptorHeap* pExistingHeap) noexcept
     : m_pHeap(pExistingHeap)
 {
+#if defined(_MSC_VER) || !defined(_WIN32)
     m_hCPU = pExistingHeap->GetCPUDescriptorHandleForHeapStart();
     m_hGPU = pExistingHeap->GetGPUDescriptorHandleForHeapStart();
     m_desc = pExistingHeap->GetDesc();
+#else
+    std::ignore = pExistingHeap->GetCPUDescriptorHandleForHeapStart(&m_hCPU);
+    std::ignore = pExistingHeap->GetGPUDescriptorHandleForHeapStart(&m_hGPU);
+    std::ignore = pExistingHeap->GetDesc(&m_desc);
+#endif
 
     ComPtr<ID3D12Device> device;
     pExistingHeap->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
@@ -168,11 +174,19 @@ void DescriptorHeap::Create(
 
         SetDebugObjectName(m_pHeap.Get(), L"DescriptorHeap");
 
+    #if defined(_MSC_VER) || !defined(_WIN32)
         m_hCPU = m_pHeap->GetCPUDescriptorHandleForHeapStart();
-
         if (pDesc->Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE)
+        {
             m_hGPU = m_pHeap->GetGPUDescriptorHandleForHeapStart();
-
+        }
+    #else
+        std::ignore = m_pHeap->GetCPUDescriptorHandleForHeapStart(&m_hCPU);
+        if (pDesc->Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE)
+        {
+            std::ignore = m_pHeap->GetGPUDescriptorHandleForHeapStart(&m_hGPU);
+        }
+    #endif
     }
 }
 

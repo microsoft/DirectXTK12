@@ -67,6 +67,7 @@ namespace DirectX
             const D3D12_SHADER_BYTECODE& pixelShader,
             _Outptr_ ID3D12PipelineState** pPipelineState) const;
 
+    #if defined(_MSC_VER) || !defined(_WIN32)
         D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDesc() const noexcept
         {
             D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
@@ -84,6 +85,28 @@ namespace DirectX
             psoDesc.NodeMask = renderTargetState.nodeMask;
             return psoDesc;
         }
+    #else
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC* GetDesc(_Out_ D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc) const noexcept
+        {
+            if (!psoDesc)
+                return nullptr;
+
+            *psoDesc = {};
+            psoDesc->BlendState = blendDesc;
+            psoDesc->SampleMask = renderTargetState.sampleMask;
+            psoDesc->RasterizerState = rasterizerDesc;
+            psoDesc->DepthStencilState = depthStencilDesc;
+            psoDesc->InputLayout = inputLayout;
+            psoDesc->IBStripCutValue = stripCutValue;
+            psoDesc->PrimitiveTopologyType = primitiveTopology;
+            psoDesc->NumRenderTargets = renderTargetState.numRenderTargets;
+            memcpy(psoDesc->RTVFormats, renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+            psoDesc->DSVFormat = renderTargetState.dsvFormat;
+            psoDesc->SampleDesc = renderTargetState.sampleDesc;
+            psoDesc->NodeMask = renderTargetState.nodeMask;
+            return psoDesc;
+        }
+    #endif
 
         uint32_t ComputeHash() const noexcept;
 
