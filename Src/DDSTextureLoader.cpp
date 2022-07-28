@@ -239,6 +239,10 @@ namespace
         {
             format = MakeSRGB(format);
         }
+        else if (loadFlags & DDS_LOADER_IGNORE_SRGB)
+        {
+            format = MakeLinear(format);
+        }
 
         D3D12_RESOURCE_DESC desc = {};
         desc.Width = static_cast<UINT>(width);
