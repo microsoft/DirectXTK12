@@ -6,7 +6,7 @@ http://go.microsoft.com/fwlink/?LinkID=615561
 
 Copyright (c) Microsoft Corporation.
 
-**June 15, 2022**
+**July 29, 2022**
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps for Windows 11 / Windows 10, game titles for Xbox Series X\|S / Xbox One, and Win32 desktop applications for Windows 11 / Windows 10.
 
@@ -116,7 +116,7 @@ This project may contain trademarks or logos for projects, products, or services
 
 ## Credits
 
-The _DirectX Tool Kit for DirectX 11_ is the work of Shawn Hargreaves and Chuck Walbourn, with contributions from Aaron Rodriguez Hernandez, and Dani Roman.
+The _DirectX Tool Kit for DirectX 11_ is the work of Shawn Hargreaves and Chuck Walbourn, with contributions from Aaron Rodriguez Hernandez and Dani Roman.
 
 The _DirectX Tool Kit for DirectX 12_ is the work of Pete Lewis, Justin Saunders, and Chuck Walbourn based heavily on the DirectX Tool Kit for DirectX 11.
 

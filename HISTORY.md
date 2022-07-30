@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### July 29, 2022
+* DDSTextureLoader ``Ex`` functions now support a ``DDS_LOADER_IGNORE_SRGB`` flag.
+* Fixed Mouse race-condition with changing mode and resetting scroll wheel at the same time.
+* Updates for MinGW ABI fixes in the latest DirectX-Headers.
+* CMake and MSBuild project updates
+* Minor code review
+
 ### June 15, 2022
 * GamePad, Keyboard, and Mouse updated to use GameInput on PC for the Gaming.Desktop.x64 platform
 * CMake project updates
