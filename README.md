@@ -80,6 +80,8 @@ For the latest version of DirectXTK12, bug reports, etc. please visit the projec
 
 ## Release Notes
 
+* As of the September 2022 release, the library makes use of C++11 inline namespaces for differing types that have the same names in the DirectX 11 and DirectX 12 version of the *DirectX Tool Kit*. This provides a link-unique name such as ``DirectX::DX12::SpriteBatch`` that will appear in linker output messages. In most use cases, however, there is no need to add explicit ``DX12`` namespace resolution in client code.
+
 * As of the March 2022 release, legacy Xbox One XDK support requires the XDK April 2018 release or later. Upgrading to the Microsoft GDKX is strongly recommended.
 
 * In the June 2021 release or later, the VS 2019 projects of this library build the HLSL shaders with Shader Model 6 via DXC. Since the NuGet still builds using VS 2017, the build-in shaders in that version are currently Shader Model 5.1. See [this wiki page](https://github.com/microsoft/DirectXTK12/wiki/Shader-Model-6) for more information. The Microsoft GDK projects always use Shader Model 6.
