@@ -14,7 +14,7 @@
 #include "GraphicsMemory.h"
 
 using namespace DirectX;
-using namespace DirectX::Internal;
+using namespace DirectX::DX12::Private;
 using Microsoft::WRL::ComPtr;
 
 
