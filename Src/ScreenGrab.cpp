@@ -435,7 +435,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    namespace DX12
+    inline namespace DX12
     {
         namespace Internal
         {
