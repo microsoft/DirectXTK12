@@ -435,9 +435,12 @@ HRESULT DirectX::SaveDDSTextureToFile(
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    namespace Internal
+    inline namespace DX12
     {
-        extern IWICImagingFactory2* GetWIC() noexcept;
+        namespace Internal
+        {
+            extern IWICImagingFactory2* GetWIC() noexcept;
+        }
     }
 }
 
@@ -453,7 +456,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     std::function<void(IPropertyBag2*)> setCustomProps,
     bool forceSRGB)
 {
-    using namespace DirectX::Internal;
+    using namespace DirectX::DX12::Internal;
 
     if (!fileName)
         return E_INVALIDARG;

@@ -20,6 +20,8 @@ option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
 
 option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
 
+option(BUILD_MIXED_DX11 "Support linking with DX11 version of toolkit" OFF)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -51,39 +53,28 @@ set(LIBRARY_HEADERS
     Inc/DirectXHelpers.h
     Inc/Effects.h
     Inc/EffectPipelineStateDescription.h
-    Inc/GamePad.h
     Inc/GeometricPrimitive.h
     Inc/GraphicsMemory.h
-    Inc/Keyboard.h
     Inc/Model.h
-    Inc/Mouse.h
     Inc/PostProcess.h
     Inc/PrimitiveBatch.h
     Inc/RenderTargetState.h
     Inc/ResourceUploadBatch.h
     Inc/ScreenGrab.h
-    Inc/SimpleMath.h
-    Inc/SimpleMath.inl
     Inc/SpriteBatch.h
     Inc/SpriteFont.h
     Inc/VertexTypes.h
     Inc/WICTextureLoader.h)
 
 set(LIBRARY_SOURCES
-    Src/AlignedNew.h
     Src/AlphaTestEffect.cpp
     Src/BasicEffect.cpp
     Src/BasicPostProcess.cpp
-    Src/Bezier.h
-    Src/BinaryReader.cpp
-    Src/BinaryReader.h
     Src/BufferHelpers.cpp
     Src/CommonStates.cpp
     Src/d3dx12.h
-    Src/DDS.h
     Src/DDSTextureLoader.cpp
     Src/DebugEffect.cpp
-    Src/DemandCreate.h
     Src/DescriptorHeap.cpp
     Src/DirectXHelpers.cpp
     Src/DualPostProcess.cpp
@@ -94,60 +85,82 @@ set(LIBRARY_SOURCES
     Src/EffectPipelineStateDescription.cpp
     Src/EffectTextureFactory.cpp
     Src/EnvironmentMapEffect.cpp
-    Src/GamePad.cpp
     Src/GeometricPrimitive.cpp
-    Src/Geometry.h
-    Src/Geometry.cpp
     Src/GraphicsMemory.cpp
-    Src/Keyboard.cpp
     Src/LinearAllocator.cpp
     Src/LinearAllocator.h
-    Src/LoaderHelpers.h
     Src/Model.cpp
     Src/ModelLoadCMO.cpp
     Src/ModelLoadSDKMESH.cpp
     Src/ModelLoadVBO.cpp
-    Src/Mouse.cpp
     Src/NormalMapEffect.cpp
     Src/PBREffect.cpp
     Src/PBREffectFactory.cpp
     Src/pch.h
-    Src/PlatformHelpers.h
     Src/PrimitiveBatch.cpp
     Src/ResourceUploadBatch.cpp
     Src/ScreenGrab.cpp
-    Src/SDKMesh.h
-    Src/SharedResourcePool.h
-    Src/SimpleMath.cpp
     Src/SkinnedEffect.cpp
     Src/SpriteBatch.cpp
     Src/SpriteFont.cpp
-    Src/TeapotData.inc
     Src/ToneMapPostProcess.cpp
-    Src/vbo.h
     Src/VertexTypes.cpp
     Src/WICTextureLoader.cpp)
 
 set(SHADER_SOURCES
     Src/Shaders/AlphaTestEffect.fx
     Src/Shaders/BasicEffect.fx
-    Src/Shaders/Common.fxh
     Src/Shaders/DebugEffect.fx
     Src/Shaders/DualTextureEffect.fx
     Src/Shaders/EnvironmentMapEffect.fx
     Src/Shaders/GenerateMips.hlsl
-    Src/Shaders/Lighting.fxh
     Src/Shaders/NormalMapEffect.fx
-    Src/Shaders/PBRCommon.fxh
     Src/Shaders/PBREffect.fx
-    Src/Shaders/PixelPacking_Velocity.hlsli
     Src/Shaders/PostProcess.fx
     Src/Shaders/RootSig.fxh
     Src/Shaders/SkinnedEffect.fx
-    Src/Shaders/Skinning.fxh
     Src/Shaders/SpriteEffect.fx
+    Src/Shaders/ToneMap.fx)
+
+# These source files are identical in both DX11 and DX12 version.
+if (NOT BUILD_MIXED_DX11)
+    set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+      Inc/GamePad.h
+      Inc/Keyboard.h
+      Inc/Mouse.h
+      Inc/SimpleMath.h
+      Inc/SimpleMath.inl)
+
+    set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+      Src/BinaryReader.cpp
+      Src/GamePad.cpp
+      Src/Geometry.cpp
+      Src/Keyboard.cpp
+      Src/Mouse.cpp
+      Src/SimpleMath.cpp)
+endif()
+
+set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+    Src/AlignedNew.h
+    Src/Bezier.h
+    Src/BinaryReader.h
+    Src/DDS.h
+    Src/DemandCreate.h
+    Src/Geometry.h
+    Src/LoaderHelpers.h
+    Src/PlatformHelpers.h
+    Src/SDKMesh.h
+    Src/SharedResourcePool.h
+    Src/vbo.h
+    Src/TeapotData.inc)
+
+set(SHADER_SOURCES ${SHADER_SOURCES}
+    Src/Shaders/Common.fxh
+    Src/Shaders/Lighting.fxh
+    Src/Shaders/PBRCommon.fxh
+    Src/Shaders/PixelPacking_Velocity.hlsli
+    Src/Shaders/Skinning.fxh
     Src/Shaders/Structures.fxh
-    Src/Shaders/ToneMap.fx
     Src/Shaders/Utilities.fxh)
 
 if(MINGW)
