@@ -234,6 +234,12 @@
 
 #include <wincodec.h>
 
+#if defined(NTDDI_WIN10_FE) || defined(__MINGW32__)
+#include <ocidl.h>
+#else
+#include <OCIdl.h>
+#endif
+
 #ifndef __MINGW32__
 // DirectX Tool Kit for Audio is in all versions of DirectXTK12
 #include <mmreg.h>
