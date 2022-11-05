@@ -871,6 +871,8 @@ namespace DirectX
 
             void __cdecl SetSharing(bool enabled) noexcept;
 
+            void __cdecl EnableLighting(bool enabled) noexcept;
+
             void __cdecl EnablePerPixelLighting(bool enabled) noexcept;
 
             void __cdecl EnableNormalMapEffect(bool enabled) noexcept;

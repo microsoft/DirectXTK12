@@ -63,6 +63,7 @@ public:
         , mSamplerDescriptors(nullptr)
         , mSharing(true)
         , mUseNormalMapEffect(true)
+        , mEnableLighting(true)
         , mEnablePerPixelLighting(true)
         , mEnableFog(false)
         , mEnableInstancing(false)
@@ -89,6 +90,7 @@ public:
 
     bool mSharing;
     bool mUseNormalMapEffect;
+    bool mEnableLighting;
     bool mEnablePerPixelLighting;
     bool mEnableFog;
     bool mEnableInstancing;
@@ -336,7 +338,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     else if (info.enableNormalMaps && mUseNormalMapEffect)
     {
         // NormalMapEffect
-        int effectflags = EffectFlags::None;
+        int effectflags = EffectFlags::PerPixelLighting;
 
         if (mEnableFog)
         {
@@ -408,7 +410,12 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     else
     {
         // set effect flags for creation
-        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+        int effectflags = EffectFlags::None;
+
+        if (mEnableLighting)
+        {
+            effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+        }
 
         if (mEnableFog)
         {
@@ -554,6 +561,11 @@ void EffectFactory::ReleaseCache()
 void EffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->mSharing = enabled;
+}
+
+void EffectFactory::EnableLighting(bool enabled) noexcept
+{
+    pImpl->mEnableLighting = enabled;
 }
 
 void EffectFactory::EnablePerPixelLighting(bool enabled) noexcept
