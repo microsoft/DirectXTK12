@@ -1,3 +1,4 @@
+#include "SimpleMath.h"
 //-------------------------------------------------------------------------------------
 // SimpleMath.inl -- Simplified C++ Math wrapper for DirectXMath
 //
@@ -2584,11 +2585,27 @@ inline Matrix Matrix::CreatePerspectiveFieldOfView(float fov, float aspectRatio,
     return R;
 }
 
+inline Matrix Matrix::CreatePerspectiveFieldOfViewLH(float fov, float aspectRatio, float nearPlane, float farPlane) noexcept
+{
+    using namespace DirectX;
+    Matrix R;
+    XMStoreFloat4x4(&R, XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane));
+    return R;
+}
+
 inline Matrix Matrix::CreatePerspective(float width, float height, float nearPlane, float farPlane) noexcept
 {
     using namespace DirectX;
     Matrix R;
     XMStoreFloat4x4(&R, XMMatrixPerspectiveRH(width, height, nearPlane, farPlane));
+    return R;
+}
+
+inline Matrix DirectX::SimpleMath::Matrix::CreatePerspectiveLH(float width, float height, float nearPlane, float farPlane) noexcept
+{
+    using namespace DirectX;
+    Matrix R;
+    XMStoreFloat4x4(&R, XMMatrixPerspectiveLH(width, height, nearPlane, farPlane));
     return R;
 }
 
@@ -2624,6 +2641,17 @@ inline Matrix Matrix::CreateLookAt(const Vector3& eye, const Vector3& target, co
     const XMVECTOR targetv = XMLoadFloat3(&target);
     const XMVECTOR upv = XMLoadFloat3(&up);
     XMStoreFloat4x4(&R, XMMatrixLookAtRH(eyev, targetv, upv));
+    return R;
+}
+
+inline Matrix DirectX::SimpleMath::Matrix::CreateLookAtLH(const Vector3& position, const Vector3& target, const Vector3& up) noexcept
+{
+    using namespace DirectX;
+    Matrix R;
+    XMVECTOR eyev = XMLoadFloat3(&position);
+    XMVECTOR targetv = XMLoadFloat3(&target);
+    XMVECTOR upv = XMLoadFloat3(&up);
+    XMStoreFloat4x4(&R, XMMatrixLookAtLH(eyev, targetv, upv));
     return R;
 }
 
