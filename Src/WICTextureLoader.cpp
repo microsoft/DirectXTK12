@@ -972,3 +972,415 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
 
     return hr;
 }
+
+_Use_decl_annotations_
+HRESULT DirectX::CreateWICTextureArrayFromFiles(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const wchar_t* fileNames[],
+    UINT fileNameCount,
+    ID3D12Resource** texture,
+    bool generateMips,
+    size_t maxsize)
+{
+    return CreateWICTextureArrayFromFilesEx(
+        d3dDevice,
+        resourceUpload,
+        fileNames,
+        fileNameCount,
+        maxsize,
+        D3D12_RESOURCE_FLAG_NONE,
+        generateMips ? WIC_LOADER_MIP_AUTOGEN : WIC_LOADER_DEFAULT,
+        texture);
+}
+
+HRESULT CreateTextureSliceFromWIC(
+    IWICBitmapFrameDecode* frame,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS resFlags,
+    WIC_LOADER_FLAGS loadFlags,
+    std::unique_ptr<uint8_t[]>& decodedData,
+    D3D12_RESOURCE_DESC& sliceDesc,
+    D3D12_SUBRESOURCE_DATA& subresource);
+
+_Use_decl_annotations_
+HRESULT DirectX::CreateWICTextureArrayFromFilesEx(
+    ID3D12Device* d3dDevice,
+    ResourceUploadBatch& resourceUpload,
+    const wchar_t* fileNames[],
+    UINT fileNameCount,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS resFlags,
+    WIC_LOADER_FLAGS loadFlags,
+    ID3D12Resource** texture)
+{
+    if (texture)
+    {
+        *texture = nullptr;
+    }
+
+    if (!d3dDevice || !fileNames || !texture || !fileNameCount)
+        return E_INVALIDARG;
+
+    auto pWIC = GetWIC();
+    if (!pWIC)
+        return E_NOINTERFACE;
+
+    std::vector<std::unique_ptr<uint8_t[]>> decodedData(fileNameCount);
+    std::vector<D3D12_SUBRESOURCE_DATA> initData(fileNameCount);
+    D3D12_RESOURCE_DESC desc = {};
+    HRESULT hr = S_OK;
+    UINT lastWidth = 0, lastHeight = 0;
+    for (UINT i = 0; i < fileNameCount; ++i)
+    {
+        ComPtr<IWICBitmapDecoder> decoder;
+        hr = pWIC->CreateDecoderFromFilename(fileNames[i],
+            nullptr,
+            GENERIC_READ,
+            WICDecodeMetadataCacheOnDemand,
+            decoder.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        ComPtr<IWICBitmapFrameDecode> frame;
+        hr = decoder->GetFrame(0, frame.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+        {
+            DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+            if (!resourceUpload.IsSupportedForGenerateMips(fmt))
+            {
+                DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
+                loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
+            }
+        }
+
+        hr = CreateTextureSliceFromWIC(frame.Get(), maxsize, resFlags, loadFlags, decodedData[i], desc, initData[i]);
+        if (i > 0 && ((lastWidth != desc.Width) || (lastHeight != desc.Height)))
+        {
+            DebugTrace("ERROR: Textures in array must all be the same width and height");
+            return E_INVALIDARG;
+        }
+        if (FAILED(hr))
+            return hr;
+        lastWidth = static_cast<UINT>(desc.Width);
+        lastHeight = desc.Height;
+    }
+
+    desc.DepthOrArraySize = static_cast<UINT16>(fileNameCount);
+    CD3DX12_HEAP_PROPERTIES defaultHeapProps(D3D12_HEAP_TYPE_DEFAULT);
+    hr = d3dDevice->CreateCommittedResource(&defaultHeapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(texture));
+    if (FAILED(hr))
+        return hr;
+
+    resourceUpload.Upload(*texture, 0, initData.data(), static_cast<uint32_t>(initData.size()));
+    resourceUpload.Transition(*texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+        resourceUpload.GenerateMips(*texture);
+    (*texture)->SetName(L"WICTextureLoader");
+
+    return hr;
+}
+
+HRESULT CreateTextureSliceFromWIC(
+    IWICBitmapFrameDecode* frame,
+    size_t maxsize,
+    D3D12_RESOURCE_FLAGS resFlags,
+    WIC_LOADER_FLAGS loadFlags,
+    std::unique_ptr<uint8_t[]>& decodedData,
+    D3D12_RESOURCE_DESC& sliceDesc,
+    D3D12_SUBRESOURCE_DATA& subresource)
+{
+    UINT width, height;
+    HRESULT hr = frame->GetSize(&width, &height);
+    if (FAILED(hr))
+        return hr;
+    if (!width || !height || maxsize > UINT32_MAX)
+        return E_INVALIDARG;
+
+    if (maxsize == 0)
+        maxsize = D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+
+    UINT twidth = width;
+    UINT theight = height;
+    if (loadFlags & WIC_LOADER_FIT_POW2)
+    {
+        LoaderHelpers::FitPowerOf2(width, height, twidth, theight, maxsize);
+    }
+    else if (width > maxsize || height > maxsize)
+    {
+        float ar = static_cast<float>(height) / static_cast<float>(width);
+        if (width > height)
+        {
+            twidth = static_cast<UINT>(maxsize);
+            theight = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) * ar));
+        }
+        else
+        {
+            theight = static_cast<UINT>(maxsize);
+            twidth = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) / ar));
+        }
+        assert(twidth <= maxsize && theight <= maxsize);
+    }
+
+    if (loadFlags & WIC_LOADER_MAKE_SQUARE)
+    {
+        twidth = std::max<UINT>(twidth, theight);
+        theight = twidth;
+    }
+
+    // Determine format
+    WICPixelFormatGUID pixelFormat;
+    hr = frame->GetPixelFormat(&pixelFormat);
+    if (FAILED(hr))
+        return hr;
+
+    WICPixelFormatGUID convertGUID;
+    memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &pixelFormat, sizeof(GUID));
+
+    size_t bpp = 0;
+
+    DXGI_FORMAT format = WICToDXGI(pixelFormat);
+    if (format == DXGI_FORMAT_UNKNOWN)
+    {
+        for (size_t i = 0; i < _countof(g_WICConvert); ++i)
+        {
+            if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
+            {
+                memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &g_WICConvert[i].target, sizeof(GUID));
+
+                format = WICToDXGI(g_WICConvert[i].target);
+                assert(format != DXGI_FORMAT_UNKNOWN);
+                bpp = WICBitsPerPixel(convertGUID);
+                break;
+            }
+        }
+
+        if (format == DXGI_FORMAT_UNKNOWN)
+        {
+            DebugTrace("ERROR: WICTextureLoader does not support all DXGI formats (WIC GUID {%8.8lX-%4.4X-%4.4X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X}). Consider using DirectXTex.\n",
+                pixelFormat.Data1, pixelFormat.Data2, pixelFormat.Data3,
+                pixelFormat.Data4[0], pixelFormat.Data4[1], pixelFormat.Data4[2], pixelFormat.Data4[3],
+                pixelFormat.Data4[4], pixelFormat.Data4[5], pixelFormat.Data4[6], pixelFormat.Data4[7]);
+            return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        }
+    }
+    else
+    {
+        bpp = WICBitsPerPixel(pixelFormat);
+    }
+
+    if (loadFlags & WIC_LOADER_FORCE_RGBA32)
+    {
+        memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &GUID_WICPixelFormat32bppRGBA, sizeof(GUID));
+        format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        bpp = 32;
+    }
+
+    if (!bpp)
+        return E_FAIL;
+
+    // Handle sRGB formats
+    if (loadFlags & WIC_LOADER_FORCE_SRGB)
+    {
+        format = LoaderHelpers::MakeSRGB(format);
+    }
+    else if (!(loadFlags & WIC_LOADER_IGNORE_SRGB))
+    {
+        ComPtr<IWICMetadataQueryReader> metareader;
+        if (SUCCEEDED(frame->GetMetadataQueryReader(metareader.GetAddressOf())))
+        {
+            GUID containerFormat;
+            if (SUCCEEDED(metareader->GetContainerFormat(&containerFormat)))
+            {
+                bool sRGB = false;
+
+                PROPVARIANT value;
+                PropVariantInit(&value);
+
+                // Check for colorspace chunks
+                if (memcmp(&containerFormat, &GUID_ContainerFormatPng, sizeof(GUID)) == 0)
+                {
+                    // Check for sRGB chunk
+                    if (SUCCEEDED(metareader->GetMetadataByName(L"/sRGB/RenderingIntent", &value)) && value.vt == VT_UI1)
+                    {
+                        sRGB = true;
+                    }
+                    else if (SUCCEEDED(metareader->GetMetadataByName(L"/gAMA/ImageGamma", &value)) && value.vt == VT_UI4)
+                    {
+                        sRGB = (value.uintVal == 45455);
+                    }
+                    else
+                    {
+                        sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
+                    }
+                }
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+                else if (memcmp(&containerFormat, &GUID_ContainerFormatJpeg, sizeof(GUID)) == 0)
+                {
+                    if (SUCCEEDED(metareader->GetMetadataByName(L"/app1/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2)
+                    {
+                        sRGB = (value.uiVal == 1);
+                    }
+                    else
+                    {
+                        sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
+                    }
+                }
+                else if (memcmp(&containerFormat, &GUID_ContainerFormatTiff, sizeof(GUID)) == 0)
+                {
+                    if (SUCCEEDED(metareader->GetMetadataByName(L"/ifd/exif/{ushort=40961}", &value)) && value.vt == VT_UI2)
+                    {
+                        sRGB = (value.uiVal == 1);
+                    }
+                    else
+                    {
+                        sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
+                    }
+                }
+#else
+                else if (SUCCEEDED(metareader->GetMetadataByName(L"System.Image.ColorSpace", &value)) && value.vt == VT_UI2)
+                {
+                    sRGB = (value.uiVal == 1);
+                }
+                else
+                {
+                    sRGB = (loadFlags & WIC_LOADER_SRGB_DEFAULT) != 0;
+                }
+#endif
+
+                (void)PropVariantClear(&value);
+
+                if (sRGB)
+                    format = LoaderHelpers::MakeSRGB(format);
+            }
+        }
+    }
+
+    // Allocate memory for decoded image
+    uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
+    uint64_t numBytes = rowBytes * uint64_t(height);
+
+    if (rowBytes > UINT32_MAX || numBytes > UINT32_MAX)
+        return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
+
+    auto rowPitch = static_cast<size_t>(rowBytes);
+    auto imageSize = static_cast<size_t>(numBytes);
+
+    decodedData.reset(new (std::nothrow) uint8_t[imageSize]);
+    if (!decodedData)
+        return E_OUTOFMEMORY;
+
+    // Load image data
+    if (memcmp(&convertGUID, &pixelFormat, sizeof(GUID)) == 0
+        && twidth == width
+        && theight == height)
+    {
+        // No format conversion or resize needed
+        hr = frame->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
+        if (FAILED(hr))
+            return hr;
+    }
+    else if (twidth != width || theight != height)
+    {
+        // Resize
+        auto pWIC = GetWIC();
+        if (!pWIC)
+            return E_NOINTERFACE;
+
+        ComPtr<IWICBitmapScaler> scaler;
+        hr = pWIC->CreateBitmapScaler(scaler.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        hr = scaler->Initialize(frame, twidth, theight, WICBitmapInterpolationModeFant);
+        if (FAILED(hr))
+            return hr;
+
+        WICPixelFormatGUID pfScaler;
+        hr = scaler->GetPixelFormat(&pfScaler);
+        if (FAILED(hr))
+            return hr;
+
+        if (memcmp(&convertGUID, &pfScaler, sizeof(GUID)) == 0)
+        {
+            // No format conversion needed
+            hr = scaler->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
+            if (FAILED(hr))
+                return hr;
+        }
+        else
+        {
+            ComPtr<IWICFormatConverter> FC;
+            hr = pWIC->CreateFormatConverter(FC.GetAddressOf());
+            if (FAILED(hr))
+                return hr;
+
+            BOOL canConvert = FALSE;
+            hr = FC->CanConvert(pfScaler, convertGUID, &canConvert);
+            if (FAILED(hr) || !canConvert)
+            {
+                return E_UNEXPECTED;
+            }
+
+            hr = FC->Initialize(scaler.Get(), convertGUID, WICBitmapDitherTypeErrorDiffusion, nullptr, 0, WICBitmapPaletteTypeMedianCut);
+            if (FAILED(hr))
+                return hr;
+
+            hr = FC->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
+            if (FAILED(hr))
+                return hr;
+        }
+    }
+    else
+    {
+        // Format conversion but no resize
+        auto pWIC = GetWIC();
+        if (!pWIC)
+            return E_NOINTERFACE;
+
+        ComPtr<IWICFormatConverter> FC;
+        hr = pWIC->CreateFormatConverter(FC.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        BOOL canConvert = FALSE;
+        hr = FC->CanConvert(pixelFormat, convertGUID, &canConvert);
+        if (FAILED(hr) || !canConvert)
+        {
+            return E_UNEXPECTED;
+        }
+
+        hr = FC->Initialize(frame, convertGUID, WICBitmapDitherTypeErrorDiffusion, nullptr, 0, WICBitmapPaletteTypeMedianCut);
+        if (FAILED(hr))
+            return hr;
+
+        hr = FC->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), decodedData.get());
+        if (FAILED(hr))
+            return hr;
+    }
+
+    // Count the number of mips
+    uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
+        ? LoaderHelpers::CountMips(twidth, theight) : 1u;
+
+    // Create texture description
+    sliceDesc = {};
+    sliceDesc.Width = twidth;
+    sliceDesc.Height = theight;
+    sliceDesc.MipLevels = static_cast<UINT16>(mipCount);
+    sliceDesc.DepthOrArraySize = 1;
+    sliceDesc.Format = format;
+    sliceDesc.SampleDesc.Count = 1;
+    sliceDesc.SampleDesc.Quality = 0;
+    sliceDesc.Flags = resFlags;
+    sliceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+    subresource.pData = decodedData.get();
+    subresource.RowPitch = static_cast<LONG>(rowPitch);
+    subresource.SlicePitch = static_cast<LONG>(imageSize);
+
+    return hr;
+}

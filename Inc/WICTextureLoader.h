@@ -135,6 +135,26 @@ namespace DirectX
         WIC_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture);
 
+    // Create a texture array from filenames with ResourceUploadBatch
+    HRESULT __cdecl CreateWICTextureArrayFromFiles(
+        _In_ ID3D12Device* d3dDevice,
+        ResourceUploadBatch& resourceUpload,
+        _In_reads_(fileNameCount) const wchar_t* fileNames[],
+        UINT fileNameCount,
+        _Outptr_ ID3D12Resource** texture,
+        bool generateMips = false,
+        size_t maxsize = 0);
+
+    HRESULT __cdecl CreateWICTextureArrayFromFilesEx(
+        _In_ ID3D12Device* d3dDevice,
+        ResourceUploadBatch& resourceUpload,
+        _In_reads_(fileNameCount) const wchar_t* fileNames[],
+        UINT fileNameCount,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        WIC_LOADER_FLAGS loadFlags,
+        _Outptr_ ID3D12Resource** texture);
+
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
