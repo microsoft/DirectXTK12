@@ -118,6 +118,37 @@ namespace DirectX
         D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
         bool isCubeMap = false);
 
+    // Creates an unordered access view from an arbitrary resource
+    void __cdecl CreateUnorderedAccessView(
+        _In_ ID3D12Device* device,
+        _In_ ID3D12Resource* tex,
+        D3D12_CPU_DESCRIPTOR_HANDLE uavDescriptor,
+        UINT mipLevel = 0);
+
+    // Creates an render target view from an arbitrary resource
+    void __cdecl CreateRenderTargetView(
+        _In_ ID3D12Device* device,
+        _In_ ID3D12Resource* tex,
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor,
+        UINT mipLevel = 0);
+
+    // Creates a shader resource view from a buffer resource
+    void __cdecl CreateBufferShaderResourceView(
+        _In_ ID3D12Device* device,
+        _In_ ID3D12Resource* buffer,
+        D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
+        UINT stride = 0);
+
+    // Creates a unordered access view from a buffer resource
+    void __cdecl CreateBufferUnorderedAccessView(
+        _In_ ID3D12Device* device,
+        _In_ ID3D12Resource* buffer,
+        D3D12_CPU_DESCRIPTOR_HANDLE uavDescriptor,
+        UINT stride,
+        D3D12_BUFFER_UAV_FLAGS flag = D3D12_BUFFER_UAV_FLAG_NONE,
+        UINT counterOffset = 0,
+        _In_ _Maybenull_ ID3D12Resource* counterResource = nullptr);
+
     // Shorthand for creating a root signature
     inline HRESULT CreateRootSignature(
         _In_ ID3D12Device* device,
