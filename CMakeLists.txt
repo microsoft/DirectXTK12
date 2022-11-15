@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required (VERSION 3.18)
+cmake_minimum_required (VERSION 3.20)
 
 set(DIRECTXTK12_VERSION 1.5.0)
 
@@ -227,7 +227,7 @@ add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPILED_SHADERS} Src)
 
-if ((${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16") AND (NOT MINGW))
+if (NOT MINGW)
     target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
 endif()
 
@@ -243,17 +243,6 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 
 if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
-endif()
-
-if(MSVC)
-    # Use max Warning Level
-    string(REPLACE "/W3 " "/Wall " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-    string(REPLACE "/W3 " "/Wall " CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
-    string(REPLACE "/W3 " "/Wall " CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
-
-    # Model uses dynamic_cast, so we need /GR (Enable RTTI)
-
-    # Library needs /EHsc (Enable C++ exceptions)
 endif()
 
 if (MINGW OR VCPKG_TOOLCHAIN)
@@ -305,8 +294,9 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-config-version.cmake
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PACKAGE_NAME})
 
+# Model uses dynamic_cast, so we need /GR (Enable RTTI)
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
+    target_compile_options(${PROJECT_NAME} PRIVATE /Wall /GR /fp:fast "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
     target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT)
 
     if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "^arm"))
@@ -331,7 +321,7 @@ if(NOT ${DIRECTX_ARCH} MATCHES "^arm")
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wpedantic -Wextra)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wpedantic -Wextra)
 endif()
 if(MINGW)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wno-ignored-attributes)
@@ -354,10 +344,14 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
         target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
     endif()
+
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
+        target_compile_options(${PROJECT_NAME} PRIVATE /wd5262)
+    endif()
 endif()
 
 if(WIN32)
-    # Windows 10 is used here
+    # Windows 10/Windows 11 is used here
     target_compile_definitions(${PROJECT_NAME} PRIVATE _UNICODE UNICODE _WIN32_WINNT=0x0A00)
 
     if(WINDOWS_STORE)
