@@ -236,7 +236,7 @@
     <LibraryPath>$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
     <IncludePath>$(Console_SdkIncludeRoot);$(IncludePath)</IncludePath>
     <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>Bin\GDK_2019\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Bin\GDK_2019\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>DirectXTK12</TargetName>
