@@ -30,7 +30,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/CMake")
 
-if (DEFINED VCPKG_TARGET_ARCHITECTURE)
+if(DEFINED VCPKG_TARGET_ARCHITECTURE)
     set(DIRECTX_ARCH ${VCPKG_TARGET_ARCHITECTURE})
 elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Ww][Ii][Nn]32$")
     set(DIRECTX_ARCH x86)
@@ -123,7 +123,7 @@ set(SHADER_SOURCES
     Src/Shaders/ToneMap.fx)
 
 # These source files are identical in both DX11 and DX12 version.
-if (NOT BUILD_MIXED_DX11)
+if(NOT BUILD_MIXED_DX11)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
       Inc/GamePad.h
       Inc/Keyboard.h
@@ -186,8 +186,8 @@ if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
         Audio/WAVFileReader.h)
 endif()
 
-if (NOT COMPILED_SHADERS)
-    if (USE_PREBUILT_SHADERS)
+if(NOT COMPILED_SHADERS)
+    if(USE_PREBUILT_SHADERS)
         message(FATAL_ERROR "ERROR: Using prebuilt shaders requires the COMPILED_SHADERS variable is set")
     endif()
     set(COMPILED_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/Shaders/Compiled)
@@ -206,8 +206,8 @@ else()
     message("INFO: Using Shader Model 5.1 (FXC.EXE) for shaders.")
 endif()
 
-if (NOT USE_PREBUILT_SHADERS)
-    if (BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
+if(NOT USE_PREBUILT_SHADERS)
+    if(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
         message("INFO: Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
         find_program(DIRECTX_DXC_TOOL DXC.EXE
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
@@ -227,7 +227,7 @@ add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPILED_SHADERS} Src)
 
-if (NOT MINGW)
+if(NOT MINGW)
     target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
 endif()
 
@@ -245,7 +245,7 @@ if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
 endif()
 
-if (MINGW OR VCPKG_TOOLCHAIN)
+if(MINGW OR VCPKG_TOOLCHAIN)
     message("INFO: Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
     find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
@@ -253,7 +253,7 @@ if (MINGW OR VCPKG_TOOLCHAIN)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
 endif()
 
-if (BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
+if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
     message("INFO: Using XAudio2Redist for DirectX Tool Kit for Audio.")
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
 
@@ -308,10 +308,12 @@ if(MSVC)
       target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
       target_link_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
     endif()
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE $<IF:$<CONFIG:DEBUG>,_DEBUG,NDEBUG>)
 endif()
 
 if(NOT ${DIRECTX_ARCH} MATCHES "^arm")
-    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
+    if(${CMAKE_SIZEOF_VOID_P} EQUAL "4")
         set(ARCH_SSE2 $<$<CXX_COMPILER_ID:MSVC>:/arch:SSE2> $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
     else()
         set(ARCH_SSE2 $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
@@ -320,31 +322,30 @@ if(NOT ${DIRECTX_ARCH} MATCHES "^arm")
     target_compile_options(${PROJECT_NAME} PRIVATE ${ARCH_SSE2})
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wpedantic -Wextra)
 elseif(MINGW)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE $<IF:$<CONFIG:DEBUG>,_DEBUG,NDEBUG>)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wno-ignored-attributes)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus)
 
     if(ENABLE_CODE_ANALYSIS)
         target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
     endif()
 
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
         target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
     endif()
 
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
         target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
     endif()
 
-    if ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
+    if((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
         target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
     endif()
 
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
         target_compile_options(${PROJECT_NAME} PRIVATE /wd5262)
     endif()
 endif()
