@@ -28,7 +28,6 @@ variables:
   EXTRACTED_FOLDER: $(ExtractedFolder)
   GDK_EDITION: $(GDKEditionNumber)
   GDKEnableBWOI: true
-  GITHUB_PAT: $(GITHUBPUBLICTOKEN)
   URL_FEED: $(ADOFeedURL)
 
 jobs:

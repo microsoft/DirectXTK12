@@ -125,7 +125,7 @@ jobs:
       cmakeArgs: --build out
 
 - job: MINGW64_BUILD
-  displayName: 'Minimalist GNU for Windows (MinGW-W64)'
+  displayName: 'Minimalist GNU for Windows (MinGW-W64) BUILD_TESTING=ON'
   steps:
   - checkout: self
     clean: true
