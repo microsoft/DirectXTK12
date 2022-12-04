@@ -38,7 +38,7 @@
 
   <!-- Remove copy of real gameos.xvd since this is a build validation only pipeline -->
   <PropertyGroup Condition="'$(Platform)' == 'Gaming.Xbox.XboxOne.x64' or '$(Platform)' == 'Gaming.Xbox.Scarlett.x64'">
-    <GameOSFilePath>$(MSBuildThisFileDirectory).bwoi\placeholder.xvd</GameOSFilePath>
+    <GameOSFilePath>$(MSBuildThisFileDirectory)build\placeholder.xvd</GameOSFilePath>
   </PropertyGroup>
 
   <!--
