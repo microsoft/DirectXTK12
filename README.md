@@ -54,9 +54,13 @@ These components are designed to work without requiring any content from the leg
 
   + DirectXTK for Audio source files and internal implementation headers
 
+* ``build\``
+
+  + Contains YAML files for the build pipelines along with some miscellaneous build files and scripts.
+
 > MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK)
 
-# Documentation
+## Documentation
 
 Documentation is available on the [GitHub wiki](https://github.com/Microsoft/DirectXTK12/wiki).
 

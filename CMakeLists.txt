@@ -14,6 +14,9 @@ project (DirectXTK12
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
 option(BUILD_XAUDIO_REDIST "Build for XAudio2Redist" OFF)
 
+# https://devblogs.microsoft.com/cppblog/spectre-mitigations-in-msvc/
+option(ENABLE_SPECTRE_MITIGATION "Build using /Qspectre for MSVC" OFF)
+
 option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 
 option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
@@ -188,7 +191,7 @@ endif()
 
 if(NOT COMPILED_SHADERS)
     if(USE_PREBUILT_SHADERS)
-        message(FATAL_ERROR "ERROR: Using prebuilt shaders requires the COMPILED_SHADERS variable is set")
+        message(FATAL_ERROR "ERROR: Using prebuilt shaders requires the COMPILED_SHADERS variable is set.")
     endif()
     set(COMPILED_SHADERS ${CMAKE_CURRENT_BINARY_DIR}/Shaders/Compiled)
     file(MAKE_DIRECTORY ${COMPILED_SHADERS})
@@ -200,15 +203,15 @@ set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
     ${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc)
 
 if(BUILD_DXIL_SHADERS)
-    message("INFO: Using Shader Model 6.0 (DXC.EXE) for shaders.")
+    message(STATUS "Using Shader Model 6.0 (DXC.EXE) for shaders.")
     set(ShaderOpts "dxil")
 else()
-    message("INFO: Using Shader Model 5.1 (FXC.EXE) for shaders.")
+    message(STATUS "Using Shader Model 5.1 (FXC.EXE) for shaders.")
 endif()
 
 if(NOT USE_PREBUILT_SHADERS)
     if(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
-        message("INFO: Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
+        message(STATUS "Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
         find_program(DIRECTX_DXC_TOOL DXC.EXE
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
           HINTS ${DIRECTX_DXC_PATH})
@@ -246,7 +249,7 @@ if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
 endif()
 
 if(MINGW OR VCPKG_TOOLCHAIN)
-    message("INFO: Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
+    message(STATUS "Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
     find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers Microsoft::DirectXMath)
@@ -254,7 +257,7 @@ if(MINGW OR VCPKG_TOOLCHAIN)
 endif()
 
 if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
-    message("INFO: Using XAudio2Redist for DirectX Tool Kit for Audio.")
+    message(STATUS "Using XAudio2Redist for DirectX Tool Kit for Audio.")
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
 
     find_package(xaudio2redist CONFIG REQUIRED)
@@ -300,10 +303,19 @@ if(MSVC)
     target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT)
 
     if((${CMAKE_SIZEOF_VOID_P} EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "^arm"))
-        target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
+      target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
     endif()
 
-    if((MSVC_VERSION GREATER_EQUAL 1928) AND (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    if(ENABLE_SPECTRE_MITIGATION
+       AND (MSVC_VERSION GREATER_EQUAL 1913)
+       AND (NOT WINDOWS_STORE)
+       AND (NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
+      message(STATUS "Using Spectre-mitigated libraries.")
+      target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
+    endif()
+
+    if((MSVC_VERSION GREATER_EQUAL 1928)
+       AND (CMAKE_SIZEOF_VOID_P EQUAL 8)
        AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0)))
       target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
       target_link_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
@@ -359,7 +371,7 @@ if(WIN32)
     endif()
 
     if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
-        message("INFO: Using DirectX Tool Kit for Audio on XAudio 2.9 (Windows 10/Windows 11).")
+      message(STATUS "Using DirectX Tool Kit for Audio on XAudio 2.9 (Windows 10/Windows 11).")
     endif()
 endif()
 
