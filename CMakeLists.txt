@@ -310,7 +310,7 @@ if(MSVC)
        AND (MSVC_VERSION GREATER_EQUAL 1913)
        AND (NOT WINDOWS_STORE)
        AND (NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
-      message(STATUS "Using Spectre-mitigated libraries.")
+      message(STATUS "Building Spectre-mitigated libraries.")
       target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
     endif()
 
