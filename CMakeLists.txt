@@ -357,6 +357,10 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
     endif()
 
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.28)
+        target_compile_options(${PROJECT_NAME} PRIVATE /Zc:lambda)
+    endif()
+
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
         target_compile_options(${PROJECT_NAME} PRIVATE /wd5262)
     endif()
