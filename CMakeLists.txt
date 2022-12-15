@@ -339,7 +339,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 elseif(MINGW)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wno-ignored-attributes)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus)
+    target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus /Zc:inline)
 
     if(ENABLE_CODE_ANALYSIS)
         target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
@@ -355,6 +355,10 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 
     if((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
         target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
+    endif()
+
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.28)
+        target_compile_options(${PROJECT_NAME} PRIVATE /Zc:lambda)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
