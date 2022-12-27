@@ -17,6 +17,8 @@ option(BUILD_XAUDIO_REDIST "Build for XAudio2Redist" OFF)
 # https://devblogs.microsoft.com/cppblog/spectre-mitigations-in-msvc/
 option(ENABLE_SPECTRE_MITIGATION "Build using /Qspectre for MSVC" OFF)
 
+option(DISABLE_MSVC_ITERATOR_DEBUGGING "Disable iterator debugging in Debug configurations with the MSVC CRT" OFF)
+
 option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 
 option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
@@ -376,6 +378,10 @@ if(WIN32)
 
     if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
       message(STATUS "Using DirectX Tool Kit for Audio on XAudio 2.9 (Windows 10/Windows 11).")
+    endif()
+
+    if(DISABLE_MSVC_ITERATOR_DEBUGGING)
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _ITERATOR_DEBUG_LEVEL=0)
     endif()
 endif()
 
