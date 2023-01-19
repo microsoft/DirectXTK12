@@ -24,6 +24,8 @@ option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
 
 option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
+option(BUILD_XBOXONE_SHADERS "Build shaders for Xbox One" OFF)
+option(BUILD_SCARLETT_SHADERS "Build shaders for Xbox Series X|S" OFF)
 
 option(BUILD_MIXED_DX11 "Support linking with DX11 version of toolkit" OFF)
 
@@ -204,15 +206,26 @@ endif()
 set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
     ${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc)
 
-if(BUILD_DXIL_SHADERS)
+if(BUILD_SCARLETT_SHADERS)
+    message(STATUS "Using Shader Model 6 for Xbox Series X|S for shaders")
+    set(ShaderOpts gxdk scarlett)
+elseif(BUILD_XBOXONE_SHADERS)
+    if(BUILD_DXIL_SHADERS)
+        message(STATUS "Using Shader Model 6 for Xbox One for shaders")
+        set(ShaderOpts gxdk)
+    else()
+        message(STATUS "Using Shader Model 5.1 for Xbox One for shaders")
+        set(ShaderOpts xbox)
+    endif()
+elseif(BUILD_DXIL_SHADERS)
     message(STATUS "Using Shader Model 6.0 (DXC.EXE) for shaders.")
-    set(ShaderOpts "dxil")
+    set(ShaderOpts dxil)
 else()
     message(STATUS "Using Shader Model 5.1 (FXC.EXE) for shaders.")
 endif()
 
 if(NOT USE_PREBUILT_SHADERS)
-    if(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
+    if(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN AND (NOT BUILD_SCARLETT_SHADERS) AND (NOT BUILD_XBOXONE_SHADERS))
         message(STATUS "Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
         find_program(DIRECTX_DXC_TOOL DXC.EXE
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
