@@ -93,18 +93,17 @@ jobs:
     inputs:
       script: g++ --version
   - task: CmdLine@2
-    # The error checks are commented out due to a bug with vcpkg not returning 0 on success.
     displayName: VCPKG install headers
     inputs:
       script: |
         call vcpkg install directxmath
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install directx-headers
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install xaudio2redist
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install directx-dxc:x64-mingw-static
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         :finish
         @echo --- VCPKG COMPLETE ---
         exit /b 0
@@ -187,13 +186,13 @@ jobs:
     inputs:
       script: |
         call vcpkg install directxmath
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install directx-headers
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install xaudio2redist
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         call vcpkg install directx-dxc
-        REM @if ERRORLEVEL 1 goto error
+        @if ERRORLEVEL 1 goto error
         :finish
         @echo --- VCPKG COMPLETE ---
         exit /b 0
