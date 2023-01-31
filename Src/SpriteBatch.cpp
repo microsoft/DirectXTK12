@@ -313,7 +313,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
         &heapProps,
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST,
+        c_initialCopyTargetState,
         nullptr,
         IID_GRAPHICS_PPV_ARGS(indexBuffer.ReleaseAndGetAddressOf())));
 

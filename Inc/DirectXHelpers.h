@@ -34,10 +34,6 @@
 #pragma comment(lib,"dxguid.lib")
 #endif
 
-#ifndef IID_GRAPHICS_PPV_ARGS
-#define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
-#endif
-
 //
 // The d3dx12.h header includes the following helper C++ classes and functions
 //  CD3DX12_RECT
@@ -113,8 +109,18 @@
 //  CD3DX12FeatureSupport
 //
 
+#ifndef IID_GRAPHICS_PPV_ARGS
+#define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
+#endif
+
 namespace DirectX
 {
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+    constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COPY_DEST;
+#else
+    constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COMMON;
+#endif
+
     constexpr D3D12_CPU_DESCRIPTOR_HANDLE D3D12_CPU_DESCRIPTOR_HANDLE_ZERO = {};
 
     // Creates a shader resource view from an arbitrary resource
