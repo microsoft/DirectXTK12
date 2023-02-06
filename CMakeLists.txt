@@ -264,11 +264,14 @@ if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
 endif()
 
 if(MINGW OR VCPKG_TOOLCHAIN)
-    message(STATUS "Using VCPKG for DirectX-Headers and DirectXMath (${VCPKG_TARGET_TRIPLET}).")
-    find_package(directx-headers CONFIG REQUIRED)
     find_package(directxmath CONFIG REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers Microsoft::DirectXMath)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectXMath)
+
+    if(NOT VCPKG_TARGET_IS_XBOX)
+        find_package(directx-headers CONFIG REQUIRED)
+        target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
+    endif()
 endif()
 
 if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
