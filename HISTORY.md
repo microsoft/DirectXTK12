@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### February 6, 2023
+* Fixed warnings when using GPU-based validation on PC
+* Mouse relative mode now accumulates multiple delta updates per frame. Added new optional but recommended method ``EndOfInputFrame``.
+* Fixed out-of-bounds read bug in the .WAV file reader.
+* Additional checks added to DDSTextureLoader for planar video formats.
+* CMake project updates
+
 ### December 15, 2022
 * DirectXHelpers updated with **CreateUnorderedAccessView**, **CreateRenderTargetView**, **CreateBufferShaderResourceView**, and **CreateBufferUnorderedAccessView** helpers
 * Added **EnableLighting** method to ``EffectFactory`` to support creating unlit model materials
