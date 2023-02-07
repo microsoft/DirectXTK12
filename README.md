@@ -6,7 +6,7 @@ http://go.microsoft.com/fwlink/?LinkID=615561
 
 Copyright (c) Microsoft Corporation.
 
-**December 15, 2022**
+**February 6, 2023**
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps for Windows 11 and Windows 10, game titles for Xbox Series X\|S and Xbox One, and Win32 desktop applications for Windows 11 and Windows 10.
 
@@ -84,9 +84,9 @@ For the latest version of DirectXTK12, bug reports, etc. please visit the projec
 
 ## Release Notes
 
-* As of the September 2022 release, the library makes use of C++11 inline namespaces for differing types that have the same names in the DirectX 11 and DirectX 12 version of the *DirectX Tool Kit*. This provides a link-unique name such as ``DirectX::DX12::SpriteBatch`` that will appear in linker output messages. In most use cases, however, there is no need to add explicit ``DX12`` namespace resolution in client code.
+* Starting with the February 2023 release, the Mouse class implementation of relative mouse movement was updated to accumulate changes between calls to ``GetState``. By default, each time you call ``GetState`` the deltas are reset which works for scenarios where you use relative movement but only call the method once per frame. If you call it more than once per frame, then add an explicit call to ``EndOfInputFrame`` to use an explicit reset model instead.
 
-* As of the March 2022 release, legacy Xbox One XDK support requires the XDK April 2018 release or later. Upgrading to the Microsoft GDKX is strongly recommended.
+* As of the September 2022 release, the library makes use of C++11 inline namespaces for differing types that have the same names in the DirectX 11 and DirectX 12 version of the *DirectX Tool Kit*. This provides a link-unique name such as ``DirectX::DX12::SpriteBatch`` that will appear in linker output messages. In most use cases, however, there is no need to add explicit ``DX12`` namespace resolution in client code.
 
 * In the June 2021 release or later, the VS 2019 projects of this library build the HLSL shaders with Shader Model 6 via DXC. Since the NuGet still builds using VS 2017, the build-in shaders in that version are currently Shader Model 5.1. See [this wiki page](https://github.com/microsoft/DirectXTK12/wiki/Shader-Model-6) for more information. The Microsoft GDK projects always use Shader Model 6.
 
@@ -98,7 +98,7 @@ For the latest version of DirectXTK12, bug reports, etc. please visit the projec
 
 * The UWP projects and the Win10 classic desktop project include configurations for the ARM64 platform. Building these requires installing the ARM64 toolset.
 
-* When using clang/LLVM for the ARM64 platform, the Windows 11 SDK ([22000](https://walbourn.github.io/windows-sdk-for-windows-11/)) is required.
+* When using clang/LLVM for the ARM64 platform, the Windows 11 SDK ([22000](https://walbourn.github.io/windows-sdk-for-windows-11/)) or later is required.
 
 * The ``CompileShaders.cmd`` script must have Windows-style (CRLF) line-endings. If it is changed to Linux-style (LF) line-endings, it can fail to build all the required shaders.
 
