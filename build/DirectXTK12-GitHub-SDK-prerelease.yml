@@ -13,6 +13,9 @@ schedules:
     - main
   always: true
 
+trigger: none
+pr: none
+
 resources:
   repositories:
   - repository: self
