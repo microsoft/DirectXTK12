@@ -49,6 +49,12 @@ elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Aa][Rr][Mm]64$")
     set(DIRECTX_ARCH arm64)
 endif()
 
+if(XBOX_CONSOLE_TARGET STREQUAL "scarlett")
+  set(BUILD_SCARLETT_SHADERS ON)
+elseif(XBOX_CONSOLE_TARGET STREQUAL "xboxone")
+  set(BUILD_XBOXONE_SHADERS ON)
+endif()
+
 include(GNUInstallDirs)
 
 #--- Library
