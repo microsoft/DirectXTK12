@@ -49,6 +49,12 @@ elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Aa][Rr][Mm]64$")
     set(DIRECTX_ARCH arm64)
 endif()
 
+if(XBOX_CONSOLE_TARGET STREQUAL "scarlett")
+  set(BUILD_SCARLETT_SHADERS ON)
+elseif(XBOX_CONSOLE_TARGET STREQUAL "xboxone")
+  set(BUILD_XBOXONE_SHADERS ON)
+endif()
+
 include(GNUInstallDirs)
 
 #--- Library
@@ -263,23 +269,30 @@ if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
 endif()
 
-if(MINGW OR VCPKG_TOOLCHAIN)
+if(MINGW)
     find_package(directxmath CONFIG REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectXMath)
+    find_package(directx-headers CONFIG REQUIRED)
+else()
+    find_package(directxmath CONFIG QUIET)
+    find_package(directx-headers CONFIG QUIET)
+endif()
 
-    if(NOT VCPKG_TARGET_IS_XBOX)
-        find_package(directx-headers CONFIG REQUIRED)
-        target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
-    endif()
+if(directxmath_FOUND)
+    message(STATUS "Using DirectXMath package")
+    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectXMath)
+endif()
+
+if(directx-headers_FOUND)
+    message(STATUS "Using DirectX-Headers package")
+    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
 endif()
 
 if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
     message(STATUS "Using XAudio2Redist for DirectX Tool Kit for Audio.")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
-
     find_package(xaudio2redist CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::XAudio2Redist)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
 endif()
 
 #--- Package
