@@ -14,6 +14,10 @@ project (DirectXTK12
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
 option(BUILD_XAUDIO_REDIST "Build for XAudio2Redist" OFF)
 
+option(BUILD_GAMEINPUT "Build for GameInput" OFF)
+option(BUILD_WGI "Build for Windows.Gaming.Input" OFF)
+option(BUILD_XINPUT "Build for XInput" OFF)
+
 # https://devblogs.microsoft.com/cppblog/spectre-mitigations-in-msvc/
 option(ENABLE_SPECTRE_MITIGATION "Build using /Qspectre for MSVC" OFF)
 
@@ -50,9 +54,14 @@ elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Aa][Rr][Mm]64$")
 endif()
 
 if(XBOX_CONSOLE_TARGET STREQUAL "scarlett")
+  set(BUILD_GAMEINPUT ON)
   set(BUILD_SCARLETT_SHADERS ON)
 elseif(XBOX_CONSOLE_TARGET STREQUAL "xboxone")
+  set(BUILD_GAMEINPUT ON)
   set(BUILD_XBOXONE_SHADERS ON)
+elseif(WINDOWS_STORE)
+   set(BUILD_GAMEINPUT OFF)
+   set(USING_WINDOWS_GAMING_INPUT ON)
 endif()
 
 include(GNUInstallDirs)
@@ -293,6 +302,23 @@ if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
     find_package(xaudio2redist CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::XAudio2Redist)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XAUDIO2_REDIST)
+endif()
+
+include(CheckIncludeFileCXX)
+
+if(BUILD_GAMEINPUT)
+    message(STATUS "Using GameInput for GamePad/Keyboard/Mouse.")
+    CHECK_INCLUDE_FILE_CXX(GameInput.h GAMEINPUT_HEADER)
+    if(NOT GAMEINPUT_HEADER)
+        message(FATAL_ERROR "Microsoft GDK required to build GameInput.")
+    endif()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_GAMEINPUT)
+elseif(BUILD_WGI)
+    message(STATUS "Using Windows.Gaming.Input for GamePad.")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_WINDOWS_GAMING_INPUT)
+elseif(BUILD_XINPUT)
+    message(STATUS "Using XInput for GamePad.")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_XINPUT)
 endif()
 
 #--- Package
