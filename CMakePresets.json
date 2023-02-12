@@ -110,6 +110,22 @@
       "hidden": true
     },
     {
+      "name": "Scarlett",
+      "cacheVariables": {
+        "XBOX_CONSOLE_TARGET": "scarlett",
+        "BUILD_TESTING": false
+      },
+      "hidden": true
+    },
+    {
+      "name": "XboxOne",
+      "cacheVariables": {
+        "XBOX_CONSOLE_TARGET": "xboxone",
+        "BUILD_TESTING": false
+      },
+      "hidden": true
+    },
+    {
       "name": "VCPKG",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
@@ -206,6 +222,12 @@
 
     { "name": "x64-Debug-GDK"    , "description": "MSVC for x64 (Debug) with Microsoft GDK", "inherits": [ "base", "x64", "Debug", "MSVC", "GDK" ] },
     { "name": "x64-Release-GDK"  , "description": "MSVC for x64 (Release) with Microsoft GDK", "inherits": [ "base", "x64", "Release", "MSVC", "GDK" ] },
+
+    { "name": "x64-Debug-Scarlett"    , "description": "MSVC for x64 (Debug) for Xbox Series X|S", "inherits": [ "base", "x64", "Debug", "MSVC", "Scarlett" ] },
+    { "name": "x64-Release-Scarlett"  , "description": "MSVC for x64 (Release) for Xbox Series X|S", "inherits": [ "base", "x64", "Release", "MSVC", "Scarlett" ] },
+
+    { "name": "x64-Debug-XboxOne"    , "description": "MSVC for x64 (Debug) for Xbox One", "inherits": [ "base", "x64", "Debug", "MSVC", "XboxOne" ] },
+    { "name": "x64-Release-XboxOne"  , "description": "MSVC for x64 (Release) for Xbox One", "inherits": [ "base", "x64", "Release", "MSVC", "XboxOne" ] },
 
     { "name": "x64-Debug-VCPKG"           , "description": "MSVC for x64 (Debug)", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG", "XAudio2Redist", "X64_X64" ] },
     { "name": "x64-Release-VCPKG"         , "description": "MSVC for x64 (Release)", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG", "XAudio2Redist", "X64_X64" ] },
