@@ -5,6 +5,8 @@ rem Licensed under the MIT License.
 setlocal
 set error=0
 
+if %PROCESSOR_ARCHITECTURE%.==ARM64. (set FXCARCH=arm64) else (if %PROCESSOR_ARCHITECTURE%.==AMD64. (set FXCARCH=x64) else (set FXCARCH=x86))
+
 set FXCOPTS=/nologo /WX /Ges /Zi /Zpc /Qstrip_reflect /Qstrip_debug
 
 if %1.==xbox. goto continuexbox
@@ -47,9 +49,9 @@ goto continue
 
 :continuedxil
 if defined DirectXShaderCompiler goto dxcviaenv
-set PCDXC="%WindowsSdkVerBinPath%x86\dxc.exe"
+set PCDXC="%WindowsSdkVerBinPath%%FXCARCH%\dxc.exe"
 if exist %PCDXC% goto continue
-set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
+set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\%FXCARCH%\dxc.exe"
 if exist %PCDXC% goto continue
 
 set PCDXC=dxc.exe
@@ -63,11 +65,11 @@ goto needdxil
 :continuepc
 set PCOPTS=
 
-set PCFXC="%WindowsSdkVerBinPath%x86\fxc.exe"
+set PCFXC="%WindowsSdkVerBinPath%%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
-set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
+set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
-set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\x86\fxc.exe"
+set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
 
 set PCFXC=fxc.exe
