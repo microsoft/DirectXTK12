@@ -6,6 +6,15 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### March 30, 2023
+* *DirectX Tool Kit for Audio* updates
+  * Reworked audio device enumeration for XAudio 2.9 to use MMDeviceEnumerator rather than Windows Runtime APIs
+  * ``GetOutputFormat`` now reports sample rate and bit-depth from the audio device properties
+  * New method ``GetOutputSampleRate`` added to return the input sample rate of the mastering voice
+  * ``Resume`` now handles device failure by switching to silent mode
+* CMake project updates
+* Retired VS 2017 legacy Xbox One XDK projects
+
 ### February 6, 2023
 * Fixed warnings when using GPU-based validation on PC
 * Mouse relative mode now accumulates multiple delta updates per frame. Added new optional but recommended method ``EndOfInputFrame``.
