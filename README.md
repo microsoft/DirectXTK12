@@ -139,3 +139,5 @@ Thanks to Pete Lewis and Justin Saunders for the normal-mapped and PBR shaders i
 Thanks for Travis Johnson for the mGPU support.
 
 Thanks to Roberto Sonnino for his help with the CMO format and the VS Starter Kit animation.
+
+Thanks to Andrew Farrier and Scott Matloff for their on-going help with code reviews.
