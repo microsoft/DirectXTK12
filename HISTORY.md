@@ -6,6 +6,10 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### April 28, 2023
+* Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
+* CMake project updates and fixes for clang/LLVM v16 warnings
+
 ### March 30, 2023
 * *DirectX Tool Kit for Audio* updates
   * Reworked audio device enumeration for XAudio 2.9 to use MMDeviceEnumerator rather than Windows Runtime APIs
