@@ -419,6 +419,11 @@ if(MSVC)
       target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
     endif()
 
+    if((MSVC_VERSION GREATER_EQUAL 1924)
+       AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16.0)))
+      target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
+    endif()
+
     if((MSVC_VERSION GREATER_EQUAL 1928)
        AND (CMAKE_SIZEOF_VOID_P EQUAL 8)
        AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0)))
@@ -460,10 +465,6 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
       message(STATUS "Building using Whole Program Optimization")
       target_compile_options(${PROJECT_NAME} PRIVATE /Gy /Gw)
-    endif()
-
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
-        target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
