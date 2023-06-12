@@ -485,11 +485,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.35)
         if(NOT (DEFINED XBOX_CONSOLE_TARGET))
-            target_compile_options(${PROJECT_NAME} PRIVATE /Zc:templateScope)
-        endif()
-
-        if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-            target_compile_options(${PROJECT_NAME} PRIVATE /Zc:checkGwOdr)
+          target_compile_options(${PROJECT_NAME} PRIVATE /Zc:checkGwOdr $<$<VERSION_GREATER_EQUAL:${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION},10.0.22000>:/Zc:templateScope>)
         endif()
     endif()
 endif()
