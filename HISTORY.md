@@ -6,6 +6,10 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### June 13, 2023
+* Root Signature updates to resolve some warnings from Xbox PIX
+* CMake project updates
+
 ### April 28, 2023
 * Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
 * CMake project updates and fixes for clang/LLVM v16 warnings
