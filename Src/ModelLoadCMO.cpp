@@ -998,3 +998,21 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
     return model;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+_Use_decl_annotations_
+std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
+    ID3D12Device* device,
+    const __wchar_t* szFileName,
+    ModelLoaderFlags flags,
+    size_t* animsOffset)
+{
+    return CreateFromCMO(device, reinterpret_cast<const unsigned short*>(szFileName), flags, animsOffset);
+}
+
+#endif

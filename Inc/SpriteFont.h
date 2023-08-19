@@ -91,6 +91,26 @@ namespace DirectX
                 float XAdvance;
             };
 
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+            SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, _In_z_ __wchar_t const* fileName, D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor, bool forceSRGB = false);
+
+            void XM_CALLCONV DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0) const;
+
+            void XM_CALLCONV DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0) const;
+            void XM_CALLCONV DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, FXMVECTOR position, FXMVECTOR color = Colors::White, float rotation = 0, FXMVECTOR origin = g_XMZero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0) const;
+            void XM_CALLCONV DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0) const;
+
+            XMVECTOR XM_CALLCONV MeasureString(_In_z_ __wchar_t const* text, bool ignoreWhitespace = true) const;
+
+            RECT __cdecl MeasureDrawBounds(_In_z_ __wchar_t const* text, XMFLOAT2 const& position, bool ignoreWhitespace = true) const;
+            RECT XM_CALLCONV MeasureDrawBounds(_In_z_ __wchar_t const* text, FXMVECTOR position, bool ignoreWhitespace = true) const;
+
+            void __cdecl SetDefaultCharacter(__wchar_t character);
+
+            bool __cdecl ContainsCharacter(__wchar_t character) const;
+
+            Glyph const* __cdecl FindGlyph(__wchar_t character) const;
+#endif // !_NATIVE_WCHAR_T_DEFINED
 
         private:
             // Private implementation.

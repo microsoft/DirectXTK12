@@ -9,6 +9,9 @@
 
 #pragma once
 
+#ifndef __DIRECTXTK_EFFECTS_H__
+#define __DIRECTXTK_EFFECTS_H__
+
 #ifdef _GAMING_XBOX_SCARLETT
 #include <d3d12_xs.h>
 #elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
@@ -930,3 +933,5 @@ namespace DirectX
         };
     }
 }
+
+#endif // __DIRECTXTK_EFFECTS_H__

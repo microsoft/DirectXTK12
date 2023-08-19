@@ -830,3 +830,21 @@ void Model::Transition(
         commandList->ResourceBarrier(count, barrier);
     }
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+_Use_decl_annotations_
+std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch,
+    const __wchar_t* texturesPath,
+    D3D12_DESCRIPTOR_HEAP_FLAGS flags) const
+{
+    return LoadTextures(device, resourceUploadBatch, reinterpret_cast<const unsigned short*>(texturesPath), flags);
+}
+
+#endif

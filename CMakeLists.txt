@@ -31,6 +31,8 @@ option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
 
 option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
 
+option(NO_WCHAR_T "Use legacy wide-character as unsigned short" OFF)
+
 option(BUILD_MIXED_DX11 "Support linking with DX11 version of toolkit" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -429,6 +431,11 @@ if(MSVC)
        AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0)))
       target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
       target_link_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
+    endif()
+
+    if(NO_WCHAR_T)
+      message(STATUS "Using non-native wchar_t as unsigned short")
+      target_compile_options(${PROJECT_NAME} PRIVATE "/Zc:wchar_t-")
     endif()
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE $<IF:$<CONFIG:DEBUG>,_DEBUG,NDEBUG>)
