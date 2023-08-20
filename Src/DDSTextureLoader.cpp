@@ -1052,3 +1052,77 @@ HRESULT DirectX::CreateDDSTextureFromFileEx(
 
     return hr;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+namespace DirectX
+{
+    HRESULT __cdecl LoadDDSTextureFromFile(
+        _In_ ID3D12Device* d3dDevice,
+        _In_z_ const __wchar_t* szFileName,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& ddsData,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        size_t maxsize,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode,
+        _Out_opt_ bool* isCubeMap)
+    {
+        return LoadDDSTextureFromFile(d3dDevice,
+            reinterpret_cast<const unsigned short*>(szFileName),
+            texture, ddsData, subresources, maxsize, alphaMode, isCubeMap);
+    }
+
+    HRESULT __cdecl CreateDDSTextureFromFile(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUpload,
+        _In_z_ const __wchar_t* szFileName,
+        _Outptr_ ID3D12Resource** texture,
+        bool generateMipsIfMissing,
+        size_t maxsize,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode,
+        _Out_opt_ bool* isCubeMap)
+    {
+        return CreateDDSTextureFromFile(device, resourceUpload,
+            reinterpret_cast<const unsigned short*>(szFileName),
+            texture, generateMipsIfMissing, maxsize, alphaMode, isCubeMap);
+    }
+
+    HRESULT __cdecl LoadDDSTextureFromFileEx(
+        _In_ ID3D12Device* d3dDevice,
+        _In_z_ const __wchar_t* szFileName,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        DDS_LOADER_FLAGS loadFlags,
+        _Outptr_ ID3D12Resource** texture,
+        std::unique_ptr<uint8_t[]>& ddsData,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode,
+        _Out_opt_ bool* isCubeMap)
+    {
+        return LoadDDSTextureFromFileEx(d3dDevice,
+            reinterpret_cast<const unsigned short*>(szFileName),
+            maxsize, resFlags, loadFlags, texture, ddsData, subresources, alphaMode, isCubeMap);
+    }
+
+    HRESULT __cdecl CreateDDSTextureFromFileEx(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUpload,
+        _In_z_ const __wchar_t* szFileName,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        DDS_LOADER_FLAGS loadFlags,
+        _Outptr_ ID3D12Resource** texture,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode,
+        _Out_opt_ bool* isCubeMap)
+    {
+        return CreateDDSTextureFromFileEx(device, resourceUpload,
+            reinterpret_cast<const unsigned short*>(szFileName),
+            maxsize, resFlags, loadFlags, texture, alphaMode, isCubeMap);
+    }
+}
+
+#endif // !_NATIVE_WCHAR_T_DEFINED

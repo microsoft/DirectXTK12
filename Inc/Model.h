@@ -574,6 +574,32 @@ namespace DirectX
             ModelBone::TransformArray       invBindPoseMatrices;
             std::wstring                    name;
 
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+            std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
+                _In_ ID3D12Device* device,
+                ResourceUploadBatch& resourceUploadBatch,
+                _In_opt_z_ const __wchar_t* texturesPath = nullptr,
+                D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
+
+            static std::unique_ptr<Model> __cdecl CreateFromCMO(
+                _In_opt_ ID3D12Device* device,
+                _In_z_ const __wchar_t* szFileName,
+                ModelLoaderFlags flags = ModelLoader_Default,
+                _Out_opt_ size_t* animsOffset = nullptr);
+
+            static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
+                _In_opt_ ID3D12Device* device,
+                _In_z_ const __wchar_t* szFileName,
+                ModelLoaderFlags flags = ModelLoader_Default);
+
+            static std::unique_ptr<Model> __cdecl CreateFromVBO(
+                _In_opt_ ID3D12Device* device,
+                _In_z_ const __wchar_t* szFileName,
+                ModelLoaderFlags flags = ModelLoader_Default);
+
+#endif // !_NATIVE_WCHAR_T_DEFINED
+
         private:
             std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(
                 IEffectFactory& fxFactory,

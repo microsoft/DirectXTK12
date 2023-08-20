@@ -809,3 +809,42 @@ HRESULT DirectX::SaveWICTextureToFile(
 
     return S_OK;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+namespace DirectX
+{
+    HRESULT __cdecl SaveDDSTextureToFile(
+        _In_ ID3D12CommandQueue* pCommandQueue,
+        _In_ ID3D12Resource* pSource,
+        _In_z_ const __wchar_t* fileName,
+        D3D12_RESOURCE_STATES beforeState,
+        D3D12_RESOURCE_STATES afterState) noexcept
+    {
+        return SaveDDSTextureToFile(pCommandQueue, pSource,
+            reinterpret_cast<const unsigned short*>(fileName),
+            beforeState, afterState);
+    }
+
+    HRESULT __cdecl SaveWICTextureToFile(
+        _In_ ID3D12CommandQueue* pCommandQ,
+        _In_ ID3D12Resource* pSource,
+        REFGUID guidContainerFormat,
+        _In_z_ const __wchar_t* fileName,
+        D3D12_RESOURCE_STATES beforeState,
+        D3D12_RESOURCE_STATES afterState,
+        _In_opt_ const GUID* targetFormat,
+        _In_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps,
+        bool forceSRGB)
+    {
+        return SaveWICTextureToFile(pCommandQ, pSource, guidContainerFormat,
+            reinterpret_cast<const unsigned short*>(fileName),
+            beforeState, afterState, targetFormat, setCustomProps, forceSRGB);
+    }
+}
+
+#endif // !_NATIVE_WCHAR_T_DEFINED
