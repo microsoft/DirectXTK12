@@ -71,7 +71,7 @@ void GeometricPrimitive::Impl::Initialize(
 
     auto const vertSizeBytes = static_cast<size_t>(sizeInBytes);
 
-    mVertexBuffer = GraphicsMemory::Get(device).Allocate(vertSizeBytes);
+    mVertexBuffer = GraphicsMemory::Get(device).Allocate(vertSizeBytes, 16, GraphicsMemory::TAG_VERTEX);
 
     auto verts = reinterpret_cast<const uint8_t*>(vertices.data());
     memcpy(mVertexBuffer.Memory(), verts, vertSizeBytes);
@@ -83,7 +83,7 @@ void GeometricPrimitive::Impl::Initialize(
 
     auto const indSizeBytes = static_cast<size_t>(sizeInBytes);
 
-    mIndexBuffer = GraphicsMemory::Get(device).Allocate(indSizeBytes);
+    mIndexBuffer = GraphicsMemory::Get(device).Allocate(indSizeBytes, 16, GraphicsMemory::TAG_INDEX);
 
     auto ind = reinterpret_cast<const uint8_t*>(indices.data());
     memcpy(mIndexBuffer.Memory(), ind, indSizeBytes);

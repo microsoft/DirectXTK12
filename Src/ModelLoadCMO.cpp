@@ -539,7 +539,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
             ib.ptr = indexes;
             ibData.emplace_back(ib);
 
-            ibs[j] = GraphicsMemory::Get(device).Allocate(ibBytes);
+            ibs[j] = GraphicsMemory::Get(device).Allocate(ibBytes, 16, GraphicsMemory::TAG_INDEX);
             memcpy(ibs[j].Memory(), indexes, ibBytes);
         }
 
@@ -890,7 +890,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
                     }
                 }
 
-                vbs[j] = GraphicsMemory::Get(device).Allocate(bytes);
+                vbs[j] = GraphicsMemory::Get(device).Allocate(bytes, 16, GraphicsMemory::TAG_VERTEX);
                 memcpy(vbs[j].Memory(), temp.get(), bytes);
             }
         }
