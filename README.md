@@ -140,4 +140,6 @@ Thanks for Travis Johnson for the mGPU support.
 
 Thanks to Roberto Sonnino for his help with the CMO format and the VS Starter Kit animation.
 
+Thanks to Richie Meyer for their contribution of Xbox PIX custom memory and type allocation tracking events support.
+
 Thanks to Andrew Farrier and Scott Matloff for their on-going help with code reviews.
