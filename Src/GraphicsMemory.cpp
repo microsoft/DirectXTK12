@@ -246,6 +246,10 @@ public:
         }
 
         s_graphicsMemory = this;
+
+    #endif
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+        DebugTrace("INFO: GraphicsMemory PIX custom memory tracking events enabled (Allocator ID %u)\n", c_PIXAllocatorID);
     #endif
     }
 
