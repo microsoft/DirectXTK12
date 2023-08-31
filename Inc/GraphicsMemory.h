@@ -179,7 +179,8 @@ namespace DirectX
                 constexpr size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
                 auto alloc = AllocateImpl(alignedSize, alignment);
 #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
-                std::ignore = ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), TAG_CONSTANT);
+                // This cast is needed to capture the type information in the PDB
+                std::ignore = reinterpret_cast<T*>(ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), TAG_CONSTANT));
 #endif
                 return alloc;
             }
@@ -215,6 +216,7 @@ namespace DirectX
             GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment);
 
 #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+            // The declspec is required to ensure the proper information is captured in the PDB
             __declspec(allocator) static void* ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
 #endif
 
