@@ -6,6 +6,11 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### September 1, 2023
+* GraphicsMemory updated to use Xbox PIX custom memory events with optional tags
+* Retired ARM (32-bit) support for the UWP platform
+* CMake project updates
+
 ### June 13, 2023
 * Root Signature updates to resolve some warnings from Xbox PIX
 * CMake project updates
