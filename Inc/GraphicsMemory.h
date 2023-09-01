@@ -24,6 +24,14 @@
 #include <cstring>
 #include <memory>
 
+#ifdef _GAMING_XBOX
+#include <gxdk.h>
+#endif
+
+#if defined(_GAMING_XBOX) && (defined(_DEBUG) || defined(PROFILE)) && (_GXDK_VER >= 0x585D073C) /* GDK Edition 221000 */
+#define USING_PIX_CUSTOM_MEMORY_EVENTS
+#include <tuple>
+#endif
 
 namespace DirectX
 {
@@ -129,6 +137,17 @@ namespace DirectX
         class GraphicsMemory
         {
         public:
+            enum Tag
+            {
+                TAG_GENERIC = 0,
+                TAG_CONSTANT,
+                TAG_VERTEX,
+                TAG_INDEX,
+                TAG_SPRITES,
+                TAG_TEXTURE,
+                TAG_COMPUTE,
+            };
+
             explicit GraphicsMemory(_In_ ID3D12Device* device);
 
             GraphicsMemory(GraphicsMemory&&) noexcept;
@@ -142,14 +161,28 @@ namespace DirectX
             // Make sure to keep the GraphicsResource handle alive as long as you need to access
             // the memory on the CPU. For example, do not simply cache GpuAddress() and discard
             // the GraphicsResource object, or your memory may be overwritten later.
-            GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16);
+            GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16, uint32_t tag = TAG_GENERIC)
+            {
+                auto alloc = AllocateImpl(size, alignment);
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+                std::ignore = ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), tag);
+#else
+                UNREFERENCED_PARAMETER(tag);
+#endif
+                return alloc;
+            }
 
-            // Special overload of Allocate that aligns to D3D12 constant buffer alignment requirements
+            // Version of Allocate that aligns to D3D12 constant buffer requirements
             template<typename T> GraphicsResource AllocateConstant()
             {
                 constexpr size_t alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
                 constexpr size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
-                return Allocate(alignedSize, alignment);
+                auto alloc = AllocateImpl(alignedSize, alignment);
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+                // This cast is needed to capture the type information in the PDB
+                std::ignore = reinterpret_cast<T*>(ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), TAG_CONSTANT));
+#endif
+                return alloc;
             }
             template<typename T> GraphicsResource AllocateConstant(const T& setData)
             {
@@ -179,6 +212,13 @@ namespace DirectX
         private:
             // Private implementation.
             class Impl;
+
+            GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment);
+
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+            // The declspec is required to ensure the proper information is captured in the PDB
+            __declspec(allocator) static void* ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
+#endif
 
             std::unique_ptr<Impl> pImpl;
         };

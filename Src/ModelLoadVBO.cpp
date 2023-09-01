@@ -99,11 +99,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
     auto indices = reinterpret_cast<const uint16_t*>(meshData + sizeof(VBO::header_t) + vertSize);
 
     // Create vertex buffer
-    auto vb = GraphicsMemory::Get(device).Allocate(vertSize);
+    auto vb = GraphicsMemory::Get(device).Allocate(vertSize, 16, GraphicsMemory::TAG_VERTEX);
     memcpy(vb.Memory(), verts, vertSize);
 
     // Create index buffer
-    auto ib = GraphicsMemory::Get(device).Allocate(indexSize);
+    auto ib = GraphicsMemory::Get(device).Allocate(indexSize, 16, GraphicsMemory::TAG_INDEX);
     memcpy(ib.Memory(), indices, indexSize);
 
     auto part = new ModelMeshPart(0);

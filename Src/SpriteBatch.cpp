@@ -830,7 +830,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
         // Allocate a new page of vertex memory if we're starting the batch
         if (mSpriteCount == 0)
         {
-            mVertexSegment = GraphicsMemory::Get(mDeviceResources->mDevice).Allocate(mVertexPageSize);
+            mVertexSegment = GraphicsMemory::Get(mDeviceResources->mDevice).Allocate(mVertexPageSize, 16, GraphicsMemory::TAG_SPRITES);
         }
 
         auto vertices = static_cast<VertexPositionColorTexture*>(mVertexSegment.Memory()) + mSpriteCount * VerticesPerSprite;
