@@ -758,7 +758,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     if (FAILED(hr))
         return hr;
 
-    if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+    if ((loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_FORCE_RGBA32)) == WIC_LOADER_MIP_AUTOGEN)
     {
         const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
@@ -932,7 +932,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     if (FAILED(hr))
         return hr;
 
-    if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
+    if ((loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_FORCE_RGBA32)) == WIC_LOADER_MIP_AUTOGEN)
     {
         const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
