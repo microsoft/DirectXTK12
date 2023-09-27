@@ -306,14 +306,14 @@ echo %fxc%
 exit /b
 
 :CompileShaderdxil
-set dxc=%PCDXC% "%1.fx" %FXCOPTS% -HV 2021 /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set dxc=%PCDXC% "%1.fx" %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShaderdxil
-set dxc=%PCDXC% "%1.hlsl" %FXCOPTS% -HV 2021 /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set dxc=%PCDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
