@@ -334,14 +334,14 @@ echo %fxc%
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
+set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% -HV 2021 /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
+set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% -HV 2021 /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
