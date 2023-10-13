@@ -1123,7 +1123,7 @@ std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue
 }
 
 
-bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
+bool ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
 {
     return pImpl->IsSupportedForGenerateMips(format);
 }

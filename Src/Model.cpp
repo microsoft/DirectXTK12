@@ -188,36 +188,36 @@ ModelMesh::~ModelMesh()
 }
 
 // Draw the mesh
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
 }
 
 
 // Draw the mesh with an effect
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, effect);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
 }
 
 
 // Draw the mesh with a callback for each mesh part
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, callback);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
 }
