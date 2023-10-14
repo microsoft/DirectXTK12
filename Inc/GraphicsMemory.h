@@ -217,7 +217,7 @@ namespace DirectX
 
 #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
             // The declspec is required to ensure the proper information is captured in the PDB
-            __declspec(allocator) static void* ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
+            __declspec(allocator) static void* __cdecl ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
 #endif
 
             std::unique_ptr<Impl> pImpl;
