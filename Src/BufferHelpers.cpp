@@ -88,6 +88,52 @@ HRESULT DirectX::CreateStaticBuffer(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
+HRESULT DirectX::CreateUAVBuffer(
+    ID3D12Device* device,
+    uint64_t bufferSize,
+    ID3D12Resource** pBuffer,
+    D3D12_RESOURCE_STATES initialState,
+    D3D12_RESOURCE_FLAGS additionalResFlags) noexcept
+{
+    if (!pBuffer)
+        return E_INVALIDARG;
+
+    *pBuffer = nullptr;
+
+    if (!device || !bufferSize)
+        return E_INVALIDARG;
+
+    static constexpr uint64_t c_maxBytes = D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u;
+
+    if (bufferSize > c_maxBytes)
+    {
+        DebugTrace("ERROR: Resource size too large for DirectX 12 (size %llu)\n", bufferSize);
+        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+    }
+
+    auto const desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS | additionalResFlags);
+
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+
+    ComPtr<ID3D12Resource> res;
+    HRESULT hr = device->CreateCommittedResource(
+        &heapProperties,
+        D3D12_HEAP_FLAG_NONE,
+        &desc,
+        initialState,
+        nullptr,
+        IID_GRAPHICS_PPV_ARGS(res.GetAddressOf()));
+    if (FAILED(hr))
+        return hr;
+
+    *pBuffer = res.Detach();
+
+    return S_OK;
+}
+
+
+//--------------------------------------------------------------------------------------
+_Use_decl_annotations_
 HRESULT DirectX::CreateUploadBuffer(
     ID3D12Device* device,
     const void* ptr,
@@ -102,7 +148,7 @@ HRESULT DirectX::CreateUploadBuffer(
 
     *pBuffer = nullptr;
 
-    if (!device || !ptr || !count || !stride)
+    if (!device || !count || !stride)
         return E_INVALIDARG;
 
     const uint64_t sizeInbytes = uint64_t(count) * uint64_t(stride);
@@ -130,13 +176,16 @@ HRESULT DirectX::CreateUploadBuffer(
     if (FAILED(hr))
         return hr;
 
-    void* mappedPtr = nullptr;
-    hr = res->Map(0, nullptr, &mappedPtr);
-    if (FAILED(hr))
-        return hr;
+    if (ptr)
+    {
+        void* mappedPtr = nullptr;
+        hr = res->Map(0, nullptr, &mappedPtr);
+        if (FAILED(hr))
+            return hr;
 
-    memcpy(mappedPtr, ptr, sizeInbytes);
-    res->Unmap(0, nullptr);
+        memcpy(mappedPtr, ptr, sizeInbytes);
+        res->Unmap(0, nullptr);
+    }
 
     *pBuffer = res.Detach();
 

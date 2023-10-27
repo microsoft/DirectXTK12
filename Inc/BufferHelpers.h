@@ -61,8 +61,14 @@ namespace DirectX
             afterState, pBuffer, resFlags);
     }
 
+    HRESULT __cdecl CreateUAVBuffer(_In_ ID3D12Device* device,
+        uint64_t bufferSize,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
+        D3D12_RESOURCE_FLAGS additionalResFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
+
     HRESULT __cdecl CreateUploadBuffer(_In_ ID3D12Device* device,
-        _In_reads_bytes_(count* stride) const void* ptr,
+        _In_reads_bytes_opt_(count* stride) const void* ptr,
         size_t count,
         size_t stride,
         _COM_Outptr_ ID3D12Resource** pBuffer,
