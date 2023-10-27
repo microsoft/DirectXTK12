@@ -183,7 +183,7 @@ HRESULT DirectX::CreateUploadBuffer(
         if (FAILED(hr))
             return hr;
 
-        memcpy(mappedPtr, ptr, sizeInbytes);
+        memcpy(mappedPtr, ptr, static_cast<const size_t>(sizeInbytes));
         res->Unmap(0, nullptr);
     }
 
