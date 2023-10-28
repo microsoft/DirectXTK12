@@ -21,6 +21,7 @@
 #endif
 
 #include <cstddef>
+#include <cstdint>
 
 
 namespace DirectX
