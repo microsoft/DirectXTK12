@@ -21,6 +21,7 @@
 #endif
 
 #include <cstddef>
+#include <cstdint>
 
 
 namespace DirectX
@@ -59,6 +60,42 @@ namespace DirectX
     {
         return CreateStaticBuffer(device, resourceUpload, data.data(), data.size(), sizeof(typename T::value_type),
             afterState, pBuffer, resFlags);
+    }
+
+    HRESULT __cdecl CreateUAVBuffer(_In_ ID3D12Device* device,
+        uint64_t bufferSize,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
+        D3D12_RESOURCE_FLAGS additionalResFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
+
+    HRESULT __cdecl CreateUploadBuffer(_In_ ID3D12Device* device,
+        _In_reads_bytes_opt_(count* stride) const void* ptr,
+        size_t count,
+        size_t stride,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ,
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
+
+    template<typename T>
+    HRESULT CreateUploadBuffer(_In_ ID3D12Device* device,
+        _In_reads_(count) T const* data,
+        size_t count,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ,
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept
+    {
+        return CreateUploadBuffer(device, data, count, sizeof(T), pBuffer, initialState, resFlags);
+    }
+
+    template<typename T>
+    HRESULT CreateUploadBuffer(_In_ ID3D12Device* device,
+        T const& data,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ,
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept
+    {
+        return CreateUploadBuffer(device, data.data(), data.size(), sizeof(typename T::value_type),
+            pBuffer, initialState, resFlags);
     }
 
     // Helpers for creating texture from memory arrays.
