@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### October 28, 2023
+* Added ``CreateUploadBuffer`` and ``CreateUAVBuffer`` helpers
+* Fixed validation bug with WIC loader when using autogen and force RGBA together
+* Fixed minor link issue with a  Xbox PIX custom memory method
+* Xbox shader compilation now uses ``-HV 2021``
+* Additional methods for *DirectX Tool Kit for Audio* emitter for linear and inverse-square falloff curves
+
 ### September 1, 2023
 * GraphicsMemory updated to use Xbox PIX custom memory events with optional tags
 * Retired ARM (32-bit) support for the UWP platform
