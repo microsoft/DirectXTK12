@@ -35,6 +35,8 @@ option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
 
 option(NO_WCHAR_T "Use legacy wide-character as unsigned short" OFF)
 
+option(BUILD_FUZZING "Build for fuzz testing" OFF)
+
 option(BUILD_MIXED_DX11 "Support linking with DX11 version of toolkit" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -409,7 +411,7 @@ install(FILES
 # Model uses dynamic_cast, so we need /GR (Enable RTTI)
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /Wall /GR /fp:fast "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
-    target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT)
+    target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT /INCREMENTAL:NO)
 
     if((CMAKE_SIZEOF_VOID_P EQUAL 4) AND (NOT ${DIRECTX_ARCH} MATCHES "^arm"))
       target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
@@ -497,6 +499,11 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
           target_compile_options(${PROJECT_NAME} PRIVATE /Zc:checkGwOdr $<$<VERSION_GREATER_EQUAL:${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION},10.0.22000>:/Zc:templateScope>)
         endif()
     endif()
+
+    if (BUILD_FUZZING AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.32)
+        target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address /fsanitize-coverage=inline-8bit-counters /fsanitize-coverage=edge /fsanitize-coverage=trace-cmp /fsanitize-coverage=trace-div)
+        target_link_libraries(${PROJECT_NAME} PRIVATE sancov.lib)
+    endif()
 endif()
 
 if(WIN32)
@@ -525,4 +532,8 @@ if(BUILD_TESTING AND WIN32 AND (NOT WINDOWS_STORE) AND (NOT (DEFINED XBOX_CONSOL
    AND (EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tests/CMakeLists.txt"))
   enable_testing()
   add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Tests)
+elseif(BUILD_FUZZING AND WIN32 AND (NOT WINDOWS_STORE) AND (NOT (DEFINED XBOX_CONSOLE_TARGET))
+   AND (EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tests/fuzzloaders/CMakeLists.txt"))
+  message(STATUS "Building for fuzzing")
+  add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Tests/fuzzloaders)
 endif()
