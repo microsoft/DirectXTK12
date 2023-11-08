@@ -23,6 +23,7 @@ Bin
 /Src/Shaders/Compiled/*.pdb
 /ipch
 /Tests
+/Testing
 /wiki
 /out
 /CMakeUserPresets.json
