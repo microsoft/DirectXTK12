@@ -254,7 +254,7 @@ jobs:
       cmakeArgs: --build out/build/x64-Debug -v
   - task: DeleteFiles@1
     inputs:
-      Contents: 'out'  - task: CMake@1
+      Contents: 'out'
   - task: CMake@1
     displayName: CMake (MSVC; x64-Release) Config
     inputs:
@@ -267,7 +267,7 @@ jobs:
       cmakeArgs: --build out/build/x64-Release -v
   - task: DeleteFiles@1
     inputs:
-      Contents: 'out'  - task: CMake@1
+      Contents: 'out'
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Debug) Config
     inputs:
@@ -280,7 +280,7 @@ jobs:
       cmakeArgs: --build out/build/x64-Debug-Clang -v
   - task: DeleteFiles@1
     inputs:
-      Contents: 'out'  - task: CMake@1
+      Contents: 'out'
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Release) Config
     inputs:
@@ -293,7 +293,7 @@ jobs:
       cmakeArgs: --build out/build/x64-Release-Clang -v
   - task: DeleteFiles@1
     inputs:
-      Contents: 'out'  - task: CmdLine@2
+      Contents: 'out'
   - task: CmdLine@2
     displayName: Set LIB for ARM64
     inputs:
@@ -317,7 +317,7 @@ jobs:
       cmakeArgs: --build out/build/arm64-Debug-Clang -v
   - task: DeleteFiles@1
     inputs:
-      Contents: 'out'  - task: CMake@1
+      Contents: 'out'
   - task: CMake@1
     displayName: CMake (clang/LLVM; arm64-Release) Config
     inputs:
