@@ -6,6 +6,11 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### December 31, 2023
+* Fix WAVFileReader bugs with bounds checking
+* CMake project updates
+* Code review
+
 ### October 28, 2023
 * Added ``CreateUploadBuffer`` and ``CreateUAVBuffer`` helpers
 * Fixed validation bug with WIC loader when using autogen and force RGBA together
