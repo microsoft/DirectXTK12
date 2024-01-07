@@ -865,6 +865,10 @@ void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
 // SkinnedPBREffect
 //--------------------------------------------------------------------------------------
 
+SkinnedPBREffect::~SkinnedPBREffect()
+{
+}
+
 // Animation settings.
 void SkinnedPBREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
 {

@@ -846,6 +846,10 @@ void NormalMapEffect::SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescript
 // SkinnedNormalMapEffect
 //--------------------------------------------------------------------------------------
 
+SkinnedNormalMapEffect::~SkinnedNormalMapEffect()
+{
+}
+
 // Animation settings.
 void SkinnedNormalMapEffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
 {

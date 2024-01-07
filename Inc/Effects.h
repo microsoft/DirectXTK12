@@ -551,6 +551,8 @@ namespace DirectX
             SkinnedNormalMapEffect(SkinnedNormalMapEffect const&) = delete;
             SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect const&) = delete;
 
+            ~SkinnedNormalMapEffect() override;
+
             // Animation settings.
             void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
             void __cdecl ResetBoneTransforms() override;
@@ -648,6 +650,8 @@ namespace DirectX
 
             SkinnedPBREffect(SkinnedPBREffect const&) = delete;
             SkinnedPBREffect& operator= (SkinnedPBREffect const&) = delete;
+
+            ~SkinnedPBREffect() override;
 
             // Animation settings.
             void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
