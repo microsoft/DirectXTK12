@@ -31,7 +31,9 @@
 #include <DirectXMath.h>
 
 #ifndef _GAMING_XBOX
+#ifdef _MSC_VER
 #pragma comment(lib,"dxguid.lib")
+#endif
 #endif
 
 //

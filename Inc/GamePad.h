@@ -29,7 +29,9 @@
 #ifdef USING_GAMEINPUT
 #include <GameInput.h>
 #ifndef _GAMING_XBOX
+#ifdef _MSC_VER
 #pragma comment(lib,"gameinput.lib")
+#endif
 #endif
 
 #elif defined(USING_WINDOWS_GAMING_INPUT)
