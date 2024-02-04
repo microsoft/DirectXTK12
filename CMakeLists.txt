@@ -446,7 +446,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/DirectXTK12.pc"
 
 # Model uses dynamic_cast, so we need /GR (Enable RTTI)
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /Wall /GR /fp:fast "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
+    target_compile_options(${PROJECT_NAME} PRIVATE /Wall /GR "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
     target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT /INCREMENTAL:NO)
 
     if((CMAKE_SIZEOF_VOID_P EQUAL 4) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
@@ -503,7 +503,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-ignored-attributes" "-Walloc-size-larger-than=4GB")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus /Zc:inline)
+    target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus /Zc:inline /fp:fast)
 
     if(ENABLE_CODE_ANALYSIS)
         target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
