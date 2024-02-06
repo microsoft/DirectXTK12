@@ -47,10 +47,14 @@
 #include <xaudio2.h>
 #include <xaudio2fx.h>
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4619 4616 5246)
+#endif
 #include <x3daudio.h>
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 #include <xapofx.h>
 
