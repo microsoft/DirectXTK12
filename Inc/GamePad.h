@@ -33,7 +33,9 @@
 #endif
 
 #elif defined(USING_WINDOWS_GAMING_INPUT)
+#ifdef _MSC_VER
 #pragma comment(lib,"runtimeobject.lib")
+#endif
 #include <string>
 
 #elif defined(_XBOX_ONE)
