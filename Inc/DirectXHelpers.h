@@ -30,10 +30,8 @@
 
 #include <DirectXMath.h>
 
-#ifndef _GAMING_XBOX
-#ifdef _MSC_VER
+#if !defined(_GAMING_XBOX) && defined(_MSC_VER)
 #pragma comment(lib,"dxguid.lib")
-#endif
 #endif
 
 //
