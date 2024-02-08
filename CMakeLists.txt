@@ -500,6 +500,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-ignored-attributes" "-Walloc-size-larger-than=4GB")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus /Zc:inline /fp:fast /Qdiag-disable:161)
+    set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus /Zc:inline /fp:fast)
 
