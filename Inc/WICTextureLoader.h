@@ -34,7 +34,9 @@
 #include <cstdint>
 #include <memory>
 
+#ifdef _MSC_VER
 #pragma comment(lib,"uuid.lib")
+#endif
 
 
 namespace DirectX
