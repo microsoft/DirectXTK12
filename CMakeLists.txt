@@ -214,7 +214,9 @@ if(MINGW)
    set(BUILD_XAUDIO_WIN10 OFF)
 endif()
 
-if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8 OR BUILD_XAUDIO_REDIST)
+if(WINDOWS_STORE
+   OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8
+   OR BUILD_XAUDIO_REDIST)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
         Inc/Audio.h)
 
@@ -300,7 +302,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 
-if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8 OR BUILD_XAUDIO_REDIST)
+if(WINDOWS_STORE
+   OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8
+   OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
 endif()
 
@@ -323,7 +327,8 @@ if(directx-headers_FOUND)
     target_compile_definitions(${PROJECT_NAME} PUBLIC USING_DIRECTX_HEADERS)
 endif()
 
-if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10) AND (NOT BUILD_XAUDIO_WIN8) AND (NOT WINDOWS_STORE))
+if(BUILD_XAUDIO_REDIST
+   AND (NOT BUILD_XAUDIO_WIN10) AND (NOT BUILD_XAUDIO_WIN8) AND (NOT WINDOWS_STORE))
     message(STATUS "Using XAudio2Redist for DirectX Tool Kit for Audio.")
     find_package(xaudio2redist CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::XAudio2Redist)
@@ -409,13 +414,12 @@ install(EXPORT ${PROJECT_NAME}-targets
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PACKAGE_NAME})
 
 install(FILES ${LIBRARY_HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/directxtk12)
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/directxtk12)
 
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-config-version.cmake
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PACKAGE_NAME})
-
 
 # Create pkg-config file
 include(build/JoinPaths.cmake)
@@ -446,31 +450,18 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/DirectXTK12.pc"
 
 # Model uses dynamic_cast, so we need /GR (Enable RTTI)
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /Wall /GR "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
+    target_compile_options(${PROJECT_NAME} PRIVATE /Wall /EHsc /GR "$<$<NOT:$<CONFIG:DEBUG>>:/guard:cf>")
     target_link_options(${PROJECT_NAME} PRIVATE /DYNAMICBASE /NXCOMPAT /INCREMENTAL:NO)
 
     if((CMAKE_SIZEOF_VOID_P EQUAL 4) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
       target_link_options(${PROJECT_NAME} PRIVATE /SAFESEH)
     endif()
 
-    if(ENABLE_SPECTRE_MITIGATION
-       AND (MSVC_VERSION GREATER_EQUAL 1913)
-       AND (NOT WINDOWS_STORE)
-       AND (NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
-      message(STATUS "Building Spectre-mitigated libraries.")
-      target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
-    endif()
-
-    if((MSVC_VERSION GREATER_EQUAL 1924)
-       AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16.0)))
-      target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
-    endif()
-
     if((MSVC_VERSION GREATER_EQUAL 1928)
        AND (CMAKE_SIZEOF_VOID_P EQUAL 8)
-       AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0)))
-      target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
-      target_link_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
+       AND ((NOT (CMAKE_CXX_COMPILER_ID MATCHES "Clang|IntelLLVM")) OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0)))
+        target_compile_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
+        target_link_options(${PROJECT_NAME} PRIVATE "$<$<NOT:$<CONFIG:DEBUG>>:/guard:ehcont>")
     endif()
 
     if(NO_WCHAR_T)
@@ -487,26 +478,34 @@ elseif(XBOX_CONSOLE_TARGET MATCHES "(xboxone|durango)")
     target_compile_options(${PROJECT_NAME} PRIVATE $<IF:$<CXX_COMPILER_ID:MSVC>,/favor:AMD64 /arch:AVX,-march=btver2>)
 elseif(NOT (${DIRECTX_ARCH} MATCHES "^arm"))
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-        set(ARCH_SSE2 $<$<CXX_COMPILER_ID:MSVC>:/arch:SSE2> $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
+        set(ARCH_SSE2 $<$<CXX_COMPILER_ID:MSVC,Intel>:/arch:SSE2> $<$<NOT:$<CXX_COMPILER_ID:MSVC,Intel>>:-msse2>)
     else()
-        set(ARCH_SSE2 $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-msse2>)
+        set(ARCH_SSE2 $<$<NOT:$<CXX_COMPILER_ID:MSVC,Intel>>:-msse2>)
     endif()
 
     target_compile_options(${PROJECT_NAME} PRIVATE ${ARCH_SSE2})
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wpedantic -Wextra)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16.0)
-        target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-unsafe-buffer-usage")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|IntelLLVM")
+    if(MSVC AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16.0))
+      target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
     endif()
+
+    set(WarningsLib -Wall -Wpedantic -Wextra)
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16.0)
+        list(APPEND WarningsLib "-Wno-unsafe-buffer-usage")
+    endif()
+    target_compile_options(${PROJECT_NAME} PRIVATE ${WarningsLib})
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-ignored-attributes" "-Walloc-size-larger-than=4GB")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+    target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus /Zc:inline /fp:fast /Qdiag-disable:161)
+    set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /sdl /permissive- /JMC- /Zc:__cplusplus /Zc:inline /fp:fast)
 
     if(ENABLE_CODE_ANALYSIS)
-        target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
+      target_compile_options(${PROJECT_NAME} PRIVATE /analyze)
     endif()
 
     if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
@@ -514,38 +513,51 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
       target_compile_options(${PROJECT_NAME} PRIVATE /Gy /Gw)
     endif()
 
+    if(ENABLE_SPECTRE_MITIGATION
+       AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.13)
+       AND (NOT WINDOWS_STORE))
+        message(STATUS "Building Spectre-mitigated libraries")
+        target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
+    endif()
+
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.24)
+      target_compile_options(${PROJECT_NAME} PRIVATE /ZH:SHA_256)
+    endif()
+
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
-        target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
+      target_compile_options(${PROJECT_NAME} PRIVATE /Zc:preprocessor /wd5104 /wd5105)
     endif()
 
     if((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.27) AND (NOT (${DIRECTX_ARCH} MATCHES "^arm")))
-        target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
+      target_link_options(${PROJECT_NAME} PRIVATE /CETCOMPAT)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.28)
-        target_compile_options(${PROJECT_NAME} PRIVATE /Zc:lambda)
+      target_compile_options(${PROJECT_NAME} PRIVATE /Zc:lambda)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
-        target_compile_options(${PROJECT_NAME} PRIVATE /wd5262)
+      target_compile_options(${PROJECT_NAME} PRIVATE /wd5262)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.35)
-        target_compile_options(${PROJECT_NAME} PRIVATE /Zc:checkGwOdr)
+      target_compile_options(${PROJECT_NAME} PRIVATE /Zc:checkGwOdr)
 
-        if(NOT (DEFINED XBOX_CONSOLE_TARGET))
-          target_compile_options(${PROJECT_NAME} PRIVATE $<$<VERSION_GREATER_EQUAL:${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION},10.0.22000>:/Zc:templateScope>)
-        endif()
+      if(NOT (DEFINED XBOX_CONSOLE_TARGET))
+        target_compile_options(${PROJECT_NAME} PRIVATE $<$<VERSION_GREATER_EQUAL:${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION},10.0.22000>:/Zc:templateScope>)
+      endif()
     endif()
 
-    if (BUILD_FUZZING AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.32)
-        target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address /fsanitize-coverage=inline-8bit-counters /fsanitize-coverage=edge /fsanitize-coverage=trace-cmp /fsanitize-coverage=trace-div)
-        target_link_libraries(${PROJECT_NAME} PRIVATE sancov.lib)
+    if(BUILD_FUZZING
+        AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.32)
+        AND (NOT WINDOWS_STORE))
+          target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address /fsanitize-coverage=inline-8bit-counters /fsanitize-coverage=edge /fsanitize-coverage=trace-cmp /fsanitize-coverage=trace-div)
+          target_link_libraries(${PROJECT_NAME} PRIVATE sancov.lib)
     endif()
 endif()
 
 if(WIN32)
-    if (XBOX_CONSOLE_TARGET STREQUAL "durango")
+    if(XBOX_CONSOLE_TARGET STREQUAL "durango")
         set(WINVER 0x0602)
     else()
         set(WINVER 0x0A00)
