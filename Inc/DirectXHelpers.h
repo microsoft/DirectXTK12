@@ -118,9 +118,11 @@ namespace DirectX
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COPY_DEST;
     constexpr D3D12_RESOURCE_STATES c_initialReadTargetState = D3D12_RESOURCE_STATE_GENERIC_READ;
+    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 #else
     constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COMMON;
     constexpr D3D12_RESOURCE_STATES c_initialReadTargetState = D3D12_RESOURCE_STATE_COMMON;
+    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState = D3D12_RESOURCE_STATE_COMMON;
 #endif
 
     constexpr D3D12_CPU_DESCRIPTOR_HANDLE D3D12_CPU_DESCRIPTOR_HANDLE_ZERO = {};
