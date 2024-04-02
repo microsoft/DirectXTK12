@@ -140,7 +140,6 @@ HRESULT DirectX::CreateUploadBuffer(
     size_t count,
     size_t stride,
     ID3D12Resource** pBuffer,
-    D3D12_RESOURCE_STATES initialState,
     D3D12_RESOURCE_FLAGS resFlags) noexcept
 {
     if (!pBuffer)
@@ -170,7 +169,7 @@ HRESULT DirectX::CreateUploadBuffer(
         &heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
-        initialState,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_GRAPHICS_PPV_ARGS(res.GetAddressOf()));
     if (FAILED(hr))
