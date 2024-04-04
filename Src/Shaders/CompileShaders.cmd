@@ -34,6 +34,7 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuegxdk
+set XBOXOPTS=/D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
 if %2.==scarlett. (
 set XBOXPREFIX=XboxGamingScarlett
 set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
