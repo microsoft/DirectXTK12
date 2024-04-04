@@ -18,7 +18,7 @@ exit /b
 
 :continuexbox
 set XBOXPREFIX=XboxOne
-set XBOXOPTS=/D__XBOX_DISABLE_SHADER_NAME_EMPLACEMENT
+set XBOXOPTS=/D__XBOX_DISABLE_SHADER_NAME_EMPLACEMENT /D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
 if NOT %2.==noprecompile. goto skipnoprecompile
 set XBOXOPTS=%XBOXOPTS% /D__XBOX_DISABLE_PRECOMPILE=1
 :skipnoprecompile
@@ -34,6 +34,7 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuegxdk
+set XBOXOPTS=/D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
 if %2.==scarlett. (
 set XBOXPREFIX=XboxGamingScarlett
 set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
@@ -334,14 +335,14 @@ echo %fxc%
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% -HV 2021 /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
+set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% -HV 2021 /T%2_6_0 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% -HV 2021 /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
+set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% -HV 2021 /Tcs_6_0 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
