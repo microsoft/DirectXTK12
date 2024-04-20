@@ -289,18 +289,6 @@ namespace
 
         auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<const uint8_t*>(header) + sizeof(DDS_HEADER));
 
-#if !defined(NDEBUG) && defined(_GXDK_VER)
-        if (xboxext->xdkVer < _GXDK_VER)
-        {
-            OutputDebugStringA("WARNING: DDS XBOX file may be outdated and need regeneration\n");
-        }
-#elif !defined(NDEBUG) && defined(_XDK_VER)
-        if (xboxext->xdkVer < _XDK_VER)
-        {
-            OutputDebugStringA("WARNING: DDS XBOX file may be outdated and need regeneration\n");
-        }
-#endif
-
         uint32_t arraySize = xboxext->arraySize;
         if (arraySize == 0)
         {
