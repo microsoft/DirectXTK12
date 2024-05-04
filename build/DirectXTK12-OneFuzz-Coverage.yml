@@ -31,9 +31,9 @@ parameters:
 variables:
   - name: coverage-file
     value: cobertura-coverage.xml
-  - name: job-ID 
+  - name: job-ID
     value: ${{ parameters.jobID }}
-  - name: build-date 
+  - name: build-date
     value: ${{ parameters.buildDate }}
   - name: branch
     value: ${{ parameters.branch }}
