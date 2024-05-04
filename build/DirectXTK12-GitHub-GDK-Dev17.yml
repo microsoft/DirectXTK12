@@ -215,6 +215,10 @@ jobs:
     inputs:
       script: |
         call "$(VC_PATH)\Auxiliary\Build\vcvars64.bat"
+        echo ##vso[task.prependpath]%VCINSTALLDIR%\Tools\Llvm\x64\bin
+        echo ##vso[task.prependpath]%WindowsSdkBinPath%\x64
+        echo ##vso[task.prependpath]%WindowsSdkVerBinPath%x64
+        echo ##vso[task.prependpath]%VCToolsInstallDir%\bin\HostX64\x64
         call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER)\GDK $(GDK_EDITION) Scarlett
 
       falOnStderr: true
