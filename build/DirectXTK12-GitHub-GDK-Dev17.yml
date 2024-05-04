@@ -236,12 +236,12 @@ jobs:
     displayName: 'CMake (MSVC): Config Scarlett Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --preset=x64-Debug-Release
+      cmakeArgs: --preset=x64-Release-Scarlett
   - task: CMake@1
     displayName: 'CMake (MSVC): Build Scarlett Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --build out\build\x64-Debug-Release
+      cmakeArgs: --build out\build\x64-Release-Scarlett
   - task: CMake@1
     displayName: 'CMake (Clang): Config Scarlett Debug'
     inputs:
@@ -256,12 +256,12 @@ jobs:
     displayName: 'CMake (Clang): Config Scarlett Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --preset=x64-Debug-Release-Clang
+      cmakeArgs: --preset=x64-Release-Scarlett-Clang
   - task: CMake@1
     displayName: 'CMake (Clang): Build Scarlett Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --build out\build\x64-Debug-Release-Clang
+      cmakeArgs: --build out\build\x64-Release-Scarlett-Clang
 
 - job: BUILD_GDK_CMAKE_XBONE
   displayName: 'Microsoft Game Development Kit (GDK) using CMake (XboxOne)'
@@ -340,12 +340,12 @@ jobs:
     displayName: 'CMake (MSVC): Config XboxOne Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --preset=x64-Debug-Release
+      cmakeArgs: --preset=x64-Release-XboxOne
   - task: CMake@1
     displayName: 'CMake (MSVC): Build XboxOne Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --build out\build\x64-Debug-Release
+      cmakeArgs: --build out\build\x64-Release-XboxOne
   - task: CMake@1
     displayName: 'CMake (Clang): Config XboxOne Debug'
     inputs:
@@ -360,9 +360,9 @@ jobs:
     displayName: 'CMake (Clang): Config XboxOne Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --preset=x64-Debug-Release-Clang
+      cmakeArgs: --preset=x64-Release-XboxOne-Clang
   - task: CMake@1
     displayName: 'CMake (Clang): Build XboxOne Release'
     inputs:
       cwd: '$(Build.SourcesDirectory)'
-      cmakeArgs: --build out\build\x64-Debug-Release-Clang
+      cmakeArgs: --build out\build\x64-Release-XboxOne-Clang
