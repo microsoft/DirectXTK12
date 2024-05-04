@@ -228,7 +228,7 @@ jobs:
         echo ##vso[task.setvariable variable=LIB;]%LIB%
         echo ##vso[task.prependpath]%ADDBIN%
 
-      falOnStderr: true
+      failOnStderr: true
   - task: CMake@1
     displayName: 'CMake (MSVC): Config Scarlett Debug'
     inputs:
@@ -339,7 +339,7 @@ jobs:
         echo ##vso[task.setvariable variable=LIB;]%LIB%
         echo ##vso[task.prependpath]%ADDBIN%
 
-      falOnStderr: true
+      failOnStderr: true
   - task: CMake@1
     displayName: 'CMake (MSVC): Config XboxOne Debug'
     inputs:
