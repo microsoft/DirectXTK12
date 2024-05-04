@@ -44,6 +44,7 @@ variables:
   GDKEnableBWOI: true
   URL_FEED: $(ADOFeedURL)
   skipNugetSecurityAnalysis: true # We explicitly call this task so we don't need it to be auto-injected
+  VC_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC'
 
 jobs:
 - job: BUILD_GDK
@@ -194,6 +195,7 @@ jobs:
   - task: nuget-security-analysis@0
     displayName: 'Secure Supply Chain Analysis'
   - task: PowerShell@2
+    displayName: Install Ninja
     inputs:
       targetType: inline
       script: choco install ninja
@@ -209,8 +211,12 @@ jobs:
       command: custom
       arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
   - task: CmdLine@2
+    displayName: Setup BWOI for GDK command-line
     inputs:
-      script: 'call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER)\GDK $(GDK_EDITION) Scarlett'
+      script: |
+        call "$(VC_PATH)\Auxiliary\Build\vcvars64.bat"
+        call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER)\GDK $(GDK_EDITION) Scarlett
+
       falOnStderr: true
   - task: CMake@1
     displayName: 'CMake (MSVC): Config Scarlett Debug'
