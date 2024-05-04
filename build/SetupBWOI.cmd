@@ -37,6 +37,10 @@ echo ADDLIB: %ADDLIB%
 set PATH=%ADDBIN%;%PATH%
 set INCLUDE=%INCLUDE%;%ADDINCLUDE%
 set LIB=%LIB%;%ADDLIB%
+
+echo "##vso[task.setvariable variable=INCLUDE;]%INCLUDE%"
+echo "##vso[task.setvariable variable=LIB;]%LIB%"
+echo "##vso[task.prependpath]%ADDBIN%"
 exit /b 0
 
 :needpackage
