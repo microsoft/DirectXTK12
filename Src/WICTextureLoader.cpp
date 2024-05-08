@@ -164,7 +164,7 @@ namespace DirectX
 {
     inline namespace DX12
     {
-        namespace Internal
+        namespace ToolKitInternal
         {
             IWICImagingFactory2* GetWIC() noexcept;
             // Also used by ScreenGrab
@@ -172,7 +172,7 @@ namespace DirectX
     }
 }
 
-IWICImagingFactory2* DirectX::DX12::Internal::GetWIC() noexcept
+IWICImagingFactory2* DirectX::DX12::ToolKitInternal::GetWIC() noexcept
 {
     static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
@@ -189,7 +189,7 @@ IWICImagingFactory2* DirectX::DX12::Internal::GetWIC() noexcept
     return factory;
 }
 
-using namespace DirectX::DX12::Internal;
+using namespace DirectX::DX12::ToolKitInternal;
 
 namespace
 {

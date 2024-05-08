@@ -443,7 +443,7 @@ namespace DirectX
 {
     inline namespace DX12
     {
-        namespace Internal
+        namespace ToolKitInternal
         {
             extern IWICImagingFactory2* GetWIC() noexcept;
         }
@@ -462,7 +462,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     std::function<void(IPropertyBag2*)> setCustomProps,
     bool forceSRGB)
 {
-    using namespace DirectX::DX12::Internal;
+    using namespace DirectX::DX12::ToolKitInternal;
 
     if (!fileName)
         return E_INVALIDARG;
