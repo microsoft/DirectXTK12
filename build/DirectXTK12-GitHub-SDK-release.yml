@@ -26,6 +26,7 @@ resources:
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 variables:
+  Codeql.Enabled: false
   EXTRACTED_FOLDER: $(ExtractedFolder)
   WSDKEnableBWOI: true
   URL_FEED: $(ADOFeedURL)
