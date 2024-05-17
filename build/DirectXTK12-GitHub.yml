@@ -63,7 +63,7 @@ variables:
   Codeql.Enabled: false
 
 pool:
-  vmImage: windows-2022
+  vmImage: windows-2019
 
 jobs:
 - job: DESKTOP_BUILD
