@@ -6,6 +6,14 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### June 4, 2024
+* *breaking change* `CreateUploadBuffer` helper no longer takes initialState parameter as it must be a specific value
+* Renamed Internal namespace to ToolKitInternal for some conformance issues
+* Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
+* Add `c_initialRead/UAVTargetState` to help with PC vs. Xbox validation warnings
+* CMake project updates
+* Retired VS 2019 projects for the UWP platform
+
 ### February 21, 2024
 * Project updates for GDK validation
 * Shaders are now built with full path for improved PIX debugging support
