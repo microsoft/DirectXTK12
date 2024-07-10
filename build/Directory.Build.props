@@ -33,6 +33,11 @@
   <Import Condition="'$(GDKEnableBWOI)' == 'true' and $(Platform.Contains('x64'))"
           Project="$(ExtractedFolder)GDK\Microsoft.GDK.Xbox.$(GDKEditionNumber)\build\Microsoft.GDK.Xbox.$(GDKEditionNumber).props" />
 
+  <!-- Remove copy of real gameos.xvd since this is a build validation only pipeline -->
+  <PropertyGroup Condition="'$(Platform)' == 'Gaming.Xbox.XboxOne.x64' or '$(Platform)' == 'Gaming.Xbox.Scarlett.x64'">
+    <GameOSFilePath>$(MSBuildThisFileDirectory)build\placeholder.xvd</GameOSFilePath>
+  </PropertyGroup>
+
   <!--
   ****************************************************************************************************
   VCTargetsPath redirection (VS 2019)
