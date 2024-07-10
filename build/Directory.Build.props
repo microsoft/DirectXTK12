@@ -7,7 +7,7 @@
 
     <_AlternativeVCTargetsPath170>$(ExtractedFolder)VCTargets170\</_AlternativeVCTargetsPath170>
     <_AlternativeVCTargetsPath160>$(ExtractedFolder)VCTargets160\</_AlternativeVCTargetsPath160>
-    <_AlternativeVCTargetsPath150>$(ExtractedFolder)VCTargets150\</_AlternativeVCTargetsPath150>
+    <_AlternativeVCTargetsPath150 Condition="'$(GDKEditionNumber)' != '' AND '$(GDKEditionNumber)' &lt; '241000'">$(ExtractedFolder)VCTargets150\</_AlternativeVCTargetsPath150>
 
     <!-- Workaround for VS bug -->
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
@@ -32,11 +32,6 @@
 
   <Import Condition="'$(GDKEnableBWOI)' == 'true' and $(Platform.Contains('x64'))"
           Project="$(ExtractedFolder)GDK\Microsoft.GDK.Xbox.$(GDKEditionNumber)\build\Microsoft.GDK.Xbox.$(GDKEditionNumber).props" />
-
-  <!-- Remove copy of real gameos.xvd since this is a build validation only pipeline -->
-  <PropertyGroup Condition="'$(Platform)' == 'Gaming.Xbox.XboxOne.x64' or '$(Platform)' == 'Gaming.Xbox.Scarlett.x64'">
-    <GameOSFilePath>$(MSBuildThisFileDirectory)build\placeholder.xvd</GameOSFilePath>
-  </PropertyGroup>
 
   <!--
   ****************************************************************************************************
