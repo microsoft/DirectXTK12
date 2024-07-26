@@ -39,6 +39,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
       - name: Configure CMake
         working-directory: ${{ github.workspace }}
         run: cmake -B out -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON
@@ -46,7 +50,7 @@ jobs:
       - name: 'Build Shaders'
         shell: cmd
         working-directory: ./Src/Shaders
-        run: CompileShaders.cmd
+        run: CompileShaders.cmd dxil
         env:
           CompileShadersOutput: ${{ github.workspace }}/out/Shaders/Compiled
 
