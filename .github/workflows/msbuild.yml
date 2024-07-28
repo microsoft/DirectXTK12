@@ -39,9 +39,9 @@ jobs:
 
     - name: 'Build'
       working-directory: ${{ github.workspace }}
-      run: msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }} ./DirectXMesh_Desktop_${{ matrix.vs }}_Win10.sln
+      run: msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }} ./DirectXTK_Desktop_${{ matrix.vs }}_Win10.sln
 
     - if: matrix.vs == '2022'
       name: 'Build (UWP)'
       working-directory: ${{ github.workspace }}
-      run: msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }} ./DirectXMesh_Windows10_2022.sln
+      run: msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }} ./DirectXTK_Windows10_2022.sln
