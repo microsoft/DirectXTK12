@@ -12,8 +12,15 @@ schedules:
     include:
     - main
 
+# GitHub Actions handles CodeQL and PREFAST for CI/PR
 trigger: none
-pr: none
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - build/DirectXTK12-SDL.yml
 
 resources:
   repositories:

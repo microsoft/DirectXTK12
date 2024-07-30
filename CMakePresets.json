@@ -172,6 +172,15 @@
       }
     },
     {
+      "name": "X64_ARM64EC",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64ec-windows",
+        "VCPKG_HOST_TRIPLET": "x64-windows",
+        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+      }
+    },
+    {
       "name": "ARM64_ARM64",
       "hidden": true,
       "cacheVariables": {
@@ -249,8 +258,8 @@
     { "name": "x86-Release"      , "description": "MSVC for x86 (Release) for Windows 10", "inherits": [ "base", "x86", "Release", "MSVC" ] },
     { "name": "arm64-Debug"      , "description": "MSVC for ARM64 (Debug) for Windows 10", "inherits": [ "base", "ARM64", "Debug", "MSVC" ] },
     { "name": "arm64-Release"    , "description": "MSVC for ARM64 (Release) for Windows 10", "inherits": [ "base", "ARM64", "Release", "MSVC" ] },
-    { "name": "arm64ec-Debug"      , "description": "MSVC for ARM64EC (Debug) for Windows 10", "inherits": [ "base", "ARM64EC", "Debug", "MSVC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
-    { "name": "arm64ec-Release"    , "description": "MSVC for ARM64EC (Release) for Windows 10", "inherits": [ "base", "ARM64EC", "Release", "MSVC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
+    { "name": "arm64ec-Debug"    , "description": "MSVC for ARM64EC (Debug) for Windows 10", "inherits": [ "base", "ARM64EC", "Debug", "MSVC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
+    { "name": "arm64ec-Release"  , "description": "MSVC for ARM64EC (Release) for Windows 10", "inherits": [ "base", "ARM64EC", "Release", "MSVC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
 
     { "name": "x64-Debug-UWP"    , "description": "MSVC for x64 (Debug) for UWP", "inherits": [ "base", "x64", "Debug", "MSVC", "UWP" ] },
     { "name": "x64-Release-UWP"  , "description": "MSVC for x64 (Release) for UWP", "inherits": [ "base", "x64", "Release", "MSVC", "UWP" ] },
@@ -279,13 +288,15 @@
     { "name": "arm64-Release-VCPKG"       , "description": "MSVC for ARM64 (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "X64_ARM64" ] },
     { "name": "arm64-Native-Debug-VCPKG"  , "description": "MSVC for ARM64 Native (Debug)", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "ARM64_ARM64" ] },
     { "name": "arm64-Native-Release-VCPKG", "description": "MSVC for ARM64 Native (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "ARM64_ARM64" ] },
+    { "name": "arm64ec-Debug-VCPKG"       , "description": "MSVC for ARM64EC (Debug)", "inherits": [ "base", "ARM64EC", "Debug", "MSVC", "VCPKG", "X64_ARM64EC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
+    { "name": "arm64ec-Release-VCPKG"     , "description": "MSVC for ARM64EC (Release)", "inherits": [ "base", "ARM64EC", "Release", "MSVC", "VCPKG", "X64_ARM64EC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
 
     { "name": "x64-Debug-Clang"    , "description": "Clang/LLVM for x64 (Debug) for Windows 10", "inherits": [ "base", "x64", "Debug", "Clang" ] },
     { "name": "x64-Release-Clang"  , "description": "Clang/LLVM for x64 (Release) for Windows 10", "inherits": [ "base", "x64", "Release", "Clang" ] },
     { "name": "x86-Debug-Clang"    , "description": "Clang/LLVM for x86 (Debug) for Windows 10", "inherits": [ "base", "x86", "Debug", "Clang" ], "environment": { "CXXFLAGS": "-m32" } },
     { "name": "x86-Release-Clang"  , "description": "Clang/LLVM for x86 (Debug) for Windows 10", "inherits": [ "base", "x86", "Release", "Clang" ], "environment": { "CXXFLAGS": "-m32" } },
     { "name": "arm64-Debug-Clang"  , "description": "Clang/LLVM for AArch64 (Debug) for Windows 10", "inherits": [ "base", "ARM64", "Debug", "Clang" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } },
-    { "name": "arm64-Release-Clang", "description": "Clang/LLVM for AArch64 (Debug) for Windows 10", "inherits": [ "base", "ARM64", "Release", "Clang" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } },
+    { "name": "arm64-Release-Clang", "description": "Clang/LLVM for AArch64 (Release) for Windows 10", "inherits": [ "base", "ARM64", "Release", "Clang" ], "environment": { "CXXFLAGS": "--target=arm64-pc-windows-msvc" } },
 
     { "name": "x64-Debug-UWP-Clang"    , "description": "Clang/LLVM for x64 (Debug) for UWP", "inherits": [ "base", "x64", "Debug", "Clang", "UWP" ] },
     { "name": "x64-Release-UWP-Clang"  , "description": "Clang/LLVM for x64 (Release) for UWP", "inherits": [ "base", "x64", "Release", "Clang", "UWP" ] },
@@ -314,12 +325,14 @@
     { "name": "x64-Fuzzing"      , "description": "MSVC for x64 (Release) with ASan", "inherits": [ "base", "x64", "Release", "MSVC", "Fuzzing" ] }
   ],
   "testPresets": [
-    { "name": "x64-Debug"    , "configurePreset": "x64-Debug" },
-    { "name": "x64-Release"  , "configurePreset": "x64-Release" },
-    { "name": "x86-Debug"    , "configurePreset": "x86-Debug" },
-    { "name": "x86-Release"  , "configurePreset": "x86-Release" },
-    { "name": "arm64-Debug"  , "configurePreset": "arm64-Debug" },
-    { "name": "arm64-Release", "configurePreset": "arm64-Release" },
+    { "name": "x64-Debug"      , "configurePreset": "x64-Debug" },
+    { "name": "x64-Release"    , "configurePreset": "x64-Release" },
+    { "name": "x86-Debug"      , "configurePreset": "x86-Debug" },
+    { "name": "x86-Release"    , "configurePreset": "x86-Release" },
+    { "name": "arm64-Debug"    , "configurePreset": "arm64-Debug" },
+    { "name": "arm64-Release"  , "configurePreset": "arm64-Release" },
+    { "name": "arm64ec-Debug"  , "configurePreset": "arm64ec-Debug" },
+    { "name": "arm64ec-Release", "configurePreset": "arm64ec-Release" },
 
     { "name": "x64-Debug-VCPKG"    , "configurePreset": "x64-Debug-VCPKG" },
     { "name": "x64-Release-VCPKG"  , "configurePreset": "x64-Release-VCPKG" },
