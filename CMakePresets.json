@@ -172,6 +172,15 @@
       }
     },
     {
+      "name": "X64_ARM64EC",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64ec-windows",
+        "VCPKG_HOST_TRIPLET": "x64-windows",
+        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+      }
+    },
+    {
       "name": "ARM64_ARM64",
       "hidden": true,
       "cacheVariables": {
@@ -279,6 +288,8 @@
     { "name": "arm64-Release-VCPKG"       , "description": "MSVC for ARM64 (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "X64_ARM64" ] },
     { "name": "arm64-Native-Debug-VCPKG"  , "description": "MSVC for ARM64 Native (Debug)", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "ARM64_ARM64" ] },
     { "name": "arm64-Native-Release-VCPKG", "description": "MSVC for ARM64 Native (Release)", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "ARM64_ARM64" ] },
+    { "name": "arm64ec-Debug-VCPKG"       , "description": "MSVC for ARM64EC (Debug)", "inherits": [ "base", "ARM64EC", "Debug", "MSVC", "VCPKG", "X64_ARM64EC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
+    { "name": "arm64ec-Release-VCPKG"     , "description": "MSVC for ARM64EC (Release)", "inherits": [ "base", "ARM64EC", "Release", "MSVC", "VCPKG", "X64_ARM64EC" ], "environment": { "CXXFLAGS": "/arm64EC" } },
 
     { "name": "x64-Debug-Clang"    , "description": "Clang/LLVM for x64 (Debug) for Windows 10", "inherits": [ "base", "x64", "Debug", "Clang" ] },
     { "name": "x64-Release-Clang"  , "description": "Clang/LLVM for x64 (Release) for Windows 10", "inherits": [ "base", "x64", "Release", "Clang" ] },
