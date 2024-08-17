@@ -135,6 +135,12 @@ namespace
             mMutex{}
         { }
 
+        DeviceResources(const DeviceResources&) = delete;
+        DeviceResources& operator=(const DeviceResources&) = delete;
+
+        DeviceResources(DeviceResources&&) = default;
+        DeviceResources& operator=(DeviceResources&&) = default;
+
         ID3D12RootSignature* GetRootSignature(int slot, const D3D12_ROOT_SIGNATURE_DESC& desc)
         {
             assert(slot >= 0 && slot < RootSignatureCount);

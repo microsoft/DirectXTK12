@@ -69,6 +69,12 @@ public:
         SetDebugObjectName(mTextureDescriptorHeap.Heap(), L"EffectTextureFactory");
     }
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     size_t CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
 
     void ReleaseCache();
