@@ -75,6 +75,12 @@ public:
             mSamplerDescriptors = std::make_unique<DescriptorHeap>(samplerDescriptors);
     }
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     std::shared_ptr<IEffect> CreateEffect(
         const EffectInfo& info,
         const EffectPipelineStateDescription& opaquePipelineState,
