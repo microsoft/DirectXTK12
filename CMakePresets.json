@@ -150,7 +150,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_HOST_TRIPLET": "x64-windows",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+        "DIRECTX_DXC_PATH": "build/vcpkg_installed/x64-windows/tools/directx-dxc"
       }
     },
     {
@@ -159,7 +159,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x86-windows",
         "VCPKG_HOST_TRIPLET": "x64-windows",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+        "DIRECTX_DXC_PATH": "build/vcpkg_installed/x64-windows/tools/directx-dxc"
       }
     },
     {
