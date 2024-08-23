@@ -191,7 +191,11 @@ set(SHADER_SOURCES ${SHADER_SOURCES}
     Src/Shaders/Utilities.fxh)
 
 if(MINGW)
-   set(BUILD_XAUDIO_WIN10 OFF)
+  set(BUILD_XAUDIO_WIN10 OFF)
+endif()
+
+if(${DIRECTX_ARCH} MATCHES "^arm")
+  set(BUILD_XAUDIO_REDIST OFF)
 endif()
 
 if(WINDOWS_STORE
