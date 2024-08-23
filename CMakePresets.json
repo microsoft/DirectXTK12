@@ -168,7 +168,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-windows",
         "VCPKG_HOST_TRIPLET": "x64-windows",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+        "DIRECTX_DXC_PATH": "build/vcpkg_installed/x64-windows/tools/directx-dxc"
       }
     },
     {
@@ -177,7 +177,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64ec-windows",
         "VCPKG_HOST_TRIPLET": "x64-windows",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
+        "DIRECTX_DXC_PATH": "build/vcpkg_installed/x64-windows/tools/directx-dxc"
       }
     },
     {
@@ -186,7 +186,7 @@
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-windows",
         "VCPKG_HOST_TRIPLET": "arm64-windows",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/arm64-windows/tools/directx-dxc"
+        "DIRECTX_DXC_PATH": "build/vcpkg_installed/x64-windows/tools/directx-dxc"
       }
     },
     {

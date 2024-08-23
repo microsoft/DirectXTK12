@@ -7,6 +7,9 @@
         "host": true
       },
       "directx-headers",
-      "xaudio2redist"
+      {
+        "name": "xaudio2redist",
+        "platform": "windows & !arm"
+      }
     ]
   }
