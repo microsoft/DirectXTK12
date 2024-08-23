@@ -252,7 +252,8 @@ if(NOT USE_PREBUILT_SHADERS)
         message(STATUS "Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
         find_program(DIRECTX_DXC_TOOL DXC.EXE
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
-          HINTS ${DIRECTX_DXC_PATH})
+          HINTS ${DIRECTX_DXC_PATH}
+                "${CMAKE_CURRENT_LIST_DIR}/build/vcpkg_installed/${VCPKG_HOST_TRIPLET}/tools/directx-dxc")
     endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
