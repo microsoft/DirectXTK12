@@ -84,7 +84,7 @@ jobs:
       working-directory: ${{ github.workspace }}
       run: >
         cmake --preset=${{ matrix.build_type }} -DBUILD_TESTING=OFF -DBUILD_XAUDIO_WIN10=OFF -DBUILD_XAUDIO_REDIST=ON
-        -DIRECTX_DXC_TOOL="${{ github.workspace }}/vcpkg/packages/directx-dxc_x64-windows/bin/"
+        -DIRECTX_DXC_PATH="${{ github.workspace }}/build/vcpkg_installed/x64-windows/tools/directx-dxc"
         -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_MANIFEST_DIR="${{ github.workspace }}/build"
         -DVCPKG_TARGET_TRIPLET="${env:VCPKG_DEFAULT_TRIPLET}"
 
