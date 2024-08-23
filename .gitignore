@@ -27,3 +27,4 @@ Bin
 /wiki
 /out
 /CMakeUserPresets.json
+/build/vcpkg_installed
