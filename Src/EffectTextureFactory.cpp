@@ -72,8 +72,8 @@ public:
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = default;
-    Impl& operator=(Impl&&) = default;
+    Impl(Impl&&) = delete;
+    Impl& operator=(Impl&&) = delete;
 
     size_t CreateTexture(_In_z_ const wchar_t* name, int descriptorSlot);
 
