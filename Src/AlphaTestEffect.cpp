@@ -46,6 +46,12 @@ public:
     Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
         D3D12_COMPARISON_FUNC alphaFunction);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     enum RootParameterIndex
     {
         ConstantBuffer,

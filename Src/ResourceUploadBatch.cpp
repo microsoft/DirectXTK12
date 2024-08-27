@@ -230,6 +230,12 @@ namespace
             generateMipsPSO = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
         }
 
+        GenerateMipsResources(const GenerateMipsResources&) = delete;
+        GenerateMipsResources& operator=(const GenerateMipsResources&) = delete;
+
+        GenerateMipsResources(GenerateMipsResources&&) = default;
+        GenerateMipsResources& operator=(GenerateMipsResources&&) = default;
+
     private:
         static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(
             _In_ ID3D12Device* device)
@@ -314,6 +320,12 @@ public:
             mStandardSwizzle64KBSupported = options.StandardSwizzle64KBSupported != 0;
         }
     }
+
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
 
     // Call this before your multiple calls to Upload.
     void Begin(D3D12_COMMAND_LIST_TYPE commandType)

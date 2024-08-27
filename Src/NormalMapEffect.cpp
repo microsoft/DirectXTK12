@@ -71,6 +71,12 @@ class NormalMapEffect::Impl : public EffectBase<NormalMapEffectTraits>
 public:
     explicit Impl(_In_ ID3D12Device* device);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     void Initialize(
         _In_ ID3D12Device* device,
         uint32_t effectFlags,
