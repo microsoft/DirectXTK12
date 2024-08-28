@@ -27,6 +27,12 @@ class GeometricPrimitive::Impl
 public:
     Impl() noexcept : mIndexCount(0), mVertexBufferView{}, mIndexBufferView{} {}
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     void Initialize(const VertexCollection& vertices, const IndexCollection& indices, _In_opt_ ID3D12Device* device);
 
     void LoadStaticBuffers(

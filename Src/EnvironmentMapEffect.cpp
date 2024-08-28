@@ -63,6 +63,12 @@ public:
         const EffectPipelineStateDescription& pipelineDescription,
         EnvironmentMapEffect::Mapping mapping);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     enum RootParameterIndex
     {
         TextureSRV,

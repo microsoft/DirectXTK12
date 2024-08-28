@@ -24,6 +24,12 @@ class PrimitiveBatchBase::Impl
 public:
     Impl(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     void Begin(_In_ ID3D12GraphicsCommandList* cmdList);
     void End();
 

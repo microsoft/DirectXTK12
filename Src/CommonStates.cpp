@@ -464,6 +464,12 @@ public:
         }
     }
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     D3D12_GPU_DESCRIPTOR_HANDLE Get(SamplerIndex i) const
     {
         return mDescriptors.GetGpuHandle(static_cast<size_t>(i));

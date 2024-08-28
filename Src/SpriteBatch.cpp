@@ -79,6 +79,12 @@ public:
          const SpriteBatchPipelineStateDescription& psoDesc,
          const D3D12_VIEWPORT* viewport);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     void XM_CALLCONV Begin(
         _In_ ID3D12GraphicsCommandList* commandList,
         SpriteSortMode sortMode = SpriteSortMode_Deferred,
