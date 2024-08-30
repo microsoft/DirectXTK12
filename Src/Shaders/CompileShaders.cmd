@@ -59,17 +59,21 @@ if exist %PCDXC% goto dxilver
 set PCDXC=dxc.exe
 goto continue
 
-:dxcviaenv
-set PCDXC="%DirectXShaderCompiler%"
-if exist %PCDXC% goto continue
-goto needdxil
-
 :dxilver
 if not defined WindowsSDKVersion goto continue
 REM known DXC.EXE versions that don't support -HV 2021
 if not "x%WindowsSDKVersion:10.0.19041.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
 if not "x%WindowsSDKVersion:10.0.20348.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
 if not "x%WindowsSDKVersion:10.0.22000.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+goto continue
+
+:dxcviaenv
+set PCDXC="%DirectXShaderCompiler%"
+if not exist %PCDXC% goto needdxil
+
+if not "x%DirectXShaderCompiler:10.0.19041.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%DirectXShaderCompiler:10.0.20348.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%DirectXShaderCompiler:10.0.22000.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
 goto continue
 
 :continuepc
