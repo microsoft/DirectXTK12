@@ -269,7 +269,6 @@ call :CompileShader%1 PostProcess ps PSMerge
 call :CompileShader%1 PostProcess ps PSBloomCombine
 
 call :CompileComputeShader%1 GenerateMips main
-call :CompileComputeShader%1 GenerateMips sRGB
 
 call :CompileShader%1 ToneMap vs VSQuad
 call :CompileShader%1 ToneMap ps PSCopy
