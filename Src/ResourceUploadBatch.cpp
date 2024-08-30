@@ -26,12 +26,16 @@ namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
 #include "XboxGamingScarlettGenerateMips_main.inc"
+#include "XboxGamingScarlettGenerateMips_sRGB.inc"
 #elif defined(_GAMING_XBOX)
 #include "XboxGamingXboxOneGenerateMips_main.inc"
+#include "XboxGamingXboxOneGenerateMips_sRGB.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
 #include "XboxOneGenerateMips_main.inc"
+#include "XboxOneGenerateMips_sRGB.inc"
 #else
 #include "GenerateMips_main.inc"
+#include "GenerateMips_sRGB.inc"
 #endif
 
     bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept
@@ -222,12 +226,14 @@ namespace
 
         ComPtr<ID3D12RootSignature> rootSignature;
         ComPtr<ID3D12PipelineState> generateMipsPSO;
+        ComPtr<ID3D12PipelineState> generateMipsPSO_sRGB;
 
         GenerateMipsResources(
             _In_ ID3D12Device* device)
         {
             rootSignature = CreateGenMipsRootSignature(device);
             generateMipsPSO = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
+            generateMipsPSO_sRGB = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_sRGB, sizeof(GenerateMips_sRGB));
         }
 
         GenerateMipsResources(const GenerateMipsResources&) = delete;
@@ -476,7 +482,7 @@ public:
         // This is true of BGRA or sRGB textures, for example.
         if (uavCompat)
         {
-            GenerateMips_UnorderedAccessPath(resource);
+            GenerateMips_UnorderedAccessPath(resource, false);
         }
         else if (!mTypedUAVLoadAdditionalFormats)
         {
@@ -645,7 +651,8 @@ public:
 private:
     // Resource is UAV compatible
     void GenerateMips_UnorderedAccessPath(
-        _In_ ID3D12Resource* resource)
+        _In_ ID3D12Resource* resource,
+        bool srgb)
     {
     #if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
@@ -759,7 +766,7 @@ private:
         uav2srvDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 
         // based on format, select srgb or not
-        ComPtr<ID3D12PipelineState> pso = mGenMipsResources->generateMipsPSO;
+        ComPtr<ID3D12PipelineState> pso = srgb ? mGenMipsResources->generateMipsPSO_sRGB : mGenMipsResources->generateMipsPSO;
 
         // Set up state
         mList->SetComputeRootSignature(mGenMipsResources->rootSignature.Get());
@@ -899,7 +906,7 @@ private:
         TransitionResource(mList.Get(), resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, originalState);
 
         // Generate the mips
-        GenerateMips_UnorderedAccessPath(resourceCopy.Get());
+        GenerateMips_UnorderedAccessPath(resourceCopy.Get(), FormatIsSRGB(resourceDesc.Format));
 
         // Direct copy back
         D3D12_RESOURCE_BARRIER barrier[2] = {};
@@ -1019,7 +1026,7 @@ private:
         aliasBarrier[1].Transition.StateAfter = originalState;
 
         mList->ResourceBarrier(2, aliasBarrier);
-        GenerateMips_UnorderedAccessPath(resourceCopy.Get());
+        GenerateMips_UnorderedAccessPath(resourceCopy.Get(), FormatIsSRGB(resourceDesc.Format));
 
         // Direct copy back RGB to BGR
         aliasBarrier[0].Aliasing.pResourceBefore = resourceCopy.Get();
