@@ -70,6 +70,7 @@ elseif(WINDOWS_STORE)
 endif()
 
 include(GNUInstallDirs)
+include(build/CompilerAndLinker.cmake)
 
 #--- Library
 set(LIBRARY_HEADERS
@@ -258,6 +259,12 @@ if(NOT USE_PREBUILT_SHADERS)
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
           HINTS ${DIRECTX_DXC_PATH}
                 "${CMAKE_CURRENT_LIST_DIR}/build/vcpkg_installed/${VCPKG_HOST_TRIPLET}/tools/directx-dxc")
+    elseif((NOT BUILD_SCARLETT_SHADERS) AND (NOT BUILD_XBOXONE_SHADERS))
+        find_program(DIRECTX_DXC_TOOL DXC.EXE
+          REQUIRED
+          HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_ARCH}"
+                "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_ARCH}")
+        message(STATUS "Using DirectXShaderCompiler found in ${DIRECTX_DXC_TOOL}")
     endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
@@ -406,8 +413,6 @@ if(MSVC)
       target_compile_options(${PROJECT_NAME} PRIVATE "/Zc:wchar_t-")
     endif()
 endif()
-
-include(build/CompilerAndLinker.cmake)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPILER_DEFINES})
 target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILER_SWITCHES})
