@@ -77,8 +77,8 @@ if not "x%DirectXShaderCompiler:10.0.22000.0=%"=="x%DirectXShaderCompiler%" set 
 goto continue
 
 :continuepc
-set PCOPTS=
 
+if defined LegacyShaderCompiler goto fxcviaenv
 set PCFXC="%WindowsSdkVerBinPath%%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
@@ -87,6 +87,12 @@ set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
 
 set PCFXC=fxc.exe
+goto continue
+
+:fxcviaenv
+set PCFXC="%LegacyShaderCompiler%"
+if not exist %PCFXC% goto needfxc
+goto continue
 
 :continue
 if not defined CompileShadersOutput set CompileShadersOutput=Compiled
@@ -306,14 +312,14 @@ endlocal
 exit /b 0
 
 :CompileShader
-set fxc=%PCFXC% "%1.fx" %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set fxc=%PCFXC% "%1.fx" %FXCOPTS% /T%2_5_1 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set fxc=%PCFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
@@ -369,6 +375,10 @@ exit /b 1
 :needgxdk
 echo ERROR: CompileShaders gxdk requires the Microsoft Gaming SDK
 echo        (try re-running from the Microsoft GDKX Gaming Command Prompt)
+exit /b 1
+
+:needfxc
+echo ERROR: CompileShaders requires FXC.EXE
 exit /b 1
 
 :needdxil

@@ -253,25 +253,30 @@ else()
 endif()
 
 if(NOT USE_PREBUILT_SHADERS)
-    if(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN AND (NOT BUILD_SCARLETT_SHADERS) AND (NOT BUILD_XBOXONE_SHADERS))
+    if(BUILD_SCARLETT_SHADERS OR BUILD_XBOXONE_SHADERS)
+    elseif(BUILD_DXIL_SHADERS AND VCPKG_TOOLCHAIN)
         message(STATUS "Using VCPKG for DirectXShaderCompiler (${VCPKG_HOST_TRIPLET}).")
         find_program(DIRECTX_DXC_TOOL DXC.EXE
           REQUIRED NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
           HINTS ${DIRECTX_DXC_PATH}
                 "${CMAKE_CURRENT_LIST_DIR}/build/vcpkg_installed/${VCPKG_HOST_TRIPLET}/tools/directx-dxc")
-    elseif((NOT BUILD_SCARLETT_SHADERS) AND (NOT BUILD_XBOXONE_SHADERS))
+    elseif(BUILD_DXIL_SHADERS)
         find_program(DIRECTX_DXC_TOOL DXC.EXE
-          REQUIRED
-          HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_ARCH}"
-                "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_ARCH}")
+          HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_HOST_ARCH}"
+                "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_HOST_ARCH}")
         message(STATUS "Using DirectXShaderCompiler found in ${DIRECTX_DXC_TOOL}")
+    else()
+        find_program(DIRECTX_FXC_TOOL FXC.EXE
+          HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_HOST_ARCH}"
+                "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_HOST_ARCH}")
+        message(STATUS "Using LegacyShaderCompiler found in ${DIRECTX_FXC_TOOL}")
     endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
         MAIN_DEPENDENCY "${PROJECT_SOURCE_DIR}/Src/Shaders/CompileShaders.cmd"
         DEPENDS ${SHADER_SOURCES}
         COMMENT "Generating HLSL shaders..."
-        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" $<$<BOOL:${DIRECTX_DXC_TOOL}>:DirectXShaderCompiler=${DIRECTX_DXC_TOOL}> CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
+        COMMAND ${CMAKE_COMMAND} -E env CompileShadersOutput="${COMPILED_SHADERS}" $<$<BOOL:${DIRECTX_DXC_TOOL}>:DirectXShaderCompiler=${DIRECTX_DXC_TOOL}> $<$<BOOL:${DIRECTX_FXC_TOOL}>:LegacyShaderCompiler=${DIRECTX_FXC_TOOL}> CompileShaders.cmd ARGS ${ShaderOpts} > "${COMPILED_SHADERS}/compileshaders.log"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/Src/Shaders"
         USES_TERMINAL)
 endif()
