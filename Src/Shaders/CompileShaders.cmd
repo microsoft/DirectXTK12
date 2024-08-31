@@ -34,7 +34,7 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuegxdk
-set XBOXOPTS=/D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
+set XBOXOPTS=-HV 2021 /D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
 if %2.==scarlett. (
 set XBOXPREFIX=XboxGamingScarlett
 set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
@@ -49,23 +49,36 @@ if not exist %XBOXDXC% goto needgxdk
 goto continue
 
 :continuedxil
+set DXILOPTS=-HV 2021
 if defined DirectXShaderCompiler goto dxcviaenv
 set PCDXC="%WindowsSdkVerBinPath%%FXCARCH%\dxc.exe"
-if exist %PCDXC% goto continue
+if exist %PCDXC% goto dxilver
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\%FXCARCH%\dxc.exe"
-if exist %PCDXC% goto continue
+if exist %PCDXC% goto dxilver
 
 set PCDXC=dxc.exe
 goto continue
 
+:dxilver
+if not defined WindowsSDKVersion goto continue
+REM known DXC.EXE versions that don't support -HV 2021
+if not "x%WindowsSDKVersion:10.0.19041.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%WindowsSDKVersion:10.0.20348.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%WindowsSDKVersion:10.0.22000.0=%"=="x%WindowsSDKVersion%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+goto continue
+
 :dxcviaenv
 set PCDXC="%DirectXShaderCompiler%"
-if exist %PCDXC% goto continue
-goto needdxil
+if not exist %PCDXC% goto needdxil
+
+if not "x%DirectXShaderCompiler:10.0.19041.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%DirectXShaderCompiler:10.0.20348.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+if not "x%DirectXShaderCompiler:10.0.22000.0=%"=="x%DirectXShaderCompiler%" set DXILOPTS=%DXILOPTS:-HV 2021=%
+goto continue
 
 :continuepc
-set PCOPTS=
 
+if defined LegacyShaderCompiler goto fxcviaenv
 set PCFXC="%WindowsSdkVerBinPath%%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
@@ -74,6 +87,12 @@ set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\%FXCARCH%\fxc.exe"
 if exist %PCFXC% goto continue
 
 set PCFXC=fxc.exe
+goto continue
+
+:fxcviaenv
+set PCFXC="%LegacyShaderCompiler%"
+if not exist %PCFXC% goto needfxc
+goto continue
 
 :continue
 if not defined CompileShadersOutput set CompileShadersOutput=Compiled
@@ -293,28 +312,28 @@ endlocal
 exit /b 0
 
 :CompileShader
-set fxc=%PCFXC% "%1.fx" %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set fxc=%PCFXC% "%1.fx" %FXCOPTS% /T%2_5_1 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set fxc=%PCFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderdxil
-set dxc=%PCDXC% "%1.fx" %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set dxc=%PCDXC% "%1.fx" %FXCOPTS% /T%2_6_0 %DXILOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShaderdxil
-set dxc=%PCDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set dxc=%PCDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 %DXILOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
@@ -335,14 +354,14 @@ echo %fxc%
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% -HV 2021 /T%2_6_0 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
+set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% /T%2_6_0 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% -HV 2021 /Tcs_6_0 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
+set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
@@ -356,6 +375,10 @@ exit /b 1
 :needgxdk
 echo ERROR: CompileShaders gxdk requires the Microsoft Gaming SDK
 echo        (try re-running from the Microsoft GDKX Gaming Command Prompt)
+exit /b 1
+
+:needfxc
+echo ERROR: CompileShaders requires FXC.EXE
 exit /b 1
 
 :needdxil
