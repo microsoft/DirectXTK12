@@ -46,8 +46,6 @@ jobs:
     fetchTags: false
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
-    inputs:
-      versionSpec: '6.5.x'
   - task: PowerShell@2
     displayName: 'Create nuget.config with single source'
     inputs:
@@ -71,6 +69,8 @@ jobs:
       arguments: sources add -Name xboxgdk -Source $(URL_FEED) -ConfigFile $(Build.SourcesDirectory)\NuGet.config
   - task: nuget-security-analysis@0
     displayName: 'Secure Supply Chain Analysis'
+  - task: NuGetAuthenticate@1
+    displayName: 'NuGet Auth'
   - task: NuGetCommand@2
     displayName: NuGet Install WSDK x64
     inputs:
@@ -145,8 +145,6 @@ jobs:
     fetchTags: false
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
-    inputs:
-      versionSpec: '6.5.x'
   - task: PowerShell@2
     displayName: 'Create nuget.config with single source'
     inputs:
@@ -169,6 +167,8 @@ jobs:
       arguments: sources add -Name xboxgdk -Source $(URL_FEED) -ConfigFile $(Build.SourcesDirectory)\NuGet.config
   - task: nuget-security-analysis@0
     displayName: 'Secure Supply Chain Analysis'
+  - task: NuGetAuthenticate@1
+    displayName: 'NuGet Auth'
   - task: NuGetCommand@2
     displayName: NuGet Install WSDK x64
     inputs:
@@ -214,16 +214,15 @@ jobs:
       platform: x64
       configuration: Release
 
-- job: UWP_BUILD_ARM_ARM64
-  displayName: 'Universal Windows Platform (UWP) for ARM/ARM64'
+- job: UWP_BUILD_ARM64
+  displayName: 'Universal Windows Platform (UWP) for ARM64'
+  # Windows on ARM 32-bit is deprecated. https://learn.microsoft.com/windows/arm/arm32-to-arm64
   steps:
   - checkout: self
     clean: true
     fetchTags: false
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
-    inputs:
-      versionSpec: '6.5.x'
   - task: PowerShell@2
     displayName: 'Create nuget.config with single source'
     inputs:
@@ -246,6 +245,8 @@ jobs:
       arguments: sources add -Name xboxgdk -Source $(URL_FEED) -ConfigFile $(Build.SourcesDirectory)\NuGet.config
   - task: nuget-security-analysis@0
     displayName: 'Secure Supply Chain Analysis'
+  - task: NuGetAuthenticate@1
+    displayName: 'NuGet Auth'
   - task: NuGetCommand@2
     displayName: NuGet Install WSDK arm64
     inputs:
