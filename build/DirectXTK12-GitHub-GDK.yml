@@ -107,12 +107,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: CopyFiles@2
     displayName: Set up Directory.Build.props
     inputs:
@@ -224,12 +224,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet restore
     inputs:
@@ -312,12 +312,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet restore
     inputs:
