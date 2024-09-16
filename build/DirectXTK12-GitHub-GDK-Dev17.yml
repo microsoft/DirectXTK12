@@ -88,12 +88,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: CopyFiles@2
     displayName: Set up Directory.Build.props
     inputs:
@@ -200,12 +200,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: CmdLine@2
     displayName: Setup BWOI for GDK command-line
     inputs:
@@ -217,7 +217,7 @@ jobs:
         echo ##vso[task.prependpath]%WindowsSdkBinPath%x64
         echo ##vso[task.prependpath]%WindowsSdkVerBinPath%x64
         echo ##vso[task.prependpath]%VCToolsInstallDir%bin\HostX64\x64
-        call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER)\GDK $(GDK_EDITION) Scarlett
+        call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER) $(GDK_EDITION) Scarlett
         echo ##vso[task.setvariable variable=GameDKLatest;]%GameDKLatest%
         echo ##vso[task.setvariable variable=GRDKLatest;]%GRDKLatest%
         echo ##vso[task.setvariable variable=GXDKLatest;]%GXDKLatest%
@@ -306,12 +306,12 @@ jobs:
     displayName: NuGet install PGDK
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.PC.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: NuGetCommand@2
     displayName: NuGet install GDKX
     inputs:
       command: custom
-      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)\GDK
+      arguments: install -prerelease Microsoft.GDK.Xbox.$(GDK_EDITION) -ExcludeVersion -OutputDirectory $(EXTRACTED_FOLDER)
   - task: CmdLine@2
     displayName: Setup BWOI for GDK command-line
     inputs:
@@ -323,7 +323,7 @@ jobs:
         echo ##vso[task.prependpath]%WindowsSdkBinPath%x64
         echo ##vso[task.prependpath]%WindowsSdkVerBinPath%x64
         echo ##vso[task.prependpath]%VCToolsInstallDir%bin\HostX64\x64
-        call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER)\GDK $(GDK_EDITION) XboxOne
+        call $(Build.SourcesDirectory)\build\SetupBWOI.cmd $(EXTRACTED_FOLDER) $(GDK_EDITION) XboxOne
         echo ##vso[task.setvariable variable=GameDKLatest;]%GameDKLatest%
         echo ##vso[task.setvariable variable=GRDKLatest;]%GRDKLatest%
         echo ##vso[task.setvariable variable=GXDKLatest;]%GXDKLatest%
