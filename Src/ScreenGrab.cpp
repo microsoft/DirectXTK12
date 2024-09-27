@@ -177,7 +177,14 @@ namespace
             nullptr,
             IID_GRAPHICS_PPV_ARGS(pStaging));
         if (FAILED(hr))
+        {
+            if (*pStaging)
+            {
+                (*pStaging)->Release();
+                *pStaging = nullptr;
+            }
             return hr;
+        }
 
         SetDebugObjectName(*pStaging, L"ScreenGrab staging");
 
@@ -205,7 +212,11 @@ namespace
 
         hr = commandList->Close();
         if (FAILED(hr))
+        {
+            (*pStaging)->Release();
+            *pStaging = nullptr;
             return hr;
+        }
 
         // Execute the command list
         pCommandQ->ExecuteCommandLists(1, CommandListCast(commandList.GetAddressOf()));
@@ -213,7 +224,11 @@ namespace
         // Signal the fence
         hr = pCommandQ->Signal(fence.Get(), 1);
         if (FAILED(hr))
+        {
+            (*pStaging)->Release();
+            *pStaging = nullptr;
             return hr;
+        }
 
         // Block until the copy is complete
         while (fence->GetCompletedValue() < 1)
