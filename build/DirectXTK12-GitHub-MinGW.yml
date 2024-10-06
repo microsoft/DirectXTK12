@@ -195,7 +195,7 @@ jobs:
         -B out -DCMAKE_BUILD_TYPE="Debug" -DDIRECTX_ARCH=x64 -DBUILD_XAUDIO_REDIST=ON
         -DCMAKE_CXX_COMPILER="g++.exe" -G "MinGW Makefiles"
         -DCMAKE_TOOLCHAIN_FILE="$(VCPKG_CMAKE_DIR)" -DVCPKG_MANIFEST_DIR="$(VCPKG_MANIFEST_DIR)" -DVCPKG_TARGET_TRIPLET=x64-mingw-static
-        -DDIRECTX_DXC_PATH="$(DIRECTX_DXC_DIR)"
+        -DVCPKG_HOST_TRIPLET=x64-mingw-static -DDIRECTX_DXC_PATH="$(DIRECTX_DXC_DIR)"
   - task: CMake@1
     displayName: CMake (MinGW-W64) Build
     inputs:
