@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
-# http://go.microsoft.com/fwlink/?LinkID=615561
+# https://go.microsoft.com/fwlink/?LinkID=615561
 
 # Builds the library and test suite.
 
@@ -28,6 +28,11 @@ resources:
     type: git
     ref: refs/heads/main
     trigger: none
+  - repository: testRepo
+    name: walbourn/directxtk12test
+    type: github
+    endpoint: microsoft
+    ref: refs/heads/main
 
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
@@ -37,7 +42,6 @@ pool:
 variables:
   Codeql.Enabled: false
   VC_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC'
-  GITHUB_PAT: $(GITHUBPUBLICTOKEN)
   GUID_FEED: $(ADOFeedGUID)
 
 jobs:
@@ -51,19 +55,14 @@ jobs:
   - checkout: self
     clean: true
     fetchTags: false
-  - task: DeleteFiles@1
-    displayName: Delete files from Tests
-    inputs:
-      SourceFolder: Tests
-      Contents: '**'
-      RemoveSourceFolder: true
-      RemoveDotFiles: true
-  - task: CmdLine@2
+    fetchDepth: 1
+    path: 's'
+  - checkout: testRepo
     displayName: Fetch Tests
-    inputs:
-      script: git clone --quiet --no-tags https://%GITHUB_PAT%@github.com/walbourn/directxtk12test.git Tests
-      workingDirectory: $(Build.SourcesDirectory)
-      failOnStderr: true
+    clean: true
+    fetchTags: false
+    fetchDepth: 1
+    path: 's/Tests'
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
   - task: NuGetAuthenticate@1
@@ -155,19 +154,14 @@ jobs:
   - checkout: self
     clean: true
     fetchTags: false
-  - task: DeleteFiles@1
-    displayName: Delete files from Tests
-    inputs:
-      SourceFolder: Tests
-      Contents: '**'
-      RemoveSourceFolder: true
-      RemoveDotFiles: true
-  - task: CmdLine@2
+    fetchDepth: 1
+    path: 's'
+  - checkout: testRepo
     displayName: Fetch Tests
-    inputs:
-      script: git clone --quiet --no-tags https://%GITHUB_PAT%@github.com/walbourn/directxtk12test.git Tests
-      workingDirectory: $(Build.SourcesDirectory)
-      failOnStderr: true
+    clean: true
+    fetchTags: false
+    fetchDepth: 1
+    path: 's/Tests'
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
   - task: NuGetAuthenticate@1
@@ -225,19 +219,14 @@ jobs:
   - checkout: self
     clean: true
     fetchTags: false
-  - task: DeleteFiles@1
-    displayName: Delete files from Tests
-    inputs:
-      SourceFolder: Tests
-      Contents: '**'
-      RemoveSourceFolder: true
-      RemoveDotFiles: true
-  - task: CmdLine@2
+    fetchDepth: 1
+    path: 's'
+  - checkout: testRepo
     displayName: Fetch Tests
-    inputs:
-      script: git clone --quiet --no-tags https://%GITHUB_PAT%@github.com/walbourn/directxtk12test.git Tests
-      workingDirectory: $(Build.SourcesDirectory)
-      failOnStderr: true
+    clean: true
+    fetchTags: false
+    fetchDepth: 1
+    path: 's/Tests'
   - task: CmdLine@2
     displayName: Setup environment for CMake to use VS
     inputs:
@@ -256,12 +245,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; x64-Debug) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=x64-Debug
   - task: CMake@1
     displayName: CMake (MSVC; x64-Debug) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/x64-Debug -v
   - task: DeleteFiles@1
     inputs:
@@ -269,12 +258,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; x64-Release) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=x64-Release
   - task: CMake@1
     displayName: CMake (MSVC; x64-Release) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/x64-Release -v
   - task: DeleteFiles@1
     inputs:
@@ -282,12 +271,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Debug) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=x64-Debug-Clang
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Debug) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/x64-Debug-Clang -v
   - task: DeleteFiles@1
     inputs:
@@ -295,12 +284,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Release) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=x64-Release-Clang
   - task: CMake@1
     displayName: CMake (clang/LLVM; x64-Release) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/x64-Release-Clang -v
 
 - job: CMAKE_BUILD_ARM64
@@ -312,19 +301,14 @@ jobs:
   - checkout: self
     clean: true
     fetchTags: false
-  - task: DeleteFiles@1
-    displayName: Delete files from Tests
-    inputs:
-      SourceFolder: Tests
-      Contents: '**'
-      RemoveSourceFolder: true
-      RemoveDotFiles: true
-  - task: CmdLine@2
+    fetchDepth: 1
+    path: 's'
+  - checkout: testRepo
     displayName: Fetch Tests
-    inputs:
-      script: git clone --quiet --no-tags https://%GITHUB_PAT%@github.com/walbourn/directxtk12test.git Tests
-      workingDirectory: $(Build.SourcesDirectory)
-      failOnStderr: true
+    clean: true
+    fetchTags: false
+    fetchDepth: 1
+    path: 's/Tests'
   - task: CmdLine@2
     displayName: Setup environment for CMake to use VS
     inputs:
@@ -343,12 +327,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; arm64-Debug) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64-Debug
   - task: CMake@1
     displayName: CMake (MSVC; arm64-Debug) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64-Debug -v
   - task: DeleteFiles@1
     inputs:
@@ -356,12 +340,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; arm64-Release) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64-Release
   - task: CMake@1
     displayName: CMake (MSVC; arm64-Release) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64-Release -v
   - task: DeleteFiles@1
     inputs:
@@ -369,12 +353,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (clang/LLVM; arm64-Debug) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64-Debug-Clang
   - task: CMake@1
     displayName: CMake (clang/LLVM; arm64-Debug) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64-Debug-Clang -v
   - task: DeleteFiles@1
     inputs:
@@ -382,12 +366,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (clang/LLVM; arm64-Release) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64-Release-Clang
   - task: CMake@1
     displayName: CMake (clang/LLVM; arm64-Release) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64-Release-Clang -v
   - task: DeleteFiles@1
     inputs:
@@ -395,12 +379,12 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; arm64ec-Debug) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64ec-Debug
   - task: CMake@1
     displayName: CMake (MSVC; arm64ec-Debug) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64ec-Debug -v
   - task: DeleteFiles@1
     inputs:
@@ -408,10 +392,10 @@ jobs:
   - task: CMake@1
     displayName: CMake (MSVC; arm64ec-Release) Config
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --preset=arm64ec-Release
   - task: CMake@1
     displayName: CMake (MSVC; arm64ec-Release) Build
     inputs:
-      cwd: '$(Build.SourcesDirectory)'
+      cwd: $(Build.SourcesDirectory)
       cmakeArgs: --build out/build/arm64ec-Release -v

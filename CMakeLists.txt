@@ -447,11 +447,15 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
     endif()
 
-    if(BUILD_FUZZING
-        AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.32)
-        AND (NOT WINDOWS_STORE))
-          target_compile_options(${PROJECT_NAME} PRIVATE ${ASAN_SWITCHES})
-          target_link_libraries(${PROJECT_NAME} PRIVATE ${ASAN_LIBS})
+
+    if(BUILD_FUZZING AND (NOT WINDOWS_STORE))
+      string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+      string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
+
+      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.32)
+        target_compile_options(${PROJECT_NAME} PRIVATE ${ASAN_SWITCHES})
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${ASAN_LIBS})
+      endif()
     endif()
 endif()
 
