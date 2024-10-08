@@ -256,7 +256,6 @@
       "name": "Coverage",
       "cacheVariables":
       {
-        "BUILD_TOOLS": false,
         "ENABLE_CODE_COVERAGE": true
       },
       "hidden": true
