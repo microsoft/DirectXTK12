@@ -63,6 +63,22 @@ namespace DirectX
             rtvFormats[0] = rtFormat;
         }
 
+        // MSAA single render target convenience constructor
+        RenderTargetState(
+            _In_ DXGI_FORMAT rtFormat,
+            _In_ DXGI_FORMAT dsFormat,
+            _In_ uint32_t sampleCount,
+            _In_ uint32_t quality = 0) noexcept
+            : sampleMask(UINT_MAX)
+            , numRenderTargets(1)
+            , rtvFormats{}
+            , dsvFormat(dsFormat)
+            , sampleDesc{ sampleCount, quality }
+            , nodeMask(0)
+        {
+            rtvFormats[0] = rtFormat;
+        }
+
         // Convenience constructors converting from DXGI_SWAPCHAIN_DESC
     #if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         RenderTargetState(
