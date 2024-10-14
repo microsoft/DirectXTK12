@@ -57,6 +57,7 @@ namespace DirectX
             DDS_LOADER_IGNORE_SRGB = 0x2,
             DDS_LOADER_MIP_AUTOGEN = 0x8,
             DDS_LOADER_MIP_RESERVE = 0x10,
+            DDS_LOADER_IGNORE_MIPS = 0x20,
         };
     }
 
