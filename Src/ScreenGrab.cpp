@@ -123,8 +123,11 @@ namespace
         bufferDesc.SampleDesc.Count = 1;
 
         ComPtr<ID3D12Resource> copySource(pSource);
+        D3D12_RESOURCE_STATES beforeStateSource = beforeState;
         if (desc.SampleDesc.Count > 1)
         {
+            TransitionResource(commandList.Get(), pSource, beforeState, D3D12_RESOURCE_STATE_RESOLVE_SOURCE);
+
             // MSAA content must be resolved before being copied to a staging texture
             auto descCopy = desc;
             descCopy.SampleDesc.Count = 1;
@@ -136,7 +139,7 @@ namespace
                 &defaultHeapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &descCopy,
-                D3D12_RESOURCE_STATE_COPY_DEST,
+                D3D12_RESOURCE_STATE_RESOLVE_DEST,
                 nullptr,
                 IID_GRAPHICS_PPV_ARGS(pTemp.GetAddressOf()));
             if (FAILED(hr))
@@ -166,6 +169,11 @@ namespace
             }
 
             copySource = pTemp;
+            beforeState = D3D12_RESOURCE_STATE_RESOLVE_DEST;
+        }
+        else
+        {
+            beforeStateSource = D3D12_RESOURCE_STATE_COPY_SOURCE;
         }
 
         // Create a staging texture
@@ -191,7 +199,7 @@ namespace
         assert(*pStaging);
 
         // Transition the resource if necessary
-        TransitionResource(commandList.Get(), pSource, beforeState, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        TransitionResource(commandList.Get(), copySource.Get(), beforeState, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
         // Get the copy target location
         D3D12_PLACED_SUBRESOURCE_FOOTPRINT bufferFootprint = {};
@@ -207,8 +215,8 @@ namespace
         // Copy the texture
         commandList->CopyTextureRegion(&copyDest, 0, 0, 0, &copySrc, nullptr);
 
-        // Transition the resource to the next state
-        TransitionResource(commandList.Get(), pSource, D3D12_RESOURCE_STATE_COPY_SOURCE, afterState);
+        // Transition the source resource to the next state
+        TransitionResource(commandList.Get(), pSource, beforeStateSource, afterState);
 
         hr = commandList->Close();
         if (FAILED(hr))
