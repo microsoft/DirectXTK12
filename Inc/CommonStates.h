@@ -20,6 +20,7 @@
 #include <d3d12.h>
 #endif
 
+#include <cstdint>
 #include <memory>
 
 
@@ -76,7 +77,7 @@ namespace DirectX
             D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicClamp() const;
 
             // These index into the heap returned by SamplerDescriptorHeap
-            enum class SamplerIndex
+            enum class SamplerIndex : uint32_t
             {
                 PointWrap,
                 PointClamp,

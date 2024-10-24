@@ -144,7 +144,7 @@ namespace DirectX
 
     inline namespace DX12
     {
-        DEFINE_ENUM_FLAG_OPERATORS(WIC_LOADER_FLAGS);
+        DEFINE_ENUM_FLAG_OPERATORS(WIC_LOADER_FLAGS)
     }
 
 #ifdef __clang__
