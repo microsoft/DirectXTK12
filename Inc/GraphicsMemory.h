@@ -21,6 +21,7 @@
 #endif
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <memory>
 
@@ -137,7 +138,7 @@ namespace DirectX
         class GraphicsMemory
         {
         public:
-            enum Tag
+            enum Tag : uint32_t
             {
                 TAG_GENERIC = 0,
                 TAG_CONSTANT,
