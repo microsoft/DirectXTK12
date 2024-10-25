@@ -50,7 +50,7 @@ namespace DirectX
                 _In_ LinearAllocatorPage* page,
                 _In_ D3D12_GPU_VIRTUAL_ADDRESS gpuAddress,
                 _In_ ID3D12Resource* resource,
-                _In_ void* memory,
+                _In_ ID3D12Resource* memory,
                 _In_ size_t offset,
                 _In_ size_t size) noexcept;
 
@@ -64,7 +64,7 @@ namespace DirectX
 
             D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mGpuAddress; }
             ID3D12Resource* Resource() const noexcept { return mResource; }
-            void* Memory() const noexcept { return mMemory; }
+            ID3D12Resource* Memory() const noexcept { return mMemory; }
             size_t ResourceOffset() const noexcept { return mBufferOffset; }
             size_t Size() const noexcept { return mSize; }
 
@@ -78,7 +78,7 @@ namespace DirectX
             LinearAllocatorPage*        mPage;
             D3D12_GPU_VIRTUAL_ADDRESS   mGpuAddress;
             ID3D12Resource*             mResource;
-            void*                       mMemory;
+            ID3D12Resource*             mMemory;
             size_t                      mBufferOffset;
             size_t                      mSize;
         };
@@ -104,7 +104,7 @@ namespace DirectX
 
             D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mSharedResource->GpuAddress(); }
             ID3D12Resource* Resource() const noexcept { return mSharedResource->Resource(); }
-            void* Memory() const noexcept { return mSharedResource->Memory(); }
+            ID3D12Resource* Memory() const noexcept { return mSharedResource->Memory(); }
             size_t ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
             size_t Size() const noexcept { return mSharedResource->Size(); }
 
@@ -214,7 +214,20 @@ namespace DirectX
             // Private implementation.
             class Impl;
 
-            GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment);
+            GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment){ //Allocate memory using the global new operatr
+                void* allocatedMemory = ::operator new(size);
+                if(!allocatedMemory) { //Check if memory allocation failed
+                    throw std::runtime_error("Memory allocation failed"); // Throw if allocation fails
+            }    //Return a new GraphicResrouce object initialized with the given parameters
+                return GraphicsResource(
+                    mPage, //Pointer to the LinearAllocatorPage
+                    gpuAddress, //Actual GPU address
+                    resource, //Resource
+                    static_cast<ID3D12Resource*>(allocatedMemory), //Cast allocated memroy to ID3D12Resource*
+                    0, //Initial offset
+                    size //size of allocated memory
+                );
+            }
 
 #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
             // The declspec is required to ensure the proper information is captured in the PDB
