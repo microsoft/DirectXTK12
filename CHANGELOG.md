@@ -6,6 +6,14 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### October 28, 2024
+* All enums now use ``uint32_t`` as the underlying type rather than ``unsigned long`` or ``int``.
+* Added `DDS_LOADER_INGNORE_MIPS` flag to DDSTextureLoader
+* Fixed bug in ScreenGrab for MSAA resolve state handling
+* Added ctor to RenderTargetState for MSAA scenarios
+* Refactored CMO structures into their own header
+* CMake and MSBuild project updates
+
 ### September 4, 2024
 * HLSL shaders built with `-HV 2021` when using DXIL
 * *DirectX Tool Kit for Audio* update
