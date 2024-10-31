@@ -63,7 +63,7 @@ namespace DirectX
 
     // Standard version
     HRESULT __cdecl LoadDDSTextureFromMemory(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         size_t ddsDataSize,
         _Outptr_ ID3D12Resource** texture,
@@ -73,7 +73,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl LoadDDSTextureFromFile(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& ddsData,
@@ -106,7 +106,7 @@ namespace DirectX
 
     // Extended version
     HRESULT __cdecl LoadDDSTextureFromMemoryEx(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         size_t ddsDataSize,
         size_t maxsize,
@@ -118,7 +118,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl LoadDDSTextureFromFileEx(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
@@ -152,6 +152,65 @@ namespace DirectX
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
+
+#ifdef __cpp_lib_byte
+    inline HRESULT __cdecl LoadDDSTextureFromMemory(
+        _In_ ID3D12Device* device,
+        _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
+        size_t ddsDataSize,
+        _Outptr_ ID3D12Resource** texture,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        size_t maxsize = 0,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
+        _Out_opt_ bool* isCubeMap = nullptr)
+    {
+        return LoadDDSTextureFromMemory(device, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, texture, subresources, maxsize, alphaMode, isCubeMap);
+    }
+
+    inline HRESULT __cdecl CreateDDSTextureFromMemory(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUpload,
+        _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
+        size_t ddsDataSize,
+        _Outptr_ ID3D12Resource** texture,
+        bool generateMipsIfMissing = false,
+        size_t maxsize = 0,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
+        _Out_opt_ bool* isCubeMap = nullptr)
+    {
+        return CreateDDSTextureFromMemory(device, resourceUpload, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, texture, generateMipsIfMissing, maxsize, alphaMode, isCubeMap);
+    }
+
+    inline HRESULT __cdecl LoadDDSTextureFromMemoryEx(
+        _In_ ID3D12Device* device,
+        _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
+        size_t ddsDataSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        DDS_LOADER_FLAGS loadFlags,
+        _Outptr_ ID3D12Resource** texture,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
+        _Out_opt_ bool* isCubeMap = nullptr)
+    {
+        return LoadDDSTextureFromMemoryEx(device, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, maxsize, resFlags, loadFlags, texture, subresources, alphaMode, isCubeMap);
+    }
+
+    inline HRESULT __cdecl CreateDDSTextureFromMemoryEx(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUpload,
+        _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
+        size_t ddsDataSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS resFlags,
+        DDS_LOADER_FLAGS loadFlags,
+        _Outptr_ ID3D12Resource** texture,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
+        _Out_opt_ bool* isCubeMap = nullptr)
+    {
+        return CreateDDSTextureFromMemoryEx(device, resourceUpload, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, maxsize, resFlags, loadFlags, texture, alphaMode, isCubeMap);
+    }
+#endif //  __cpp_lib_byte
 
 #ifdef __clang__
 #pragma clang diagnostic push
