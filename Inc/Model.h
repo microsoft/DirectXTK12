@@ -527,6 +527,33 @@ namespace DirectX
                 _In_z_ const wchar_t* szFileName,
                 ModelLoaderFlags flags = ModelLoader_Default);
 
+#ifdef __cpp_lib_byte
+            static std::unique_ptr<Model> __cdecl CreateFromCMO(
+                _In_opt_ ID3D12Device* device,
+                _In_reads_bytes_(dataSize) const std::byte* meshData, _In_ size_t dataSize,
+                ModelLoaderFlags flags = ModelLoader_Default,
+                _Out_opt_ size_t* animsOffset = nullptr)
+            {
+                return CreateFromCMO(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags, animsOffset);
+            }
+
+            static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(
+                _In_opt_ ID3D12Device* device,
+                _In_reads_bytes_(dataSize) const std::byte* meshData, _In_ size_t dataSize,
+                ModelLoaderFlags flags = ModelLoader_Default)
+            {
+                return CreateFromSDKMESH(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
+            }
+
+            static std::unique_ptr<Model> __cdecl CreateFromVBO(
+                _In_opt_ ID3D12Device* device,
+                _In_reads_bytes_(dataSize) const std::byte* meshData, _In_ size_t dataSize,
+                ModelLoaderFlags flags = ModelLoader_Default)
+            {
+                return CreateFromVBO(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
+            }
+#endif //  __cpp_lib_byte
+
             // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
             // descriptor will be zero.
             D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const

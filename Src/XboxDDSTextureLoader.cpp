@@ -182,7 +182,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    HRESULT CreateD3DResources(_In_ ID3D12Device* d3dDevice,
+    HRESULT CreateD3DResources(_In_ ID3D12Device* device,
         _In_ const DDS_HEADER_XBOX* xboxext,
         _In_ uint32_t width,
         _In_ uint32_t height,
@@ -193,7 +193,7 @@ namespace
         _In_ void* grfxMemory,
         _Outptr_ ID3D12Resource** texture) noexcept
     {
-        if (!d3dDevice || !grfxMemory)
+        if (!device || !grfxMemory)
             return E_POINTER;
 
         HRESULT hr = E_FAIL;
@@ -216,7 +216,7 @@ namespace
         desc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(xboxext->resourceDimension);
         desc.Layout = static_cast<D3D12_TEXTURE_LAYOUT>((0x100 | xboxext->tileMode) & ~XBOX_TILEMODE_SCARLETT);
 
-        hr = d3dDevice->CreatePlacedResourceX(
+        hr = device->CreatePlacedResourceX(
             reinterpret_cast<D3D12_GPU_VIRTUAL_ADDRESS>(grfxMemory),
             &desc,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
@@ -232,7 +232,7 @@ namespace
     }
 
     //--------------------------------------------------------------------------------------
-    HRESULT CreateTextureFromDDS(_In_ ID3D12Device* d3dDevice,
+    HRESULT CreateTextureFromDDS(_In_ ID3D12Device* device,
         _In_ const DDS_HEADER* header,
         _In_reads_bytes_(bitSize) const uint8_t* bitData,
         _In_ size_t bitSize,
@@ -393,7 +393,7 @@ namespace
         memcpy(*grfxMemory, bitData, xboxext->dataSize);
 
         // Create the texture
-        hr = CreateD3DResources(d3dDevice, xboxext,
+        hr = CreateD3DResources(device, xboxext,
             width, height, depth, mipCount, arraySize,
             forceSRGB, *grfxMemory,
             texture);
@@ -442,7 +442,7 @@ namespace
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 HRESULT Xbox::CreateDDSTextureFromMemory(
-    ID3D12Device* d3dDevice,
+    ID3D12Device* device,
     const uint8_t* ddsData,
     size_t ddsDataSize,
     ID3D12Resource** texture,
@@ -471,7 +471,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
         *isCubeMap = false;
     }
 
-    if ( !d3dDevice || !ddsData || !texture || !grfxMemory )
+    if ( !device || !ddsData || !texture || !grfxMemory )
     {
         return E_INVALIDARG;
     }
@@ -513,7 +513,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
 
     auto offset = DDS_XBOX_HEADER_SIZE;
 
-    HRESULT hr = CreateTextureFromDDS( d3dDevice, header,
+    HRESULT hr = CreateTextureFromDDS( device, header,
                                        ddsData + offset, ddsDataSize - offset, forceSRGB,
                                        texture, grfxMemory, isCubeMap );
     if ( SUCCEEDED(hr) )
@@ -531,7 +531,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 HRESULT Xbox::CreateDDSTextureFromFile(
-    ID3D12Device* d3dDevice,
+    ID3D12Device* device,
     const wchar_t* fileName,
     ID3D12Resource** texture,
     void** grfxMemory,
@@ -559,7 +559,7 @@ HRESULT Xbox::CreateDDSTextureFromFile(
         *isCubeMap = false;
     }
 
-    if ( !d3dDevice || !fileName || !texture || !grfxMemory )
+    if ( !device || !fileName || !texture || !grfxMemory )
     {
         return E_INVALIDARG;
     }
@@ -580,7 +580,7 @@ HRESULT Xbox::CreateDDSTextureFromFile(
         return hr;
     }
 
-    hr = CreateTextureFromDDS( d3dDevice, header,
+    hr = CreateTextureFromDDS( device, header,
                                bitData, bitSize, forceSRGB,
                                texture, grfxMemory, isCubeMap );
 

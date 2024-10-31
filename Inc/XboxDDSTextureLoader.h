@@ -75,7 +75,7 @@ namespace Xbox
     //
 
     HRESULT __cdecl CreateDDSTextureFromMemory(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
         _In_ size_t ddsDataSize,
         _Outptr_opt_ ID3D12Resource** texture,
@@ -85,7 +85,7 @@ namespace Xbox
         _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFile(
-        _In_ ID3D12Device* d3dDevice,
+        _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
         _Outptr_opt_ ID3D12Resource** texture,
         _Outptr_ void** grfxMemory,
@@ -94,4 +94,19 @@ namespace Xbox
         _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
     void FreeDDSTextureMemory(_In_opt_ void* grfxMemory) noexcept;
+
+#ifdef __cpp_lib_byte
+    inline HRESULT __cdecl CreateDDSTextureFromMemory(
+        _In_ ID3D12Device* device,
+        _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
+        _In_ size_t ddsDataSize,
+        _Outptr_opt_ ID3D12Resource** texture,
+        _Outptr_ void** grfxMemory,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
+        _In_ bool forceSRGB = false,
+        _Out_opt_ bool* isCubeMap = nullptr) noexcept
+    {
+        return CreateDDSTextureFromMemory(device, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, texture, grfxMemory, alphaMode, forceSRGB, isCubeMap);
+    }
+#endif //  __cpp_lib_byte
 }
