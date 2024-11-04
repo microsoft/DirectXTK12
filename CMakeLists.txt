@@ -310,7 +310,11 @@ endif()
 
 if(MINGW)
     find_package(directxmath CONFIG REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectXMath)
+
     find_package(directx-headers CONFIG REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::DirectX-Headers)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC USING_DIRECTX_HEADERS)
 else()
     find_package(directxmath CONFIG QUIET)
     find_package(directx-headers CONFIG QUIET)
