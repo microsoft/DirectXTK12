@@ -217,8 +217,8 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x86-mingw-static",
-        "VCPKG_HOST_TRIPLET": "x64-mingw-static",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-mingw-static/tools/directx-dxc"
+        "VCPKG_HOST_TRIPLET": "x64-windows",
+        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
       }
     },
     {
@@ -229,8 +229,8 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
-        "VCPKG_HOST_TRIPLET": "x64-mingw-static",
-        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-mingw-static/tools/directx-dxc"
+        "VCPKG_HOST_TRIPLET": "x64-windows",
+        "DIRECTX_DXC_PATH": "$env{VCPKG_ROOT}/installed/x64-windows/tools/directx-dxc"
       }
     },
     {
