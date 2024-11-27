@@ -367,6 +367,9 @@ namespace
                 return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
             }
             break;
+
+        default:
+            return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
         }
 
         if (xboxext->dxgiFormat == DXGI_FORMAT_UNKNOWN)
