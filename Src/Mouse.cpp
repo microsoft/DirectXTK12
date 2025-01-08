@@ -533,7 +533,7 @@ public:
     explicit Impl(Mouse* owner) noexcept(false) :
         mState{},
         mOwner(owner),
-        mDPI(96.f),
+        mDPI(USER_DEFAULT_SCREEN_DPI),
         mMode(MODE_ABSOLUTE),
         mAutoReset(true),
         mLastX(0),
@@ -906,8 +906,8 @@ private:
 
             const float dpi = s_mouse->mDPI;
 
-            s_mouse->mState.x = static_cast<int>(pos.X * dpi / 96.f + 0.5f);
-            s_mouse->mState.y = static_cast<int>(pos.Y * dpi / 96.f + 0.5f);
+            s_mouse->mState.x = static_cast<int>(pos.X * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
+            s_mouse->mState.y = static_cast<int>(pos.Y * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
         }
 
         return S_OK;
@@ -970,8 +970,8 @@ private:
 
                 float dpi = s_mouse->mDPI;
 
-                s_mouse->mState.x = static_cast<int>(pos.X * dpi / 96.f + 0.5f);
-                s_mouse->mState.y = static_cast<int>(pos.Y * dpi / 96.f + 0.5f);
+                s_mouse->mState.x = static_cast<int>(pos.X * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
+                s_mouse->mState.y = static_cast<int>(pos.Y * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
             }
         }
 
