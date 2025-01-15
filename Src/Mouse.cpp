@@ -909,8 +909,8 @@ private:
 
             const float dpi = s_mouse->mDPI;
 
-            s_mouse->mState.x = static_cast<int>(pos.X * dpi / float(USER_DEFAULT_SCREEN_DPI) + 0.5f);
-            s_mouse->mState.y = static_cast<int>(pos.Y * dpi / float(USER_DEFAULT_SCREEN_DPI) + 0.5f);
+            s_mouse->mState.x = static_cast<int>(pos.X * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
+            s_mouse->mState.y = static_cast<int>(pos.Y * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
         }
 
         return S_OK;
@@ -973,8 +973,8 @@ private:
 
                 float dpi = s_mouse->mDPI;
 
-                s_mouse->mState.x = static_cast<int>(pos.X * dpi / float(USER_DEFAULT_SCREEN_DPI) + 0.5f);
-                s_mouse->mState.y = static_cast<int>(pos.Y * dpi / float(USER_DEFAULT_SCREEN_DPI) + 0.5f);
+                s_mouse->mState.x = static_cast<int>(pos.X * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
+                s_mouse->mState.y = static_cast<int>(pos.Y * dpi / USER_DEFAULT_SCREEN_DPI + 0.5f);
             }
         }
 
