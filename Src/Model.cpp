@@ -352,7 +352,7 @@ void Model::LoadStaticBuffers(
 
             part->vertexBufferSize = static_cast<uint32_t>(part->vertexBuffer.Size());
 
-            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
+            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,
@@ -408,7 +408,7 @@ void Model::LoadStaticBuffers(
 
             part->indexBufferSize = static_cast<uint32_t>(part->indexBuffer.Size());
 
-            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
+            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,

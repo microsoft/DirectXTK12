@@ -613,7 +613,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         // Create subsets
         for (size_t j = 0; j < mh.NumSubsets; ++j)
         {
-            auto const sIndex = subsets[j];
+            const auto sIndex = subsets[j];
             if (sIndex >= header->NumTotalSubsets)
                 throw std::out_of_range("Invalid mesh found");
 
@@ -679,14 +679,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
 
             // Vertex data
             auto verts = bufferData + (vh.DataOffset - bufferDataOffset);
-            auto const vbytes = static_cast<size_t>(vh.SizeBytes);
+            const auto vbytes = static_cast<size_t>(vh.SizeBytes);
             part->vertexBufferSize = static_cast<uint32_t>(vh.SizeBytes);
             part->vertexBuffer = GraphicsMemory::Get(device).Allocate(vbytes, 16, GraphicsMemory::TAG_VERTEX);
             memcpy(part->vertexBuffer.Memory(), verts, vbytes);
 
             // Index data
             auto indices = bufferData + (ih.DataOffset - bufferDataOffset);
-            auto const ibytes = static_cast<size_t>(ih.SizeBytes);
+            const auto ibytes = static_cast<size_t>(ih.SizeBytes);
             part->indexBufferSize = static_cast<uint32_t>(ih.SizeBytes);
             part->indexBuffer = GraphicsMemory::Get(device).Allocate(ibytes, 16, GraphicsMemory::TAG_INDEX);
             memcpy(part->indexBuffer.Memory(), indices, ibytes);

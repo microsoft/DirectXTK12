@@ -621,7 +621,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    auto const cbuffer = GetConstantBufferGpuAddress();
+    const auto cbuffer = GetConstantBufferGpuAddress();
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
         (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);

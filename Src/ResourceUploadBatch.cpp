@@ -374,7 +374,7 @@ public:
             numSubresources);
 
         const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-        auto const resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+        const auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
 
         // Create a temporary buffer
         ComPtr<ID3D12Resource> scratchResource = nullptr;
@@ -706,7 +706,7 @@ private:
 
         SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
 
-        auto const descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+        const auto descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         // Create the top-level SRV
     #if defined(_MSC_VER) || !defined(_WIN32)
@@ -947,7 +947,7 @@ private:
 
         D3D12_HEAP_DESC heapDesc = {};
     #if defined(_MSC_VER) || !defined(_WIN32)
-        auto const allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
+        const auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
     #else
         D3D12_RESOURCE_ALLOCATION_INFO allocInfo;
         std::ignore = mDevice->GetResourceAllocationInfo(&allocInfo, 0, 1, &copyDesc);

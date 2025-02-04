@@ -75,7 +75,7 @@ void GeometricPrimitive::Impl::Initialize(
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
         throw std::invalid_argument("VB too large for DirectX 12");
 
-    auto const vertSizeBytes = static_cast<size_t>(sizeInBytes);
+    const auto vertSizeBytes = static_cast<size_t>(sizeInBytes);
 
     mVertexBuffer = GraphicsMemory::Get(device).Allocate(vertSizeBytes, 16, GraphicsMemory::TAG_VERTEX);
 
@@ -87,7 +87,7 @@ void GeometricPrimitive::Impl::Initialize(
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
         throw std::invalid_argument("IB too large for DirectX 12");
 
-    auto const indSizeBytes = static_cast<size_t>(sizeInBytes);
+    const auto indSizeBytes = static_cast<size_t>(sizeInBytes);
 
     mIndexBuffer = GraphicsMemory::Get(device).Allocate(indSizeBytes, 16, GraphicsMemory::TAG_INDEX);
 
@@ -121,7 +121,7 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
     {
         assert(mVertexBuffer);
 
-        auto const desc = CD3DX12_RESOURCE_DESC::Buffer(mVertexBuffer.Size());
+        const auto desc = CD3DX12_RESOURCE_DESC::Buffer(mVertexBuffer.Size());
 
         ThrowIfFailed(device->CreateCommittedResource(
             &heapProperties,
@@ -150,7 +150,7 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
     {
         assert(mIndexBuffer);
 
-        auto const desc = CD3DX12_RESOURCE_DESC::Buffer(mIndexBuffer.Size());
+        const auto desc = CD3DX12_RESOURCE_DESC::Buffer(mIndexBuffer.Size());
 
         ThrowIfFailed(device->CreateCommittedResource(
             &heapProperties,

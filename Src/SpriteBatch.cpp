@@ -312,7 +312,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
     static_assert((MaxBatchSize * VerticesPerSprite) < USHRT_MAX, "MaxBatchSize too large for 16-bit indices");
 
     const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
-    auto const bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(short) * MaxBatchSize * IndicesPerSprite);
+    const auto bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(short) * MaxBatchSize * IndicesPerSprite);
 
     // Create the constant buffer.
     ThrowIfFailed(device->CreateCommittedResource(
@@ -412,7 +412,7 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 
     for (size_t j = 0; j < MaxBatchSize * VerticesPerSprite; j += VerticesPerSprite)
     {
-        auto const i = static_cast<short>(j);
+        const auto i = static_cast<short>(j);
 
         indices.push_back(i);
         indices.push_back(i + 1);
