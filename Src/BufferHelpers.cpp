@@ -48,7 +48,7 @@ HRESULT DirectX::CreateStaticBuffer(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
+    const auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -111,7 +111,7 @@ HRESULT DirectX::CreateUAVBuffer(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS | additionalResFlags);
+    const auto desc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS | additionalResFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -160,7 +160,7 @@ HRESULT DirectX::CreateUploadBuffer(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
+    const auto desc = CD3DX12_RESOURCE_DESC::Buffer(sizeInbytes, resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
 
@@ -220,7 +220,7 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u, resFlags);
+    const auto desc = CD3DX12_RESOURCE_DESC::Tex1D(format, static_cast<UINT64>(width), 1u, 1u, resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -296,7 +296,7 @@ HRESULT DirectX::CreateTextureFromMemory(
         }
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
+    const auto desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
         1u, mipCount, 1u, 0u, resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
@@ -368,7 +368,7 @@ HRESULT DirectX::CreateTextureFromMemory(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    auto const desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
+    const auto desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
         static_cast<UINT64>(width), static_cast<UINT>(height), static_cast<UINT16>(depth),
         1u, resFlags);
 
