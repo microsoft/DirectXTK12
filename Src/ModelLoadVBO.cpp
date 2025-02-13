@@ -121,9 +121,11 @@ std::unique_ptr<Model> DirectX::Model::CreateFromVBO(
     auto mesh = std::make_shared<ModelMesh>();
     BoundingSphere::CreateFromPoints(mesh->boundingSphere, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
     BoundingBox::CreateFromPoints(mesh->boundingBox, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
+    mesh->opaqueMeshParts.reserve(1);
     mesh->opaqueMeshParts.emplace_back(std::move(part));
 
     auto model = std::make_unique<Model>();
+    model->meshes.reserve(1);
     model->meshes.emplace_back(mesh);
 
     return model;
