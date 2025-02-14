@@ -664,7 +664,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
                     (flags & ModelLoader_MaterialColorsSRGB) != 0);
             }
 
-            auto part = new ModelMeshPart(partCount++);
+            auto part = std::make_unique<ModelMeshPart>(partCount++);
 
             const auto& vh = vbArray[mh.VertexBuffers[0]];
             const auto& ih = ibArray[mh.IndexBuffer];
@@ -695,9 +695,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
             part->vbDecl = vbDecls[mh.VertexBuffers[0]];
 
             if (mat.alphaValue < 1.0f)
-                mesh->alphaMeshParts.emplace_back(part);
+                mesh->alphaMeshParts.emplace_back(std::move(part));
             else
-                mesh->opaqueMeshParts.emplace_back(part);
+                mesh->opaqueMeshParts.emplace_back(std::move(part));
         }
 
         model->meshes.emplace_back(mesh);
