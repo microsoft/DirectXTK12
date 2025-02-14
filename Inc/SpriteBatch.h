@@ -32,6 +32,16 @@
 
 #include "RenderTargetState.h"
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
 
 namespace DirectX
 {
@@ -56,7 +66,7 @@ namespace DirectX
             SpriteEffects_FlipBoth = SpriteEffects_FlipHorizontally | SpriteEffects_FlipVertically,
         };
 
-        class SpriteBatchPipelineStateDescription
+        class DIRECTX_TOOLKIT_API SpriteBatchPipelineStateDescription
         {
         public:
             explicit SpriteBatchPipelineStateDescription(
@@ -97,52 +107,82 @@ namespace DirectX
         class SpriteBatch
         {
         public:
-            SpriteBatch(_In_ ID3D12Device* device, ResourceUploadBatch& upload,
+            DIRECTX_TOOLKIT_API SpriteBatch(
+                _In_ ID3D12Device* device, ResourceUploadBatch& upload,
                 const SpriteBatchPipelineStateDescription& psoDesc,
                 _In_opt_ const D3D12_VIEWPORT* viewport = nullptr);
 
-            SpriteBatch(SpriteBatch&&) noexcept;
-            SpriteBatch& operator= (SpriteBatch&&) noexcept;
+            DIRECTX_TOOLKIT_API SpriteBatch(SpriteBatch&&) noexcept;
+            DIRECTX_TOOLKIT_API SpriteBatch& operator= (SpriteBatch&&) noexcept;
 
             SpriteBatch(SpriteBatch const&) = delete;
             SpriteBatch& operator= (SpriteBatch const&) = delete;
 
-            virtual ~SpriteBatch();
+            DIRECTX_TOOLKIT_API virtual ~SpriteBatch();
 
             // Begin/End a batch of sprite drawing operations.
-            void XM_CALLCONV Begin(
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Begin(
                 _In_ ID3D12GraphicsCommandList* commandList,
                 SpriteSortMode sortMode = SpriteSortMode_Deferred,
                 FXMMATRIX transformMatrix = MatrixIdentity);
-            void XM_CALLCONV Begin(
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Begin(
                 _In_ ID3D12GraphicsCommandList* commandList,
                 D3D12_GPU_DESCRIPTOR_HANDLE sampler,
                 SpriteSortMode sortMode = SpriteSortMode_Deferred,
                 FXMMATRIX transformMatrix = MatrixIdentity);
-            void __cdecl End();
+            DIRECTX_TOOLKIT_API void __cdecl End();
 
             // Draw overloads specifying position, origin and scale as XMFLOAT2.
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, FXMVECTOR color = Colors::White);
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                XMFLOAT2 const& position,
+                FXMVECTOR color = Colors::White);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle,
+                FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, float scale = 1,
+                SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                XMFLOAT2 const& position, _In_opt_ RECT const* sourceRectangle,
+                FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale,
+                SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
             // Draw overloads specifying position, origin and scale via the first two components of an XMVECTOR.
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, FXMVECTOR color = Colors::White);
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, FXMVECTOR origin = g_XMZero, float scale = 1, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, FXMVECTOR position, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                FXMVECTOR position,
+                FXMVECTOR color = Colors::White);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                FXMVECTOR position, _In_opt_ RECT const* sourceRectangle,
+                FXMVECTOR color = Colors::White, float rotation = 0, FXMVECTOR origin = g_XMZero, float scale = 1,
+                SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                FXMVECTOR position, _In_opt_ RECT const* sourceRectangle,
+                FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale,
+                SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
             // Draw overloads specifying position as a RECT.
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, FXMVECTOR color = Colors::White);
-            void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(
+                D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize,
+                RECT const& destinationRectangle,
+                FXMVECTOR color = Colors::White);
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE
+                 textureSRV, XMUINT2 const& textureSize,
+                 RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle,
+                 FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero,
+                 SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
             // Rotation mode to be applied to the sprite transformation
         #if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-            void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
-            DXGI_MODE_ROTATION __cdecl GetRotation() const noexcept;
+            DIRECTX_TOOLKIT_API void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
+            DIRECTX_TOOLKIT_API DXGI_MODE_ROTATION __cdecl GetRotation() const noexcept;
         #endif
 
             // Set viewport for sprite transformation
-            void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);
+            DIRECTX_TOOLKIT_API void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);
 
         private:
             // Private implementation.
@@ -150,8 +190,8 @@ namespace DirectX
 
             std::unique_ptr<Impl> pImpl;
 
-            static const XMMATRIX MatrixIdentity;
-            static const XMFLOAT2 Float2Zero;
+            DIRECTX_TOOLKIT_API static const XMMATRIX MatrixIdentity;
+            DIRECTX_TOOLKIT_API static const XMFLOAT2 Float2Zero;
         };
     }
 }

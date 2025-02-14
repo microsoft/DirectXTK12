@@ -25,11 +25,21 @@
 
 #include <cstdint>
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
 
 namespace DirectX
 {
     // Encapsulates all render target state when creating pipeline state objects
-    class RenderTargetState
+    class DIRECTX_TOOLKIT_API RenderTargetState
     {
     public:
         RenderTargetState() noexcept

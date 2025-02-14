@@ -34,6 +34,22 @@
 #pragma comment(lib,"dxguid.lib")
 #endif
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
+#if defined(DIRECTX_TOOLKIT_IMPORT) && defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
+
+
 //
 // The d3dx12.h header includes the following helper C++ classes and functions
 //  CD3DX12_RECT
@@ -128,6 +144,7 @@ namespace DirectX
     constexpr D3D12_CPU_DESCRIPTOR_HANDLE D3D12_CPU_DESCRIPTOR_HANDLE_ZERO = {};
 
     // Creates a shader resource view from an arbitrary resource
+    DIRECTX_TOOLKIT_API
     void __cdecl CreateShaderResourceView(
         _In_ ID3D12Device* device,
         _In_ ID3D12Resource* tex,
@@ -135,6 +152,7 @@ namespace DirectX
         bool isCubeMap = false);
 
     // Creates an unordered access view from an arbitrary resource
+    DIRECTX_TOOLKIT_API
     void __cdecl CreateUnorderedAccessView(
         _In_ ID3D12Device* device,
         _In_ ID3D12Resource* tex,
@@ -142,6 +160,7 @@ namespace DirectX
         uint32_t mipLevel = 0);
 
     // Creates an render target view from an arbitrary resource
+    DIRECTX_TOOLKIT_API
     void __cdecl CreateRenderTargetView(
         _In_ ID3D12Device* device,
         _In_ ID3D12Resource* tex,
@@ -149,6 +168,7 @@ namespace DirectX
         uint32_t mipLevel = 0);
 
     // Creates a shader resource view from a buffer resource
+    DIRECTX_TOOLKIT_API
     void __cdecl CreateBufferShaderResourceView(
         _In_ ID3D12Device* device,
         _In_ ID3D12Resource* buffer,
@@ -156,6 +176,7 @@ namespace DirectX
         uint32_t stride = 0);
 
     // Creates a unordered access view from a buffer resource
+    DIRECTX_TOOLKIT_API
     void __cdecl CreateBufferUnorderedAccessView(
         _In_ ID3D12Device* device,
         _In_ ID3D12Resource* buffer,
@@ -166,6 +187,7 @@ namespace DirectX
         _In_opt_ ID3D12Resource* counterResource = nullptr);
 
     // Shorthand for creating a root signature
+    DIRECTX_TOOLKIT_API
     inline HRESULT CreateRootSignature(
         _In_ ID3D12Device* device,
         _In_ const D3D12_ROOT_SIGNATURE_DESC* rootSignatureDesc,
@@ -184,6 +206,7 @@ namespace DirectX
     }
 
     // Helper for obtaining texture size
+    DIRECTX_TOOLKIT_API
     inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
@@ -246,6 +269,7 @@ namespace DirectX
     #endif
 
     // Helper for resource barrier.
+    DIRECTX_TOOLKIT_API
     inline void TransitionResource(
         _In_ ID3D12GraphicsCommandList* commandList,
         _In_ ID3D12Resource* resource,
@@ -269,7 +293,7 @@ namespace DirectX
     }
 
     // Helper which applies one or more resources barriers and then reverses them on destruction.
-    class ScopedBarrier
+    class DIRECTX_TOOLKIT_API ScopedBarrier
     {
     public:
         ScopedBarrier(
@@ -365,3 +389,7 @@ namespace DirectX
         }
     }
 }
+
+#if defined(DIRECTX_TOOLKIT_IMPORT) && defined(_MSC_VER)
+#pragma warning(pop)
+#endif

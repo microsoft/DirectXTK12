@@ -48,6 +48,17 @@ namespace DirectX
 }
 #endif
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
+
 namespace Xbox
 {
     using DirectX::DDS_ALPHA_MODE;
@@ -74,6 +85,7 @@ namespace Xbox
     //  FlushPipelineX.
     //
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
@@ -84,6 +96,7 @@ namespace Xbox
         _In_ bool forceSRGB = false,
         _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
@@ -93,9 +106,10 @@ namespace Xbox
         _In_ bool forceSRGB = false,
         _Out_opt_ bool* isCubeMap = nullptr) noexcept;
 
-    void FreeDDSTextureMemory(_In_opt_ void* grfxMemory) noexcept;
+    DIRECTX_TOOLKIT_API void FreeDDSTextureMemory(_In_opt_ void* grfxMemory) noexcept;
 
 #ifdef __cpp_lib_byte
+    DIRECTX_TOOLKIT_API
     inline HRESULT __cdecl CreateDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,

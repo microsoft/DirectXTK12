@@ -27,11 +27,21 @@
 
 #include "RenderTargetState.h"
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
 
 namespace DirectX
 {
     // Pipeline state information for creating effects.
-    struct EffectPipelineStateDescription
+    struct DIRECTX_TOOLKIT_API EffectPipelineStateDescription
     {
         EffectPipelineStateDescription(
             _In_opt_ const D3D12_INPUT_LAYOUT_DESC* iinputLayout,
