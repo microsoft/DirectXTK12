@@ -31,6 +31,16 @@
 #include <memory>
 #include <vector>
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
 
 namespace DirectX
 {
@@ -62,6 +72,7 @@ namespace DirectX
     }
 
     // Standard version
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl LoadDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
@@ -72,6 +83,7 @@ namespace DirectX
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl LoadDDSTextureFromFile(
         _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
@@ -83,6 +95,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
     // Standard version with resource upload
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -94,6 +107,7 @@ namespace DirectX
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -105,6 +119,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
     // Extended version
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl LoadDDSTextureFromMemoryEx(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
@@ -117,6 +132,7 @@ namespace DirectX
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl LoadDDSTextureFromFileEx(
         _In_ ID3D12Device* device,
         _In_z_ const wchar_t* szFileName,
@@ -130,6 +146,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
     // Extended version with resource upload
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromMemoryEx(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -142,6 +159,7 @@ namespace DirectX
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateDDSTextureFromFileEx(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -154,6 +172,7 @@ namespace DirectX
         _Out_opt_ bool* isCubeMap = nullptr);
 
 #ifdef __cpp_lib_byte
+    DIRECTX_TOOLKIT_API
     inline HRESULT __cdecl LoadDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
@@ -167,6 +186,7 @@ namespace DirectX
         return LoadDDSTextureFromMemory(device, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, texture, subresources, maxsize, alphaMode, isCubeMap);
     }
 
+    DIRECTX_TOOLKIT_API
     inline HRESULT __cdecl CreateDDSTextureFromMemory(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
@@ -181,6 +201,7 @@ namespace DirectX
         return CreateDDSTextureFromMemory(device, resourceUpload, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, texture, generateMipsIfMissing, maxsize, alphaMode, isCubeMap);
     }
 
+    DIRECTX_TOOLKIT_API
     inline HRESULT __cdecl LoadDDSTextureFromMemoryEx(
         _In_ ID3D12Device* device,
         _In_reads_bytes_(ddsDataSize) const std::byte* ddsData,
@@ -196,6 +217,7 @@ namespace DirectX
         return LoadDDSTextureFromMemoryEx(device, reinterpret_cast<const uint8_t*>(ddsData), ddsDataSize, maxsize, resFlags, loadFlags, texture, subresources, alphaMode, isCubeMap);
     }
 
+    DIRECTX_TOOLKIT_API
     inline HRESULT __cdecl CreateDDSTextureFromMemoryEx(
         _In_ ID3D12Device* device,
         ResourceUploadBatch& resourceUpload,
