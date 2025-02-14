@@ -115,8 +115,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API SpriteBatch(SpriteBatch&&) noexcept;
             DIRECTX_TOOLKIT_API SpriteBatch& operator= (SpriteBatch&&) noexcept;
 
-            DIRECTX_TOOLKIT_API SpriteBatch(SpriteBatch const&) = delete;
-            DIRECTX_TOOLKIT_API SpriteBatch& operator= (SpriteBatch const&) = delete;
+            SpriteBatch(SpriteBatch const&) = delete;
+            SpriteBatch& operator= (SpriteBatch const&) = delete;
 
             DIRECTX_TOOLKIT_API virtual ~SpriteBatch();
 
