@@ -54,7 +54,7 @@ namespace DirectX
             D3D12_DESCRIPTOR_HEAP_TYPE type,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags,
             size_t count) noexcept(false);
-        DIRECTX_TOOLKIT_API DescriptorHeap(
+        DIRECTX_TOOLKIT_API inline DescriptorHeap(
             _In_ ID3D12Device* device,
             size_t count) noexcept(false) :
             DescriptorHeap(device,
@@ -63,8 +63,8 @@ namespace DirectX
         {
         }
 
-        DIRECTX_TOOLKIT_API DescriptorHeap(DescriptorHeap&&) = default;
-        DIRECTX_TOOLKIT_API DescriptorHeap& operator=(DescriptorHeap&&) = default;
+        DescriptorHeap(DescriptorHeap&&) = default;
+        DescriptorHeap& operator=(DescriptorHeap&&) = default;
 
         DescriptorHeap(const DescriptorHeap&) = delete;
         DescriptorHeap& operator=(const DescriptorHeap&) = delete;
@@ -90,20 +90,20 @@ namespace DirectX
             _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptors,
             uint32_t descriptorCount);
 
-        DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const noexcept
+        DIRECTX_TOOLKIT_API inline D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const noexcept
         {
             assert(m_desc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
             assert(m_pHeap != nullptr);
             return m_hGPU;
         }
 
-        DIRECTX_TOOLKIT_API D3D12_CPU_DESCRIPTOR_HANDLE GetFirstCpuHandle() const noexcept
+        DIRECTX_TOOLKIT_API inline D3D12_CPU_DESCRIPTOR_HANDLE GetFirstCpuHandle() const noexcept
         {
             assert(m_pHeap != nullptr);
             return m_hCPU;
         }
 
-        DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandle(_In_ size_t index) const
+        DIRECTX_TOOLKIT_API inline D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandle(_In_ size_t index) const
         {
             assert(m_pHeap != nullptr);
             if (index >= m_desc.NumDescriptors)
@@ -117,7 +117,7 @@ namespace DirectX
             return handle;
         }
 
-        DIRECTX_TOOLKIT_API D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(_In_ size_t index) const
+        DIRECTX_TOOLKIT_API inline D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(_In_ size_t index) const
         {
             assert(m_pHeap != nullptr);
             if (index >= m_desc.NumDescriptors)
@@ -130,11 +130,11 @@ namespace DirectX
             return handle;
         }
 
-        DIRECTX_TOOLKIT_API size_t Count() const noexcept { return m_desc.NumDescriptors; }
-        DIRECTX_TOOLKIT_API unsigned int Flags() const noexcept { return m_desc.Flags; }
-        DIRECTX_TOOLKIT_API D3D12_DESCRIPTOR_HEAP_TYPE Type() const noexcept { return m_desc.Type; }
-        DIRECTX_TOOLKIT_API uint32_t Increment() const noexcept { return m_increment; }
-        DIRECTX_TOOLKIT_API ID3D12DescriptorHeap* Heap() const noexcept { return m_pHeap.Get(); }
+        DIRECTX_TOOLKIT_API inline size_t Count() const noexcept { return m_desc.NumDescriptors; }
+        DIRECTX_TOOLKIT_API inline unsigned int Flags() const noexcept { return m_desc.Flags; }
+        DIRECTX_TOOLKIT_API inline D3D12_DESCRIPTOR_HEAP_TYPE Type() const noexcept { return m_desc.Type; }
+        DIRECTX_TOOLKIT_API inline uint32_t Increment() const noexcept { return m_increment; }
+        DIRECTX_TOOLKIT_API inline ID3D12DescriptorHeap* Heap() const noexcept { return m_pHeap.Get(); }
 
         DIRECTX_TOOLKIT_API static void __cdecl DefaultDesc(
             _In_ D3D12_DESCRIPTOR_HEAP_TYPE type,
@@ -159,7 +159,7 @@ namespace DirectX
         using IndexType = size_t;
         static constexpr IndexType INVALID_INDEX = size_t(-1);
 
-        DIRECTX_TOOLKIT_API DescriptorPile(
+        DIRECTX_TOOLKIT_API inline DescriptorPile(
             _In_ ID3D12DescriptorHeap* pExistingHeap,
             size_t reserve = 0) noexcept(false)
             : DescriptorHeap(pExistingHeap),
@@ -171,7 +171,7 @@ namespace DirectX
             }
         }
 
-        DIRECTX_TOOLKIT_API DescriptorPile(
+        DIRECTX_TOOLKIT_API inline DescriptorPile(
             _In_ ID3D12Device* device,
             _In_ const D3D12_DESCRIPTOR_HEAP_DESC* pDesc,
             size_t reserve = 0) noexcept(false)
@@ -184,7 +184,7 @@ namespace DirectX
             }
         }
 
-        DIRECTX_TOOLKIT_API DescriptorPile(
+        DIRECTX_TOOLKIT_API inline DescriptorPile(
             _In_ ID3D12Device* device,
             D3D12_DESCRIPTOR_HEAP_TYPE type,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags,
@@ -199,7 +199,7 @@ namespace DirectX
             }
         }
 
-        DIRECTX_TOOLKIT_API DescriptorPile(
+        DIRECTX_TOOLKIT_API inline DescriptorPile(
             _In_ ID3D12Device* device,
             size_t count,
             size_t reserve = 0) noexcept(false) :
@@ -209,13 +209,13 @@ namespace DirectX
         {
         }
 
-        DIRECTX_TOOLKIT_API DescriptorPile(DescriptorPile&&) = default;
-        DIRECTX_TOOLKIT_API DescriptorPile& operator=(DescriptorPile&&) = default;
+        DescriptorPile(DescriptorPile&&) = default;
+        DescriptorPile& operator=(DescriptorPile&&) = default;
 
         DescriptorPile(const DescriptorPile&) = delete;
         DescriptorPile& operator=(const DescriptorPile&) = delete;
 
-        DIRECTX_TOOLKIT_API IndexType Allocate()
+        DIRECTX_TOOLKIT_API inline IndexType Allocate()
         {
             IndexType start, end;
             AllocateRange(1, start, end);

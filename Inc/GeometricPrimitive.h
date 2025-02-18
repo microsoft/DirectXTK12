@@ -38,8 +38,8 @@ namespace DirectX
         class GeometricPrimitive
         {
         public:
-            DIRECTX_TOOLKIT_API GeometricPrimitive(GeometricPrimitive&&) = default;
-            DIRECTX_TOOLKIT_API GeometricPrimitive& operator= (GeometricPrimitive&&) = default;
+            GeometricPrimitive(GeometricPrimitive&&) = default;
+            GeometricPrimitive& operator= (GeometricPrimitive&&) = default;
 
             GeometricPrimitive(GeometricPrimitive const&) = delete;
             GeometricPrimitive& operator= (GeometricPrimitive const&) = delete;

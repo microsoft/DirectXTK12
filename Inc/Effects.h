@@ -58,15 +58,15 @@ namespace DirectX
     {
         //------------------------------------------------------------------------------
         // Abstract interface representing any effect which can be applied onto a D3D device context.
-        class IEffect
+        class DIRECTX_TOOLKIT_API IEffect
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffect() = default;
+            virtual ~IEffect() = default;
 
             IEffect(const IEffect&) = delete;
             IEffect& operator=(const IEffect&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
+            virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
         protected:
             IEffect() = default;
@@ -76,91 +76,91 @@ namespace DirectX
 
 
         // Abstract interface for effects with world, view, and projection matrices.
-        class IEffectMatrices
+        class DIRECTX_TOOLKIT_API IEffectMatrices
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectMatrices() = default;
+            virtual ~IEffectMatrices() = default;
 
             IEffectMatrices(const IEffectMatrices&) = delete;
             IEffectMatrices& operator=(const IEffectMatrices&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection);
+            virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
+            virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
+            virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
+            virtual void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection);
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectMatrices() = default;
-            DIRECTX_TOOLKIT_API IEffectMatrices(IEffectMatrices&&) = default;
-            DIRECTX_TOOLKIT_API IEffectMatrices& operator=(IEffectMatrices&&) = default;
+            IEffectMatrices() = default;
+            IEffectMatrices(IEffectMatrices&&) = default;
+            IEffectMatrices& operator=(IEffectMatrices&&) = default;
         };
 
 
         // Abstract interface for effects which support directional lighting.
-        class IEffectLights
+        class DIRECTX_TOOLKIT_API IEffectLights
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectLights() = default;
+            virtual ~IEffectLights() = default;
 
             IEffectLights(const IEffectLights&) = delete;
             IEffectLights& operator=(const IEffectLights&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
+            virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
 
-            DIRECTX_TOOLKIT_API virtual void __cdecl SetLightEnabled(int whichLight, bool value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) = 0;
+            virtual void __cdecl SetLightEnabled(int whichLight, bool value) = 0;
+            virtual void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) = 0;
+            virtual void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) = 0;
+            virtual void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) = 0;
 
-            DIRECTX_TOOLKIT_API virtual void __cdecl EnableDefaultLighting() = 0;
+            virtual void __cdecl EnableDefaultLighting() = 0;
 
             static constexpr int MaxDirectionalLights = 3;
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectLights() = default;
-            DIRECTX_TOOLKIT_API IEffectLights(IEffectLights&&) = default;
-            DIRECTX_TOOLKIT_API IEffectLights& operator=(IEffectLights&&) = default;
+            IEffectLights() = default;
+            IEffectLights(IEffectLights&&) = default;
+            IEffectLights& operator=(IEffectLights&&) = default;
         };
 
 
         // Abstract interface for effects which support fog.
-        class IEffectFog
+        class DIRECTX_TOOLKIT_API IEffectFog
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectFog() = default;
+            virtual ~IEffectFog() = default;
 
             IEffectFog(const IEffectFog&) = delete;
             IEffectFog& operator=(const IEffectFog&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual void __cdecl SetFogStart(float value) = 0;
-            DIRECTX_TOOLKIT_API virtual void __cdecl SetFogEnd(float value) = 0;
-            DIRECTX_TOOLKIT_API virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
+            virtual void __cdecl SetFogStart(float value) = 0;
+            virtual void __cdecl SetFogEnd(float value) = 0;
+            virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectFog() = default;
-            DIRECTX_TOOLKIT_API IEffectFog(IEffectFog&&) = default;
-            DIRECTX_TOOLKIT_API IEffectFog& operator=(IEffectFog&&) = default;
+            IEffectFog() = default;
+            IEffectFog(IEffectFog&&) = default;
+            IEffectFog& operator=(IEffectFog&&) = default;
         };
 
 
         // Abstract interface for effects which support skinning
-        class IEffectSkinning
+        class DIRECTX_TOOLKIT_API IEffectSkinning
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectSkinning() = default;
+            virtual ~IEffectSkinning() = default;
 
             IEffectSkinning(const IEffectSkinning&) = delete;
             IEffectSkinning& operator=(const IEffectSkinning&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
-            DIRECTX_TOOLKIT_API virtual void __cdecl ResetBoneTransforms() = 0;
+            virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
+            virtual void __cdecl ResetBoneTransforms() = 0;
 
             static constexpr int MaxBones = 72;
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectSkinning() = default;
-            DIRECTX_TOOLKIT_API IEffectSkinning(IEffectSkinning&&) = default;
-            DIRECTX_TOOLKIT_API IEffectSkinning& operator=(IEffectSkinning&&) = default;
+            IEffectSkinning() = default;
+            IEffectSkinning(IEffectSkinning&&) = default;
+            IEffectSkinning& operator=(IEffectSkinning&&) = default;
         };
 
 
@@ -567,10 +567,10 @@ namespace DirectX
                 bool skinningEnabled);
         };
 
-        class SkinnedNormalMapEffect : public NormalMapEffect, public IEffectSkinning
+        class DIRECTX_TOOLKIT_API SkinnedNormalMapEffect : public NormalMapEffect, public IEffectSkinning
         {
         public:
-            DIRECTX_TOOLKIT_API SkinnedNormalMapEffect(
+            SkinnedNormalMapEffect(
                 _In_ ID3D12Device* device,
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
@@ -578,17 +578,17 @@ namespace DirectX
             {
             }
 
-            DIRECTX_TOOLKIT_API SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
-            DIRECTX_TOOLKIT_API SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
+            SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
+            SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
 
             SkinnedNormalMapEffect(SkinnedNormalMapEffect const&) = delete;
             SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect const&) = delete;
 
-            DIRECTX_TOOLKIT_API ~SkinnedNormalMapEffect() override;
+            ~SkinnedNormalMapEffect() override;
 
             // Animation settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
-            DIRECTX_TOOLKIT_API void __cdecl ResetBoneTransforms() override;
+            void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+            void __cdecl ResetBoneTransforms() override;
         };
 
 
@@ -674,10 +674,10 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
         };
 
-        class SkinnedPBREffect : public PBREffect, public IEffectSkinning
+        class DIRECTX_TOOLKIT_API SkinnedPBREffect : public PBREffect, public IEffectSkinning
         {
         public:
-            DIRECTX_TOOLKIT_API SkinnedPBREffect(
+            SkinnedPBREffect(
                 _In_ ID3D12Device* device,
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
@@ -685,17 +685,17 @@ namespace DirectX
             {
             }
 
-            DIRECTX_TOOLKIT_API SkinnedPBREffect(SkinnedPBREffect&&) = default;
-            DIRECTX_TOOLKIT_API SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;
+            SkinnedPBREffect(SkinnedPBREffect&&) = default;
+            SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;
 
             SkinnedPBREffect(SkinnedPBREffect const&) = delete;
             SkinnedPBREffect& operator= (SkinnedPBREffect const&) = delete;
 
-            DIRECTX_TOOLKIT_API ~SkinnedPBREffect() override;
+            ~SkinnedPBREffect() override;
 
             // Animation settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
-            DIRECTX_TOOLKIT_API void __cdecl ResetBoneTransforms() override;
+            void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+            void __cdecl ResetBoneTransforms() override;
         };
 
 
@@ -749,20 +749,20 @@ namespace DirectX
 
         //------------------------------------------------------------------------------
         // Abstract interface to factory texture resources
-        class IEffectTextureFactory
+        class DIRECTX_TOOLKIT_API IEffectTextureFactory
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectTextureFactory() = default;
+            virtual ~IEffectTextureFactory() = default;
 
             IEffectTextureFactory(const IEffectTextureFactory&) = delete;
             IEffectTextureFactory& operator=(const IEffectTextureFactory&) = delete;
 
-            DIRECTX_TOOLKIT_API virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
+            virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectTextureFactory() = default;
-            DIRECTX_TOOLKIT_API IEffectTextureFactory(IEffectTextureFactory&&) = default;
-            DIRECTX_TOOLKIT_API IEffectTextureFactory& operator=(IEffectTextureFactory&&) = default;
+            IEffectTextureFactory() = default;
+            IEffectTextureFactory(IEffectTextureFactory&&) = default;
+            IEffectTextureFactory& operator=(IEffectTextureFactory&&) = default;
         };
 
 
@@ -823,10 +823,10 @@ namespace DirectX
 
         //------------------------------------------------------------------------------
         // Abstract interface to factory for sharing effects
-        class IEffectFactory
+        class DIRECTX_TOOLKIT_API IEffectFactory
         {
         public:
-            DIRECTX_TOOLKIT_API virtual ~IEffectFactory() = default;
+            virtual ~IEffectFactory() = default;
 
             IEffectFactory(const IEffectFactory&) = delete;
             IEffectFactory& operator=(const IEffectFactory&) = delete;
@@ -874,7 +874,7 @@ namespace DirectX
                 }
             };
 
-            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+            virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
                 const EffectInfo& info,
                 const EffectPipelineStateDescription& opaquePipelineState,
                 const EffectPipelineStateDescription& alphaPipelineState,
@@ -883,9 +883,9 @@ namespace DirectX
                 int samplerDescriptorOffset = 0) = 0;
 
         protected:
-            DIRECTX_TOOLKIT_API IEffectFactory() = default;
-            DIRECTX_TOOLKIT_API IEffectFactory(IEffectFactory&&) = default;
-            DIRECTX_TOOLKIT_API IEffectFactory& operator=(IEffectFactory&&) = default;
+            IEffectFactory() = default;
+            IEffectFactory(IEffectFactory&&) = default;
+            IEffectFactory& operator=(IEffectFactory&&) = default;
         };
 
 

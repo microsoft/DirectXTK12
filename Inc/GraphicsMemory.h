@@ -178,7 +178,7 @@ namespace DirectX
             // Make sure to keep the GraphicsResource handle alive as long as you need to access
             // the memory on the CPU. For example, do not simply cache GpuAddress() and discard
             // the GraphicsResource object, or your memory may be overwritten later.
-            DIRECTX_TOOLKIT_API GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16, uint32_t tag = TAG_GENERIC)
+            DIRECTX_TOOLKIT_API inline GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16, uint32_t tag = TAG_GENERIC)
             {
                 auto alloc = AllocateImpl(size, alignment);
 #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
