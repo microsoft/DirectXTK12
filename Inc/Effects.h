@@ -45,7 +45,7 @@
 
 #if defined(DIRECTX_TOOLKIT_IMPORT) && defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251 4275)
 #endif
 
 
@@ -500,7 +500,7 @@ namespace DirectX
         class NormalMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
         {
         public:
-            DIRECTX_TOOLKIT_API NormalMapEffect(
+            DIRECTX_TOOLKIT_API inline NormalMapEffect(
                 _In_ ID3D12Device* device,
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
@@ -597,7 +597,7 @@ namespace DirectX
         class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
         {
         public:
-            DIRECTX_TOOLKIT_API PBREffect(
+            DIRECTX_TOOLKIT_API inline PBREffect(
                 _In_ ID3D12Device* device,
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
