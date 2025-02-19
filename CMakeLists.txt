@@ -15,6 +15,10 @@ project (DirectXTK12
   HOMEPAGE_URL "https://go.microsoft.com/fwlink/?LinkID=615561"
   LANGUAGES CXX)
 
+if(DEFINED XBOX_CONSOLE_TARGET)
+  set(CMAKE_CXX_STANDARD_LIBRARIES "")
+endif()
+
 option(BUILD_SHARED_LIBS "Build DirectXTK as a shared library" OFF)
 
 option(BUILD_XAUDIO_WIN10 "Build for XAudio 2.9" ON)
@@ -302,6 +306,8 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     target_link_libraries(${PROJECT_NAME} PRIVATE xgameplatform.lib d3d12_xs.lib pixevt.lib)
   elseif(XBOX_CONSOLE_TARGET MATCHES "xboxone")
     target_link_libraries(${PROJECT_NAME} PRIVATE xgameplatform.lib d3d12_x.lib pixevt.lib)
+  elseif(XBOX_CONSOLE_TARGET MATCHES "durango")
+    target_link_libraries(${PROJECT_NAME} PRIVATE kernelx.lib combase.lib d3d12_x.lib xi.lib)
   else()
     target_link_libraries(${PROJECT_NAME} PRIVATE d3d12.lib)
   endif()
