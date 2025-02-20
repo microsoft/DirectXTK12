@@ -23,6 +23,16 @@
 #include <cstdint>
 #include <memory>
 
+#ifndef DIRECTX_TOOLKIT_API
+#ifdef DIRECTX_TOOLKIT_EXPORT
+#define DIRECTX_TOOLKIT_API __declspec(dllexport)
+#elif defined(DIRECTX_TOOLKIT_IMPORT)
+#define DIRECTX_TOOLKIT_API __declspec(dllimport)
+#else
+#define DIRECTX_TOOLKIT_API
+#endif
+#endif
+
 
 namespace DirectX
 {
@@ -31,50 +41,50 @@ namespace DirectX
         class CommonStates
         {
         public:
-            explicit CommonStates(_In_ ID3D12Device* device);
+            DIRECTX_TOOLKIT_API explicit CommonStates(_In_ ID3D12Device* device);
 
-            CommonStates(CommonStates&&) noexcept;
-            CommonStates& operator = (CommonStates&&) noexcept;
+            DIRECTX_TOOLKIT_API CommonStates(CommonStates&&) noexcept;
+            DIRECTX_TOOLKIT_API CommonStates& operator = (CommonStates&&) noexcept;
 
             CommonStates(const CommonStates&) = delete;
             CommonStates& operator = (const CommonStates&) = delete;
 
-            virtual ~CommonStates();
+            DIRECTX_TOOLKIT_API virtual ~CommonStates();
 
             // Blend states.
-            static const D3D12_BLEND_DESC Opaque;
-            static const D3D12_BLEND_DESC AlphaBlend;
-            static const D3D12_BLEND_DESC Additive;
-            static const D3D12_BLEND_DESC NonPremultiplied;
+            DIRECTX_TOOLKIT_API static const D3D12_BLEND_DESC Opaque;
+            DIRECTX_TOOLKIT_API static const D3D12_BLEND_DESC AlphaBlend;
+            DIRECTX_TOOLKIT_API static const D3D12_BLEND_DESC Additive;
+            DIRECTX_TOOLKIT_API static const D3D12_BLEND_DESC NonPremultiplied;
 
             // Depth stencil states.
-            static const D3D12_DEPTH_STENCIL_DESC DepthNone;
-            static const D3D12_DEPTH_STENCIL_DESC DepthDefault;
-            static const D3D12_DEPTH_STENCIL_DESC DepthRead;
-            static const D3D12_DEPTH_STENCIL_DESC DepthReverseZ;
-            static const D3D12_DEPTH_STENCIL_DESC DepthReadReverseZ;
+            DIRECTX_TOOLKIT_API static const D3D12_DEPTH_STENCIL_DESC DepthNone;
+            DIRECTX_TOOLKIT_API static const D3D12_DEPTH_STENCIL_DESC DepthDefault;
+            DIRECTX_TOOLKIT_API static const D3D12_DEPTH_STENCIL_DESC DepthRead;
+            DIRECTX_TOOLKIT_API static const D3D12_DEPTH_STENCIL_DESC DepthReverseZ;
+            DIRECTX_TOOLKIT_API static const D3D12_DEPTH_STENCIL_DESC DepthReadReverseZ;
 
             // Rasterizer states.
-            static const D3D12_RASTERIZER_DESC CullNone;
-            static const D3D12_RASTERIZER_DESC CullClockwise;
-            static const D3D12_RASTERIZER_DESC CullCounterClockwise;
-            static const D3D12_RASTERIZER_DESC Wireframe;
+            DIRECTX_TOOLKIT_API static const D3D12_RASTERIZER_DESC CullNone;
+            DIRECTX_TOOLKIT_API static const D3D12_RASTERIZER_DESC CullClockwise;
+            DIRECTX_TOOLKIT_API static const D3D12_RASTERIZER_DESC CullCounterClockwise;
+            DIRECTX_TOOLKIT_API static const D3D12_RASTERIZER_DESC Wireframe;
 
             // Static sampler states.
-            static const D3D12_STATIC_SAMPLER_DESC StaticPointWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            static const D3D12_STATIC_SAMPLER_DESC StaticPointClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            static const D3D12_STATIC_SAMPLER_DESC StaticLinearWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            static const D3D12_STATIC_SAMPLER_DESC StaticLinearClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
 
             // Sampler states.
-            D3D12_GPU_DESCRIPTOR_HANDLE PointWrap() const;
-            D3D12_GPU_DESCRIPTOR_HANDLE PointClamp() const;
-            D3D12_GPU_DESCRIPTOR_HANDLE LinearWrap() const;
-            D3D12_GPU_DESCRIPTOR_HANDLE LinearClamp() const;
-            D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicWrap() const;
-            D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicClamp() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE PointWrap() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE PointClamp() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE LinearWrap() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE LinearClamp() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicWrap() const;
+            DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE AnisotropicClamp() const;
 
             // These index into the heap returned by SamplerDescriptorHeap
             enum class SamplerIndex : uint32_t
@@ -88,7 +98,7 @@ namespace DirectX
                 Count
             };
 
-            ID3D12DescriptorHeap* Heap() const noexcept;
+            DIRECTX_TOOLKIT_API ID3D12DescriptorHeap* Heap() const noexcept;
 
         private:
             class Impl;
