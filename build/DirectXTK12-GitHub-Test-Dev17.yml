@@ -241,7 +241,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln 64dbg
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: x64
       configuration: Debug
@@ -249,7 +249,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln 64rel
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: x64
       configuration: Release
@@ -284,7 +284,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln 32dbg
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: x86
       configuration: Debug
@@ -292,7 +292,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln 32rel
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: x86
       configuration: Release
@@ -327,7 +327,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln arm64dbg
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: ARM64
       configuration: Debug
@@ -335,7 +335,7 @@ jobs:
     displayName: Build solution DirectXTK_Tests_Windows10.sln arm64rel
     inputs:
       solution: Tests/DirectXTK_Tests_Windows10.sln
-      vsVersion: 16.0
+      vsVersion: 17.0
       msbuildArgs: /p:PreferredToolArchitecture=x64 /p:AppxBundle=Never
       platform: ARM64
       configuration: Release
