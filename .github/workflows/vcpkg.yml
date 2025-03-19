@@ -53,6 +53,16 @@ jobs:
             shared: OFF
             gameinput: OFF
           - os: windows-2022
+            build_type: x64-Debug-Redist
+            arch: amd64
+            shared: OFF
+            gameinput: OFF
+          - os: windows-2022
+            build_type: x64-Release-Redist
+            arch: amd64
+            shared: OFF
+            gameinput: OFF
+          - os: windows-2022
             build_type: arm64-Debug-VCPKG
             arch: amd64_arm64
             shared: OFF
@@ -68,15 +78,20 @@ jobs:
             shared: OFF
             gameinput: OFF
           - os: windows-2022
-            build_type: x64-Debug-VCPKG
-            arch: amd64
-            shared: ON
-            gameinput: ON
-          - os: windows-2022
             build_type: x64-Release-MinGW
             arch: amd64
             shared: OFF
             gameinput: OFF
+          - os: windows-2022
+            build_type: x64-Debug-MinGW
+            arch: amd64
+            shared: OFF
+            gameinput: ON
+          - os: windows-2022
+            build_type: x64-Debug-VCPKG
+            arch: amd64
+            shared: ON
+            gameinput: ON
           - os: windows-2022
             build_type: x64-Debug-MinGW
             arch: amd64
@@ -159,7 +174,7 @@ jobs:
     - name: 'Configure CMake'
       working-directory: ${{ github.workspace }}
       run: >
-        cmake --preset=${{ matrix.build_type }} -DBUILD_TESTING=OFF -DBUILD_XAUDIO_WIN10=OFF -DBUILD_XAUDIO_REDIST=ON
+        cmake --preset=${{ matrix.build_type }} -DBUILD_TESTING=OFF
         -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DBUILD_GAMEINPUT=${{ matrix.gameinput }}
         -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_MANIFEST_DIR="${{ github.workspace }}/build"
         -DVCPKG_TARGET_TRIPLET="${env:VCPKG_DEFAULT_TRIPLET}"

@@ -118,6 +118,14 @@
     },
 
     {
+      "name": "XAudio2Redist",
+      "cacheVariables": {
+        "BUILD_XAUDIO_WIN10": false,
+        "BUILD_XAUDIO_REDIST": true
+      },
+      "hidden": true
+    },
+    {
       "name": "UWP",
       "cacheVariables": {
         "CMAKE_SYSTEM_NAME": "WindowsStore",
@@ -255,14 +263,6 @@
         "strategy": "external"
       }
     },
-    {
-      "name": "XAudio2Redist",
-      "cacheVariables": {
-        "BUILD_XAUDIO_WIN10": false,
-        "BUILD_XAUDIO_REDIST": true
-      },
-      "hidden": true
-    },
 
     {
       "name": "Analyze",
@@ -305,6 +305,11 @@
     { "name": "arm64-Debug-UWP"  , "description": "MSVC for ARM64 (Debug) for UWP", "inherits": [ "base", "ARM64", "Debug", "MSVC", "UWP" ] },
     { "name": "arm64-Release-UWP", "description": "MSVC for ARM64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "MSVC", "UWP" ] },
 
+    { "name": "x64-Debug-Redist"  , "description": "MSVC for x64 (Debug) with XAudio2Redist", "inherits": [ "base", "x64", "Debug", "MSVC", "XAudio2Redist", "VCPKG", "X64_X64" ] },
+    { "name": "x64-Release-Redist", "description": "MSVC for x64 (Release) with XAudio2Redist", "inherits": [ "base", "x64", "Release", "MSVC", "XAudio2Redist", "VCPKG", "X64_X64" ] },
+    { "name": "x86-Debug-Redist"  , "description": "MSVC for x86 (Debug) with XAudio2Redist", "inherits": [ "base", "x86", "Debug", "MSVC", "XAudio2Redist", "VCPKG", "X64_X86" ] },
+    { "name": "x86-Release-Redist", "description": "MSVC for x86 (Release) with XAudio2Redist", "inherits": [ "base", "x86", "Release", "MSVC", "XAudio2Redist", "VCPKG", "X64_X86" ] },
+
     { "name": "x64-Debug-GDK"    , "description": "MSVC for x64 (Debug) with Microsoft GDK", "inherits": [ "base", "x64", "Debug", "MSVC", "GDK" ] },
     { "name": "x64-Release-GDK"  , "description": "MSVC for x64 (Release) with Microsoft GDK", "inherits": [ "base", "x64", "Release", "MSVC", "GDK" ] },
 
@@ -317,10 +322,10 @@
     { "name": "x64-Debug-Durango"    , "description": "MSVC for x64 (Debug) for legacy Xbox One XDK", "inherits": [ "base", "x64", "Debug", "MSVC", "Durango" ] },
     { "name": "x64-Release-Durango"  , "description": "MSVC for x64 (Release) for legacy Xbox One XDK", "inherits": [ "base", "x64", "Release", "MSVC", "Durango" ] },
 
-    { "name": "x64-Debug-VCPKG"           , "description": "MSVC for x64 (Debug) using VCPKG", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG", "XAudio2Redist", "X64_X64" ] },
-    { "name": "x64-Release-VCPKG"         , "description": "MSVC for x64 (Release) using VCPKG", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG", "XAudio2Redist", "X64_X64" ] },
-    { "name": "x86-Debug-VCPKG"           , "description": "MSVC for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Debug", "MSVC", "VCPKG", "XAudio2Redist", "X64_X86" ] },
-    { "name": "x86-Release-VCPKG"         , "description": "MSVC for x86 (Release) using VCPKG", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG", "XAudio2Redist", "X64_X86" ] },
+    { "name": "x64-Debug-VCPKG"           , "description": "MSVC for x64 (Debug) using VCPKG", "inherits": [ "base", "x64", "Debug", "MSVC", "VCPKG", "X64_X64" ] },
+    { "name": "x64-Release-VCPKG"         , "description": "MSVC for x64 (Release) using VCPKG", "inherits": [ "base", "x64", "Release", "MSVC", "VCPKG", "X64_X64" ] },
+    { "name": "x86-Debug-VCPKG"           , "description": "MSVC for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Debug", "MSVC", "VCPKG", "X64_X86" ] },
+    { "name": "x86-Release-VCPKG"         , "description": "MSVC for x86 (Release) using VCPKG", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG", "X64_X86" ] },
     { "name": "arm64-Debug-VCPKG"         , "description": "MSVC for ARM64 (Debug) using VCPKG", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "X64_ARM64" ] },
     { "name": "arm64-Release-VCPKG"       , "description": "MSVC for ARM64 (Release) using VCPKG", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "X64_ARM64" ] },
     { "name": "arm64-Native-Debug-VCPKG"  , "description": "MSVC for ARM64 Native (Debug) using VCPKG", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "ARM64_ARM64" ] },
@@ -335,10 +340,10 @@
     { "name": "arm64-Debug-Clang"  , "description": "Clang/LLVM for AArch64 (Debug) for Windows 10", "inherits": [ "base", "ARM64", "Debug", "Clang", "Clang-AArch64" ] },
     { "name": "arm64-Release-Clang", "description": "Clang/LLVM for AArch64 (Release) for Windows 10", "inherits": [ "base", "ARM64", "Release", "Clang", "Clang-AArch64" ] },
 
-    { "name": "x64-Debug-Clang-VCPKG"   , "description": "Clang/LLVM for x64 (Debug) using VCPKG", "inherits": [ "base", "x64", "Debug", "Clang", "VCPKG", "XAudio2Redist", "X64_X64" ] },
-    { "name": "x64-Release-Clang-VCPKG" , "description": "Clang/LLVM for x64 (Release) using VCPKG", "inherits": [ "base", "x64", "Release", "Clang", "VCPKG", "XAudio2Redist", "X64_X64" ] },
-    { "name": "x86-Debug-Clang-VCPKG"   , "description": "Clang/LLVM for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Debug", "Clang", "Clang-X86", "VCPKG", "XAudio2Redist", "X64_X86" ] },
-    { "name": "x86-Release-Clang-VCPKG" , "description": "Clang/LLVM for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Release", "Clang", "Clang-X86", "VCPKG", "XAudio2Redist", "X64_X86" ] },
+    { "name": "x64-Debug-Clang-VCPKG"   , "description": "Clang/LLVM for x64 (Debug) using VCPKG", "inherits": [ "base", "x64", "Debug", "Clang", "VCPKG", "X64_X64" ] },
+    { "name": "x64-Release-Clang-VCPKG" , "description": "Clang/LLVM for x64 (Release) using VCPKG", "inherits": [ "base", "x64", "Release", "Clang", "VCPKG", "X64_X64" ] },
+    { "name": "x86-Debug-Clang-VCPKG"   , "description": "Clang/LLVM for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Debug", "Clang", "Clang-X86", "VCPKG", "X64_X86" ] },
+    { "name": "x86-Release-Clang-VCPKG" , "description": "Clang/LLVM for x86 (Debug) using VCPKG", "inherits": [ "base", "x86", "Release", "Clang", "Clang-X86", "VCPKG", "X64_X86" ] },
 
     { "name": "x64-Debug-UWP-Clang"    , "description": "Clang/LLVM for x64 (Debug) for UWP", "inherits": [ "base", "x64", "Debug", "Clang", "UWP" ] },
     { "name": "x64-Release-UWP-Clang"  , "description": "Clang/LLVM for x64 (Release) for UWP", "inherits": [ "base", "x64", "Release", "Clang", "UWP" ] },
@@ -346,6 +351,11 @@
     { "name": "x86-Release-UWP-Clang"  , "description": "Clang/LLVM for x86 (Release) for UWP", "inherits": [ "base", "x86", "Release", "Clang", "Clang-X86", "UWP" ] },
     { "name": "arm64-Debug-UWP-Clang"  , "description": "Clang/LLVM for AArch64 (Debug) for UWP", "inherits": [ "base", "ARM64", "Debug", "Clang", "Clang-AArch64", "UWP" ] },
     { "name": "arm64-Release-UWP-Clang", "description": "Clang/LLVM for AArch64 (Release) for UWP", "inherits": [ "base", "ARM64", "Release", "Clang", "Clang-AArch64", "UWP" ] },
+
+    { "name": "x64-Debug-Redist-Clang"  , "description": "Clang/LLVM for x64 (Debug) with XAudio2Redist", "inherits": [ "base", "x64", "Debug", "Clang", "XAudio2Redist", "VCPKG", "X64_X64" ] },
+    { "name": "x64-Release-Redist-Clang", "description": "Clang/LLVM for x64 (Release) with XAudio2Redist", "inherits": [ "base", "x64", "Release", "Clang", "XAudio2Redist", "VCPKG", "X64_X64" ] },
+    { "name": "x86-Debug-Redist-Clang"  , "description": "Clang/LLVM for x86 (Debug) with XAudio2Redist", "inherits": [ "base", "x86", "Debug", "Clang", "Clang-X86", "XAudio2Redist", "VCPKG", "X64_X86" ] },
+    { "name": "x86-Release-Redist-Clang", "description": "Clang/LLVM for x86 (Release) with XAudio2Redist", "inherits": [ "base", "x86", "Release", "Clang", "Clang-X86", "XAudio2Redist", "VCPKG", "X64_X86" ] },
 
     { "name": "x64-Debug-Scarlett-Clang"  , "description": "Clang/LLVM for x64 (Debug) for Xbox Series X|S", "inherits": [ "base", "x64", "Debug", "Clang", "Scarlett" ] },
     { "name": "x64-Release-Scarlett-Clang", "description": "Clang/LLVM for x64 (Release) for Xbox Series X|S", "inherits": [ "base", "x64", "Release", "Clang", "Scarlett" ] },
@@ -378,6 +388,11 @@
     { "name": "arm64-Release"  , "configurePreset": "arm64-Release" },
     { "name": "arm64ec-Debug"  , "configurePreset": "arm64ec-Debug" },
     { "name": "arm64ec-Release", "configurePreset": "arm64ec-Release" },
+
+    { "name": "x64-Debug-Redist"    , "configurePreset": "x64-Debug-Redist" },
+    { "name": "x64-Release-Redist"  , "configurePreset": "x64-Release-Redist" },
+    { "name": "x86-Debug-Redist"    , "configurePreset": "x86-Debug-Redist" },
+    { "name": "x86-Release-Redist"  , "configurePreset": "x86-Release-Redist" },
 
     { "name": "x64-Debug-VCPKG"    , "configurePreset": "x64-Debug-VCPKG" },
     { "name": "x64-Release-VCPKG"  , "configurePreset": "x64-Release-VCPKG" },
