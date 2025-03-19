@@ -1,15 +1,23 @@
 {
-    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "dependencies": [
-      "directxmath",
-      {
-        "name": "directx-dxc",
-        "host": true
-      },
-      "directx-headers",
-      {
-        "name": "xaudio2redist",
-        "platform": "windows & !arm"
-      }
-    ]
-  }
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    {
+      "name": "directx-dxc",
+      "host": true,
+      "platform": "windows & !xbox"
+    },
+    {
+      "name": "directx-headers",
+      "platform": "windows & !xbox"
+    },
+    "directxmath",
+    {
+      "name": "gameinput",
+      "platform": "windows & x64 & !xbox"
+    },
+    {
+      "name": "xaudio2redist",
+      "platform": "windows & !arm & !xbox"
+    }
+  ]
+}
