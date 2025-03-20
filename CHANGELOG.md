@@ -15,7 +15,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
   * Repurposed `SoundEffectInstance_UseRedirectLFE` from an internal flag to a per voice override
   * Added `SoundEffectInstance_ZeroCenter3D` as a per voice override
   * Bug fixes for recent ``IsValid`` methods
-* Code review particularly to remove Windows 7 and Windows 8.0 code paths
+* Code review particularly to remove Windows 7 and Windows 8.0 code paths in shared code
 * CMake project updates including support for BUILD_SHARED_LIBS (i.e. DLL vs. static library)
 
 ### October 28, 2024
