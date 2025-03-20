@@ -11,7 +11,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * *DirectX Tool Kit for Audio* bug fixes for recent ``IsValid`` methods
 * GamePad, Keyboard, and Mouse _GameInput_ implementation now supports both v0 and v1 of the API
 * SimpleMath changes for Vector2/Vector3 operators to speed up performance particularly in debug builds
-* Code review particularly to remove Windows 7 code paths
+* Code review particularly to remove Windows 7 and Windows 8.0 code paths
 * CMake project updates including support for BUILD_SHARED_LIBS (i.e. DLL vs. static library)
 
 ### October 28, 2024
