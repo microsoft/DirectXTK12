@@ -5,6 +5,10 @@ cmake_minimum_required (VERSION 3.20)
 
 set(DIRECTXTK12_VERSION 1.6.2)
 
+if(XBOX_CONSOLE_TARGET STREQUAL "durango")
+  set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+endif()
+
 project (DirectXTK12
   VERSION ${DIRECTXTK12_VERSION}
   DESCRIPTION "DirectX Tool Kit for DirectX 12"
