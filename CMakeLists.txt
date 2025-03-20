@@ -196,6 +196,15 @@ set(SHADER_SOURCES ${SHADER_SOURCES}
     Src/Shaders/Structures.fxh
     Src/Shaders/Utilities.fxh)
 
+# Xbox-specific extensions
+if(DEFINED XBOX_CONSOLE_TARGET)
+  set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+      Inc/XboxDDSTextureLoader.h)
+
+  set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+      Src/XboxDDSTextureLoader.cpp)
+endif()
+
 if(MINGW)
   set(BUILD_XAUDIO_WIN10 OFF)
 endif()
