@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup Label="Debug" Condition="'$(Configuration.ToLower())' == 'debug'">
+    <NuGetConfiguration>Debug</NuGetConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Label="Non_Debug" Condition="'$(Configuration.ToLower())' == 'profile'">
+    <NuGetConfiguration>Release</NuGetConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Label="Non_Debug" Condition="'$(Configuration.ToLower())' == 'release'">
+    <NuGetConfiguration>Release</NuGetConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(NuGetConfiguration)' == ''">
+    <NuGetConfiguration>Release</NuGetConfiguration>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <directxtk12-LibPath>$(MSBuildThisFileDirectory)..\..\native\lib\$(PlatformTarget)\$(NuGetConfiguration)</directxtk12-LibPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalLibraryDirectories>$(directxtk12-LibPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>HAS_DIRECTXTK12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+</Project>
