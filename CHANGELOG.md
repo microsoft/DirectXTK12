@@ -6,6 +6,18 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### March 20, 2025
+* C++17 `std::byte` support for `FromMemory` functions
+* GamePad, Keyboard, and Mouse _GameInput_ implementation now supports both v0 and v1 of the API
+* SimpleMath changes for Vector2/Vector3 operators to speed up performance particularly in debug builds
+* *DirectX Tool Kit for Audio* changes:
+  * Added more audio engine flags to control X3DAudio usage: `AudioEngine_DisableLFERedirect`, `AudioEngine_DisableDopplerEffect`, `AudioEngine_ZeroCenter3D`
+  * Repurposed `SoundEffectInstance_UseRedirectLFE` from an internal flag to a per voice override
+  * Added `SoundEffectInstance_ZeroCenter3D` as a per voice override
+  * Bug fixes for recent ``IsValid`` methods
+* Code review particularly to remove Windows 7 and Windows 8.0 code paths in shared code
+* CMake project updates including support for BUILD_SHARED_LIBS (i.e. DLL vs. static library)
+
 ### October 28, 2024
 * All enums now use ``uint32_t`` as the underlying type rather than ``unsigned long`` or ``int``.
 * Added `DDS_LOADER_INGNORE_MIPS` flag to DDSTextureLoader
@@ -45,7 +57,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 ### October 28, 2023
 * Added ``CreateUploadBuffer`` and ``CreateUAVBuffer`` helpers
 * Fixed validation bug with WIC loader when using autogen and force RGBA together
-* Fixed minor link issue with a  Xbox PIX custom memory method
+* Fixed minor link issue with a Xbox PIX custom memory method
 * Xbox shader compilation now uses ``-HV 2021``
 * Additional methods for *DirectX Tool Kit for Audio* emitter for linear and inverse-square falloff curves
 
@@ -110,7 +122,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### May 9, 2022
 * C++20 spaceship operator updates for SimpleMath
-* Fixed missing VertexPositionNormal::InputLayout
+* Fixed missing `VertexPositionNormal::InputLayout`
 * Minor updates for VS 2022 (17.2)
 * CMake project updates (now supports MSVC, clang/LLVM, and MinGW)
 * Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
@@ -127,10 +139,10 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Dropped support for legacy Xbox One XDK prior to April 2018
 
 ### February 28, 2022
-* Minor fix to DescriptorHeap Increment() to return uint32_t instead of size_t
+* Minor fix to **DescriptorHeap::Increment** to return `uint32_t` instead of `size_t`
 * Updated D3DX12 internal copy with latest changes from GitHub
-* SimpleMath Matrix updated with ToEuler and Vector3 version of CreateFromYawPitchRoll methods
-* SimpleMath Quaternion updated with ToEuler, RotateTowards, FromToRotation, LookRotation, and Angle methods
+* SimpleMath Matrix updated with **ToEuler** and Vector3 version of **CreateFromYawPitchRoll** methods
+* SimpleMath Quaternion updated with **ToEuler**, **RotateTowards**, **FromToRotation**, **LookRotation**, and **Angle** methods
 * Keyboard updated with new IME On/Off v-keys
 * Win32 Mouse now uses ``WM_ACTIVATE`` for more robust behavior
 * *DirectX Tool Kit for Audio* updated for Advanced Format (4Kn) wavebank streaming
@@ -160,7 +172,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Project and code cleanup
 
 ### September 30, 2021
-* Added ModelBone support for transformation hierarchies
+* Added **ModelBone** support for transformation hierarchies
   * Rigid-body & skinned animation Draw support added to Model
 * Support for loading Visual Studio ``CMO`` models added using BasicEffect or SkinnedEffect materials
 * Added type aliases ``Model::EffectCollection``, ``ModelMeshPart::InputLayoutCollection``, ``GeometricPrimitive::VertexCollection`` and ``IndexCollection``
@@ -171,8 +183,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### August 1, 2021
 * DebugEffect, NormalMapEffect, and PBREffect updated with instancing support
-* GeometricPrimitive updated with DrawInstanced method
-* ToneMapPostProcess updated with SetColorRotation method
+* GeometricPrimitive updated with **DrawInstanced** method
+* ToneMapPostProcess updated with **SetColorRotation** method
 * Added VS 2022 Preview projects
 * Minor code review
 
@@ -318,7 +330,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 ### October 31, 2018
 * Model loader for SDKMESH now attempts to use legacy DE3CN compressed normals
   + This is an approximation only and emits a warning in debug builds
-* IEffectTextureFactory's CreateTexture interface method now returns the 'slot'
+* IEffectTextureFactory's **CreateTexture** interface method now returns the 'slot'
   + This is for use with **GetResource** method
 * Minor code review
 
@@ -443,7 +455,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Fixed default graphics memory alignment to resolve rendering problems on some hardware
 * Added ``forceSRGB`` optional parameter to SpriteFont ctor
 * EffectFactory method **EnableForceSRGB** added
-* Removed problematic ABI::Windows::Foundation::Rect interop for SimpleMath
+* Removed problematic `ABI::Windows::Foundation::Rect` interop for SimpleMath
 * Updated D3DX12 internal copy for the Windows 10 Anniversary Update SDK (14393)
 * Minor code cleanup
 

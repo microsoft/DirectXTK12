@@ -6,7 +6,7 @@ http://go.microsoft.com/fwlink/?LinkID=615561
 
 Copyright (c) Microsoft Corporation.
 
-**October 28, 2024**
+**March 20, 2025**
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps for Windows 11 and Windows 10, game titles for Xbox Series X\|S and Xbox One, and Win32 desktop applications for Windows 11 and Windows 10.
 
@@ -109,6 +109,8 @@ For a full change history, see [CHANGELOG.md](https://github.com/microsoft/Direc
 * When using clang/LLVM for the ARM64/AArch64 platform, the Windows 11 SDK ([22000](https://walbourn.github.io/windows-sdk-for-windows-11/)) or later is required.
 
 * The ``CompileShaders.cmd`` script must have Windows-style (CRLF) line-endings. If it is changed to Linux-style (LF) line-endings, it can fail to build all the required shaders.
+
+* Support for targeting Xbox One using the legacy Xbox One XDK was retired in March 2023. See the February 2023 or earlier releases of *DirectX Tool Kit* for the required MSBuild project files. It can also be built using the current CMake projects from an *Xbox One XDK Developer Command Prompt* with the addition of CMake 3.20 or later to the path via the `x64-Debug-Durango` or `x64-Release-Durango` CMake preset.
 
 ## Support
 

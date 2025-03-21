@@ -3,7 +3,11 @@
 
 cmake_minimum_required (VERSION 3.20)
 
-set(DIRECTXTK12_VERSION 1.6.1)
+set(DIRECTXTK12_VERSION 1.6.2)
+
+if(XBOX_CONSOLE_TARGET STREQUAL "durango")
+  set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+endif()
 
 project (DirectXTK12
   VERSION ${DIRECTXTK12_VERSION}
@@ -195,6 +199,15 @@ set(SHADER_SOURCES ${SHADER_SOURCES}
     Src/Shaders/Skinning.fxh
     Src/Shaders/Structures.fxh
     Src/Shaders/Utilities.fxh)
+
+# Xbox-specific extensions
+if(DEFINED XBOX_CONSOLE_TARGET)
+  set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+      Inc/XboxDDSTextureLoader.h)
+
+  set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+      Src/XboxDDSTextureLoader.cpp)
+endif()
 
 if(MINGW)
   set(BUILD_XAUDIO_WIN10 OFF)
