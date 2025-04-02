@@ -2194,7 +2194,7 @@ inline Matrix Matrix::CreatePerspectiveFieldOfView(float fov, float aspectRatio,
 {
     using namespace DirectX;
     Matrix R;
-    XMStoreFloat4x4(&R, XMMatrixPerspectiveFovRH(fov, aspectRatio, nearPlane, farPlane));
+    XMStoreFloat4x4(&R, XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane));
     return R;
 }
 
@@ -2202,7 +2202,7 @@ inline Matrix Matrix::CreatePerspective(float width, float height, float nearPla
 {
     using namespace DirectX;
     Matrix R;
-    XMStoreFloat4x4(&R, XMMatrixPerspectiveRH(width, height, nearPlane, farPlane));
+    XMStoreFloat4x4(&R, XMMatrixPerspectiveLH(width, height, nearPlane, farPlane));
     return R;
 }
 
@@ -2210,7 +2210,7 @@ inline Matrix Matrix::CreatePerspectiveOffCenter(float left, float right, float 
 {
     using namespace DirectX;
     Matrix R;
-    XMStoreFloat4x4(&R, XMMatrixPerspectiveOffCenterRH(left, right, bottom, top, nearPlane, farPlane));
+    XMStoreFloat4x4(&R, XMMatrixPerspectiveOffCenterLH(left, right, bottom, top, nearPlane, farPlane));
     return R;
 }
 
@@ -2218,7 +2218,7 @@ inline Matrix Matrix::CreateOrthographic(float width, float height, float zNearP
 {
     using namespace DirectX;
     Matrix R;
-    XMStoreFloat4x4(&R, XMMatrixOrthographicRH(width, height, zNearPlane, zFarPlane));
+    XMStoreFloat4x4(&R, XMMatrixOrthographicLH(width, height, zNearPlane, zFarPlane));
     return R;
 }
 
@@ -2226,7 +2226,7 @@ inline Matrix Matrix::CreateOrthographicOffCenter(float left, float right, float
 {
     using namespace DirectX;
     Matrix R;
-    XMStoreFloat4x4(&R, XMMatrixOrthographicOffCenterRH(left, right, bottom, top, zNearPlane, zFarPlane));
+    XMStoreFloat4x4(&R, XMMatrixOrthographicOffCenterLH(left, right, bottom, top, zNearPlane, zFarPlane));
     return R;
 }
 
@@ -2237,7 +2237,7 @@ inline Matrix Matrix::CreateLookAt(const Vector3& eye, const Vector3& target, co
     const XMVECTOR eyev = XMLoadFloat3(&eye);
     const XMVECTOR targetv = XMLoadFloat3(&target);
     const XMVECTOR upv = XMLoadFloat3(&up);
-    XMStoreFloat4x4(&R, XMMatrixLookAtRH(eyev, targetv, upv));
+    XMStoreFloat4x4(&R, XMMatrixLookAtLH(eyev, targetv, upv));
     return R;
 }
 
