@@ -208,6 +208,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
     if (!*nMesh)
         throw std::runtime_error("No meshes found");
 
+    if (*nMesh > UINT16_MAX)
+        throw std::runtime_error("Too many meshes in a file");
+
     std::map<std::wstring, int> textureDictionary;
     std::vector<ModelMaterialInfo> modelmats;
 
@@ -238,6 +241,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
+
+        if (*nMats > UINT16_MAX)
+            throw std::overflow_error("Too many materials");
 
         std::vector<MaterialRecordCMO> materials;
         materials.reserve(*nMats);
@@ -343,6 +349,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
         if (!*nIBs)
             throw std::runtime_error("No index buffers found\n");
 
+        if (*nIBs > UINT16_MAX)
+            throw std::overflow_error("Too many index buffers");
+
         struct IBData
         {
             size_t          nIndices;
@@ -403,6 +412,9 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
         if (!*nVBs)
             throw std::runtime_error("No vertex buffers found\n");
+
+        if (*nVBs > UINT16_MAX)
+            throw std::overflow_error("Too many vertex buffers");
 
         struct VBData
         {
