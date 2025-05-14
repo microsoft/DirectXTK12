@@ -182,7 +182,7 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
+std::unique_ptr<Model> Model::CreateFromCMO(
     ID3D12Device* device,
     const uint8_t* meshData, size_t dataSize,
     ModelLoaderFlags flags,
@@ -832,7 +832,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
+std::unique_ptr<Model> Model::CreateFromCMO(
     ID3D12Device* device,
     const wchar_t* szFileName,
     ModelLoaderFlags flags,
@@ -867,7 +867,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
 _Use_decl_annotations_
-std::unique_ptr<Model> DirectX::Model::CreateFromCMO(
+std::unique_ptr<Model> Model::CreateFromCMO(
     ID3D12Device* device,
     const __wchar_t* szFileName,
     ModelLoaderFlags flags,
