@@ -9,7 +9,7 @@ parameters:
 - name: msVersion
   type: string
   values:
-    - '${{ parameters.msVersion }}'
+    - '16.0'
     - '17.0'
 - name: vsYear
   type: number
