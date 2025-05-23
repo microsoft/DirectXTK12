@@ -1,0 +1,7 @@
+.azuredevops\
+.git\
+.github\
+.nuget\
+.vs\
+build\
+wiki\
