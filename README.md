@@ -48,17 +48,17 @@ These components are designed to work without requiring any content from the leg
 
 * ``Src\``
 
-  + DirectXTK source files and internal implementation headers
+  + DirectXTK12 source files and internal implementation headers
 
 * ``Audio\``
 
-  + DirectXTK for Audio source files and internal implementation headers
+  + DirectXTK12 for Audio source files and internal implementation headers
 
 * ``build\``
 
   + Contains miscellaneous build files and scripts.
 
-> MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK)
+> MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK). Audio, GamePad, Keyboard, Mouse, and SimpleMath are identical between both versions of the toolkit.
 
 ## Documentation
 
