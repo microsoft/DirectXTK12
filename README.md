@@ -56,7 +56,7 @@ These components are designed to work without requiring any content from the leg
 
 * ``build\``
 
-  + Contains YAML files for the build pipelines along with some miscellaneous build files and scripts.
+  + Contains miscellaneous build files and scripts.
 
 > MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK)
 
