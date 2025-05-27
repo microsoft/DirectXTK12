@@ -8,7 +8,7 @@ Copyright (c) Microsoft Corporation.
 
 **March 20, 2025**
 
-This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps for Windows 11 and Windows 10, game titles for Xbox Series X\|S and Xbox One, and Win32 desktop applications for Windows 11 and Windows 10.
+This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Win32 desktop applications for Windows 11 and Windows 10, game titles for Xbox Series X\|S and Xbox One, and Universal Windows Platform (UWP) apps for Windows 11 and Windows 10.
 
 This code is designed to build with Visual Studio 2019 (16.11), Visual Studio 2022, clang for Windows v12 or later, or MinGW 12.2. Use of the Windows 10 May 2020 Update SDK ([19041](https://walbourn.github.io/windows-10-may-2020-update-sdk/)) or later is required for Visual Studio.
 
@@ -48,17 +48,17 @@ These components are designed to work without requiring any content from the leg
 
 * ``Src\``
 
-  + DirectXTK source files and internal implementation headers
+  + DirectXTK12 source files and internal implementation headers
 
 * ``Audio\``
 
-  + DirectXTK for Audio source files and internal implementation headers
+  + DirectXTK12 for Audio source files and internal implementation headers
 
 * ``build\``
 
-  + Contains YAML files for the build pipelines along with some miscellaneous build files and scripts.
+  + Contains miscellaneous build files and scripts.
 
-> MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK)
+> MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK). Audio, GamePad, Keyboard, Mouse, and SimpleMath are identical between both versions of the toolkit.
 
 ## Documentation
 
@@ -125,6 +125,8 @@ This project welcomes contributions and suggestions. Most contributions require 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
 Tests for new features should also be submitted as a PR to the [Test Suite](https://github.com/walbourn/directxtk12test/wiki) repository.
+
+Information on coding-style can be found [here](https://github.com/microsoft/DirectXTK12/wiki/Implementation).
 
 ## Code of Conduct
 
