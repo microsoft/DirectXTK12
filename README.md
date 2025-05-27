@@ -126,6 +126,8 @@ When you submit a pull request, a CLA bot will automatically determine whether y
 
 Tests for new features should also be submitted as a PR to the [Test Suite](https://github.com/walbourn/directxtk12test/wiki) repository.
 
+Information on coding-style can be found [here](https://github.com/microsoft/DirectXTK12/wiki/Implementation).
+
 ## Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more informatsion see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
