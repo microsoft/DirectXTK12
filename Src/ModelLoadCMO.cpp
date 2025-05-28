@@ -55,7 +55,7 @@ namespace
         static const D3D12_INPUT_ELEMENT_DESC InputElements[InputElementCount];
     };
 
-    static_assert(sizeof(VertexPositionNormalTangentColorTexture) == sizeof(VSD3DStarter::VertexPositionNormalTangentColorTexture), "mismatch with CMO vertex type");
+    static_assert(sizeof(VertexPositionNormalTangentColorTexture) == sizeof(VSD3DStarter::Vertex), "mismatch with CMO vertex type");
 
     const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTangentColorTexture::InputElements[] =
     {
