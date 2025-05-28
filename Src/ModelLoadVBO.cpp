@@ -22,7 +22,7 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-static_assert(sizeof(VertexPositionNormalTexture) == 32, "VBO vertex size mismatch");
+static_assert(sizeof(VertexPositionNormalTexture) == sizeof(VBO::vertex_t), "VBO vertex size mismatch");
 
 namespace
 {
