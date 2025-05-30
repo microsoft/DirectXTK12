@@ -134,6 +134,22 @@ jobs:
         Write-Host "##vso[task.prependpath]$env:BUILD_SOURCESDIRECTORY\gw32\mingw32\bin"
 
       workingDirectory: $(Build.SourcesDirectory)
+  - task: PowerShell@2
+    displayName: Setup for Windows 11 SDK
+    inputs:
+      targetType: inline
+      script: |
+        $sdkroot = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots' | Select-Object -ExpandProperty KitsRoot10
+        $wsdkarchlib = "{0}lib\$(WIN11_SDK)\um\x86" -f $sdkroot
+        if (Test-Path "$wsdkarchlib") {
+            Write-Host "##vso[task.setvariable variable=WindowsSdkDir;]$sdkroot"
+            Write-Host "##vso[task.setvariable variable=LIB;]$wsdkarchlib"
+        }
+        else {
+            Write-Error -Message "##[error]Can't find Windows SDK ($(WIN11_SDK))" -ErrorAction Stop
+        }
+
+      workingDirectory: $(Build.SourcesDirectory)
   - task: CmdLine@2
     displayName: GCC version
     inputs:
@@ -187,6 +203,22 @@ jobs:
         echo ##vso[task.setvariable variable=VCPKG_DEFAULT_HOST_TRIPLET;]x64-mingw-static
 
       workingDirectory: $(Build.SourcesDirectory)\vcpkg
+  - task: PowerShell@2
+    displayName: Setup for Windows 11 SDK
+    inputs:
+      targetType: inline
+      script: |
+        $sdkroot = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots' | Select-Object -ExpandProperty KitsRoot10
+        $wsdkarchlib = "{0}lib\$(WIN11_SDK)\um\x64" -f $sdkroot
+        if (Test-Path "$wsdkarchlib") {
+            Write-Host "##vso[task.setvariable variable=WindowsSdkDir;]$sdkroot"
+            Write-Host "##vso[task.setvariable variable=LIB;]$wsdkarchlib"
+        }
+        else {
+            Write-Error -Message "##[error]Can't find Windows SDK ($(WIN11_SDK))" -ErrorAction Stop
+        }
+
+      workingDirectory: $(Build.SourcesDirectory)
   - task: CmdLine@2
     displayName: GCC version
     inputs:
