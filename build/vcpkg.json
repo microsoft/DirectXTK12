@@ -7,6 +7,10 @@
       "platform": "windows & !xbox"
     },
     {
+      "name": "directx12-agility",
+      "platform": "windows & !xbox"
+    },
+    {
       "name": "directx-headers",
       "platform": "windows & !xbox"
     },
