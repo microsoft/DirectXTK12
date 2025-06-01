@@ -429,8 +429,7 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_
 _Use_decl_annotations_
 SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
     : pImpl(std::make_unique<Impl>(texture, textureSize, glyphs, glyphCount, lineSpacing))
-{
-}
+{}
 
 
 SpriteFont::SpriteFont(SpriteFont&&) noexcept = default;
@@ -698,8 +697,7 @@ SpriteFont::SpriteFont(
         device, upload,
         reinterpret_cast<const unsigned short*>(fileName),
         cpuDescriptorDest, gpuDescriptor, forceSRGB)
-{
-}
+{}
 
 void SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, float scale, SpriteEffects effects, float layerDepth) const
 {

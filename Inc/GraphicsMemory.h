@@ -189,11 +189,11 @@ namespace DirectX
             DIRECTX_TOOLKIT_API inline GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16, uint32_t tag = TAG_GENERIC)
             {
                 auto alloc = AllocateImpl(size, alignment);
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+            #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
                 std::ignore = ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), tag);
-#else
+            #else
                 UNREFERENCED_PARAMETER(tag);
-#endif
+            #endif
                 return alloc;
             }
 
@@ -203,10 +203,10 @@ namespace DirectX
                 constexpr size_t alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
                 constexpr size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
                 auto alloc = AllocateImpl(alignedSize, alignment);
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
-                // This cast is needed to capture the type information in the PDB
+            #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+                            // This cast is needed to capture the type information in the PDB
                 std::ignore = reinterpret_cast<T*>(ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), TAG_CONSTANT));
-#endif
+            #endif
                 return alloc;
             }
             template<typename T> GraphicsResource AllocateConstant(const T& setData)
@@ -240,10 +240,10 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment);
 
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
-            // The declspec is required to ensure the proper information is captured in the PDB
+        #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+                    // The declspec is required to ensure the proper information is captured in the PDB
             DIRECTX_TOOLKIT_API __declspec(allocator) static void* __cdecl ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
-#endif
+        #endif
 
             std::unique_ptr<Impl> pImpl;
         };

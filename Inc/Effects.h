@@ -513,8 +513,7 @@ namespace DirectX
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
                 NormalMapEffect(device, effectFlags, pipelineDescription, false)
-            {
-            }
+            {}
 
             DIRECTX_TOOLKIT_API NormalMapEffect(NormalMapEffect&&) noexcept;
             DIRECTX_TOOLKIT_API NormalMapEffect& operator= (NormalMapEffect&&) noexcept;
@@ -583,8 +582,7 @@ namespace DirectX
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
                 NormalMapEffect(device, effectFlags, pipelineDescription, true)
-            {
-            }
+            {}
 
             SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
             SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
@@ -610,8 +608,7 @@ namespace DirectX
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
                 PBREffect(device, effectFlags, pipelineDescription, false)
-            {
-            }
+            {}
 
             DIRECTX_TOOLKIT_API PBREffect(PBREffect&&) noexcept;
             DIRECTX_TOOLKIT_API PBREffect& operator= (PBREffect&&) noexcept;
@@ -690,8 +687,7 @@ namespace DirectX
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription) :
                 PBREffect(device, effectFlags, pipelineDescription, true)
-            {
-            }
+            {}
 
             SkinnedPBREffect(SkinnedPBREffect&&) = default;
             SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;
@@ -878,8 +874,7 @@ namespace DirectX
                     , emissiveTextureIndex(-1)
                     , samplerIndex(-1)
                     , samplerIndex2(-1)
-                {
-                }
+                {}
             };
 
             virtual std::shared_ptr<IEffect> __cdecl CreateEffect(

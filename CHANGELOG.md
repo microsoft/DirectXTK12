@@ -10,7 +10,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * C++17 `std::byte` support for `FromMemory` functions
 * GamePad, Keyboard, and Mouse _GameInput_ implementation now supports both v0 and v1 of the API
 * SimpleMath changes for Vector2/Vector3 operators to speed up performance particularly in debug builds
-* *DirectX Tool Kit for Audio* changes:
+* _DirectX Tool Kit for Audio_ changes:
   * Added more audio engine flags to control X3DAudio usage: `AudioEngine_DisableLFERedirect`, `AudioEngine_DisableDopplerEffect`, `AudioEngine_ZeroCenter3D`
   * Repurposed `SoundEffectInstance_UseRedirectLFE` from an internal flag to a per voice override
   * Added `SoundEffectInstance_ZeroCenter3D` as a per voice override
@@ -28,7 +28,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### September 4, 2024
 * HLSL shaders built with `-HV 2021` when using DXIL
-* *DirectX Tool Kit for Audio* update
+* _DirectX Tool Kit for Audio_ update
   * Add ``IsValid`` method to **AudioEmitter** and **AudioListener**
 * Sync'd DDS.H with latest changes from DirectXTex
 * CMake project updates including support for ARM64EC
@@ -59,7 +59,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Fixed validation bug with WIC loader when using autogen and force RGBA together
 * Fixed minor link issue with a Xbox PIX custom memory method
 * Xbox shader compilation now uses ``-HV 2021``
-* Additional methods for *DirectX Tool Kit for Audio* emitter for linear and inverse-square falloff curves
+* Additional methods for _DirectX Tool Kit for Audio_ emitter for linear and inverse-square falloff curves
 
 ### September 1, 2023
 * GraphicsMemory updated to use Xbox PIX custom memory events with optional tags
@@ -75,7 +75,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * CMake project updates and fixes for clang/LLVM v16 warnings
 
 ### March 30, 2023
-* *DirectX Tool Kit for Audio* updates
+* _DirectX Tool Kit for Audio_ updates
   * Reworked audio device enumeration for XAudio 2.9 to use MMDeviceEnumerator rather than Windows Runtime APIs
   * ``GetOutputFormat`` now reports sample rate and bit-depth from the audio device properties
   * New method ``GetOutputSampleRate`` added to return the input sample rate of the mastering voice
@@ -103,7 +103,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Test suite updated with CTest support
 
 ### October 17, 2022
-* Additional methods for *DirectX Tool Kit for Audio* emitter and listener for cone and falloff curves
+* Additional methods for _DirectX Tool Kit for Audio_ emitter and listener for cone and falloff curves
 * Added use of C++11 inline namespaces to make it possible to link both DX11 and DX12 versions at once
 * Minor fix for ``CompileShaders.cmd`` to address additional 'paths with spaces' issues
 * Minor CMake update
@@ -145,7 +145,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * SimpleMath Quaternion updated with **ToEuler**, **RotateTowards**, **FromToRotation**, **LookRotation**, and **Angle** methods
 * Keyboard updated with new IME On/Off v-keys
 * Win32 Mouse now uses ``WM_ACTIVATE`` for more robust behavior
-* *DirectX Tool Kit for Audio* updated for Advanced Format (4Kn) wavebank streaming
+* _DirectX Tool Kit for Audio_ updated for Advanced Format (4Kn) wavebank streaming
 * Code and project review including fixing clang v13 warnings
 * Added CMakePresets.json
 
@@ -257,7 +257,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * **Transition** methods added for GeometricPrimtive and Model for use with static VBs/IBs
 * WICTextureLoader updated with new loader flags: ``FORCE_RGBA32``, ``FIT_POW2``, and ``MAKE_SQUARE``
 * SimpleMath no longer forces use of d3d11.h or d3d12.h (can be used with d3d9.h for example)
-* *DirectX Tool Kit for Audio* updated with **SoundStreamInstance** class for async I/O playback from XACT-style streaming wavebanks
+* _DirectX Tool Kit for Audio_ updated with **SoundStreamInstance** class for async I/O playback from XACT-style streaming wavebanks
 * Code cleanup
 * Updated D3DX12 internal copy to Windows 10 SDK (19041) version
 

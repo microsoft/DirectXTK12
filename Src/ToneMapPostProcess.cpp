@@ -224,8 +224,7 @@ namespace
     public:
         DeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
-        {
-        }
+        {}
 
         DeviceResources(const DeviceResources&) = delete;
         DeviceResources& operator=(const DeviceResources&) = delete;
@@ -329,10 +328,10 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         const CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -455,8 +454,7 @@ ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTa
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func)
     : pImpl(std::make_unique<Impl>(device, rtState, op, func))
 #endif
-{
-}
+{}
 
 
 ToneMapPostProcess::ToneMapPostProcess(ToneMapPostProcess&&) noexcept = default;

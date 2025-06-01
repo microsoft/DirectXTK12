@@ -96,15 +96,13 @@ namespace DirectX
                 parentIndex(c_Invalid),
                 childIndex(c_Invalid),
                 siblingIndex(c_Invalid)
-            {
-            }
+            {}
 
             ModelBone(uint32_t parent, uint32_t child, uint32_t sibling) noexcept :
                 parentIndex(parent),
                 childIndex(child),
                 siblingIndex(sibling)
-            {
-            }
+            {}
 
             uint32_t            parentIndex;
             uint32_t            childIndex;
@@ -550,7 +548,7 @@ namespace DirectX
                 _In_z_ const wchar_t* szFileName,
                 ModelLoaderFlags flags = ModelLoader_Default);
 
-#ifdef __cpp_lib_byte
+        #ifdef __cpp_lib_byte
             static std::unique_ptr<Model> __cdecl CreateFromCMO(
                 _In_opt_ ID3D12Device* device,
                 _In_reads_bytes_(dataSize) const std::byte* meshData, _In_ size_t dataSize,
@@ -575,10 +573,10 @@ namespace DirectX
             {
                 return CreateFromVBO(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
             }
-#endif //  __cpp_lib_byte
+        #endif //  __cpp_lib_byte
 
-            // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
-            // descriptor will be zero.
+                    // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
+                    // descriptor will be zero.
             D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
             {
                 D3D12_GPU_DESCRIPTOR_HANDLE handle = {};
@@ -624,7 +622,7 @@ namespace DirectX
             ModelBone::TransformArray       invBindPoseMatrices;
             std::wstring                    name;
 
-#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+        #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
             std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
                 _In_ ID3D12Device* device,
@@ -648,7 +646,7 @@ namespace DirectX
                 _In_z_ const __wchar_t* szFileName,
                 ModelLoaderFlags flags = ModelLoader_Default);
 
-#endif // !_NATIVE_WCHAR_T_DEFINED
+        #endif // !_NATIVE_WCHAR_T_DEFINED
 
         private:
             std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(
@@ -761,9 +759,9 @@ namespace DirectX
 
         DEFINE_ENUM_FLAG_OPERATORS(ModelLoaderFlags)
 
-    #ifdef __clang__
-    #pragma clang diagnostic pop
-    #endif
+        #ifdef __clang__
+        #pragma clang diagnostic pop
+        #endif
     }
 }
 

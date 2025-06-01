@@ -31,8 +31,7 @@ LinearAllocatorPage::LinearAllocatorPage() noexcept
     , mOffset(0)
     , mSize(0)
     , mRefCount(1)
-{
-}
+{}
 
 size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
 {

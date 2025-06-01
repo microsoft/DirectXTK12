@@ -86,8 +86,7 @@ namespace
     public:
         DeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
-        {
-        }
+        {}
 
         DeviceResources(const DeviceResources&) = delete;
         DeviceResources& operator=(const DeviceResources&) = delete;
@@ -201,10 +200,10 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         // Same as CommonStates::StaticLinearClamp
@@ -321,8 +320,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
     : pImpl(std::make_unique<Impl>(device, rtState, fx))
-{
-}
+{}
 
 
 DualPostProcess::DualPostProcess(DualPostProcess&&) noexcept = default;

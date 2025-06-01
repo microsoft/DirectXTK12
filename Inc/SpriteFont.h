@@ -170,7 +170,7 @@ namespace DirectX
                 float XAdvance;
             };
 
-#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+        #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
             DIRECTX_TOOLKIT_API SpriteFont(
                 ID3D12Device* device, ResourceUploadBatch& upload,
                 _In_z_ __wchar_t const* fileName,
@@ -220,7 +220,7 @@ namespace DirectX
             DIRECTX_TOOLKIT_API bool __cdecl ContainsCharacter(__wchar_t character) const;
 
             DIRECTX_TOOLKIT_API Glyph const* __cdecl FindGlyph(__wchar_t character) const;
-#endif // !_NATIVE_WCHAR_T_DEFINED
+        #endif // !_NATIVE_WCHAR_T_DEFINED
 
         private:
             // Private implementation.
