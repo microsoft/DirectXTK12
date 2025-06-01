@@ -143,7 +143,7 @@ namespace DirectX
     public:
         typename Traits::ConstantBufferType constants;
 
-       // Constructor.
+        // Constructor.
         EffectBase(_In_ ID3D12Device* device)
             : constants{},
             dirtyFlags(INT_MAX),

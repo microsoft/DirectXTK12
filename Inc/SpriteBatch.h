@@ -183,7 +183,7 @@ namespace DirectX
                 FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero,
                 SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
-           // Rotation mode to be applied to the sprite transformation
+            // Rotation mode to be applied to the sprite transformation
         #if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
             DIRECTX_TOOLKIT_API void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
             DIRECTX_TOOLKIT_API DXGI_MODE_ROTATION __cdecl GetRotation() const noexcept;

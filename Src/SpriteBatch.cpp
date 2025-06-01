@@ -75,9 +75,9 @@ XM_ALIGNED_STRUCT(16) SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
 {
 public:
     Impl(_In_ ID3D12Device* device,
-         ResourceUploadBatch& upload,
-         const SpriteBatchPipelineStateDescription& psoDesc,
-         const D3D12_VIEWPORT* viewport);
+        ResourceUploadBatch& upload,
+        const SpriteBatchPipelineStateDescription& psoDesc,
+        const D3D12_VIEWPORT* viewport);
 
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;

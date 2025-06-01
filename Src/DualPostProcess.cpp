@@ -155,7 +155,7 @@ public:
 private:
     int                                     mDirtyFlags;
 
-   // D3D constant buffer holds a copy of the same data as the public 'constants' field.
+    // D3D constant buffer holds a copy of the same data as the public 'constants' field.
     GraphicsResource mConstantBuffer;
 
     // Per instance cache of PSOs, populated with variants for each shader & layout

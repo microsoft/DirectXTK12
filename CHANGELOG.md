@@ -94,7 +94,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * DirectXHelpers updated with **CreateUnorderedAccessView**, **CreateRenderTargetView**, **CreateBufferShaderResourceView**, and **CreateBufferUnorderedAccessView** helpers
 * Added **EnableLighting** method to ``EffectFactory`` to support creating unlit model materials
 * GamePad, Keyboard, and Mouse headers have ``USING_XINPUT``, ``USING_GAMEINPUT``, ``USING_WINDOWS_GAMING_INPUT`` defines
-* Updates for *GameInputCreate* failure handling on PC
+* Updates for `GameInputCreate` failure handling on PC
 * Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
 * CMake project updated to require 3.20 or later
 * CMake and MSBuild project updates
