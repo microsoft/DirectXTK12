@@ -36,7 +36,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Added GitHub Actions YAML files
 
 ### June 4, 2024
-* *breaking change* `CreateUploadBuffer` helper no longer takes initialState parameter as it must be a specific value
+* _breaking change_ `CreateUploadBuffer` helper no longer takes initialState parameter as it must be a specific value
 * Renamed Internal namespace to ToolKitInternal for some conformance issues
 * Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
 * Add `c_initialRead/UAVTargetState` to help with PC vs. Xbox validation warnings
@@ -220,7 +220,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Minor code cleanup
 
 ### August 15, 2020
-* *breaking change* Converted default bool parameters on some effects to ``EffectFlags``:
+* _breaking change_ Converted default bool parameters on some effects to ``EffectFlags``:
   * Added new effects flags ``Specular``, ``Emissive``, ``Fresnel``, and ``Velocity``
   * Removed EnvironmentMapEffect ``fresnelEnabled``, ``specularEnabled`` parameters
   * Removed NormalMapEffect ``specularMap`` parameter
@@ -246,8 +246,8 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Added BufferHelpers header with functions **CreateStaticBuffer** and **CreateTextureFromMemory**
 * Added **IsPowerOf2** helper to DirectXHelpers
 * SpriteBatch now supports providing a new heap-based sampler on calls to **Begin**
-* Converted to typed enum bitmask flags (see release notes for details on this potential *breaking change*)
-  + ``AUDIO_ENGINE_FLAGS``, ``DDS_LOADER_FLAGS``, ``ModelLoaderFlags``, ``SOUND_EFFECT_INSTANCE_FLAGS``, and ``WIC_LOADER_FLAGS``
+* Converted to typed enum bitmask flags (see release notes for details on this potential _breaking change_)
+  * ``AUDIO_ENGINE_FLAGS``, ``DDS_LOADER_FLAGS``, ``ModelLoaderFlags``, ``SOUND_EFFECT_INSTANCE_FLAGS``, and ``WIC_LOADER_FLAGS``
 * WICTextureLoader for ``PNG`` codec now checks ``gAMA`` chunk to determine colorspace if the ``sRGB`` chunk is not found for legacy sRGB detection.
 * ``WIC_LOADER_SRGB_DEFAULT`` flag added when loading image via WIC without explicit colorspace metadata
 * CMake project updates
@@ -270,7 +270,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * CMake updated for PCH usage with 3.16 or later
 
 ### February 24, 2020
-* *breaking change* **Model::CreateFromxxx** parameter order changed and added ModelLoaderFlags
+* _breaking change_ **Model::CreateFromxxx** parameter order changed and added ModelLoaderFlags
 * Added ``ignoreWhitespace`` defaulted parameter to SpriteFont Measure methods
 * Sync'd DirectX Tool Kit for Audio and GamePad with DX11 version
 * Fixed encoding issue with Utilities.fxh
@@ -329,9 +329,9 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### October 31, 2018
 * Model loader for SDKMESH now attempts to use legacy DE3CN compressed normals
-  + This is an approximation only and emits a warning in debug builds
+  * This is an approximation only and emits a warning in debug builds
 * IEffectTextureFactory's **CreateTexture** interface method now returns the 'slot'
-  + This is for use with **GetResource** method
+  * This is for use with **GetResource** method
 * Minor code review
 
 ### October 25, 2018
@@ -351,7 +351,7 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### July 3, 2018
 * Model **LoadStaticBuffers** method to use static vs. dynamic VB/IB
-* *breaking change* Custom Model loaders and renderers should be updated for changes to ModelMeshPart
+* _breaking change_ Custom Model loaders and renderers should be updated for changes to ModelMeshPart
 * ModelMeshPart **DrawInstanced** method added
 * Code and project cleanup
 
@@ -438,10 +438,10 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ### October 6, 2016
 * SDKMESH loader and BasicEffects support for compressed vertex normals with biasing
-* *breaking change*
-  + DDSTextureLoader Ex bool ``forceSRGB`` and ``generateMipsIfMissing`` parmeters are now a ``DDS_LOADER`` flag
-  + WICTextureLoader Ex bool ``forceSRGB`` and ``generateMips`` parameters are now a ``WIC_LOADER`` flag
-  + Add ``vertexCount`` member to ModelMeshPart
+* _breaking change_
+  * DDSTextureLoader Ex bool ``forceSRGB`` and ``generateMipsIfMissing`` parmeters are now a ``DDS_LOADER`` flag
+  * WICTextureLoader Ex bool ``forceSRGB`` and ``generateMips`` parameters are now a ``WIC_LOADER`` flag
+  * Add ``vertexCount`` member to ModelMeshPart
 * Minor code cleanup
 
 ### September 15, 2016
@@ -472,22 +472,22 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 * Specular falloff lighting computation fix in shaders
 
 ### July 18, 2016
-* *breaking changes* to CommonStates, DescriptorHeap, Effects, Model, EffectPipelineStateDescription, and SpriteBatchPipelineStateDescription
-  + added texture sampler control to Effects and SpriteBatch
-  + fixed Model control of blend and rasterizer state
-  + fixed problems with PerPixelLighting control (EffectFactory defaults to per-pixel lighting)
-  + fixed control of weights-per-vertex optimization for SkinnedEffect
-  + removed unnecesary "one-light" shader permutations
-  + fixed bug in AlphaTestEfect implementation
-  + improved debug messages for misconfigured effects NormalMapEffect for normal-map with optional specular map rendering
+* _breaking change_ to CommonStates, DescriptorHeap, Effects, Model, EffectPipelineStateDescription, and SpriteBatchPipelineStateDescription
+  * added texture sampler control to Effects and SpriteBatch
+  * fixed Model control of blend and rasterizer state
+  * fixed problems with PerPixelLighting control (EffectFactory defaults to per-pixel lighting)
+  * fixed control of weights-per-vertex optimization for SkinnedEffect
+  * removed unnecesary "one-light" shader permutations
+  * fixed bug in AlphaTestEfect implementation
+  * improved debug messages for misconfigured effects NormalMapEffect for normal-map with optional specular map rendering
 * **EnvironmentMapEffect** now supports per-pixel lighting
 * Effects updated with **SetMatrices** and **SetColorAndAlpha** methods
-* GraphicsMemory support for SharedGraphicsResource shared_ptr style smart-pointer
-* PrimitiveBatch fix for DrawQuad
+* GraphicsMemory support for `SharedGraphicsResource` `std::shared_ptr` style smart-pointer
+* PrimitiveBatch fix for **DrawQuad**
 * ScreenGrab handles resource state transition
 * SimpleMath: improved interop with DirectXMath constants
-* WICTextureLoader module LoadWICTexture* methods
-* Fixed bugs with GenerateMips for sRGB and BGRA formats
+* WICTextureLoader module **LoadWICTextureX** methods
+* Fixed bugs with **GenerateMips** for sRGB and BGRA formats
 * Code cleanup
 
 ### June 30, 2016
