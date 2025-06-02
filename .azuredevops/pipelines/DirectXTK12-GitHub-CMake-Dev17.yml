@@ -28,7 +28,6 @@ trigger:
       - build/*.ps1
       - build/*.targets
       - build/*.xvd
-    drafts: false
 
 pr:
   branches:
