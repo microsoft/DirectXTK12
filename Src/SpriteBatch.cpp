@@ -75,9 +75,9 @@ XM_ALIGNED_STRUCT(16) SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
 {
 public:
     Impl(_In_ ID3D12Device* device,
-         ResourceUploadBatch& upload,
-         const SpriteBatchPipelineStateDescription& psoDesc,
-         const D3D12_VIEWPORT* viewport);
+        ResourceUploadBatch& upload,
+        const SpriteBatchPipelineStateDescription& psoDesc,
+        const D3D12_VIEWPORT* viewport);
 
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;
@@ -350,10 +350,10 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+    #ifdef _GAMING_XBOX_SCARLETT
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
         | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+    #endif
         ;
 
     const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -1046,8 +1046,7 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
     const SpriteBatchPipelineStateDescription& psoDesc,
     const D3D12_VIEWPORT* viewport)
     : pImpl(std::make_unique<Impl>(device, upload, psoDesc, viewport))
-{
-}
+{}
 
 
 SpriteBatch::SpriteBatch(SpriteBatch&&) noexcept = default;

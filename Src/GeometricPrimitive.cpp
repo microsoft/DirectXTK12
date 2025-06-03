@@ -238,14 +238,12 @@ void GeometricPrimitive::Impl::DrawInstanced(ID3D12GraphicsCommandList* commandL
 // Constructor.
 GeometricPrimitive::GeometricPrimitive() noexcept(false)
     : pImpl(std::make_unique<Impl>())
-{
-}
+{}
 
 
 // Destructor.
 GeometricPrimitive::~GeometricPrimitive()
-{
-}
+{}
 
 
 // Public entrypoints.

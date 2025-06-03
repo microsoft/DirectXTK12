@@ -470,8 +470,7 @@ GraphicsResource::GraphicsResource() noexcept
     , mMemory(nullptr)
     , mBufferOffset(0)
     , mSize(0)
-{
-}
+{}
 
 GraphicsResource::GraphicsResource(
     _In_ LinearAllocatorPage* page,
@@ -506,9 +505,9 @@ GraphicsResource::~GraphicsResource()
 {
     if (mPage)
     {
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
         PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
-#endif
+    #endif
 
         mPage->Release();
         mPage = nullptr;
@@ -525,9 +524,9 @@ void GraphicsResource::Reset() noexcept
 {
     if (mPage)
     {
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
         PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
-#endif
+    #endif
 
         mPage->Release();
         mPage = nullptr;
@@ -544,9 +543,9 @@ void GraphicsResource::Reset(GraphicsResource&& alloc) noexcept
 {
     if (mPage)
     {
-#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
         PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
-#endif
+    #endif
 
         mPage->Release();
         mPage = nullptr;
@@ -574,27 +573,22 @@ void GraphicsResource::Reset(GraphicsResource&& alloc) noexcept
 
 SharedGraphicsResource::SharedGraphicsResource() noexcept
     : mSharedResource(nullptr)
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource) noexcept(false)
     : mSharedResource(std::make_shared<GraphicsResource>(std::move(resource)))
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource) noexcept
     : mSharedResource(std::move(resource.mSharedResource))
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource) noexcept
     : mSharedResource(resource.mSharedResource)
-{
-}
+{}
 
 SharedGraphicsResource::~SharedGraphicsResource()
-{
-}
+{}
 
 SharedGraphicsResource&& SharedGraphicsResource::operator= (SharedGraphicsResource&& resource) noexcept
 {

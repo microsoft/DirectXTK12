@@ -126,8 +126,7 @@ namespace DirectX
     public:
         EffectDeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
-        {
-        }
+        {}
 
         ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
 
@@ -144,7 +143,7 @@ namespace DirectX
     public:
         typename Traits::ConstantBufferType constants;
 
-       // Constructor.
+        // Constructor.
         EffectBase(_In_ ID3D12Device* device)
             : constants{},
             dirtyFlags(INT_MAX),
@@ -214,7 +213,7 @@ namespace DirectX
             DeviceResources(_In_ ID3D12Device* device) noexcept
                 : EffectDeviceResources(device),
                 mRootSignature{}
-            { }
+            {}
 
             // Gets or lazily creates the specified root signature
             ID3D12RootSignature* GetRootSignature(int slot, D3D12_ROOT_SIGNATURE_DESC const& desc)

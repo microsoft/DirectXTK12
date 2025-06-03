@@ -384,10 +384,10 @@ void PBREffect::Impl::Initialize(
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParametersCount] = {};
@@ -872,8 +872,7 @@ void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
 //--------------------------------------------------------------------------------------
 
 SkinnedPBREffect::~SkinnedPBREffect()
-{
-}
+{}
 
 // Animation settings.
 void SkinnedPBREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)

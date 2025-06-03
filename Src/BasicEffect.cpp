@@ -450,10 +450,10 @@ BasicEffect::Impl::Impl(
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         // Create root parameters and initialize first (constants)
@@ -597,8 +597,7 @@ BasicEffect::BasicEffect(
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
-{
-}
+{}
 
 
 // Move constructor.

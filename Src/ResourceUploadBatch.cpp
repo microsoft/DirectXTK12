@@ -245,10 +245,10 @@ namespace
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+            #ifdef _GAMING_XBOX_SCARLETT
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+            #endif
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
             const CD3DX12_STATIC_SAMPLER_DESC sampler(
@@ -1076,8 +1076,7 @@ private:
 // Public constructor.
 ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false)
     : pImpl(std::make_unique<Impl>(device))
-{
-}
+{}
 
 
 ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept = default;

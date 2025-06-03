@@ -57,8 +57,7 @@ namespace DirectX
             , dsvFormat(DXGI_FORMAT_UNKNOWN)
             , sampleDesc{}
             , nodeMask(0)
-        {
-        }
+        {}
 
         RenderTargetState(const RenderTargetState&) = default;
         RenderTargetState& operator=(const RenderTargetState&) = default;

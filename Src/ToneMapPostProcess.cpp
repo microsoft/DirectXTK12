@@ -50,17 +50,17 @@ namespace
     // HDTV to UHDTV (Rec.709 color primaries into Rec.2020)
     constexpr float c_from709to2020[12] =
     {
-          0.6274040f, 0.3292820f, 0.0433136f, 0.f,
-          0.0690970f, 0.9195400f, 0.0113612f, 0.f,
-          0.0163916f, 0.0880132f, 0.8955950f, 0.f,
+        0.6274040f, 0.3292820f, 0.0433136f, 0.f,
+        0.0690970f, 0.9195400f, 0.0113612f, 0.f,
+        0.0163916f, 0.0880132f, 0.8955950f, 0.f,
     };
 
     // DCI-P3-D65 https://en.wikipedia.org/wiki/DCI-P3 to UHDTV (DCI-P3-D65 color primaries into Rec.2020)
     constexpr float c_fromP3D65to2020[12] =
     {
-           0.753845f,  0.198593f,  0.047562f, 0.f,
-          0.0457456f,  0.941777f, 0.0124772f, 0.f,
-        -0.00121055f, 0.0176041f,  0.983607f, 0.f,
+        0.753845f,    0.198593f,  0.047562f, 0.f,
+        0.0457456f,   0.941777f,  0.0124772f, 0.f,
+        -0.00121055f, 0.0176041f, 0.983607f, 0.f,
     };
 
     // HDTV to DCI-P3-D65 (a.k.a. Display P3 or P3D65)
@@ -224,8 +224,7 @@ namespace
     public:
         DeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device)
-        {
-        }
+        {}
 
         DeviceResources(const DeviceResources&) = delete;
         DeviceResources& operator=(const DeviceResources&) = delete;
@@ -287,7 +286,7 @@ public:
 private:
     int                                     mDirtyFlags;
 
-   // D3D constant buffer holds a copy of the same data as the public 'constants' field.
+    // D3D constant buffer holds a copy of the same data as the public 'constants' field.
     GraphicsResource mConstantBuffer;
 
     // Per instance cache of PSOs, populated with variants for each shader & layout
@@ -329,10 +328,10 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         const CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -455,8 +454,7 @@ ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTa
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func)
     : pImpl(std::make_unique<Impl>(device, rtState, op, func))
 #endif
-{
-}
+{}
 
 
 ToneMapPostProcess::ToneMapPostProcess(ToneMapPostProcess&&) noexcept = default;

@@ -40,13 +40,11 @@ ModelMeshPart::ModelMeshPart(uint32_t ipartIndex) noexcept :
     vertexBufferSize(0),
     primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
     indexFormat(DXGI_FORMAT_R16_UINT)
-{
-}
+{}
 
 
 ModelMeshPart::~ModelMeshPart()
-{
-}
+{}
 
 
 _Use_decl_annotations_
@@ -179,13 +177,11 @@ void ModelMeshPart::DrawMeshParts(
 
 ModelMesh::ModelMesh() noexcept :
     boneIndex(ModelBone::c_Invalid)
-{
-}
+{}
 
 
 ModelMesh::~ModelMesh()
-{
-}
+{}
 
 // Draw the mesh
 void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
@@ -228,12 +224,10 @@ void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMesh
 //--------------------------------------------------------------------------------------
 
 Model::Model() noexcept
-{
-}
+{}
 
 Model::~Model()
-{
-}
+{}
 
 Model::Model(Model const& other) :
     meshes(other.meshes),

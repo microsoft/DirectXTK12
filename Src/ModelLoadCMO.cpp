@@ -132,7 +132,8 @@ namespace
         MaterialRecordCMO() noexcept :
             pMaterial(nullptr),
             materialIndex(0),
-            texture{} {}
+            texture{}
+        {}
     };
 
     // Shared VB input element description

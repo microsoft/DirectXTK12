@@ -178,10 +178,10 @@ namespace DirectX
                 RECT const& destinationRectangle,
                 FXMVECTOR color = Colors::White);
             DIRECTX_TOOLKIT_API void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE
-                 textureSRV, XMUINT2 const& textureSize,
-                 RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle,
-                 FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero,
-                 SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
+                textureSRV, XMUINT2 const& textureSize,
+                RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle,
+                FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero,
+                SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
             // Rotation mode to be applied to the sprite transformation
         #if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
