@@ -228,7 +228,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
 
-        auto meshName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // [CodeQL.SM02986]: The cast here is intentional.
+        auto meshName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
         usedSize += sizeof(wchar_t)*(*nName);
         if (dataSize < usedSize)
@@ -260,7 +260,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
 
-            auto matName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // [CodeQL.SM02986]: The cast here is intentional.
+            auto matName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
             usedSize += sizeof(wchar_t)*(*nName);
             if (dataSize < usedSize)
@@ -282,7 +282,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
 
-            auto psName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // [CodeQL.SM02986]: The cast here is intentional.
+            auto psName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
             usedSize += sizeof(wchar_t)*(*nName);
             if (dataSize < usedSize)
@@ -297,7 +297,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
 
-                auto txtName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // [CodeQL.SM02986]: The cast here is intentional.
+                auto txtName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
                 usedSize += sizeof(wchar_t)*(*nName);
                 if (dataSize < usedSize)
@@ -527,7 +527,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
 
-                auto boneName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // [CodeQL.SM02986]: The cast here is intentional.
+                auto boneName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
                 usedSize += sizeof(wchar_t) * (*nName);
                 if (dataSize < usedSize)
