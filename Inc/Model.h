@@ -538,6 +538,18 @@ namespace DirectX
                 _In_z_ const wchar_t* szFileName,
                 ModelLoaderFlags flags = ModelLoader_Default);
 
+        #ifdef DIRECTX_TOOLKIT_GLTF
+            // Loads a model from a .gltf or .glb file
+            static std::unique_ptr<Model> __cdecl CreateFromGLTF(
+                _In_opt_ ID3D12Device* device,
+                _In_reads_bytes_(dataSize) const uint8_t* meshData, _In_ size_t dataSize,
+                ModelLoaderFlags flags = ModelLoader_Default);
+            static std::unique_ptr<Model> __cdecl CreateFromGLTF(
+                _In_opt_ ID3D12Device* device,
+                _In_z_ const wchar_t* szFileName,
+                ModelLoaderFlags flags = ModelLoader_Default);
+        #endif
+
             // Loads a model from a .VBO file
             static std::unique_ptr<Model> __cdecl CreateFromVBO(
                 _In_opt_ ID3D12Device* device,
@@ -565,6 +577,16 @@ namespace DirectX
             {
                 return CreateFromSDKMESH(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
             }
+
+        #ifdef DIRECTX_TOOLKIT_GLTF
+            static std::unique_ptr<Model> __cdecl CreateFromGLTF(
+                _In_opt_ ID3D12Device* device,
+                _In_reads_bytes_(dataSize) const std::byte* meshData, _In_ size_t dataSize,
+                ModelLoaderFlags flags = ModelLoader_Default)
+            {
+                return CreateFromGLTF(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
+            }
+        #endif
 
             static std::unique_ptr<Model> __cdecl CreateFromVBO(
                 _In_opt_ ID3D12Device* device,

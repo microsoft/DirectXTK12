@@ -19,6 +19,7 @@
       "name": "gameinput",
       "platform": "windows & x64 & !xbox"
     },
+    "nlohmann-json",
     {
       "name": "xaudio2redist",
       "platform": "windows & !arm32 & !xbox"
