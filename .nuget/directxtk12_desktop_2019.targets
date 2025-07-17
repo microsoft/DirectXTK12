@@ -16,12 +16,14 @@
 
   <PropertyGroup>
     <directxtk12-LibPath>$(MSBuildThisFileDirectory)..\..\native\lib\$(PlatformTarget)\$(NuGetConfiguration)</directxtk12-LibPath>
+    <directxtk12-LibName Condition="'$(SpectreMitigation)'!='' AND '$(SpectreMitigation)'!='false'">DirectXTK12_Spectre</directxtk12-LibName>
+    <directxtk12-LibName Condition="'$(directxtk12-LibName)'==''">DirectXTK12</directxtk12-LibName>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <Link>
       <AdditionalLibraryDirectories>$(directxtk12-LibPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(directxtk12-LibName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 
