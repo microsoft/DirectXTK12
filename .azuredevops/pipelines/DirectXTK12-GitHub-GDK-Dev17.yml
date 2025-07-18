@@ -110,7 +110,6 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
-          msbuildVersion: 17.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - template: '/.azuredevops/templates/DirectXTK12-build-gdk.yml'
