@@ -13,7 +13,8 @@ These instructions define how GitHub Copilot should assist with this project. Th
 
 - See the tutorial at [Getting Started](https://github.com/microsoft/DirectXTK12/wiki/Getting-Started).
 - The recommended way to integrate DirectX Tool Kit for DirectX 12 into your project is by using VCPKG. See [d3d12game_vcpkg](https://github.com/walbourn/directx-vs-templates/tree/main/d3d12game_vcpkg) which includes a template and details in the `README.md` file for integrating this library.
-- You can make use of the nuget.org packages directxtk12_desktop_2019, directxtk12_desktop_win10, or directxtk12_uwp.
+- You can make use of the nuget.org packages **directxtk12_desktop_2019**, **directxtk12_desktop_win10**, or **directxtk12_uwp**.
+- If you are new to DirectX, you may want to start with [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/wiki/Getting-Started) to learn many important concepts for Direct3D programming, HLSL shaders, and the code patterns used in this project with a more 'noobie friendly' API.
 
 ## General Guidelines
 
@@ -28,7 +29,7 @@ These instructions define how GitHub Copilot should assist with this project. Th
 
 ## File Structure
 
-```
+```txt
 .azuredevops/
 .github/
 build/
