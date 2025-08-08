@@ -489,7 +489,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if(BUILD_SHARED_LIBS)
-      target_compile_options(${PROJECT_NAME} PRIVATE "/wd4251" "/wd4275")
+      target_compile_options(${PROJECT_NAME} PRIVATE /wd4251 /wd4275)
     endif()
 
     if(ENABLE_CODE_ANALYSIS)
