@@ -37,6 +37,8 @@ option(ENABLE_CODE_ANALYSIS "Use Static Code Analysis on build" OFF)
 
 option(ENABLE_CODE_COVERAGE "Build with code-coverage" OFF)
 
+option(ENABLE_CODE_PROFILING "Build for profiling" OFF)
+
 option(USE_PREBUILT_SHADERS "Use externally built HLSL shaders" OFF)
 
 option(BUILD_DXIL_SHADERS "Use DXC Shader Model 6 for shaders" ON)
@@ -495,6 +497,11 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if(ENABLE_CODE_ANALYSIS)
       message(STATUS "Building with Code Analysis (PREFIX)")
       target_compile_options(${PROJECT_NAME} PRIVATE /analyze /WX)
+    endif()
+
+    if(ENABLE_CODE_PROFILING)
+      message(STATUS "Building with /PROFILE")
+      target_link_options(${PROJECT_NAME} PRIVATE /profile)
     endif()
 
     if(ENABLE_SPECTRE_MITIGATION
