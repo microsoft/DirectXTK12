@@ -277,6 +277,18 @@ DebugEffect::Impl::Impl(
     constants.ambientDownAndAlpha = s_lower;
     constants.ambientRange = g_XMOne;
 
+    switch(debugMode)
+    {
+        case Mode_Default:
+        case Mode_Normals:
+        case Mode_Tangents:
+        case Mode_BiTangents:
+            break;
+
+        default:
+            throw std::invalid_argument("Invalid debugMode");
+    }
+
     // Create root signature.
     {
         ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
