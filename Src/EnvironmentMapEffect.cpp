@@ -373,6 +373,17 @@ EnvironmentMapEffect::Impl::Impl(
     static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode)) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices)) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
+    switch(mapping)
+    {
+    case Mapping_Cube:
+    case Mapping_Sphere:
+    case Mapping_DualParabola:
+        break;
+
+    default:
+        throw std::invalid_argument("Unsupported mapping");
+    }
+
     // Create root signature.
     {
         ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
