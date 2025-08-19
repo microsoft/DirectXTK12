@@ -114,6 +114,9 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch)
 {
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     // Convert dynamic VB to static VB

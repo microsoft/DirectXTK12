@@ -187,11 +187,15 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     bloomBaseIntensity(1.f),
     bloomSaturation(1.f),
     bloomBaseSaturation(1.f),
-    mDirtyFlags(INT_MAX),
-    mDeviceResources(deviceResourcesPool.DemandCreate(device))
+    mDirtyFlags(INT_MAX)
 {
     if (ifx >= Effect_Max)
         throw std::invalid_argument("Effect not defined");
+
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
+    mDeviceResources = deviceResourcesPool.DemandCreate(device);
 
     // Create root signature.
     {

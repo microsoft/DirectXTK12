@@ -242,11 +242,15 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     bloomBrightness(1.f),
     bloomThreshold(0.25f),
     bloomHorizontal(true),
-    mDirtyFlags(INT_MAX),
-    mDeviceResources(deviceResourcesPool.DemandCreate(device))
+    mDirtyFlags(INT_MAX)
 {
     if (ifx >= Effect_Max)
         throw std::invalid_argument("Effect not defined");
+
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
+    mDeviceResources = deviceResourcesPool.DemandCreate(device);
 
     switch (ifx)
     {

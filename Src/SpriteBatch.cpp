@@ -77,7 +77,7 @@ public:
     Impl(_In_ ID3D12Device* device,
         ResourceUploadBatch& upload,
         const SpriteBatchPipelineStateDescription& psoDesc,
-        const D3D12_VIEWPORT* viewport);
+        _In_opt_ const D3D12_VIEWPORT* viewport);
 
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;
@@ -428,7 +428,10 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 
 // Per-SpriteBatch constructor.
 _Use_decl_annotations_
-SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const SpriteBatchPipelineStateDescription& psoDesc, const D3D12_VIEWPORT* viewport)
+SpriteBatch::Impl::Impl(ID3D12Device* device,
+        ResourceUploadBatch& upload,
+        const SpriteBatchPipelineStateDescription& psoDesc,
+        const D3D12_VIEWPORT* viewport)
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
     mSetViewport(false),
     mViewPort{},
@@ -443,6 +446,9 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     mSpriteCount(0),
     mDeviceResources(deviceResourcesPool.DemandCreate(device, upload))
 {
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
     if (viewport != nullptr)
     {
         mViewPort = *viewport;

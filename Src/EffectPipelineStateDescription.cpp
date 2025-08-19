@@ -91,6 +91,9 @@ void EffectPipelineStateDescription::CreatePipelineState(
     const D3D12_SHADER_BYTECODE& pixelShader,
     _Outptr_ ID3D12PipelineState** pPipelineState) const
 {
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     auto psoDesc = GetDesc();
 #else

@@ -52,13 +52,6 @@ public:
     template<typename TAction>
     void ForEachGlyph(_In_z_ wchar_t const* text, TAction action, bool ignoreWhitespace) const;
 
-    void CreateTextureResource(_In_ ID3D12Device* device,
-        ResourceUploadBatch& upload,
-        uint32_t width, uint32_t height,
-        DXGI_FORMAT format,
-        uint32_t stride, uint32_t rows,
-        _In_reads_(stride * rows) const uint8_t* data) noexcept(false);
-
     const wchar_t* ConvertUTF8(_In_z_ const char *text) noexcept(false);
 
     // Fields.
@@ -71,6 +64,13 @@ public:
     float lineSpacing;
 
 private:
+    void CreateTextureResource(_In_ ID3D12Device* device,
+        ResourceUploadBatch& upload,
+        uint32_t width, uint32_t height,
+        DXGI_FORMAT format,
+        uint32_t stride, uint32_t rows,
+        _In_reads_(stride * rows) const uint8_t* data) noexcept(false);
+
     size_t utfBufferSize;
     std::unique_ptr<wchar_t[]> utfBuffer;
 };
@@ -117,6 +117,9 @@ SpriteFont::Impl::Impl(
     lineSpacing(0),
     utfBufferSize(0)
 {
+    if (!device || !reader)
+        throw std::invalid_argument("Direct3D device is null");
+
     // Validate the header.
     for (char const* magic = spriteFontMagic; *magic; magic++)
     {
