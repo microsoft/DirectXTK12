@@ -147,9 +147,13 @@ namespace DirectX
         EffectBase(_In_ ID3D12Device* device)
             : constants{},
             dirtyFlags(INT_MAX),
-            mRootSignature(nullptr),
-            mDeviceResources(deviceResourcesPool.DemandCreate(device))
+            mRootSignature(nullptr)
         {
+            if (!device)
+                throw std::invalid_argument("Direct3D device is null");
+
+            mDeviceResources = deviceResourcesPool.DemandCreate(device);
+
             // Initialize the constant buffer data
             mConstantBuffer = GraphicsMemory::Get(device).AllocateConstant(constants);
         }

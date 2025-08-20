@@ -315,6 +315,9 @@ void Model::LoadStaticBuffers(
     ResourceUploadBatch& resourceUploadBatch,
     bool keepMemory)
 {
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
     // Gather all unique parts
     std::set<ModelMeshPart*> uniqueParts;
     for (const auto& mesh : meshes)

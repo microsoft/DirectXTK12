@@ -81,7 +81,7 @@ variables:
   - name: DIRECTX_DXC_DIR
     value: '$(Build.SourcesDirectory)/vcpkg/installed/x64-mingw-static/tools/directx-dxc'
   - name: WIN11_SDK
-    value: '10.0.22000.0'
+    value: '10.0.26100.0'
   - name: BASE_URL
     value: https://github.com/brechtsanders/winlibs_mingw/releases/download
   - name: URL_MINGW32
@@ -92,6 +92,7 @@ variables:
 jobs:
   - job: MINGW32_BUILD
     displayName: 'Minimalist GNU for Windows (MinGW32) BUILD_TESTING=ON'
+    timeoutInMinutes: 30
     steps:
       - checkout: self
         clean: true
@@ -179,6 +180,7 @@ jobs:
 
   - job: MINGW64_BUILD
     displayName: 'Minimalist GNU for Windows (MinGW-W64) BUILD_TESTING=ON'
+    timeoutInMinutes: 90
     steps:
       - checkout: self
         clean: true

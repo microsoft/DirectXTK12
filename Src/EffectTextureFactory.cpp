@@ -50,6 +50,9 @@ public:
         , mForceSRGB(false)
         , mAutoGenMips(false)
     {
+        if (!device)
+            throw std::invalid_argument("Direct3D device is null");
+
         *mPath = 0;
     }
 

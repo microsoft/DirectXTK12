@@ -69,6 +69,9 @@ public:
         , mEnableInstancing(false)
         , mDevice(device)
     {
+        if (!device)
+            throw std::invalid_argument("Direct3D device is null");
+
         if (textureDescriptors)
             mTextureDescriptors = std::make_unique<DescriptorHeap>(textureDescriptors);
         if (samplerDescriptors)

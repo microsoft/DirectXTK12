@@ -312,14 +312,18 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     texture{},
     linearExposure(1.f),
     paperWhiteNits(200.f),
-    mDirtyFlags(INT_MAX),
-    mDeviceResources(deviceResourcesPool.DemandCreate(device))
+    mDirtyFlags(INT_MAX)
 {
     if (op >= Operator_Max)
         throw std::invalid_argument("Tonemap operator not defined");
 
     if (func > TransferFunction_Max)
         throw std::invalid_argument("Transfer function not defined");
+
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
+    mDeviceResources = deviceResourcesPool.DemandCreate(device);
 
     // Create root signature.
     {

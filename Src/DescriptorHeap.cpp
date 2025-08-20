@@ -34,9 +34,12 @@ namespace
 
 _Use_decl_annotations_
 DescriptorHeap::DescriptorHeap(
-    ID3D12DescriptorHeap* pExistingHeap) noexcept
+    ID3D12DescriptorHeap* pExistingHeap)
     : m_pHeap(pExistingHeap)
 {
+    if (!pExistingHeap)
+        throw std::invalid_argument("Heap is null");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     m_hCPU = pExistingHeap->GetCPUDescriptorHandleForHeapStart();
     m_hGPU = pExistingHeap->GetGPUDescriptorHandleForHeapStart();
@@ -56,7 +59,7 @@ DescriptorHeap::DescriptorHeap(
 _Use_decl_annotations_
 DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
-    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) noexcept(false) :
+    const D3D12_DESCRIPTOR_HEAP_DESC* pDesc) :
     m_desc{},
     m_hCPU{},
     m_hGPU{},
@@ -70,7 +73,7 @@ DescriptorHeap::DescriptorHeap(
     ID3D12Device* device,
     D3D12_DESCRIPTOR_HEAP_TYPE type,
     D3D12_DESCRIPTOR_HEAP_FLAGS flags,
-    size_t count) noexcept(false) :
+    size_t count) :
     m_desc{},
     m_hCPU{},
     m_hGPU{},
@@ -155,6 +158,9 @@ void DescriptorHeap::Create(
     ID3D12Device* pDevice,
     const D3D12_DESCRIPTOR_HEAP_DESC* pDesc)
 {
+    if (!pDevice)
+        throw std::invalid_argument("Direct3D device is null");
+
     assert(pDesc != nullptr);
 
     m_desc = *pDesc;

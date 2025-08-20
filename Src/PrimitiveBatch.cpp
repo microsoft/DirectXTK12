@@ -79,6 +79,9 @@ PrimitiveBatchBase::Impl::Impl(_In_ ID3D12Device* device, size_t maxIndices, siz
     mBaseIndex(0),
     mBaseVertex(0)
 {
+    if (!device)
+        throw std::invalid_argument("Direct3D device is null");
+
     if (!maxVertices)
         throw std::invalid_argument("maxVertices must be greater than 0");
 
