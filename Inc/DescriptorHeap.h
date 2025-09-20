@@ -23,6 +23,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 
 #include <wrl/client.h>
