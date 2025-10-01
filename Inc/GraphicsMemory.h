@@ -230,6 +230,9 @@ namespace DirectX
             DIRECTX_TOOLKIT_API GraphicsMemoryStatistics __cdecl GetStatistics();
             DIRECTX_TOOLKIT_API void __cdecl ResetStatistics();
 
+            // Properties
+            DIRECTX_TOOLKIT_API ID3D12Device* __cdecl GetDevice() const noexcept;
+
             // Singleton
             // Should only use nullptr for single GPU scenarios; mGPU requires a specific device
             DIRECTX_TOOLKIT_API static GraphicsMemory& __cdecl Get(_In_opt_ ID3D12Device* device = nullptr);

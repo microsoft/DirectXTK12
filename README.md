@@ -88,6 +88,8 @@ FOR SECURITY ADVISORIES, see [GitHub](https://github.com/microsoft/DirectXTK12/s
 
 For a full change history, see [CHANGELOG.md](https://github.com/microsoft/DirectXTK12/blob/main/CHANGELOG.md).
 
+* The CMake projects require 3.21 or later. VS 2019 users will need to install a standalone version of CMake 3.21 or later and add it to their PATH.
+
 * In the June 2024 release, the defaulted parameter `initialState` for the ``CreateUploadBuffer`` function in _BufferHelpers_ was removed. Per the DirectX 12 validation layer, the only valid initial state for an upload buffer is ``D3D12_RESOURCE_STATE_GENERIC_READ``.
 
 * Starting with the February 2023 release, the Mouse class implementation of relative mouse movement was updated to accumulate changes between calls to ``GetState``. By default, each time you call ``GetState`` the deltas are reset which works for scenarios where you use relative movement but only call the method once per frame. If you call it more than once per frame, then add an explicit call to ``EndOfInputFrame`` to use an explicit reset model instead.

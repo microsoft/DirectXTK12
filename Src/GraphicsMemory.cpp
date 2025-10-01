@@ -210,9 +210,7 @@ namespace
             stats.totalPages = totalPageCount;
         }
 
-    #if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
-    #endif
 
     private:
         ComPtr<ID3D12Device> mDevice;
@@ -330,6 +328,8 @@ public:
         m_peakPages = 0;
     }
 
+    ID3D12Device* GetDevice() const noexcept { return mDeviceAllocator ? mDeviceAllocator->GetDevice() : nullptr; }
+
     GraphicsMemory* mOwner;
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     static GraphicsMemory::Impl* s_graphicsMemory;
@@ -413,6 +413,14 @@ GraphicsMemoryStatistics GraphicsMemory::GetStatistics()
 void GraphicsMemory::ResetStatistics()
 {
     pImpl->ResetStatistics();
+}
+
+ID3D12Device* GraphicsMemory::GetDevice() const noexcept
+{
+    if (!pImpl)
+        return nullptr;
+
+    return pImpl->GetDevice();
 }
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
