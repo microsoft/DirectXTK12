@@ -37,16 +37,20 @@ goto continue
 set XBOXOPTS=-HV 2021 /D__XBOX_PER_THREAD_SCRATCH_SIZE_LIMIT_IN_BYTES=0
 if %2.==scarlett. (
 set XBOXPREFIX=XboxGamingScarlett
-set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
+set XBOXDXC="%GameDKXboxLatest%\xbox\bin\gen9\DXC.exe"
 ) else (
 set XBOXPREFIX=XboxGamingXboxOne
+set XBOXDXC="%GameDKXboxLatest%\xbox\bin\gen8\DXC.exe"
+)
+if exist %XBOXDXC% goto continue
+
+if %2.==scarlett. (
+set XBOXDXC="%GameDKLatest%\GXDK\bin\Scarlett\DXC.exe"
+) else (
 set XBOXDXC="%GameDKLatest%\GXDK\bin\XboxOne\DXC.exe"
 )
-
 if exist %XBOXDXC% goto continue
-set XBOXDXC="%GameDKLatest%\GXDK\bin\DXC.exe"
-if not exist %XBOXDXC% goto needgxdk
-goto continue
+goto needgxdk
 
 :continuedxil
 set DXILOPTS=-HV 2021
