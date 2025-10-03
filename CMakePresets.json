@@ -134,6 +134,14 @@
       "hidden": true
     },
     {
+      "name": "XINPUT",
+      "cacheVariables": {
+        "BUILD_XAUDIO_WIN10": true,
+        "BUILD_XINPUT": true
+      },
+      "hidden": true
+    },
+    {
       "name": "GDK",
       "cacheVariables": {
         "BUILD_XAUDIO_WIN10": true,
@@ -309,8 +317,11 @@
     { "name": "arm64ec-Debug-Redist"  , "description": "MSVC for ARM64EC (Debug) with XAudio2Redist", "inherits": [ "base", "ARM64EC", "Debug", "MSVC", "XAudio2Redist", "VCPKG", "X64_ARM64EC" ] },
     { "name": "arm64ec-Release-Redist", "description": "MSVC for ARM64EC (Release) with XAudio2Redist", "inherits": [ "base", "ARM64EC", "Release", "MSVC", "XAudio2Redist", "VCPKG", "X64_ARM64EC" ] },
 
-    { "name": "x64-Debug-GDK"    , "description": "MSVC for x64 (Debug) with Microsoft GDK", "inherits": [ "base", "x64", "Debug", "MSVC", "GDK" ] },
-    { "name": "x64-Release-GDK"  , "description": "MSVC for x64 (Release) with Microsoft GDK", "inherits": [ "base", "x64", "Release", "MSVC", "GDK" ] },
+    { "name": "x64-Debug-XI"    , "description": "MSVC for x64 (Debug) using XINPUT", "inherits": [ "base", "x64", "Debug", "MSVC", "XINPUT" ] },
+    { "name": "x64-Release-XI"  , "description": "MSVC for x64 (Release) using XINPUT", "inherits": [ "base", "x64", "Release", "MSVC", "XINPUT" ] },
+
+    { "name": "x64-Debug-GDK"   , "description": "MSVC for x64 (Debug) using GameInput", "inherits": [ "base", "x64", "Debug", "MSVC", "GDK" ] },
+    { "name": "x64-Release-GDK" , "description": "MSVC for x64 (Release) using GameInput", "inherits": [ "base", "x64", "Release", "MSVC", "GDK" ] },
 
     { "name": "x64-Debug-Scarlett"    , "description": "MSVC for x64 (Debug) for Xbox Series X|S", "inherits": [ "base", "x64", "Debug", "MSVC", "Scarlett" ] },
     { "name": "x64-Release-Scarlett"  , "description": "MSVC for x64 (Release) for Xbox Series X|S", "inherits": [ "base", "x64", "Release", "MSVC", "Scarlett" ] },
