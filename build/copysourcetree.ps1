@@ -19,6 +19,9 @@ Indicates overwrite of existing content if present.
 .PARAMETER Clean
 Delete content in the target directory before copying.
 
+.PARAMETER AssetsOnly
+Only copy asset files, not source code.
+
 .EXAMPLE
 copysourcetree.ps1 -Destination D:\temp\abc
 
@@ -36,7 +39,8 @@ param(
     [string]$Destination,
     [switch]$Quiet,
     [switch]$Overwrite,
-    [switch]$Clean
+    [switch]$Clean,
+    [switch]$AssetsOnly
 )
 
 $xcopyFlags = "/Y/S"
@@ -61,10 +65,7 @@ function Copy-Source {
         "*.cmd",
         "*.hlsl", "*.hlsli", "*.fx", "*.fxh",
         "*.sln", "*.vcxproj", "*.vcxproj.filters",
-        "*.config", "*.mgc", "*.appxmanifest", "*.manifest",
-        "*.spritefont", "*.bmp", "*.dds", "*.png", "*.jpg", "*.tif", "*.tiff",
-        "*.sdkmesh*", "*.cmo", "*._obj", "*.mtl", "*.vbo",
-        "*.wav", "*.xwb" )
+        "*.config", "*.mgc", "*.appxmanifest", "*.manifest")
 
     $excludefile = Split-Path -Path $PSScriptRoot -Parent
     $excludefile = Join-Path $excludefile -Child "build"
@@ -75,6 +76,32 @@ function Copy-Source {
         xcopy $xcopyFlags /EXCLUDE:$excludefile $files $Destination
         if ($LastExitCode -ne 0) {
             Write-Error "Failed copying source files" -ErrorAction Stop
+        }
+    }
+}
+
+function Copy-Assets {
+
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path,
+        [Parameter(Mandatory)]
+        [string]$Destination
+        )
+
+    $filters = @("*.spritefont", "*.bmp", "*.dds", "*.png", "*.jpg", "*.tif", "*.tiff",
+        "*.sdkmesh*", "*.cmo", "*._obj", "*.mtl", "*.vbo",
+        "*.wav", "*.xwb")
+
+    $excludefile = Split-Path -Path $PSScriptRoot -Parent
+    $excludefile = Join-Path $excludefile -Child "build"
+    $excludefile = Join-Path $excludefile -Child "copysourcetree.flt"
+
+    $filters | ForEach-Object {
+        $files = Join-Path -Path $Path -ChildPath $_
+        xcopy $xcopyFlags /EXCLUDE:$excludefile $files $Destination
+        if ($LastExitCode -ne 0) {
+            Write-Error "Failed copying asset files" -ErrorAction Stop
         }
     }
 }
@@ -105,4 +132,10 @@ $license = Join-Path -Path $sourcedir -ChildPath "LICENSE"
 
 Copy-Item $readme -Destination $destdir
 Copy-Item $license -Destination $destdir
-Copy-Source -Path $sourcedir -Destination $destdir
+
+if (-Not $AssetsOnly)
+{
+    Copy-Source -Path $sourcedir -Destination $destdir
+}
+
+Copy-Assets -Path $sourcedir -Destination $destdir
