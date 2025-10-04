@@ -80,7 +80,7 @@ function Copy-Source {
     }
 }
 
-function Copy-Assets {
+function Copy-Asset {
 
     param(
         [Parameter(Mandatory)]
@@ -138,4 +138,4 @@ if (-Not $AssetsOnly)
     Copy-Source -Path $sourcedir -Destination $destdir
 }
 
-Copy-Assets -Path $sourcedir -Destination $destdir
+Copy-Asset -Path $sourcedir -Destination $destdir
