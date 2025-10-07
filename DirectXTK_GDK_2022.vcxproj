@@ -710,7 +710,7 @@
     <Delete Files="@(_ATGShaderSymbols)" />
   </Target>
   <Target Name="ATGEnsureShadersXbox" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
-    <Exec Condition="!Exists('Src/Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)Src/Shaders" Command="CompileShaders gxdk" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath);CompileShadersOutput=$(ProjectDir)Src/Shaders/Compiled" LogStandardErrorAsError="true" />
+    <Exec Condition="!Exists('Src/Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)Src/Shaders" Command="CompileShaders gxdk" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath);GameDKXboxLatest=$(DurangoXdkInstallPath);CompileShadersOutput=$(ProjectDir)Src/Shaders/Compiled" LogStandardErrorAsError="true" />
   </Target>
   <Target Name="ATGDeleteShadersXbox" AfterTargets="Clean" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
     <ItemGroup>
@@ -721,7 +721,7 @@
     <Delete Files="@(_ATGShaderSymbols)" />
   </Target>
   <Target Name="ATGEnsureShadersXboxScarlett" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">
-    <Exec Condition="!Exists('Src/Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)Src/Shaders" Command="CompileShaders gxdk scarlett" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath);CompileShadersOutput=$(ProjectDir)Src/Shaders/Compiled" LogStandardErrorAsError="true" />
+    <Exec Condition="!Exists('Src/Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc')" WorkingDirectory="$(ProjectDir)Src/Shaders" Command="CompileShaders gxdk scarlett" EnvironmentVariables="GameDKLatest=$(DurangoXdkInstallPath);GameDKXboxLatest=$(DurangoXdkInstallPath);CompileShadersOutput=$(ProjectDir)Src/Shaders/Compiled" LogStandardErrorAsError="true" />
   </Target>
   <Target Name="ATGDeleteShadersXboxScarlett" AfterTargets="Clean" Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">
     <ItemGroup>
