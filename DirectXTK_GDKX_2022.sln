@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "DirectXTK_GDKX_2022.vcxproj", "{94F17A4D-611B-4B81-8806-B6735910AB31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Gaming.Xbox.Scarlett.x64 = Debug|Gaming.Xbox.Scarlett.x64
+		Debug|Gaming.Xbox.XboxOne.x64 = Debug|Gaming.Xbox.XboxOne.x64
+		Debug|x64 = Debug|x64
+		Profile|Gaming.Xbox.Scarlett.x64 = Profile|Gaming.Xbox.Scarlett.x64
+		Profile|Gaming.Xbox.XboxOne.x64 = Profile|Gaming.Xbox.XboxOne.x64
+		Profile|x64 = Profile|x64
+		Release|Gaming.Xbox.Scarlett.x64 = Release|Gaming.Xbox.Scarlett.x64
+		Release|Gaming.Xbox.XboxOne.x64 = Release|Gaming.Xbox.XboxOne.x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|Gaming.Xbox.Scarlett.x64.ActiveCfg = Debug|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|Gaming.Xbox.Scarlett.x64.Build.0 = Debug|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|Gaming.Xbox.XboxOne.x64.ActiveCfg = Debug|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|Gaming.Xbox.XboxOne.x64.Build.0 = Debug|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|x64.ActiveCfg = Debug|x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Debug|x64.Build.0 = Debug|x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|Gaming.Xbox.Scarlett.x64.ActiveCfg = Profile|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|Gaming.Xbox.Scarlett.x64.Build.0 = Profile|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|Gaming.Xbox.XboxOne.x64.ActiveCfg = Profile|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|Gaming.Xbox.XboxOne.x64.Build.0 = Profile|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|x64.ActiveCfg = Profile|x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Profile|x64.Build.0 = Profile|x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|Gaming.Xbox.Scarlett.x64.ActiveCfg = Release|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|Gaming.Xbox.Scarlett.x64.Build.0 = Release|Gaming.Xbox.Scarlett.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|Gaming.Xbox.XboxOne.x64.ActiveCfg = Release|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|Gaming.Xbox.XboxOne.x64.Build.0 = Release|Gaming.Xbox.XboxOne.x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|x64.ActiveCfg = Release|x64
+		{94F17A4D-611B-4B81-8806-B6735910AB31}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E5CD099B-4537-49E4-A1B4-827D253254AC}
+	EndGlobalSection
+EndGlobal
