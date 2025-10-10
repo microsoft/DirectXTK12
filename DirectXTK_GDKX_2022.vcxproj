@@ -52,8 +52,21 @@
   <Import Condition="Exists($(ATGBuildProps))" Project="$(ATGBuildProps)" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
+    <GDKPCEditionPath Condition="'$(GDKPCEditionPath)'==''">$(GRDKLatest)</GDKPCEditionPath>
     <GDKCrossPlatformPath Condition="'$(GDKCrossPlatformPath)'==''">$(GameDKCoreLatest)</GDKCrossPlatformPath>
     <GDKCrossPlatformPath Condition="'$(GDKCrossPlatformPath)'==''">$(GameDKXboxLatest)</GDKCrossPlatformPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GDKCrossPlatform Condition="'$(GDKCrossPlatform)'=='' AND Exists('$(GDKCrossPlatformPath)windows')">true</GDKCrossPlatform>
+    <GDKCrossPlatform Condition="'$(GDKCrossPlatform)'=='' AND Exists('$(GDKPCEditionPath)GameKit')">false</GDKCrossPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GDKCrossPlatform)'!='true'">
+    <WindowsIncludePath>$(GDKPCEditionPath)GameKit\Include</WindowsIncludePath>
+    <WindowsLibraryPath>$(GDKPCEditionPath)GameKit\lib\amd64</WindowsLibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GDKCrossPlatform)'=='true'">
+    <WindowsIncludePath>$(GDKCrossPlatformPath)windows\include</WindowsIncludePath>
+    <WindowsLibraryPath>$(GDKCrossPlatformPath)windows\lib\x64</WindowsLibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Gaming.Xbox.XboxOne.x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -220,8 +233,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(GameDK)bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(GDKCrossPlatformPath)windows\include;$(IncludePath);</IncludePath>
-    <LibraryPath>$(GDKCrossPlatformPath)windows\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(WindowsIncludePath);$(IncludePath);</IncludePath>
+    <LibraryPath>$(WindowsLibraryPath);$(LibraryPath)</LibraryPath>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</IntDir>
@@ -229,8 +242,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ExecutablePath>$(GameDK)bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(GDKCrossPlatformPath)windows\include;$(IncludePath);</IncludePath>
-    <LibraryPath>$(GDKCrossPlatformPath)windows\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(WindowsIncludePath);$(IncludePath);</IncludePath>
+    <LibraryPath>$(WindowsLibraryPath);$(LibraryPath)</LibraryPath>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</IntDir>
@@ -238,8 +251,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExecutablePath>$(GameDK)bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(GDKCrossPlatformPath)windows\include;$(IncludePath);</IncludePath>
-    <LibraryPath>$(GDKCrossPlatformPath)windows\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(WindowsIncludePath);$(IncludePath);</IncludePath>
+    <LibraryPath>$(WindowsLibraryPath);$(LibraryPath)</LibraryPath>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</IntDir>
@@ -687,10 +700,7 @@
   <Target Name="GDKEditionCheck" BeforeTargets="PrepareForBuild">
     <Error Condition="'$(GameDK)'==''" Text="GameDK property is required" />
     <Error Condition="!HasTrailingSlash('$(GameDK)')" Text="GameDK property must have trailing slash" />
-    <Error Condition="'$(GDKCrossPlatformPath)'==''" Text="GDKCrossPlatformPath property, GameDKCoreLatest environment variable, or GameDKXboxLatest environment variable is required" />
-    <Error Condition="!HasTrailingSlash('$(GDKCrossPlatformPath)')" Text="GDKCrossPlatformPath property must have trailing slash" />
-    <Error Condition="!Exists('$(GDKCrossPlatformPath)windows')" Text="GDKCrossPlatformPath needs to point to the October 2025 GDK or later" />
-    <Message Importance="high" Text="Using $(GDKCrossPlatformPath)" />
+    <Error Condition="'$(GDKCrossPlatform)'==''" Text="GameDKCoreLatest, GameDKXboxLatest, or GRDKLatest is required" />
   </Target>
   <Target Name="EnsureGDK" BeforeTargets="_CheckForInvalidConfigurationAndPlatform" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(Platform)', 'Gaming\..+\.x64'))">
     <PropertyGroup>
