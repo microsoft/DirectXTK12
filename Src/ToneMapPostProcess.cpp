@@ -317,7 +317,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     if (op >= Operator_Max)
         throw std::invalid_argument("Tonemap operator not defined");
 
-    if (func > TransferFunction_Max)
+    if (func >= TransferFunction_Max)
         throw std::invalid_argument("Transfer function not defined");
 
     if (!device)
