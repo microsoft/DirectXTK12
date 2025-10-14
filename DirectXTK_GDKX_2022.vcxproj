@@ -684,7 +684,7 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
-  <Target Name="GDKEditionCheck" BeforeTargets="PrepareForBuild">
+  <Target Name="GDKEditionCheck" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='x64'">
     <Error Condition="'$(GameDK)'==''" Text="GameDK property is required" />
     <Error Condition="!HasTrailingSlash('$(GameDK)')" Text="GameDK property must have trailing slash" />
     <Error Condition="'$(GDKCrossPlatformPath)'==''" Text="GDKCrossPlatformPath property, GameDKCoreLatest environment variable, or GameDKXboxLatest environment variable is required" />
