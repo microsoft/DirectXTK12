@@ -444,7 +444,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device,
     mVertexSegment{},
     mVertexPageSize(sizeof(VertexPositionColorTexture) * MaxBatchSize * VerticesPerSprite),
     mSpriteCount(0),
-    mDeviceResources(deviceResourcesPool.DemandCreate(device, upload))
+    mDeviceResources{}
 {
     if (!device)
         throw std::invalid_argument("Direct3D device is null");
@@ -454,6 +454,8 @@ SpriteBatch::Impl::Impl(ID3D12Device* device,
         mViewPort = *viewport;
         mSetViewport = true;
     }
+
+    mDeviceResources = deviceResourcesPool.DemandCreate(device, upload);
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dDesc = {};
     d3dDesc.InputLayout = s_DefaultInputLayoutDesc;

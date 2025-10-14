@@ -302,14 +302,16 @@ class ResourceUploadBatch::Impl
 {
 public:
     Impl(
-        _In_ ID3D12Device* device) noexcept
+        _In_ ID3D12Device* device)
         : mDevice(device)
         , mCommandType(D3D12_COMMAND_LIST_TYPE_DIRECT)
         , mInBeginEndBlock(false)
         , mTypedUAVLoadAdditionalFormats(false)
         , mStandardSwizzle64KBSupported(false)
     {
-        assert(device != nullptr);
+        if (!device)
+            throw std::invalid_argument("Direct3D device is null");
+
         D3D12_FEATURE_DATA_D3D12_OPTIONS options = {};
         if (SUCCEEDED(device->CheckFeatureSupport(
             D3D12_FEATURE_D3D12_OPTIONS,
@@ -358,7 +360,7 @@ public:
     }
 
     // Asynchronously uploads a resource. The memory in subRes is copied.
-    // The resource must be in the COPY_DEST state.
+    // The resource must be in the COPY_DEST or COMMON state.
     void Upload(
         _In_ ID3D12Resource* resource,
         uint32_t subresourceIndexStart,
@@ -367,6 +369,9 @@ public:
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
+
+        if (!resource || !subRes || !numSubresources)
+            throw std::invalid_argument("Resource/subresource are null");
 
         const UINT64 uploadSize = GetRequiredIntermediateSize(
             resource,
@@ -409,6 +414,9 @@ public:
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
 
+        if (!resource)
+            throw std::invalid_argument("Resource is null");
+
         // Submit resource copy to command list
         mList->CopyBufferRegion(resource, 0, buffer.Resource(), buffer.ResourceOffset(), buffer.Size());
 
@@ -420,13 +428,11 @@ public:
     // Resource must be in the PIXEL_SHADER_RESOURCE state
     void GenerateMips(_In_ ID3D12Resource* resource)
     {
-        if (resource == nullptr)
-        {
-            throw std::invalid_argument("Nullptr passed to GenerateMips");
-        }
-
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call GenerateMips on a closed ResourceUploadBatch.");
+
+        if (!resource)
+            throw std::invalid_argument("GenerateMips resource is null");
 
         if (mCommandType == D3D12_COMMAND_LIST_TYPE_COPY)
         {
@@ -508,6 +514,9 @@ public:
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
 
+        if (!resource)
+            throw std::invalid_argument("Transition resource is null");
+
         if (mCommandType == D3D12_COMMAND_LIST_TYPE_COPY)
         {
             switch (stateAfter)
@@ -550,6 +559,9 @@ public:
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("ResourceUploadBatch already closed.");
+
+        if (!commandQueue)
+            throw std::invalid_argument("Direct3D queue is null");
 
         ThrowIfFailed(mList->Close());
 

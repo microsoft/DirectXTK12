@@ -456,6 +456,9 @@ public:
     explicit Impl(_In_ ID3D12Device* device)
         : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, static_cast<size_t>(SamplerIndex::Count))
     {
+        if (!device)
+            throw std::invalid_argument("Direct3D device is null");
+
         SetDebugObjectName(mDescriptors.Heap(), L"CommonStates");
 
         for (size_t i = 0; i < static_cast<size_t>(SamplerIndex::Count); ++i)

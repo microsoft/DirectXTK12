@@ -201,6 +201,9 @@ namespace DirectX
             _In_ const D3D12_ROOT_SIGNATURE_DESC* rootSignatureDesc,
             _Out_ ID3D12RootSignature** rootSignature) noexcept
     {
+        if (!device || !rootSignatureDesc || !rootSignature)
+            return E_INVALIDARG;
+
         Microsoft::WRL::ComPtr<ID3DBlob> pSignature;
         Microsoft::WRL::ComPtr<ID3DBlob> pError;
         HRESULT hr = D3D12SerializeRootSignature(rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(), pError.GetAddressOf());
@@ -217,6 +220,9 @@ namespace DirectX
     DIRECTX_TOOLKIT_API
         inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
     {
+        if (!tex)
+            return XMUINT2(0, 0);
+
     #if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = tex->GetDesc();
     #else

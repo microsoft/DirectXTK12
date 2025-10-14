@@ -21,6 +21,9 @@ void DirectX::CreateShaderResourceView(
     D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
     bool isCubeMap)
 {
+    if (!device || !tex)
+        throw std::invalid_argument("Direct3D device and resource must be valid");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     const auto desc = tex->GetDesc();
 #else
@@ -109,6 +112,9 @@ void DirectX::CreateUnorderedAccessView(
     D3D12_CPU_DESCRIPTOR_HANDLE uavDescriptor,
     uint32_t mipLevel)
 {
+    if (!device || !tex)
+        throw std::invalid_argument("Direct3D device and resource must be valid");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     const auto desc = tex->GetDesc();
 #else
@@ -182,6 +188,9 @@ void DirectX::CreateRenderTargetView(
     D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor,
     uint32_t mipLevel)
 {
+    if (!device || !tex)
+        throw std::invalid_argument("Direct3D device and resource must be valid");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     const auto desc = tex->GetDesc();
 #else
@@ -267,6 +276,9 @@ void DirectX::CreateBufferShaderResourceView(
     D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
     uint32_t stride)
 {
+    if (!device || !buffer)
+        throw std::invalid_argument("Direct3D device and resource must be valid");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     const auto desc = buffer->GetDesc();
 #else
@@ -304,6 +316,9 @@ void DirectX::CreateBufferUnorderedAccessView(
     uint32_t counterOffset,
     ID3D12Resource* counterResource)
 {
+    if (!device || !buffer)
+        throw std::invalid_argument("Direct3D device and resource must be valid");
+
 #if defined(_MSC_VER) || !defined(_WIN32)
     const auto desc = buffer->GetDesc();
 #else
