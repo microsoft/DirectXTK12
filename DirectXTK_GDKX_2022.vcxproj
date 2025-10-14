@@ -214,7 +214,7 @@
     <LibraryWPath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</LibraryWPath>
     <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
     <ExecutablePath>$(Console_SdkRoot)bin;$(Console_SdkToolPath);$(ExecutablePath)</ExecutablePath>
-    <OutDir>Bin\GDK_2022\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Bin\GDKX_2022\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>DirectXTK12</TargetName>
   </PropertyGroup>
