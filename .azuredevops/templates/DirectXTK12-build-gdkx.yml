@@ -1,0 +1,78 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+#
+# https://go.microsoft.com/fwlink/?LinkID=615561
+
+# Template used by GitHub-GDK-* pipelines
+
+parameters:
+  - name: msVersion
+    type: string
+    values:
+      - '17.0'
+  - name: vsYear
+    type: number
+    values:
+      - 2022
+
+steps:
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} pcdbg
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: x64
+      configuration: Debug
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} pcrel
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: x64
+      configuration: Release
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} xbdbg
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: Gaming.Xbox.XboxOne.x64
+      configuration: Debug
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} xbrel
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: Gaming.Xbox.XboxOne.x64
+      configuration: Release
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} scardbg
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: Gaming.Xbox.Scarlett.x64
+      configuration: Debug
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
+  - task: VSBuild@1
+    displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} scarrel
+    continueOnError: true
+    inputs:
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      vsVersion: ${{ parameters.msVersion }}
+      platform: Gaming.Xbox.Scarlett.x64
+      configuration: Release
+      msbuildArchitecture: x64
+      msbuildArgs: /p:GDKEditionNumber=$(GDK_EDITION)
