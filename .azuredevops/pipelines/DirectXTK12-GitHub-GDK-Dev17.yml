@@ -117,7 +117,7 @@ jobs:
           msVersion: '17.0'
           vsYear: 2022
 
-  - job: BUILD_GDK
+  - job: BUILD_GDKX
     displayName: 'Microsoft Game Development Kit (GDK x64)'
     timeoutInMinutes: 120
     cancelTimeoutInMinutes: 1
