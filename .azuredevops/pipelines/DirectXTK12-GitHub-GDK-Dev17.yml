@@ -117,6 +117,12 @@ jobs:
           solution: build/SetupBWOI.targets
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - template: '/.azuredevops/templates/DirectXTK12-build-gdk.yml'
         parameters:
           msVersion: '17.0'
@@ -175,6 +181,12 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - template: '/.azuredevops/templates/DirectXTK12-build-gdkx.yml'
@@ -484,6 +496,13 @@ jobs:
           msbuildVersion: 17.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          platform: Gaming.Xbox.XboxOne.x64
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: VSBuild@1
         displayName: Build Tests xbdbg
         continueOnError: true
@@ -572,6 +591,13 @@ jobs:
         inputs:
           solution: build/SetupBWOI.targets
           msbuildVersion: 17.0
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          platform: Gaming.Xbox.Scarlett.x64
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: VSBuild@1
