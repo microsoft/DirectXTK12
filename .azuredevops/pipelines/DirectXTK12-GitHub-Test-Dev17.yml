@@ -98,6 +98,13 @@ jobs:
           feedRestore: $(GUID_FEED)
           includeNuGetOrg: false
           packagesDirectory: ../packages
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+          msbuildArchitecture: x64
       - task: VSBuild@1
         displayName: Build solution DirectXTK_Tests_Desktop_2022_Win10.sln
         inputs:
@@ -163,6 +170,13 @@ jobs:
           feedRestore: $(GUID_FEED)
           includeNuGetOrg: false
           packagesDirectory: ../packages
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+          msbuildArchitecture: x64
       - task: VSBuild@1
         displayName: Build solution DirectXTK_Tests_Windows10.sln
         inputs:

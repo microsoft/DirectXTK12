@@ -105,6 +105,13 @@ jobs:
       - checkout: self
         clean: true
         fetchTags: false
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+          msbuildArchitecture: x64
       - task: VSBuild@1
         displayName: Build solution DirectXTK_Windows10_2022.sln
         inputs:
