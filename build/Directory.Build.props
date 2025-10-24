@@ -18,6 +18,12 @@
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
   </PropertyGroup>
 
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Gaming.Xbox.XboxOne.x64'">
+    <Link>
+      <ShowProgress>LinkVerbose</ShowProgress>
+    </Link>
+  </ItemDefinitionGroup>
+
   <PropertyGroup Condition="'$(GDKEditionNumber)' != '' AND '$(GDKEditionNumber)' &lt; '220300'">
     <_PCNuGetPackage>Microsoft.PGDK</_PCNuGetPackage>
     <_XboxNuGetPackage>Microsoft.GDK</_XboxNuGetPackage>
