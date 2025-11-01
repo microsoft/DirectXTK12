@@ -367,6 +367,9 @@
     { "name": "x86-Debug-Redist-Clang"  , "description": "Clang/LLVM for x86 (Debug) with XAudio2Redist", "inherits": [ "base", "x86", "Debug", "Clang", "Clang-X86", "XAudio2Redist", "VCPKG", "X64_X86" ] },
     { "name": "x86-Release-Redist-Clang", "description": "Clang/LLVM for x86 (Release) with XAudio2Redist", "inherits": [ "base", "x86", "Release", "Clang", "Clang-X86", "XAudio2Redist", "VCPKG", "X64_X86" ] },
 
+    { "name": "x64-Debug-GDK-Clang"   , "description": "Clang/LLVM for x64 (Debug) using GameInput", "inherits": [ "base", "x64", "Debug", "MSVC", "Clang", "GDK" ] },
+    { "name": "x64-Release-GDK-Clang" , "description": "Clang/LLVM for x64 (Release) using GameInput", "inherits": [ "base", "x64", "Release", "MSVC", "Clang", "GDK" ] },
+
     { "name": "x64-Debug-Scarlett-Clang"  , "description": "Clang/LLVM for x64 (Debug) for Xbox Series X|S", "inherits": [ "base", "x64", "Debug", "Clang", "Scarlett" ] },
     { "name": "x64-Release-Scarlett-Clang", "description": "Clang/LLVM for x64 (Release) for Xbox Series X|S", "inherits": [ "base", "x64", "Release", "Clang", "Scarlett" ] },
 
