@@ -59,10 +59,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 if(XBOX_CONSOLE_TARGET STREQUAL "scarlett")
   set(BUILD_GAMEINPUT ON)
+  set(BUILD_WGI OFF)
+  set(BUILD_XINPUT OFF)
   set(BUILD_SCARLETT_SHADERS ON)
   set(BUILD_XAUDIO_REDIST OFF)
 elseif(XBOX_CONSOLE_TARGET STREQUAL "xboxone")
   set(BUILD_GAMEINPUT ON)
+  set(BUILD_WGI OFF)
+  set(BUILD_XINPUT OFF)
   set(BUILD_XBOXONE_SHADERS ON)
   set(BUILD_XAUDIO_REDIST OFF)
 elseif(XBOX_CONSOLE_TARGET STREQUAL "durango")
@@ -71,12 +75,22 @@ elseif(XBOX_CONSOLE_TARGET STREQUAL "durango")
   set(BUILD_XINPUT OFF)
   set(BUILD_XBOXONE_SHADERS ON)
   set(BUILD_DXIL_SHADERS OFF)
-  set(BUILD_XAUDIO_WIN10 OFF)
-  set(BUILD_XAUDIO_WIN8 ON)
+  set(BUILD_XAUDIO_WIN10 ON)
+  set(BUILD_XAUDIO_REDIST OFF)
 elseif(WINDOWS_STORE)
   set(BUILD_GAMEINPUT OFF)
   set(BUILD_WGI ON)
+  set(BUILD_XINPUT OFF)
+  set(BUILD_XAUDIO_WIN10 ON)
   set(BUILD_XAUDIO_REDIST OFF)
+elseif(MINGW)
+  set(BUILD_WGI OFF)
+  set(BUILD_XAUDIO_WIN10 OFF)
+  if (NOT BUILD_GAMEINPUT)
+    set(BUILD_XINPUT ON)
+  endif()
+elseif(WIN32 AND (NOT BUILD_GAMEINPUT) AND (NOT BUILD_XINPUT))
+  set(BUILD_WGI ON)
 endif()
 
 include(GNUInstallDirs)
@@ -211,13 +225,7 @@ if(DEFINED XBOX_CONSOLE_TARGET)
       Src/XboxDDSTextureLoader.cpp)
 endif()
 
-if(MINGW)
-  set(BUILD_XAUDIO_WIN10 OFF)
-endif()
-
-if(WINDOWS_STORE
-   OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8
-   OR BUILD_XAUDIO_REDIST)
+if(BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
         Inc/Audio.h)
 
@@ -319,7 +327,7 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     target_link_libraries(${PROJECT_NAME} PRIVATE d3d12.lib)
   endif()
 
-  if(MINGW)
+  if(MINGW AND BUILD_XINPUT)
     target_link_libraries(${PROJECT_NAME} PRIVATE xinput1_4.lib)
   endif()
 else()
@@ -342,9 +350,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 
-if(WINDOWS_STORE
-   OR BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_WIN8
-   OR BUILD_XAUDIO_REDIST)
+if(BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
     target_include_directories(${PROJECT_NAME} PRIVATE Audio)
 endif()
 
@@ -372,7 +378,7 @@ if(directx-headers_FOUND)
 endif()
 
 if(BUILD_XAUDIO_REDIST
-   AND (NOT BUILD_XAUDIO_WIN10) AND (NOT BUILD_XAUDIO_WIN8) AND (NOT WINDOWS_STORE))
+   AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
     message(STATUS "Using XAudio2Redist for DirectX Tool Kit for Audio.")
     find_package(xaudio2redist CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::XAudio2Redist)
@@ -532,7 +538,7 @@ if(WIN32)
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32_WINNT=${WINVER})
 
-    if(WINDOWS_STORE OR BUILD_XAUDIO_WIN10)
+    if(BUILD_XAUDIO_WIN10)
       message(STATUS "Using DirectX Tool Kit for Audio on XAudio 2.9 (Windows 10/Windows 11).")
     endif()
 
