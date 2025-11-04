@@ -377,8 +377,7 @@ if(directx-headers_FOUND)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
 endif()
 
-if(BUILD_XAUDIO_REDIST
-   AND (NOT BUILD_XAUDIO_WIN10) AND (NOT WINDOWS_STORE))
+if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10))
     message(STATUS "Using XAudio2Redist for DirectX Tool Kit for Audio.")
     find_package(xaudio2redist CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC Microsoft::XAudio2Redist)
