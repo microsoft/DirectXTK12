@@ -61,22 +61,22 @@ if(XBOX_CONSOLE_TARGET STREQUAL "scarlett")
   set(BUILD_GAMEINPUT ON)
   set(BUILD_WGI OFF)
   set(BUILD_XINPUT OFF)
-  set(BUILD_SCARLETT_SHADERS ON)
   set(BUILD_XAUDIO_REDIST OFF)
+  set(BUILD_SCARLETT_SHADERS ON)
 elseif(XBOX_CONSOLE_TARGET STREQUAL "xboxone")
   set(BUILD_GAMEINPUT ON)
   set(BUILD_WGI OFF)
   set(BUILD_XINPUT OFF)
-  set(BUILD_XBOXONE_SHADERS ON)
   set(BUILD_XAUDIO_REDIST OFF)
+  set(BUILD_XBOXONE_SHADERS ON)
 elseif(XBOX_CONSOLE_TARGET STREQUAL "durango")
   set(BUILD_GAMEINPUT OFF)
   set(BUILD_WGI OFF)
   set(BUILD_XINPUT OFF)
-  set(BUILD_XBOXONE_SHADERS ON)
-  set(BUILD_DXIL_SHADERS OFF)
   set(BUILD_XAUDIO_WIN10 ON)
   set(BUILD_XAUDIO_REDIST OFF)
+  set(BUILD_XBOXONE_SHADERS ON)
+  set(BUILD_DXIL_SHADERS OFF)
 elseif(WINDOWS_STORE)
   set(BUILD_GAMEINPUT OFF)
   set(BUILD_WGI ON)
@@ -178,18 +178,12 @@ set(SHADER_SOURCES
 # These source files are identical in both DX11 and DX12 version.
 if(NOT BUILD_MIXED_DX11)
     set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
-      Inc/GamePad.h
-      Inc/Keyboard.h
-      Inc/Mouse.h
       Inc/SimpleMath.h
       Inc/SimpleMath.inl)
 
     set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
       Src/BinaryReader.cpp
-      Src/GamePad.cpp
       Src/Geometry.cpp
-      Src/Keyboard.cpp
-      Src/Mouse.cpp
       Src/SimpleMath.cpp)
 endif()
 
@@ -223,6 +217,18 @@ if(DEFINED XBOX_CONSOLE_TARGET)
 
   set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
       Src/XboxDDSTextureLoader.cpp)
+endif()
+
+if(BUILD_XINPUT OR BUILD_WGI OR BUILD_GAMEINPUT)
+  set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+      Inc/GamePad.h
+      Inc/Keyboard.h
+      Inc/Mouse.h)
+
+  set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+      Src/GamePad.cpp
+      Src/Keyboard.cpp
+      Src/Mouse.cpp)
 endif()
 
 if(BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
