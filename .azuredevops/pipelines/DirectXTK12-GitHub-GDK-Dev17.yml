@@ -21,7 +21,9 @@ pr:
   paths:
     include:
       - '.azuredevops/pipelines/DirectXTK12-GitHub-GDK-Dev17.yml'
-      - '.azuredevops/pipelines/DirectXTK12-build-gdk.yml'
+      - '.azuredevops/templates/DirectXTK12-build-gdk.yml'
+      - '.azuredevops/templates/DirectXTK12-build-gdkx.yml'
+      - '.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
       - CMakeList.txt
       - build/*.in
       - build/*.cmake
@@ -169,7 +171,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
@@ -228,7 +230,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: true
           xboxone: false
@@ -342,7 +344,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: false
           xboxone: true
@@ -462,7 +464,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: false
           xboxone: true
@@ -556,7 +558,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: true
           xboxone: false
