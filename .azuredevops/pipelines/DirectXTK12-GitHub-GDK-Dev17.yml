@@ -65,7 +65,7 @@ variables:
 
 jobs:
   - job: BUILD_GDK
-    displayName: 'Microsoft Game Development Kit (Old layouts)'
+    displayName: 'Microsoft Game Development Kit (Gaming.*.x64)'
     timeoutInMinutes: 120
     cancelTimeoutInMinutes: 1
     steps:
@@ -135,8 +135,8 @@ jobs:
           msVersion: '17.0'
           vsYear: 2022
 
-  - job: BUILD_GDKX
-    displayName: 'Microsoft Game Development Kit (GDK x64)'
+  - job: BUILD_GDKX_SCAR
+    displayName: 'Microsoft Game Development Kit (x64+Xbox Series X|S)'
     timeoutInMinutes: 120
     cancelTimeoutInMinutes: 1
     steps:
@@ -172,6 +172,8 @@ jobs:
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
+        parameters:
+          scarlett: true
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
@@ -194,9 +196,73 @@ jobs:
         parameters:
           msVersion: '17.0'
           vsYear: 2022
+          xboxone: false
+
+  - job: BUILD_GDKX_XBONE
+    displayName: 'Microsoft Game Development Kit (x64+Xbox One)'
+    timeoutInMinutes: 120
+    cancelTimeoutInMinutes: 1
+    steps:
+      - checkout: self
+        clean: true
+        fetchTags: false
+        fetchDepth: 1
+      - task: NuGetToolInstaller@1
+        displayName: 'Use NuGet'
+      - task: PowerShell@2
+        displayName: 'Create nuget.config with single source'
+        inputs:
+          targetType: inline
+          script: |
+            $xml = @'
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+              <packageSources>
+                <clear />
+              </packageSources>
+            </configuration>
+            '@
+            $xml | Set-Content -Path "$(Build.SourcesDirectory)\NuGet.config"
+
+      - task: NuGetCommand@2
+        # We have to use a nuget.config to provide the feed for the 'nuget install' option.
+        displayName: 'NuGet set package source to ADO feed'
+        inputs:
+          command: custom
+          arguments: sources add -Name xboxgdk -Source $(URL_FEED) -ConfigFile $(Build.SourcesDirectory)\NuGet.config
+      - task: nuget-security-analysis@0
+        displayName: 'Secure Supply Chain Analysis'
+      - task: NuGetAuthenticate@1
+        displayName: 'NuGet Auth'
+      - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
+        parameters:
+          scarlett: false
+      - task: CopyFiles@2
+        displayName: Set up Directory.Build.props
+        inputs:
+          SourceFolder: build
+          Contents: 'Directory.Build.props'
+          TargetFolder: $(Build.SourcesDirectory)
+      - task: MSBuild@1
+        displayName: Setup BWOI VCTargets
+        inputs:
+          solution: build/SetupBWOI.targets
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - task: MSBuild@1
+        displayName: Log Information
+        inputs:
+          solution: build/LogInfo.targets
+          msbuildArchitecture: x64
+          msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
+      - template: '/.azuredevops/templates/DirectXTK12-build-gdkx.yml'
+        parameters:
+          msVersion: '17.0'
+          vsYear: 2022
+          scarlett: false
 
   - job: BUILD_GDK_CMAKE_SCAR
-    displayName: 'Microsoft Game Development Kit (GDK) using CMake (Scarlett)'
+    displayName: 'Microsoft Game Development Kit (GDK) using CMake (Xbox Series X|S)'
     timeoutInMinutes: 120
     cancelTimeoutInMinutes: 1
     steps:
@@ -233,7 +299,6 @@ jobs:
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: true
-          xboxone: false
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
         inputs:
@@ -347,7 +412,6 @@ jobs:
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: false
-          xboxone: true
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
         inputs:
@@ -467,7 +531,6 @@ jobs:
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: false
-          xboxone: true
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
@@ -561,7 +624,6 @@ jobs:
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
           scarlett: true
-          xboxone: false
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:

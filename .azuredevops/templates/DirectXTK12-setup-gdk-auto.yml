@@ -6,9 +6,6 @@
 # Template used by GitHub-GDK-* pipelines
 
 parameters:
-  - name: xboxone
-    type: boolean
-    default: true
   - name: scarlett
     type: boolean
     default: true
@@ -29,7 +26,7 @@ steps:
       arguments: 'install -directdownload Microsoft.GDK.Xbox.XboxSeriesX_S -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
   - task: NuGetCommand@2
     displayName: 'NuGet install Xbox One GDK'
-    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(${{ parameters.xboxone }}, true))
+    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(${{ parameters.scarlett }}, false))
     inputs:
       command: custom
       arguments: 'install -directdownload Microsoft.GDK.Xbox.XboxOne -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
