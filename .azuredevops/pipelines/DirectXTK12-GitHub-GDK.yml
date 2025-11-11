@@ -221,7 +221,6 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
-          msbuildVersion: 16.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: MSBuild@1
@@ -236,7 +235,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Debug
           msbuildArchitecture: x64
@@ -246,7 +244,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Release
           msbuildArchitecture: x64
@@ -323,7 +320,6 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
-          msbuildVersion: 16.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: MSBuild@1
@@ -338,7 +334,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Debug
           msbuildArchitecture: x64
@@ -348,7 +343,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Release
           msbuildArchitecture: x64
