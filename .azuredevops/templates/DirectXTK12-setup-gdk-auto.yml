@@ -6,10 +6,10 @@
 # Template used by GitHub-GDK-* pipelines
 
 parameters:
-  - name: 'xboxone'
+  - name: xboxone
     type: boolean
     default: true
-  - name: 'scarlett'
+  - name: scarlett
     type: boolean
     default: true
 
@@ -23,13 +23,13 @@ steps:
       failOnStderr: true
   - task: NuGetCommand@2
     displayName: 'NuGet install Xbox Series X|S GDK'
-    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(parameters.scarlett, true))
+    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(${{ parameters.scarlett }}, true))
     inputs:
       command: custom
       arguments: 'install -directdownload Microsoft.GDK.Xbox.XboxSeriesX_S -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
   - task: NuGetCommand@2
     displayName: 'NuGet install Xbox One GDK'
-    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(parameters.xboxone, true))
+    condition: and(ge(variables.GDKEditionNumber, '251000'), eq(${{ parameters.xboxone }}, true))
     inputs:
       command: custom
       arguments: 'install -directdownload Microsoft.GDK.Xbox.XboxOne -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
