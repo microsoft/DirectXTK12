@@ -63,7 +63,7 @@ variables:
 
 jobs:
   - job: BUILD_GDK
-    displayName: 'Microsoft Game Development Kit (GDK Gaming.Desktop.x64)'
+    displayName: 'Microsoft Game Development Kit (Old layouts)'
     timeoutInMinutes: 120
     cancelTimeoutInMinutes: 1
     steps:
@@ -99,12 +99,17 @@ jobs:
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
       - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
+        displayName: 'NuGet Install PC GDK'
         inputs:
           targetType: filePath
           filePath: ./build/RestoreGDK.ps1
           arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
           failOnStderr: true
+      - task: NuGetCommand@2
+        displayName: 'NuGet install Xbox GDK'
+        inputs:
+          command: custom
+          arguments: 'install -directdownload Microsoft.GDK.Xbox -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
@@ -164,13 +169,7 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
-        inputs:
-          targetType: filePath
-          filePath: ./build/RestoreGDK.ps1
-          arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
-          failOnStderr: true
+      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
@@ -229,13 +228,10 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
-        inputs:
-          targetType: filePath
-          filePath: ./build/RestoreGDK.ps1
-          arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
-          failOnStderr: true
+      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+        parameters:
+          scarlett: true
+          xboxone: false
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
         inputs:
@@ -346,13 +342,10 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
-        inputs:
-          targetType: filePath
-          filePath: ./build/RestoreGDK.ps1
-          arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
-          failOnStderr: true
+      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+        parameters:
+          scarlett: false
+          xboxone: true
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
         inputs:
@@ -469,13 +462,10 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
-        inputs:
-          targetType: filePath
-          filePath: ./build/RestoreGDK.ps1
-          arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
-          failOnStderr: true
+      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+        parameters:
+          scarlett: false
+          xboxone: true
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
@@ -566,13 +556,10 @@ jobs:
         displayName: 'Secure Supply Chain Analysis'
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
-      - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
-        inputs:
-          targetType: filePath
-          filePath: ./build/RestoreGDK.ps1
-          arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
-          failOnStderr: true
+      - template: '/.azuredevops/templates/DirectXTK12-setup-auto.yml'
+        parameters:
+          scarlett: true
+          xboxone: false
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
