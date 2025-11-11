@@ -173,6 +173,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: true
           scarlett: true
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
@@ -236,6 +237,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: true
           scarlett: false
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
@@ -298,6 +300,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: false
           scarlett: true
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
@@ -411,6 +414,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: false
           scarlett: false
       - task: CmdLine@2
         displayName: Setup BWOI for GDK command-line
@@ -530,6 +534,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: false
           scarlett: false
       - task: NuGetCommand@2
         displayName: NuGet restore
@@ -623,6 +628,7 @@ jobs:
         displayName: 'NuGet Auth'
       - template: '/.azuredevops/templates/DirectXTK12-setup-gdk-auto.yml'
         parameters:
+          windows: false
           scarlett: true
       - task: NuGetCommand@2
         displayName: NuGet restore
