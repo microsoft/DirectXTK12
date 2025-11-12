@@ -113,9 +113,9 @@ $props = $props -replace '<GDKEditionNumber>.+</GDKEditionNumber>', ("<GDKEditio
 $props = $props -replace '<GDKNuGetPackage>.+</GDKNuGetPackage>', ("<GDKNuGetPackage>{0}</GDKNuGetPackage>" -f $GDK_ID)
 Set-Content -Path $propsfile -Value $props
 
-$args = "restore RestoreGDK.proj -PackageSaveMode nuspec -packagesDirectory `"{0}`"" -f $OutputDirectory.TrimEnd('\')
-Write-Host "##[command]nuget $args"
-$nugetrun = Start-Process -PassThru -Wait -FilePath $nuget.Path -WorkingDirectory $PSScriptRoot -ArgumentList $args -NoNewWindow
+$nugetArgs = "restore RestoreGDK.proj -PackageSaveMode nuspec -packagesDirectory `"{0}`"" -f $OutputDirectory.TrimEnd('\')
+Write-Host "##[command]nuget $nugetArgs"
+$nugetrun = Start-Process -PassThru -Wait -FilePath $nuget.Path -WorkingDirectory $PSScriptRoot -ArgumentList $nugetArgs -NoNewWindow
 if ($nugetrun.ExitCode -gt 0) {
     Write-Error "##[error]nuget restore failed" -ErrorAction Stop
 }
