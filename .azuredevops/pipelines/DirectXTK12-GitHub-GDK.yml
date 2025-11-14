@@ -116,12 +116,17 @@ jobs:
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
       - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
+        displayName: 'NuGet Install PC GDK'
         inputs:
           targetType: filePath
           filePath: ./build/RestoreGDK.ps1
           arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
           failOnStderr: true
+      - task: NuGetCommand@2
+        displayName: 'NuGet install Xbox GDK'
+        inputs:
+          command: custom
+          arguments: 'install -directdownload Microsoft.GDK.Xbox -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
@@ -188,12 +193,17 @@ jobs:
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
       - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
+        displayName: 'NuGet Install PC GDK'
         inputs:
           targetType: filePath
           filePath: ./build/RestoreGDK.ps1
           arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
           failOnStderr: true
+      - task: NuGetCommand@2
+        displayName: 'NuGet install Xbox GDK'
+        inputs:
+          command: custom
+          arguments: 'install -directdownload Microsoft.GDK.Xbox -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
@@ -211,7 +221,6 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
-          msbuildVersion: 16.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: MSBuild@1
@@ -226,7 +235,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Debug
           msbuildArchitecture: x64
@@ -236,7 +244,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Release
           msbuildArchitecture: x64
@@ -285,12 +292,17 @@ jobs:
       - task: NuGetAuthenticate@1
         displayName: 'NuGet Auth'
       - task: PowerShell@2
-        displayName: 'NuGet Install GDK'
+        displayName: 'NuGet Install PC GDK'
         inputs:
           targetType: filePath
           filePath: ./build/RestoreGDK.ps1
           arguments: -GDKEditionNumber $(GDK_EDITION) -OutputDirectory $(EXTRACTED_FOLDER)
           failOnStderr: true
+      - task: NuGetCommand@2
+        displayName: 'NuGet install Xbox GDK'
+        inputs:
+          command: custom
+          arguments: 'install -directdownload Microsoft.GDK.Xbox -ExcludeVersion -Version $(GDKNuGetPackageVersion) -OutputDirectory $(EXTRACTED_FOLDER)'
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
@@ -308,7 +320,6 @@ jobs:
         displayName: Setup BWOI VCTargets
         inputs:
           solution: build/SetupBWOI.targets
-          msbuildVersion: 16.0
           msbuildArchitecture: x64
           msbuildArguments: /p:GDKEditionNumber=$(GDK_EDITION)
       - task: MSBuild@1
@@ -323,7 +334,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Debug
           msbuildArchitecture: x64
@@ -333,7 +343,6 @@ jobs:
         continueOnError: true
         inputs:
           solution: '**\*GDK_2019*.sln'
-          vsVersion: 16.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Release
           msbuildArchitecture: x64
