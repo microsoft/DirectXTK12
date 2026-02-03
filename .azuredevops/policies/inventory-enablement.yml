@@ -1,0 +1,8 @@
+name: microsoft-github-directxtk12 inventory config
+description: Inventory-as-code configuration for the directxtk12 repository
+resource: repository
+configuration:
+  inventoryConfig:
+    schemaVersion: 0
+    publishInventory: false
+    areasOnly: true
