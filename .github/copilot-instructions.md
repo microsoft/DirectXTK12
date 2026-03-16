@@ -22,6 +22,7 @@ These instructions define how GitHub Copilot should assist with this project. Th
 ## General Guidelines
 
 - **Code Style**: The project uses an .editorconfig file to enforce coding standards. Follow the rules defined in `.editorconfig` for indentation, line endings, and other formatting. Additional information can be found on the wiki at [Implementation](https://github.com/microsoft/DirectXTK12/wiki/Implementation). The code requires C++11/C++14 features.
+> Notable `.editorconfig` rules: C/C++ files use 4-space indentation, `crlf` line endings, and `latin1` charset — avoid non-ASCII characters in source files. HLSL files have separate indent/spacing rules defined in `.editorconfig`.
 - **Documentation**: The project provides documentation in the form of wiki pages available at [Documentation](https://github.com/microsoft/DirectXTK12/wiki/). The audio, input, and math implementations are identical to the DirectX Tool Kit for DirectX 11.
 - **Error Handling**: Use C++ exceptions for error handling and uses RAII smart pointers to ensure resources are properly managed. For some functions that return HRESULT error codes, they are marked `noexcept`, use `std::nothrow` for memory allocation, and should not throw exceptions.
 - **Testing**: Unit tests for this project are implemented in this repository [Test Suite](https://github.com/walbourn/directxtk12test/) and can be run using CTest per the instructions at [Test Documentation](https://github.com/walbourn/directxtk12test/wiki).
@@ -57,6 +58,86 @@ Tests/        # Tests are designed to be cloned from a separate repository at th
 - Make use of anonymous namespaces to limit scope of functions and variables.
 - Make use of `assert` for debugging checks, but be sure to validate input parameters in release builds.
 - Make use of the `DebugTrace` helper to log diagnostic messages, particularly at the point of throwing an exception.
+- Explicitly `= delete` copy constructors and copy-assignment operators on all classes that use the pImpl idiom.
+- Explicitly utilize `= default` or `=delete` for copy constructors, assignment operators, move constructors and move-assignment operators where appropriate.
+- Use 16-byte alignment (`_aligned_malloc` / `_aligned_free`) to support SIMD operations in the implementation, but do not expose this requirement in public APIs.
+
+#### SAL Annotations
+
+All public API functions must use SAL annotations on every parameter. Use `_Use_decl_annotations_` at the top of each implementation that has SAL in the header declaration — never repeat the annotations in the `.cpp` or `.inl` file.
+
+Common annotations:
+
+| Annotation | Meaning |
+| --- | --- |
+| `_In_` | Input parameter |
+| `_Out_` | Output parameter |
+| `_Inout_` | Bidirectional parameter |
+| `_In_reads_bytes_(n)` | Input buffer with byte count |
+| `_In_reads_(n)` | Input array with element count |
+| `_In_z_` | Null-terminated input string |
+| `_Out_opt_` | Optional output parameter |
+| `_COM_Outptr_` | Output COM interface |
+
+Example:
+
+```cpp
+// Header (BuffersHelpers.h)
+DIRECTX_TOOLKIT_API
+    HRESULT __cdecl CreateStaticBuffer(
+        _In_ ID3D12Device* device,
+        ResourceUploadBatch& resourceUpload,
+        _In_reads_bytes_(count* stride) const void* ptr,
+        size_t count,
+        size_t stride,
+        D3D12_RESOURCE_STATES afterState,
+        _COM_Outptr_ ID3D12Resource** pBuffer,
+        D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE) noexcept;
+
+// Implementation (.cpp)
+_Use_decl_annotations_
+HRESULT DirectX::CreateStaticBuffer(
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUpload,
+    const void* ptr,
+    size_t count,
+    size_t stride,
+    D3D12_RESOURCE_STATES afterState,
+    ID3D12Resource** pBuffer,
+    D3D12_RESOURCE_FLAGS resFlags) noexcept
+{ ... }
+```
+
+#### Calling Convention and DLL Export
+
+- All public functions use `__cdecl` explicitly for ABI stability.
+- All public function declarations are prefixed with `DIRECTX_TOOLKIT_API`, which wraps `__declspec(dllexport)` / `__declspec(dllimport)` or the GCC `__attribute__` equivalent when using `BUILD_SHARED_LIBS` in CMake.
+
+#### `noexcept` Rules
+
+- All query and utility functions that cannot fail are marked `noexcept`.
+- All HRESULT-returning I/O and processing functions are also `noexcept` — errors are communicated via return code, never via exceptions.
+- Constructors and functions that perform heap allocation or utilize Standard C++ containers that may throw are marked `noexcept(false)`.
+
+#### Enum Flags Pattern
+
+Flags enums follow this pattern — a `uint32_t`-based unscoped enum with a `_DEFAULT = 0x0` base case, followed by a call to `DEFINE_ENUM_FLAG_OPERATORS` to enable `|`, `&`, and `~` operators:
+
+```cpp
+enum DDS_LOADER_FLAGS : uint32_t
+{
+    DDS_LOADER_DEFAULT = 0,
+    DDS_LOADER_FORCE_SRGB = 0x1,
+    DDS_LOADER_IGNORE_SRGB = 0x2,
+    DDS_LOADER_MIP_AUTOGEN = 0x8,
+    DDS_LOADER_MIP_RESERVE = 0x10,
+    DDS_LOADER_IGNORE_MIPS = 0x20,
+};
+
+DEFINE_ENUM_FLAG_OPERATORS(DDS_LOADER_FLAGS);
+```
+
+See [this blog post](https://walbourn.github.io/modern-c++-bitmask-types/) for more information on this pattern.
 
 ### Patterns to Avoid
 
@@ -64,6 +145,49 @@ Tests/        # Tests are designed to be cloned from a separate repository at th
 - Avoid macros for constants—prefer `constexpr` or `inline` `const`.
 - Don’t put implementation logic in header files unless using templates, although the SimpleMath library does use an .inl file for performance.
 - Avoid using `using namespace` in header files to prevent polluting the global namespace.
+
+## Naming Conventions
+
+| Element | Convention | Example |
+| --- | --- | --- |
+| Classes / structs | PascalCase | `VertexPosition` |
+| Public functions | PascalCase + `__cdecl` | `ComputeDisplayArea` |
+| Private data members | `m_` prefix | `m_count` |
+| Enum type names | UPPER_SNAKE_CASE | `DDS_LOADER_FLAGS` |
+| Enum values | UPPER_SNAKE_CASE | `DDS_LOADER_DEFAULT` |
+| Files | PascalCase | `ScreenGrab.h`, `SpriteEffect.fx` |
+
+## File Header Convention
+
+Every source file (`.cpp`, `.h`, `.hlsl`, `.fx`, etc.) must begin with this block:
+
+```cpp
+//-------------------------------------------------------------------------------------
+// {FileName}
+//
+// {One-line description}
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+//
+// http://go.microsoft.com/fwlink/?LinkID=615561
+//-------------------------------------------------------------------------------------
+```
+
+Section separators within files use:
+- Major sections: `//-------------------------------------------------------------------------------------`
+- Subsections:   `//---------------------------------------------------------------------------------`
+
+The project does **not** use Doxygen. API documentation is maintained exclusively on the GitHub wiki.
+
+## HLSL Shader Compilation
+
+## HLSL Shader Compilation
+
+Shaders in `Src/Shaders/` are compiled with **DXC**, producing embedded C++ header files (`.inc`) that are checked in alongside the source:
+
+- Use `CompileShaders.cmd` in `Src/Shaders/` to regenerate the `.inc` files.
+- The CMake option `USE_PREBUILT_SHADERS` controls whether pre-compiled shaders are used.
 
 ## References
 
@@ -108,6 +232,29 @@ When creating documentation:
 - Review each documented item against source code whenever related to the task.
 - Remove any speculative content.
 - Ensure all documentation is verifiable against the current state of the codebase.
+
+## Cross-platform Support Notes
+
+- The code supports building for Windows.
+- Portability and conformance of the code is validated by building with Visual C++, clang/LLVM for Windows, and MinGW.
+
+### Platform and Compiler `#ifdef` Guards
+
+Use these established guards — do not invent new ones:
+
+| Guard | Purpose |
+| --- | --- |
+| `_WIN32` | Windows platform (desktop, UWP, Xbox) |
+| `_GAMING_XBOX` | Xbox One or Xbox Series X\|S |
+| `_GAMING_XBOX_SCARLETT` | Xbox Series X\|S |
+| `_XBOX_ONE && _TITLE` | Xbox One XDK (legacy) |
+| `_MSC_VER` | MSVC-specific (and MSVC-like clang-cl) pragmas and warning suppression |
+| `__clang__` | Clang/LLVM diagnostic suppressions |
+| `__MINGW32__` | MinGW compatibility headers |
+| `__GNUC__` | MinGW/GCC DLL attribute equivalents |
+|  `_M_ARM64` / `_M_X64` / `_M_IX86` | Architecture-specific code paths for MSVC (`#ifdef`) |
+| `__aarch64__` / `__x86_64__` / `__i386__` | Additional architecture-specific symbols for MinGW/GNUC (`#if`) |
+| `USING_DIRECTX_HEADERS` | External DirectX-Headers package in use |
 
 ## Code Review Instructions
 
