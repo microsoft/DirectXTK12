@@ -742,6 +742,13 @@ jobs:
           arguments: >
             install -directdownload Microsoft.GDK.Windows -ExcludeVersion -Version $(GDKNuGetPackageVersion)
             -OutputDirectory $(EXTRACTED_FOLDER)
+      - task: NuGetCommand@2
+        displayName: NuGet restore
+        inputs:
+          solution: Tests\D3D12Test\D3D12Test_GDKW_2022.sln
+          selectOrConfig: config
+          nugetConfigPath: NuGet.Config
+          packagesDirectory: $(Build.SourcesDirectory)\Tests\packages
       - task: CopyFiles@2
         displayName: Set up Directory.Build.props
         inputs:
