@@ -694,6 +694,13 @@ jobs:
         clean: true
         fetchTags: false
         fetchDepth: 1
+        path: 's'
+      - checkout: testRepo
+        displayName: Fetch Tests
+        clean: true
+        fetchTags: false
+        fetchDepth: 1
+        path: 's/Tests'
       - task: NuGetToolInstaller@1
         displayName: 'Use NuGet'
       - task: PowerShell@2
