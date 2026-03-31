@@ -1,6 +1,6 @@
 # DirectX Tool Kit for DirectX 12
 
-http://go.microsoft.com/fwlink/?LinkID=615561
+https://go.microsoft.com/fwlink/?LinkID=615561
 
 Release available for download on [GitHub](https://github.com/microsoft/DirectXTK12/releases)
 
