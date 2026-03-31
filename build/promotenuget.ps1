@@ -64,7 +64,7 @@ $bodyRelease = @{
     }
 } | ConvertTo-Json
 
-$packages = @('directxtk12_desktop_2019', 'directxtk12_desktop_win10', 'directxtk12_uwp')
+$packages = @('directxtk12_desktop_win10', 'directxtk12_uwp')
 
 # Check if all packages exist
 $allPackagesSucceeded = $true
