@@ -62,6 +62,7 @@ public:
     std::vector<uint32_t> glyphsIndex;
     Glyph const* defaultGlyph;
     float lineSpacing;
+    bool pixelAlignment;
 
 private:
     void CreateTextureResource(_In_ ID3D12Device* device,
@@ -115,6 +116,7 @@ SpriteFont::Impl::Impl(
     textureSize{},
     defaultGlyph(nullptr),
     lineSpacing(0),
+    pixelAlignment(false),
     utfBufferSize(0)
 {
     if (!device || !reader)
@@ -201,6 +203,7 @@ SpriteFont::Impl::Impl(
     glyphs(iglyphs, iglyphs + glyphCount),
     defaultGlyph(nullptr),
     lineSpacing(ilineSpacing),
+    pixelAlignment(false),
     utfBufferSize(0)
 {
     if (!itexture.ptr)
@@ -515,6 +518,11 @@ void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ wc
                 offset = XMVectorMultiplyAdd(glyphRect, axisIsMirroredTable[effects & 3], offset);
             }
 
+            if (pImpl->pixelAlignment)
+            {
+                offset = XMVectorRound(offset);
+            }
+
             spriteBatch->Draw(pImpl->texture, pImpl->textureSize, position, &glyph->Subrect, color, rotation, offset, scale, effects, layerDepth);
         }, true);
 }
@@ -645,9 +653,15 @@ float SpriteFont::GetLineSpacing() const noexcept
 }
 
 
-void SpriteFont::SetLineSpacing(float spacing)
+void SpriteFont::SetLineSpacing(float spacing) noexcept
 {
     pImpl->lineSpacing = spacing;
+}
+
+
+void SpriteFont::SetPixelAlignment(bool enable) noexcept
+{
+    pImpl->pixelAlignment = enable;
 }
 
 
