@@ -6,6 +6,13 @@ Release available for download on [GitHub](https://github.com/microsoft/DirectXT
 
 ## Release History
 
+### March 31, 2026
+* Added SpriteFont **SetPixelAlignment** method for opt-in pixel snapping support
+* Updated D3DX12 internal copy with latest changes from DirectX-Headers GitHub
+* VS 2026 support
+* Retire VS 2019 projects
+* CMake project updates
+
 ### October 27, 2025
 * GamePad, Keyboard, and Mouse _GameInput_ implementation now supports v0 - v3 of the API
 * Code review, particularly for invalid args validation
