@@ -174,7 +174,7 @@ Every source file (`.cpp`, `.h`, `.hlsl`, `.fx`, etc.) must begin with this bloc
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// http://go.microsoft.com/fwlink/?LinkID=615561
+// https://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 ```
 

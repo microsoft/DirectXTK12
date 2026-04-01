@@ -2,7 +2,7 @@
 
 # DirectX Tool Kit for DirectX 12
 
-http://go.microsoft.com/fwlink/?LinkID=615561
+https://go.microsoft.com/fwlink/?LinkID=615561
 
 Copyright (c) Microsoft Corporation.
 

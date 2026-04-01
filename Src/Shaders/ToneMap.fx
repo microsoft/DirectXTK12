@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// http://go.microsoft.com/fwlink/?LinkID=615561
+// https://go.microsoft.com/fwlink/?LinkID=615561
 
 Texture2D<float4> HDRTexture : register(t0);
 sampler Sampler : register(s0);

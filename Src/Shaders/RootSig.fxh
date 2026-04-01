@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// http://go.microsoft.com/fwlink/?LinkID=615561
+// https://go.microsoft.com/fwlink/?LinkID=615561
 
 // Root signatures must match definition in each effect, or shaders will be recompiled on Xbox when PSO loads
 
