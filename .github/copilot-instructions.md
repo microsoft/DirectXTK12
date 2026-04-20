@@ -14,20 +14,20 @@ These instructions define how GitHub Copilot should assist with this project. Th
 
 - See the tutorial at [Getting Started](https://github.com/microsoft/DirectXTK12/wiki/Getting-Started).
 - The recommended way to integrate *DirectX Tool Kit for DirectX 12* into your project is by using the *vcpkg* Package Manager. See [d3d12game_vcpkg](https://github.com/walbourn/directx-vs-templates/tree/main/d3d12game_vcpkg) for a template which uses VCPKG.
-- You can make use of the nuget.org packages **directxtk12_desktop_2019**, **directxtk12_desktop_win10**, or **directxtk12_uwp**.
+- You can make use of the nuget.org packages **directxtk12_desktop_win10** or **directxtk12_uwp**.
 - You can also use the library source code directly in your project or as a git submodule.
 
 > If you are new to DirectX, you may want to start with [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/wiki/Getting-Started) to learn many important concepts for Direct3D programming, HLSL shaders, and the code patterns used in this project with a more 'noobie friendly' API.
 
 ## General Guidelines
 
-- **Code Style**: The project uses an .editorconfig file to enforce coding standards. Follow the rules defined in `.editorconfig` for indentation, line endings, and other formatting. Additional information can be found on the wiki at [Implementation](https://github.com/microsoft/DirectXTK12/wiki/Implementation). The library implementation is written to be compatible with C++14 features.
+- **Code Style**: The project uses an .editorconfig file to enforce coding standards. Follow the rules defined in `.editorconfig` for indentation, line endings, and other formatting. Additional information can be found on the wiki at [Implementation](https://github.com/microsoft/DirectXTK12/wiki/Implementation). The library's public API requires C++11, and the project builds with C++17 (`CMAKE_CXX_STANDARD 17`).F
 > Notable `.editorconfig` rules: C/C++ files use 4-space indentation, `crlf` line endings, and `latin1` charset — avoid non-ASCII characters in source files. HLSL files have separate indent/spacing rules defined in `.editorconfig`.
 - **Documentation**: The project provides documentation in the form of wiki pages available at [Documentation](https://github.com/microsoft/DirectXTK12/wiki/). The audio, input, and math implementations are identical to the DirectX Tool Kit for DirectX 11.
 - **Error Handling**: Use C++ exceptions for error handling and uses RAII smart pointers to ensure resources are properly managed. For some functions that return HRESULT error codes, they are marked `noexcept`, use `std::nothrow` for memory allocation, and should not throw exceptions.
 - **Testing**: Unit tests for this project are implemented in this repository [Test Suite](https://github.com/walbourn/directxtk12test/) and can be run using CTest per the instructions at [Test Documentation](https://github.com/walbourn/directxtk12test/wiki).
 - **Security**: This project uses secure coding practices from the Microsoft Secure Coding Guidelines, and is subject to the `SECURITY.md` file in the root of the repository. Functions that read input from image file, geometry files, and audio files are subject to OneFuzz fuzz testing to ensure they are secure against malformed files.
-- **Dependencies**: The project uses CMake and VCPKG for managing dependencies, making optional use of DirectXMath, DirectX-Headers, DirectX 12 Agility SDK, GameInput, and XAudio2Redist. The project can be built without these dependencies, relying on the Windows SDK for core functionality.
+- **Dependencies**: The project uses CMake and VCPKG for managing dependencies, making optional use of DirectXMath, DirectX-Headers, DirectX 12 Agility SDK, GameInput, and XAudio2Redist. The project can be built without these dependencies, relying on the Windows SDK for core functionality. Additional CMake build options include `BUILD_WGI` and `BUILD_XINPUT` for alternative input backends, `BUILD_MIXED_DX11` for DX11 toolkit interop, `ENABLE_SPECTRE_MITIGATION`, `ENABLE_CODE_ANALYSIS`, and `BUILD_FUZZING`.
 - **Continuous Integration**: This project implements GitHub Actions for continuous integration, ensuring that all code changes are tested and validated before merging. This includes building the project for a number of configurations and toolsets, running a subset of unit tests, and static code analysis including GitHub super-linter, CodeQL, and MSVC Code Analysis.
 - **Code of Conduct**: The project adheres to the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). All contributors are expected to follow this code of conduct in all interactions related to the project.
 
@@ -64,6 +64,7 @@ wiki/         # Local clone of the GitHub wiki documentation repository.
 - Use 16-byte alignment (`_aligned_malloc` / `_aligned_free`) to support SIMD operations in the implementation, but do not expose this requirement in public APIs.
 - All implementation `.cpp` files include `pch.h` as their first include (precompiled header). MinGW builds skip precompiled headers.
 - `Model` and related classes require RTTI (`/GR` on MSVC, `__GXX_RTTI` on GCC/Clang). The CMake build enables `/GR` automatically; do not disable RTTI when using `Model`.
+- Many public headers use `inline namespace DX12` inside `namespace DirectX` to disambiguate from *DirectX Tool Kit for DirectX 11* types when both libraries are used together.
 
 #### SAL Annotations
 
@@ -86,7 +87,7 @@ Common annotations:
 Example:
 
 ```cpp
-// Header (BuffersHelpers.h)
+// Header (BufferHelpers.h)
 DIRECTX_TOOLKIT_API
     HRESULT __cdecl CreateStaticBuffer(
         _In_ ID3D12Device* device,
@@ -241,6 +242,7 @@ When creating documentation:
 
 - The code supports building for Windows.
 - Portability and conformance of the code is validated by building with Visual C++, clang/LLVM for Windows, and MinGW.
+- The project ships MSBuild projects for Visual Studio 2022 (`.sln` / `.vcxproj`) and Visual Studio 2026 (`.slnx` / `.vcxproj`). VS 2019 projects have been retired.
 
 ### Platform and Compiler `#ifdef` Guards
 
@@ -260,6 +262,11 @@ Use these established guards — do not invent new ones:
 | `_M_ARM64EC` | ARM64EC ABI (ARM64 code with x64 interop) for MSVC |
 | `__aarch64__` / `__x86_64__` / `__i386__` | Additional architecture-specific symbols for MinGW/GNUC (`#if`) |
 | `USING_DIRECTX_HEADERS` | External DirectX-Headers package in use |
+| `USING_GAMEINPUT` | GameInput API for GamePad, Keyboard, Mouse |
+| `USING_WINDOWS_GAMING_INPUT` | Windows.Gaming.Input API for GamePad |
+| `USING_XINPUT` | XInput API for GamePad, Keyboard, Mouse |
+| `USING_COREWINDOW` | CoreWindow-based input (UWP) for Keyboard, Mouse |
+| `USING_PIX_CUSTOM_MEMORY_EVENTS` | PIX custom memory event integration in GraphicsMemory |
 
 > `_M_ARM`/ `__arm__` is legacy 32-bit ARM which is deprecated.
 
