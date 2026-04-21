@@ -156,6 +156,18 @@ SpriteFont::Impl::Impl(
     auto textureStride = reader->Read<uint32_t>();
     auto textureRows = reader->Read<uint32_t>();
 
+    if (!textureWidth
+        || !textureHeight
+        || !textureStride
+        || !textureRows
+        || (textureWidth > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+        || (textureHeight > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+        || LoaderHelpers::BitsPerPixel(textureFormat) == 0)
+    {
+        DebugTrace("ERROR: SpriteFont provided with an invalid .spritefont file\n");
+        throw std::runtime_error("Invalid .spritefont file");
+    }
+
     const uint64_t dataSize = uint64_t(textureStride) * uint64_t(textureRows);
     if (dataSize > UINT32_MAX)
     {
