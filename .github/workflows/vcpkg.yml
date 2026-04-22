@@ -12,17 +12,20 @@ on:
       - '*.md'
       - LICENSE
       - '.azuredevops/**'
+      - '.github/*.md'
       - build/*.cmd
       - build/*.props
       - build/*.ps1
       - build/*.targets
       - build/*.xvd
+
   pull_request:
     branches: "main"
     paths-ignore:
       - '*.md'
       - LICENSE
       - '.azuredevops/**'
+      - '.github/*.md'
       - build/*.cmd
       - build/*.props
       - build/*.ps1
