@@ -575,8 +575,8 @@ namespace DirectX
             }
         #endif //  __cpp_lib_byte
 
-                    // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
-                    // descriptor will be zero.
+            // Utility function for getting a GPU descriptor for a mesh part/material index. If there is no texture the
+            // descriptor will be zero.
             D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetGpuTextureHandleForMaterialIndex(uint32_t materialIndex, _In_ ID3D12DescriptorHeap* heap, _In_ size_t descriptorSize, _In_ size_t descriptorOffset) const
             {
                 D3D12_GPU_DESCRIPTOR_HANDLE handle = {};
