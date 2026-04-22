@@ -268,11 +268,11 @@ When creating documentation:
 
 - The code targets Win32 desktop applications for Windows 10 or later, Xbox One, Xbox Series X|S, and Universal Windows Platform (UWP) apps for Windows 10 and Windows 11.
 - Portability and conformance of the code is validated by building with Visual C++, clang/LLVM for Windows, and MinGW.
-- For PC development using the Microsoft GDK, the project provides MSBuild solution `DirectXTK_GDKW_2022.sln` for the x64 or ARM64 architectures.
-- The MSBuild solution `DirectXTK_GDK_2022.sln` is for Microsoft GDK development for both desktop using the legacy Gaming.Desktop.x64 custom platform as well as Xbox development using Gaming.Xbox.*.x64 platforms.
-- For Xbox development, the project provides MSBuild solution `DirectXTK_GDKX_2022.sln` or `DirectXTK_GDKX_2026.slnx` for the Microsoft GDK with Xbox Extensions using Gaming.Xbox.*.x64 platforms.
+- For PC development using the *Microsoft GDK*, the project provides MSBuild solution `DirectXTK_GDKW_2022.sln` for the x64 or ARM64 architectures.
+- The MSBuild solution `DirectXTK_GDK_2022.sln` is for *Microsoft GDK with Xbox Extensions* development for both PC using the legacy Gaming.Desktop.x64 custom platform as well Xbox using Gaming.Xbox.*.x64 platforms.
+- For Xbox development, the project provides MSBuild solution `DirectXTK_GDKX_2022.sln` or `DirectXTK_GDKX_2026.slnx` for the *Microsoft GDK with Xbox Extensions* using Gaming.Xbox.*.x64 platforms.
 - The project ships MSBuild projects for Visual Studio 2022 (`.sln` / `.vcxproj`) and Visual Studio 2026 (`.slnx` / `.vcxproj`). VS 2019 projects have been retired.
-- The CMake build supports Xbox Series X|S and Xbox One via the `XBOX_CONSOLE_TARGET` variable (`scarlett` or `xboxone`).
+- The CMake build supports Xbox Series X|S (`scarlett`) and Xbox One (`xboxone`) via the `XBOX_CONSOLE_TARGET` variable.
 - The CMake build supports legacy Xbox One XDK via the `XBOX_CONSOLE_TARGET` variable (`durango`).
 
 ### Platform and Compiler `#ifdef` Guards
