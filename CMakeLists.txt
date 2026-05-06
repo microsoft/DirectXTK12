@@ -181,17 +181,17 @@ set(SHADER_SOURCES
 
 # These source files are identical in both DX11 and DX12 version.
 if(NOT BUILD_MIXED_DX11)
-    set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+    list(APPEND LIBRARY_HEADERS
       Inc/SimpleMath.h
       Inc/SimpleMath.inl)
 
-    set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+    list(APPEND LIBRARY_SOURCES
       Src/BinaryReader.cpp
       Src/Geometry.cpp
       Src/SimpleMath.cpp)
 endif()
 
-set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+list(APPEND LIBRARY_SOURCES
     Src/AlignedNew.h
     Src/Bezier.h
     Src/BinaryReader.h
@@ -205,7 +205,7 @@ set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
     Src/vbo.h
     Src/TeapotData.inc)
 
-set(SHADER_SOURCES ${SHADER_SOURCES}
+list(APPEND SHADER_SOURCES
     Src/Shaders/Common.fxh
     Src/Shaders/Lighting.fxh
     Src/Shaders/PBRCommon.fxh
@@ -216,30 +216,30 @@ set(SHADER_SOURCES ${SHADER_SOURCES}
 
 # Xbox-specific extensions
 if(DEFINED XBOX_CONSOLE_TARGET)
-  set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+  list(APPEND LIBRARY_HEADERS
       Inc/XboxDDSTextureLoader.h)
 
-  set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+  list(APPEND LIBRARY_SOURCES
       Src/XboxDDSTextureLoader.cpp)
 endif()
 
 if(BUILD_XINPUT OR BUILD_WGI OR BUILD_GAMEINPUT)
-  set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+  list(APPEND LIBRARY_HEADERS
       Inc/GamePad.h
       Inc/Keyboard.h
       Inc/Mouse.h)
 
-  set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+  list(APPEND LIBRARY_SOURCES
       Src/GamePad.cpp
       Src/Keyboard.cpp
       Src/Mouse.cpp)
 endif()
 
 if(BUILD_XAUDIO_WIN10 OR BUILD_XAUDIO_REDIST)
-    set(LIBRARY_HEADERS ${LIBRARY_HEADERS}
+    list(APPEND LIBRARY_HEADERS
         Inc/Audio.h)
 
-    set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+    list(APPEND LIBRARY_SOURCES
         Audio/AudioEngine.cpp
         Audio/DynamicSoundEffectInstance.cpp
         Audio/SoundCommon.cpp
@@ -264,7 +264,7 @@ else()
     file(TO_CMAKE_PATH ${COMPILED_SHADERS} COMPILED_SHADERS)
 endif()
 
-set(LIBRARY_SOURCES ${LIBRARY_SOURCES}
+list(APPEND LIBRARY_SOURCES
     ${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc)
 
 if(BUILD_SCARLETT_SHADERS)
@@ -299,13 +299,17 @@ if(NOT USE_PREBUILT_SHADERS)
           HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_HOST_ARCH}"
                 "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}.0/${DIRECTX_HOST_ARCH}"
                 "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_HOST_ARCH}")
-        message(STATUS "Using DirectXShaderCompiler found in ${DIRECTX_DXC_TOOL}")
+        if(DIRECTX_DXC_TOOL)
+          message(STATUS "Using DirectXShaderCompiler found in ${DIRECTX_DXC_TOOL}")
+        endif()
     else()
         find_program(DIRECTX_FXC_TOOL FXC.EXE
           HINTS "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}/${DIRECTX_HOST_ARCH}"
                 "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_SYSTEM_VERSION}.0/${DIRECTX_HOST_ARCH}"
                 "C:/Program Files (x86)/Windows Kits/10/bin/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/${DIRECTX_HOST_ARCH}")
-        message(STATUS "Using LegacyShaderCompiler found in ${DIRECTX_FXC_TOOL}")
+        if(DIRECTX_FXC_TOOL)
+          message(STATUS "Using LegacyShaderCompiler found in ${DIRECTX_FXC_TOOL}")
+        endif()
     endif()
     add_custom_command(
         OUTPUT "${COMPILED_SHADERS}/SpriteEffect_SpriteVertexShader.inc"
@@ -359,7 +363,8 @@ source_group(Inc REGULAR_EXPRESSION Inc/*.*)
 source_group(Src REGULAR_EXPRESSION Src/*.*)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Inc>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Inc>)
+target_include_directories(${PROJECT_NAME} SYSTEM INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/directxtk12>)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
@@ -382,13 +387,17 @@ endif()
 
 if(directxmath_FOUND)
     message(STATUS "Using DirectXMath package")
-    target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectXMath)
+    if(NOT MINGW)
+      target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectXMath)
+    endif()
 endif()
 
 if(directx-headers_FOUND)
     message(STATUS "Using DirectX-Headers package")
-    target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectX-Headers)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
+    if(NOT MINGW)
+      target_link_libraries(${PROJECT_NAME} PRIVATE Microsoft::DirectX-Headers)
+      target_compile_definitions(${PROJECT_NAME} PRIVATE USING_DIRECTX_HEADERS)
+    endif()
 endif()
 
 if(BUILD_XAUDIO_REDIST AND (NOT BUILD_XAUDIO_WIN10))
@@ -455,10 +464,9 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PACKAGE_NAME})
 
 # Create pkg-config file
-include(build/JoinPaths.cmake)
 # from: https://github.com/jtojnar/cmake-snips#concatenating-paths-when-building-pkg-config-files
-join_paths(DIRECTXTK12_INCLUDEDIR_FOR_PKG_CONFIG "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
-join_paths(DIRECTXTK12_LIBDIR_FOR_PKG_CONFIG "\${prefix}"     "${CMAKE_INSTALL_LIBDIR}")
+cmake_path(APPEND DIRECTXTK12_INCLUDEDIR_FOR_PKG_CONFIG "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
+cmake_path(APPEND DIRECTXTK12_LIBDIR_FOR_PKG_CONFIG "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
 
 set(DIRECTXTK12_DEP_L "")
 if(directxmath_FOUND)
@@ -506,8 +514,6 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     if(BUILD_SHARED_LIBS)
       target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-attributes")
     endif()
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-    set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     if(BUILD_SHARED_LIBS)
       target_compile_options(${PROJECT_NAME} PRIVATE /wd4251 /wd4275)
@@ -530,8 +536,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         target_compile_options(${PROJECT_NAME} PRIVATE "/Qspectre")
     endif()
 
-
     if(BUILD_FUZZING AND (NOT WINDOWS_STORE))
+      # Prevent fuzzing builds (which is otherwise configured as a Release mode) from disabling assertions
       string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
       string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
 
@@ -559,8 +565,6 @@ if(WIN32)
       target_compile_definitions(${PROJECT_NAME} PRIVATE _ITERATOR_DEBUG_LEVEL=0)
     endif()
 endif()
-
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 #--- Test suite
 if(WIN32 AND (NOT WINDOWS_STORE) AND (NOT (DEFINED XBOX_CONSOLE_TARGET)))
