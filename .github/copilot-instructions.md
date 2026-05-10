@@ -350,4 +350,5 @@ When reviewing documentation, do the following:
 18. Test the VCPKG port using all appropriate triplets and features.
 19. Run `.\vcpkg --x-add-version directxtk12` to update the VCPKG versioning history.
 20. Submit a PR to the VCPKG repository to update the DirectXTK12 port back to the main GitHub repo. The PR will be reviewed and merged by the VCPKG maintainers.
-21. Update the GitHub release with links to the matching NuGet packages, the VCPKG port, and the winget manifests for the tools.
+
+> When fully completed, be sure to update the GitHub release with links to the matching NuGet packages, the VCPKG port, and the winget manifests for the tools.
