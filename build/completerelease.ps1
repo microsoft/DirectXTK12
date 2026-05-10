@@ -36,6 +36,7 @@ https://github.com/microsoft/DirectXTK12/wiki
 
 #>
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '')]
 param(
     [string]$PAT = "",
     [switch]$SkipTestRepo,
