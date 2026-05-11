@@ -17,17 +17,17 @@ These instructions define how GitHub Copilot should assist with this project. Th
 - You can make use of the nuget.org packages **directxtk12_desktop_win10** or **directxtk12_uwp**.
 - You can also use the library source code directly in your project or as a git submodule.
 
-> If you are new to DirectX, you may want to start with [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/wiki/Getting-Started) to learn many important concepts for Direct3D programming, HLSL shaders, and the code patterns used in this project with a more 'noobie friendly' API.
+> If you are new to DirectX, you may want to start with [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/wiki/Getting-Started) to learn many important concepts for Direct3D programming, HLSL shaders, and the code patterns used in this project with a more 'newbie friendly' API.
 
 ## General Guidelines
 
 - **Code Style**: The project uses an .editorconfig file to enforce coding standards. Follow the rules defined in `.editorconfig` for indentation, line endings, and other formatting. Additional information can be found on the wiki at [Implementation](https://github.com/microsoft/DirectXTK12/wiki/Implementation). The library's public API requires C++11, and the project builds with C++17 (`CMAKE_CXX_STANDARD 17`). This code is designed to build with Visual Studio 2022, Visual Studio 2026, clang for Windows v12 or later, or MinGW 12.2.
 > Notable `.editorconfig` rules: C/C++ and HLSL files use 4-space indentation, `crlf` line endings, and `latin1` charset — avoid non-ASCII characters in source files. HLSL files have separate indent/spacing rules defined in `.editorconfig`.
 - **Documentation**: The project provides documentation in the form of wiki pages available at [Documentation](https://github.com/microsoft/DirectXTK12/wiki/). The audio, input, and math implementations are identical to the DirectX Tool Kit for DirectX 11.
-- **Error Handling**: Use C++ exceptions for error handling and uses RAII smart pointers to ensure resources are properly managed. For some functions that return HRESULT error codes, they are marked `noexcept`, use `std::nothrow` for memory allocation, and should not throw exceptions.
+- **Error Handling**: Use C++ exceptions for error handling and use RAII smart pointers to ensure resources are properly managed. For some functions that return HRESULT error codes, they are marked `noexcept`, use `std::nothrow` for memory allocation, and should not throw exceptions.
 - **Testing**: Unit tests for this project are implemented in this repository [Test Suite](https://github.com/walbourn/directxtk12test/) and can be run using CTest per the instructions at [Test Documentation](https://github.com/walbourn/directxtk12test/wiki). See [test copilot instructions](https://github.com/walbourn/directxtk12test/blob/main/.github/copilot-instructions.md) for additional information on the tests.
 - **Security**: This project uses secure coding practices from the Microsoft Secure Coding Guidelines, and is subject to the `SECURITY.md` file in the root of the repository. Functions that read input from image files, geometry files, and audio files are subject to OneFuzz fuzz testing to ensure they are secure against malformed files.
-- **Dependencies**: The project uses CMake and VCPKG for managing dependencies, making optional use of DirectXMath, DirectX-Headers, DirectX 12 Agility SDK, GameInput, and XAudio2Redist. The project can be built without these dependencies, relying on the Windows SDK for core functionality. CMake build options include `BUILD_GAMEINPUT`, `BUILD_WGI`, and `BUILD_XINPUT` for alternative input backends.  Additional CMake build options include `BUILD_MIXED_DX11` for DX11 toolkit interop which removes shared code from the DX12 library as it will be present in the DX11 library to avoid link conflicts.
+- **Dependencies**: The project uses CMake and VCPKG for managing dependencies, making optional use of DirectXMath, DirectX-Headers, DirectX 12 Agility SDK, GameInput, and XAudio2Redist. The project can be built without these dependencies, relying on the Windows SDK for core functionality. CMake build options include `BUILD_GAMEINPUT`, `BUILD_WGI`, and `BUILD_XINPUT` for alternative input backends. Additional CMake build options include `BUILD_MIXED_DX11` for DX11 toolkit interop which removes shared code from the DX12 library as it will be present in the DX11 library to avoid link conflicts.
 - **Continuous Integration**: This project implements GitHub Actions for continuous integration, ensuring that all code changes are tested and validated before merging. This includes building the project for a number of configurations and toolsets, running a subset of unit tests, and static code analysis including GitHub super-linter, CodeQL, and MSVC Code Analysis.
 - **Code of Conduct**: The project adheres to the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). All contributors are expected to follow this code of conduct in all interactions related to the project.
 
@@ -60,7 +60,7 @@ wiki/         # Local clone of the GitHub wiki documentation repository.
 - Make use of `assert` for debugging checks, but be sure to validate input parameters in release builds.
 - Make use of the `DebugTrace` helper to log diagnostic messages, particularly at the point of throwing an exception.
 - Explicitly `= delete` copy constructors and copy-assignment operators on all classes that use the pImpl idiom.
-- Explicitly utilize `= default` or `=delete` for copy constructors, assignment operators, move constructors and move-assignment operators where appropriate.
+- Explicitly utilize `= default` or `= delete` for copy constructors, assignment operators, move constructors and move-assignment operators where appropriate.
 - Use 16-byte alignment (`_aligned_malloc` / `_aligned_free`) to support SIMD operations in the implementation, but do not expose this requirement in public APIs.
 - All implementation `.cpp` files include `pch.h` as their first include (precompiled header). MinGW builds skip precompiled headers.
 - `Model` and related classes require RTTI (`/GR` on MSVC, `__GXX_RTTI` on GCC/Clang). The CMake build enables `/GR` automatically; do not disable RTTI when using `Model`.
@@ -206,8 +206,7 @@ Every source file (`.cpp`, `.h`, `.hlsl`, `.fx`, etc.) must begin with this bloc
 ```
 
 Section separators within files use:
-- Major sections: `//--------------------------------------------------------------------------------------`
-- Subsections:   `//--------------------------------------------------------------------------------------`
+- `//--------------------------------------------------------------------------------------`
 
 The project does **not** use Doxygen. API documentation is maintained exclusively on the GitHub wiki.
 
@@ -269,7 +268,7 @@ When creating documentation:
 - The code targets Win32 desktop applications for Windows 10 or later, Xbox One, Xbox Series X|S, and Universal Windows Platform (UWP) apps for Windows 10 and Windows 11.
 - Portability and conformance of the code is validated by building with Visual C++, clang/LLVM for Windows, and MinGW.
 - For PC development using the *Microsoft GDK*, the project provides MSBuild solution `DirectXTK_GDKW_2022.sln` for the x64 or ARM64 architectures.
-- The MSBuild solution `DirectXTK_GDK_2022.sln` is for *Microsoft GDK with Xbox Extensions* development for both PC using the legacy Gaming.Desktop.x64 custom platform as well Xbox using Gaming.Xbox.*.x64 platforms.
+- The MSBuild solution `DirectXTK_GDK_2022.sln` is for *Microsoft GDK with Xbox Extensions* development for both PC using the legacy Gaming.Desktop.x64 custom platform as well as Xbox using Gaming.Xbox.*.x64 platforms.
 - For Xbox development, the project provides MSBuild solution `DirectXTK_GDKX_2022.sln` or `DirectXTK_GDKX_2026.slnx` for the *Microsoft GDK with Xbox Extensions* using Gaming.Xbox.*.x64 platforms.
 - The project ships MSBuild projects for Visual Studio 2022 (`.sln` / `.vcxproj`) and Visual Studio 2026 (`.slnx` / `.vcxproj`). VS 2019 projects have been retired.
 - The CMake build supports Xbox Series X|S (`scarlett`) and Xbox One (`xboxone`) via the `XBOX_CONSOLE_TARGET` variable.
@@ -302,7 +301,7 @@ Use these established guards — do not invent new ones:
 | `GAMEINPUT_API_VERSION` | GameInput SDK version detection for API-level feature checks |
 | `USING_PIX_CUSTOM_MEMORY_EVENTS` | PIX custom memory event integration in GraphicsMemory |
 
-> `_M_ARM`/ `__arm__` is legacy 32-bit ARM which is deprecated.
+> `_M_ARM` / `__arm__` is legacy 32-bit ARM which is deprecated.
 
 ## Code Review Instructions
 
@@ -328,3 +327,28 @@ When reviewing documentation, do the following:
 - Review the public interface defined in the `Inc` folder.
 - Read the documentation on the wiki located in [this git repository](https://github.com/microsoft/DirectXTK12.wiki.git).
 - Report any specific gaps in the documentation compared to the public interface.
+
+## Release Process
+
+1. Ensure all changes are merged into the `main` branch and that all tests pass.
+2. Git pull the local repository to ensure it is up to date with the `main` branch.
+3. Run the PowerShell script `build\preparerelease.ps1` which will generate a topic branch for the release, update the version number in `CMakeLists.txt`, the `README.md` file, the release notes in the nuspec files, and create a stub in the `CHANGELOG.md` file for the new release.
+4. Edit the `CHANGELOG.md` file to update it with a summary of changes.
+5. Submit the topic branch for review and merge into `main` once approved. Allow the GitHub Actions workflows and the Azure DevOps pipelines to complete successfully before proceeding.
+6. Run the PowerShell script `build\completerelease.ps1` which will set a tag on the project repo and the test repo, and create a release on GitHub with the release notes from `CHANGELOG.md`. Ensure you have set up GPG signing for your GitHub account so that the tags will be verified.
+7. Git pull the local repository to ensure it is up to date with the `main` branch. Be sure to include `--tags`.
+8. Push the `main` branch to the MSCodeHub mirror repository. Be sure to include `--tags`.
+9. Create a PR on MSCodeHub from the `main` branch to the `release` branch.
+10. Merge the PR on MSCodeHub to update the release branch, which will trigger the Azure DevOps pipeline to build the NuGet packages.
+11. Edit the GitHub release and upload the signed binaries from the matching DirectXTK release to the release assets.
+12. Download the GitHub source .zip archive from the release. Unzip and compare to the local repo to ensure it matches — keep in mind there may be some CR/LF differences. Run minisign on the .zip to generate a signature file, and upload the signature file to the release assets.
+13. Validate the NuGet packages with <https://github.com/walbourn/directxtk-tutorials> by pushing the NuGet packages to a local Packages Source folder, and refreshing the NuGet packages from that folder. Then build using BuildAllSolutions.targets.
+14. Run the PowerShell script `build\promotenuget.ps1` with the `-Release` parameter to promote the version to the Release view on the project-scoped ADO feed.
+15. Run the MSCodeHub pipeline to publish the NuGet packages to nuget.org. The pipeline will automatically push the most recent package promoted to the Release view to nuget.org.
+16. Git pull a local repository of VCPKG to `d:\vcpkg` in sync with the `main` branch of the VCPKG repository.
+17. Run the PowerShell script `build\updatevcpkg.ps1` to update the DirectXTK12 port in VCPKG with the new release version. This will edit the files in `ports\directxtk12`.
+18. Test the VCPKG port using all appropriate triplets and features.
+19. Run `.\vcpkg --x-add-version directxtk12` to update the VCPKG versioning history.
+20. Submit a PR to the VCPKG repository to update the DirectXTK12 port back to the main GitHub repo. The PR will be reviewed and merged by the VCPKG maintainers.
+
+> When fully completed, be sure to update the GitHub release with links to the matching NuGet packages, the VCPKG port, and the winget manifests for the tools.
