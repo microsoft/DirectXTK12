@@ -30,3 +30,4 @@ Bin
 /CMakeUserPresets.json
 /build/vcpkg_installed
 /build/obj
+!**/skills/**
