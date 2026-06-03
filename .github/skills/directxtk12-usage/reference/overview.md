@@ -134,7 +134,6 @@ See [DirectX Tool Kit wiki: GamePad](https://github.com/Microsoft/DirectXTK/wiki
 | | `DynamicSoundEffectInstance` | Programmatic audio generation via callback-driven buffer submission. |
 | | `AudioListener`, `AudioEmitter` | 3D audio positioning for spatialized sound. |
 
-
 See the [DirectX Tool Kit for Audio wiki](https://github.com/Microsoft/DirectXTK/wiki/Audio) for full documentation.
 
 ## Math
