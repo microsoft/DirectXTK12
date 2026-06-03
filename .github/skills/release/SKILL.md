@@ -65,5 +65,6 @@ When fully completed, be sure to update the GitHub release with links to the mat
 | --- | --- |
 | `build\preparerelease.ps1` | Creates topic branch, updates version numbers and changelog stub |
 | `build\completerelease.ps1` | Sets tags, creates GitHub release from changelog |
-| `build\promotenuget.ps1 -Release` | Promotes NuGet package to Release view on ADO feed |
+| `build\promotenuget.ps1` | Promotes NuGet package to Release view on ADO feed |
+| `assets\vcpkgdxtk12.cmd` | Tests VCPKG port across all triplets and features |
 | `build\updatevcpkg.ps1` | Updates DirectXTK12 VCPKG port files |
