@@ -13,6 +13,7 @@ description: Guide for performing the DirectX Tool Kit for DirectX 12 release pr
 - Local repository:
   - VCPKG at `d:\vcpkg` (synced with `main` branch)
 
+<!-- markdownlint-disable MD029 -->
 ## Steps
 
 ### Phase 1: Prepare the Release
