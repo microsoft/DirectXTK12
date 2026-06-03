@@ -12,6 +12,7 @@ description: Guide for performing the DirectX Tool Kit for DirectX 12 release pr
 - Access to the MSCodeHub mirror repository and Azure DevOps pipelines.
 - Local repository:
   - VCPKG at `d:\vcpkg` (synced with `main` branch)
+- PATs will be needed for scripts that access GitHub and ADO.
 
 <!-- markdownlint-disable MD029 -->
 ## Steps
@@ -43,15 +44,15 @@ description: Guide for performing the DirectX Tool Kit for DirectX 12 release pr
 ### Phase 5: NuGet Validation and Publishing
 
 13. Validate the NuGet packages with <https://github.com/walbourn/directxtk-tutorials> by pushing the NuGet packages to a local Packages Source folder, and refreshing the NuGet packages from that folder. Then build using BuildAllSolutions.targets.
-14. Run the PowerShell script `build\promotenuget.ps1` with the `-Release` parameter to promote the version to the Release view on the project-scoped ADO feed.
+14. Run the PowerShell script `build\promotenuget.ps1 -Version <version> -Release` to promote the version to the Release view on the project-scoped ADO feed. The `-Version` parameter is required and should match the NuGet package version (e.g., `2026.6.2.1`).
 15. Run the MSCodeHub pipeline to publish the NuGet packages to nuget.org. The pipeline will automatically push the most recent package promoted to the Release view to nuget.org.
 
 ### Phase 6: VCPKG Port Update
 
 16. Git pull a local repository of VCPKG to `d:\vcpkg` in sync with the `main` branch of the VCPKG repository.
 17. Run the PowerShell script `build\updatevcpkg.ps1` to update the DirectXTK12 port in VCPKG with the new release version. This will edit the files in `ports\directxtk12`.
-18. Test the VCPKG port using all appropriate triplets and features.
-19. Run `.\vcpkg --x-add-version directxtk12` to update the VCPKG versioning history.
+18. Test the VCPKG port using the script at `assets/vcpkgdxtk12.cmd` (in this skill folder). Copy it to `d:\vcpkg` and run from there after bootstrapping VCPKG.
+19. Run `.\vcpkg x-add-version directxtk12` to update the VCPKG versioning history.
 20. Submit a PR to the VCPKG repository to update the DirectXTK12 port back to the main GitHub repo. The PR will be reviewed and merged by the VCPKG maintainers.
 
 ### Phase 7: Finalize
