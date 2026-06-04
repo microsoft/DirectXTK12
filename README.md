@@ -58,6 +58,10 @@ These components are designed to work without requiring any content from the leg
 
   * Contains miscellaneous build files and scripts.
 
+* ``skills\``
+
+   * Contains published CoPilot skills for use by developers.
+
 > MakeSpriteFont and XWBTool can be found in the [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK). Audio, GamePad, Keyboard, Mouse, and SimpleMath are identical between both versions of the toolkit.
 
 ## Documentation
