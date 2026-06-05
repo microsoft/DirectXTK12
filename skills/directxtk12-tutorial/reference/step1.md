@@ -118,7 +118,7 @@ The `DeviceResources` class encapsulates all Direct3D 12 device and swap chain m
 
 > Unlike Direct3D 11, the application is responsible for all synchronization between CPU and GPU. The fence mechanism ensures safe reuse of per-frame resources.
 
-> Since we are going to ultimately be rendering a 3D scene in the tutorial, we are using the default values for the DeviceResources ctor. If we were only rendering 2D, we would pass ``DXGI_FORMAT_UNKNOWN`` for the *depthBufferFormat* parameter.
+Since we are going to ultimately be rendering a 3D scene in the tutorial, we are using the default values for the DeviceResources ctor. If we were only rendering 2D, we would pass ``DXGI_FORMAT_UNKNOWN`` for the *depthBufferFormat* parameter.
 
 ### Game Loop
 
