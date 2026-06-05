@@ -1,6 +1,13 @@
 ---
 name: directxtk12-usage
-description: Guide for integrating DirectX Tool Kit for DirectX 12 into new projects and understanding the library's API surface. Use this skill when asked about how to use DirectXTK12, set up a new project, or get an overview of available classes and functionality.
+description: >-
+  Guide for integrating DirectX Tool Kit for DirectX 12 into new projects and understanding the library's API surface.
+  Use this skill when asked about how to use DirectXTK12, set up a new project, or get an overview of
+  available classes and functionality.
+license: MIT
+metadata:
+  author: chuckw
+  version: "1.0"
 ---
 
 # DirectX Tool Kit for DirectX 12 — Usage Guide
