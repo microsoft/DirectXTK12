@@ -123,6 +123,9 @@ public:
     bool mSetViewport;
     D3D12_VIEWPORT mViewPort;
     D3D12_GPU_DESCRIPTOR_HANDLE mSampler;
+    std::function<void __cdecl()> mCustomCallback;
+
+    XMMATRIX GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation);
 
 private:
     // Implementation helper methods.
@@ -142,8 +145,6 @@ private:
         _Out_writes_(VerticesPerSprite) VertexPositionColorTexture* vertices,
         FXMVECTOR textureSize,
         FXMVECTOR inverseTextureSize) noexcept;
-
-    XMMATRIX GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation);
 
     // Constants.
     static constexpr size_t MaxBatchSize = 2048;
@@ -175,6 +176,8 @@ private:
     // mSpriteQueue array, and we take care to keep them in order when sorting is disabled.
     std::vector<SpriteInfo const*> mSortedSprites;
 
+    // Custom flags.
+    bool mCustomCBV;
 
     // Mode settings from the last Begin call.
     bool mInBeginEndPair;
@@ -438,6 +441,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device,
     mSampler{},
     mSpriteQueueCount(0),
     mSpriteQueueArraySize(0),
+    mCustomCBV(false),
     mInBeginEndPair(false),
     mSortMode(SpriteSortMode_Deferred),
     mTransformMatrix(MatrixIdentity),
@@ -475,6 +479,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device,
     if (psoDesc.customRootSignature)
     {
         mRootSignature = psoDesc.customRootSignature;
+        mCustomCBV = psoDesc.customCBV;
     }
     else
     {
@@ -558,8 +563,10 @@ void SpriteBatch::Impl::End()
 
     // Break circular reference chains, in case the state lambda closed
     // over an object that holds a reference to this SpriteBatch.
-    mCommandList = nullptr;
+    mCustomCallback = nullptr;
+
     mInBeginEndPair = false;
+    mCommandList = nullptr;
 }
 
 
@@ -679,13 +686,22 @@ void SpriteBatch::Impl::PrepareForRendering()
     // Set the index buffer.
     commandList->IASetIndexBuffer(&mDeviceResources->indexBufferView);
 
-    // Set the transform matrix.
-    const XMMATRIX transformMatrix = (mRotation == DXGI_MODE_ROTATION_UNSPECIFIED)
-        ? mTransformMatrix
-        : (mTransformMatrix * GetViewportTransform(mRotation));
+    if (!mCustomCBV)
+    {
+        // Set the transform matrix.
+        const XMMATRIX transformMatrix = (mRotation == DXGI_MODE_ROTATION_UNSPECIFIED)
+            ? mTransformMatrix
+            : (mTransformMatrix * GetViewportTransform(mRotation));
 
-    mConstantBuffer = GraphicsMemory::Get(mDeviceResources->mDevice).AllocateConstant(transformMatrix);
-    commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
+        mConstantBuffer = GraphicsMemory::Get(mDeviceResources->mDevice).AllocateConstant(transformMatrix);
+        commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
+    }
+
+    // Hook lets custom rendering scenarios bind custom resources.
+    if (mCustomCallback)
+    {
+        mCustomCallback();
+    }
 }
 
 
@@ -1062,6 +1078,7 @@ SpriteBatch& SpriteBatch::operator= (SpriteBatch&&) noexcept = default;
 SpriteBatch::~SpriteBatch() = default;
 
 
+// Begin using static sampler
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Begin(
     ID3D12GraphicsCommandList* commandList,
@@ -1072,6 +1089,7 @@ void XM_CALLCONV SpriteBatch::Begin(
 }
 
 
+// Begin with heap-based sampler
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Begin(
     ID3D12GraphicsCommandList* commandList,
@@ -1089,6 +1107,45 @@ void XM_CALLCONV SpriteBatch::Begin(
     }
 
     pImpl->mSampler = sampler;
+
+    pImpl->Begin(commandList, sortMode, transformMatrix);
+}
+
+
+// Begin using static sampler and custom lambda
+_Use_decl_annotations_
+void XM_CALLCONV SpriteBatch::Begin(
+    ID3D12GraphicsCommandList* commandList,
+    std::function<void __cdecl()> setCustomCallback,
+    SpriteSortMode sortMode,
+    FXMMATRIX transformMatrix)
+{
+    pImpl->mCustomCallback = setCustomCallback;
+
+    pImpl->Begin(commandList, sortMode, transformMatrix);
+}
+
+
+// Begin with heap-based sampler and custom lambda
+_Use_decl_annotations_
+void XM_CALLCONV SpriteBatch::Begin(
+    ID3D12GraphicsCommandList* commandList,
+    D3D12_GPU_DESCRIPTOR_HANDLE sampler,
+    std::function<void __cdecl()> setCustomCallback,
+    SpriteSortMode sortMode,
+    FXMMATRIX transformMatrix)
+{
+    if (!sampler.ptr)
+        throw std::invalid_argument("Invalid heap-based sampler for Begin");
+
+    if (!pImpl->mSampler.ptr)
+    {
+        DebugTrace("ERROR: sampler version of Begin requires SpriteBatch was created with a heap-based sampler\n");
+        throw std::runtime_error("SpriteBatch::Begin");
+    }
+
+    pImpl->mSampler = sampler;
+    pImpl->mCustomCallback = setCustomCallback;
 
     pImpl->Begin(commandList, sortMode, transformMatrix);
 }
@@ -1253,4 +1310,9 @@ void SpriteBatch::SetViewport(const D3D12_VIEWPORT& viewPort)
 {
     pImpl->mSetViewport = true;
     pImpl->mViewPort = viewPort;
+}
+
+void SpriteBatch::GetViewportTransform(XMMATRIX& transformMatrix) const
+{
+    transformMatrix = pImpl->GetViewportTransform(pImpl->mRotation);
 }

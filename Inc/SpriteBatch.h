@@ -91,7 +91,8 @@ namespace DirectX
                 samplerDescriptor{},
                 customRootSignature(nullptr),
                 customVertexShader{},
-                customPixelShader{}
+                customPixelShader{},
+                customCBV(false)
             {
                 if (isamplerDescriptor)
                     this->samplerDescriptor = *isamplerDescriptor;
@@ -105,6 +106,7 @@ namespace DirectX
             ID3D12RootSignature*        customRootSignature;
             D3D12_SHADER_BYTECODE       customVertexShader;
             D3D12_SHADER_BYTECODE       customPixelShader;
+            bool                        customCBV;
 
         private:
             static const D3D12_BLEND_DESC           s_DefaultBlendDesc;
@@ -133,11 +135,30 @@ namespace DirectX
                 _In_ ID3D12GraphicsCommandList* commandList,
                 SpriteSortMode sortMode = SpriteSortMode_Deferred,
                 FXMMATRIX transformMatrix = MatrixIdentity);
+                // Begin using a static sampler.
+
             DIRECTX_TOOLKIT_API void XM_CALLCONV Begin(
                 _In_ ID3D12GraphicsCommandList* commandList,
                 D3D12_GPU_DESCRIPTOR_HANDLE sampler,
                 SpriteSortMode sortMode = SpriteSortMode_Deferred,
                 FXMMATRIX transformMatrix = MatrixIdentity);
+                // Begin with a heap-based sampler.
+
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Begin(
+                _In_ ID3D12GraphicsCommandList* commandList,
+                std::function<void __cdecl()> setCustomCallback,
+                SpriteSortMode sortMode = SpriteSortMode_Deferred,
+                FXMMATRIX transformMatrix = MatrixIdentity);
+                // Begin with a static sampler and custom callback.
+
+            DIRECTX_TOOLKIT_API void XM_CALLCONV Begin(
+                _In_ ID3D12GraphicsCommandList* commandList,
+                D3D12_GPU_DESCRIPTOR_HANDLE sampler,
+                std::function<void __cdecl()> setCustomCallback,
+                SpriteSortMode sortMode = SpriteSortMode_Deferred,
+                FXMMATRIX transformMatrix = MatrixIdentity);
+                // Begin with a heap-based sampler and custom callback.
+
             DIRECTX_TOOLKIT_API void __cdecl End();
 
             // Draw overloads specifying position, origin and scale as XMFLOAT2.
@@ -191,6 +212,9 @@ namespace DirectX
 
             // Set viewport for sprite transformation
             DIRECTX_TOOLKIT_API void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);
+
+            // Gets transform matrix based on viewport and rotation mode
+            DIRECTX_TOOLKIT_API void GetViewportTransform(XMMATRIX& transformMatrix) const;
 
         private:
             // Private implementation.
