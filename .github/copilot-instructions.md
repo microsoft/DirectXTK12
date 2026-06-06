@@ -33,7 +33,7 @@ These instructions define how GitHub Copilot should assist with this project. Th
 
 ## File Structure
 
-```txt
+```plaintext
 .azuredevops/ # Azure DevOps pipeline configuration and policy files.
 .github/      # GitHub Actions workflow files and linter configuration files.
 .nuget/       # NuGet package configuration files.
@@ -42,6 +42,7 @@ Audio/        # DirectX Tool Kit for Audio implementation files.
 Inc/          # Public header files.
 Src/          # Implementation header and source files.
   Shaders/    # HLSL shader files.
+skills/       # Published CoPilot skills for use by developers.
 Tests/        # Tests are designed to be cloned from a separate repository at this location.
 wiki/         # Local clone of the GitHub wiki documentation repository.
 ```
@@ -330,25 +331,4 @@ When reviewing documentation, do the following:
 
 ## Release Process
 
-1. Ensure all changes are merged into the `main` branch and that all tests pass.
-2. Git pull the local repository to ensure it is up to date with the `main` branch.
-3. Run the PowerShell script `build\preparerelease.ps1` which will generate a topic branch for the release, update the version number in `CMakeLists.txt`, the `README.md` file, the release notes in the nuspec files, and create a stub in the `CHANGELOG.md` file for the new release.
-4. Edit the `CHANGELOG.md` file to update it with a summary of changes.
-5. Submit the topic branch for review and merge into `main` once approved. Allow the GitHub Actions workflows and the Azure DevOps pipelines to complete successfully before proceeding.
-6. Run the PowerShell script `build\completerelease.ps1` which will set a tag on the project repo and the test repo, and create a release on GitHub with the release notes from `CHANGELOG.md`. Ensure you have set up GPG signing for your GitHub account so that the tags will be verified.
-7. Git pull the local repository to ensure it is up to date with the `main` branch. Be sure to include `--tags`.
-8. Push the `main` branch to the MSCodeHub mirror repository. Be sure to include `--tags`.
-9. Create a PR on MSCodeHub from the `main` branch to the `release` branch.
-10. Merge the PR on MSCodeHub to update the release branch, which will trigger the Azure DevOps pipeline to build the NuGet packages.
-11. Edit the GitHub release and upload the signed binaries from the matching DirectXTK release to the release assets.
-12. Download the GitHub source .zip archive from the release. Unzip and compare to the local repo to ensure it matches — keep in mind there may be some CR/LF differences. Run minisign on the .zip to generate a signature file, and upload the signature file to the release assets.
-13. Validate the NuGet packages with <https://github.com/walbourn/directxtk-tutorials> by pushing the NuGet packages to a local Packages Source folder, and refreshing the NuGet packages from that folder. Then build using BuildAllSolutions.targets.
-14. Run the PowerShell script `build\promotenuget.ps1` with the `-Release` parameter to promote the version to the Release view on the project-scoped ADO feed.
-15. Run the MSCodeHub pipeline to publish the NuGet packages to nuget.org. The pipeline will automatically push the most recent package promoted to the Release view to nuget.org.
-16. Git pull a local repository of VCPKG to `d:\vcpkg` in sync with the `main` branch of the VCPKG repository.
-17. Run the PowerShell script `build\updatevcpkg.ps1` to update the DirectXTK12 port in VCPKG with the new release version. This will edit the files in `ports\directxtk12`.
-18. Test the VCPKG port using all appropriate triplets and features.
-19. Run `.\vcpkg --x-add-version directxtk12` to update the VCPKG versioning history.
-20. Submit a PR to the VCPKG repository to update the DirectXTK12 port back to the main GitHub repo. The PR will be reviewed and merged by the VCPKG maintainers.
-
-> When fully completed, be sure to update the GitHub release with links to the matching NuGet packages, the VCPKG port, and the winget manifests for the tools.
+The release process is documented in the [release skill](.github/skills/release/SKILL.md). Invoke the `release` skill for step-by-step guidance when performing a release.
