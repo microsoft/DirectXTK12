@@ -151,6 +151,7 @@ set(LIBRARY_SOURCES
     Src/ModelLoadSDKMESH.cpp
     Src/ModelLoadVBO.cpp
     Src/NormalMapEffect.cpp
+    Src/NPREffect.cpp
     Src/PBREffect.cpp
     Src/PBREffectFactory.cpp
     Src/pch.h
@@ -172,6 +173,7 @@ set(SHADER_SOURCES
     Src/Shaders/EnvironmentMapEffect.fx
     Src/Shaders/GenerateMips.hlsl
     Src/Shaders/NormalMapEffect.fx
+    Src/Shaders/NPREffect.fx
     Src/Shaders/PBREffect.fx
     Src/Shaders/PostProcess.fx
     Src/Shaders/RootSig.fxh

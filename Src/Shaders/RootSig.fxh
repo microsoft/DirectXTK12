@@ -202,6 +202,15 @@
 "            DENY_MESH_SHADER_ROOT_ACCESS )," \
 "CBV(b0)"
 
+#define NPREffectRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS |" \
+"            DENY_MESH_SHADER_ROOT_ACCESS )," \
+"CBV(b0)"
+
 #else // !__XBOX_SCARLETT
 
 #define NoTextureRS \
@@ -365,6 +374,13 @@
 "CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
 
 #define DebugEffectRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0)"
+
+#define NPREffectRS \
 "RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
 "            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
