@@ -17,7 +17,7 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-#if defined(__MINGW32__) && !defined(USING_DIRECTX_HEADERS)
+#if defined(__MINGW32__) && (__GNUC__ < 16)
 const GUID IID_ID3D12Device = { 0x189819f1, 0x1db6, 0x4b57, { 0xbe, 0x54, 0x18, 0x21, 0x33, 0x9b, 0x85, 0xf7 } };
 #endif
 
