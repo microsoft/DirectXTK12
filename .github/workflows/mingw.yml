@@ -61,6 +61,12 @@ jobs:
       - name: 'Install Ninja'
         run: choco install ninja
 
+      # Until MinGW 16 is in the runner image, libd3d12.a is not available, so we need to use the MSVC toolset to build the tests.
+      - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: ${{ matrix.toolver }}
+
       - name: 'Set triplet'
         shell: pwsh
         run: |
