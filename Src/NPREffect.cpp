@@ -665,6 +665,7 @@ void NPREffect::SetDiffuseColor(FXMVECTOR value)
 
 void NPREffect::SetSpecularColor(FXMVECTOR value)
 {
+    // TODO: specular power needs to be specular threshold!
     // Set xyz, preserve w (specular power).
     pImpl->constants.specularColorAndSpecularPower = XMVectorSelect(pImpl->constants.specularColorAndSpecularPower, value, g_XMSelect1110);
 
@@ -709,8 +710,12 @@ void NPREffect::SetColorAndAlpha(FXMVECTOR value)
 }
 
 
-// Texture settings.
-// TODO: Implement texture settings.
+// Texture setting.
+void NPREffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+{
+    pImpl->texture = srvDescriptor;
+    pImpl->sampler = samplerDescriptor;
+}
 
 
 // Cel shading settings.
@@ -737,12 +742,4 @@ void NPREffect::SetGoochWarmColor(FXMVECTOR value, float beta)
     pImpl->constants.goochWarmColorAndBeta = XMVectorSetW(value, beta);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
-}
-
-
-// Texture setting.
-void NPREffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
-{
-    pImpl->texture = srvDescriptor;
-    pImpl->sampler = samplerDescriptor;
 }
