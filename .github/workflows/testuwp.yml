@@ -54,8 +54,14 @@ jobs:
         with:
           msbuild-architecture: x64
 
+      - name: 'NuGet Restore'
+        working-directory: ${{ github.workspace }}/Tests
+        run: >
+          nuget restore DirectXTK_Tests_Windows10.sln -Verbosity detailed -NonInteractive -Source https://api.nuget.org/v3/index.json
+
       - name: 'Build (UWP)'
         working-directory: ${{ github.workspace }}/Tests
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }}
+          /p:AppxPackage=false
           DirectXTK_Tests_Windows10.sln
