@@ -556,7 +556,7 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
-            // Texture setting - albedo, normal and specular intensity
+            // Texture settings - albedo, normal and specular intensity.
             DIRECTX_TOOLKIT_API void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
             DIRECTX_TOOLKIT_API void __cdecl SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
             DIRECTX_TOOLKIT_API void __cdecl SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
@@ -799,8 +799,8 @@ namespace DirectX
 
             static constexpr int MaxDirectionalLights = 1;
 
-            // Texture settings.
-            // TODO: Implement texture settings.
+            // Texture setting.
+            DIRECTX_TOOLKIT_API void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
             // Cel shading settings.
             DIRECTX_TOOLKIT_API void __cdecl SetCelShaderBands(int bands);

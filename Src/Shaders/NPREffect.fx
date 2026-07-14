@@ -10,6 +10,10 @@
 //--------------------------------------------------------------------------------------
 
 
+Texture2D<float4> Texture : register(t0);
+SamplerState Sampler : register(s0);
+
+
 cbuffer Parameters : register(b0)
 {
     float3 LightDirection            : packoffset(c0);
@@ -39,9 +43,141 @@ cbuffer Parameters : register(b0)
 #include "Structures.fxh"
 #include "Utilities.fxh"
 
-// Vertex shader: basic
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffect(VSInputNmTx vin)
+// Vertex shader: basic.
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffect(VSInputNm vin)
+{
+    VSOutputPixelLighting vout;
+
+    vout.PositionPS = mul(vin.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(vin.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(vin.Normal, WorldInverseTranspose));
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+
+    return vout;
+}
+
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectBn(VSInputNm vin)
+{
+    VSOutputPixelLighting vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    vout.PositionPS = mul(vin.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(vin.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(normal, WorldInverseTranspose));
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+
+    return vout;
+}
+
+
+// Vertex shader: vertex color.
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectVc(VSInputNmVc vin)
+{
+    VSOutputPixelLighting vout;
+
+    vout.PositionPS = mul(vin.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(vin.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(vin.Normal, WorldInverseTranspose));
+    vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
+    vout.Diffuse.a = vin.Color.a * Alpha;
+
+    return vout;
+}
+
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectVcBn(VSInputNmVc vin)
+{
+    VSOutputPixelLighting vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    vout.PositionPS = mul(vin.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(vin.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(normal, WorldInverseTranspose));
+    vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
+    vout.Diffuse.a = vin.Color.a * Alpha;
+
+    return vout;
+}
+
+
+// Vertex shader: instancing.
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectInst(VSInputNmInst vin)
+{
+    VSOutputPixelLighting vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    vout.PositionPS = mul(inst.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(inst.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(inst.Normal, WorldInverseTranspose));
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+
+    return vout;
+}
+
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectBnInst(VSInputNmInst vin)
+{
+    VSOutputPixelLighting vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    vout.PositionPS = mul(inst.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(inst.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(inst.Normal, WorldInverseTranspose));
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+
+    return vout;
+}
+
+
+// Vertex shader: vertex color + instancing.
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectVcInst(VSInputNmVcInst vin)
+{
+    VSOutputPixelLighting vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    vout.PositionPS = mul(inst.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(inst.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(inst.Normal, WorldInverseTranspose));
+    vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
+    vout.Diffuse.a = vin.Color.a * Alpha;
+
+    return vout;
+}
+
+[RootSignature(NoTextureRS)]
+VSOutputPixelLighting VSNPREffectVcBnInst(VSInputNmVcInst vin)
+{
+    VSOutputPixelLighting vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    vout.PositionPS = mul(inst.Position, WorldViewProj);
+    vout.PositionWS = float4(mul(inst.Position, World).xyz, 1);
+    vout.NormalWS = normalize(mul(inst.Normal, WorldInverseTranspose));
+    vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
+    vout.Diffuse.a = vin.Color.a * Alpha;
+
+    return vout;
+}
+
+
+// Vertex shader: texture.
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectTx(VSInputNmTx vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -54,8 +190,8 @@ VSOutputPixelLightingTx VSNPREffect(VSInputNmTx vin)
     return vout;
 }
 
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectBn(VSInputNmTx vin)
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectBnTx(VSInputNmTx vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -71,9 +207,9 @@ VSOutputPixelLightingTx VSNPREffectBn(VSInputNmTx vin)
 }
 
 
-// Vertex shader: vertex color
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectVc(VSInputNmTxVc vin)
+// Vertex shader: texture + vertex color.
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectVcTx(VSInputNmTxVc vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -87,8 +223,8 @@ VSOutputPixelLightingTx VSNPREffectVc(VSInputNmTxVc vin)
     return vout;
 }
 
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectVcBn(VSInputNmTxVc vin)
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectVcBnTx(VSInputNmTxVc vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -105,9 +241,9 @@ VSOutputPixelLightingTx VSNPREffectVcBn(VSInputNmTxVc vin)
 }
 
 
-// Vertex shader: instancing
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectInst(VSInputNmTxInst vin)
+// Vertex shader: texture + instancing.
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectInstTx(VSInputNmTxInst vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -122,8 +258,8 @@ VSOutputPixelLightingTx VSNPREffectInst(VSInputNmTxInst vin)
     return vout;
 }
 
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectBnInst(VSInputNmTxInst vin)
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectBnInstTx(VSInputNmTxInst vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -141,9 +277,9 @@ VSOutputPixelLightingTx VSNPREffectBnInst(VSInputNmTxInst vin)
 }
 
 
-// Vertex shader: vertex color + instancing
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectVcInst(VSInputNmTxVcInst vin)
+// Vertex shader: texture + vertex color + instancing.
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectVcInstTx(VSInputNmTxVcInst vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -159,8 +295,8 @@ VSOutputPixelLightingTx VSNPREffectVcInst(VSInputNmTxVcInst vin)
     return vout;
 }
 
-[RootSignature(NPREffectRS)]
-VSOutputPixelLightingTx VSNPREffectVcBnInst(VSInputNmTxVcInst vin)
+[RootSignature(MainRS)]
+VSOutputPixelLightingTx VSNPREffectVcBnInstTx(VSInputNmTxVcInst vin)
 {
     VSOutputPixelLightingTx vout;
 
@@ -179,9 +315,9 @@ VSOutputPixelLightingTx VSNPREffectVcBnInst(VSInputNmTxVcInst vin)
 }
 
 
-// Pixel shader: cel shading
-[RootSignature(NPREffectRS)]
-float4 PSCelShading(PSInputPixelLightingTx pin) : SV_Target0
+// Pixel shader: cel shading.
+[RootSignature(NoTextureRS)]
+float4 PSCelShading(PSInputPixelLighting pin) : SV_Target0
 {
     float3 normal = normalize(pin.NormalWS);
     float3 lightDir = normalize(-LightDirection);
@@ -197,6 +333,8 @@ float4 PSCelShading(PSInputPixelLightingTx pin) : SV_Target0
     float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
     float3 halfVec = normalize(lightDir + viewDir);
     float NdotH = max(0, dot(normal, halfVec));
+
+    //TODO: Need to revisit for cel
     float specular = step(0.95, pow(NdotH, SpecularPower));
 
     color += SpecularColor * specular;
@@ -205,9 +343,40 @@ float4 PSCelShading(PSInputPixelLightingTx pin) : SV_Target0
 }
 
 
-// Pixel shader: Gooch shading
-[RootSignature(NPREffectRS)]
-float4 PSGoochShading(PSInputPixelLightingTx pin) : SV_Target0
+// Pixel shader: cel shading + texture.
+[RootSignature(MainRS)]
+float4 PSCelShadingTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    float3 normal = normalize(pin.NormalWS);
+    float3 lightDir = normalize(-LightDirection);
+
+    // Sample base texture
+    float4 texColor = Texture.Sample(Sampler, pin.TexCoord);
+
+    // Quantize the diffuse lighting into discrete bands
+    float NdotL = dot(normal, lightDir);
+    float intensity = max(0, NdotL);
+    float quantized = floor(intensity * CelBands) / CelBands;
+
+    float3 color = pin.Diffuse.rgb * texColor.rgb * quantized;
+
+    // Specular highlight (hard edge)
+    float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 halfVec = normalize(lightDir + viewDir);
+    float NdotH = max(0, dot(normal, halfVec));
+
+    //TODO: Need to revisit for cel
+    float specular = step(0.95, pow(NdotH, SpecularPower));
+
+    color += SpecularColor * specular;
+
+    return float4(color, pin.Diffuse.a * texColor.a);
+}
+
+
+// Pixel shader: Gooch shading.
+[RootSignature(NoTextureRS)]
+float4 PSGoochShading(PSInputPixelLighting pin) : SV_Target0
 {
     float3 normal = normalize(pin.NormalWS);
     float3 lightDir = normalize(-LightDirection);
@@ -224,9 +393,43 @@ float4 PSGoochShading(PSInputPixelLightingTx pin) : SV_Target0
     // Specular highlight
     float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
     float3 reflectDir = reflect(LightDirection, normal);
+
+    //TODO: Need to revisit for Gooch
     float specular = pow(max(0, dot(viewDir, reflectDir)), SpecularPower);
 
     color += SpecularColor * specular;
 
     return float4(color, pin.Diffuse.a);
+}
+
+
+// Pixel shader: Gooch shading + texture.
+[RootSignature(MainRS)]
+float4 PSGoochShadingTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    float3 normal = normalize(pin.NormalWS);
+    float3 lightDir = normalize(-LightDirection);
+
+    // Sample base texture
+    float4 texColor = Texture.Sample(Sampler, pin.TexCoord);
+
+    // Gooch diffuse term: blend between cool and warm based on NdotL
+    float NdotL = dot(normal, lightDir);
+    float t = (1.0 + NdotL) * 0.5;
+
+    float3 coolContrib = GoochCoolColor + GoochAlpha * pin.Diffuse.rgb * texColor.rgb;
+    float3 warmContrib = GoochWarmColor + GoochBeta * pin.Diffuse.rgb * texColor.rgb;
+
+    float3 color = lerp(coolContrib, warmContrib, t);
+
+    // Specular highlight
+    float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 reflectDir = reflect(LightDirection, normal);
+
+    //TODO: Need to revisit for Gooch
+    float specular = pow(max(0, dot(viewDir, reflectDir)), SpecularPower);
+
+    color += SpecularColor * specular;
+
+    return float4(color, pin.Diffuse.a * texColor.a);
 }
