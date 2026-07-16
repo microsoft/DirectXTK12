@@ -10,7 +10,7 @@ Copyright (c) Microsoft Corporation.
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for writing Direct3D 12 C++ code for Win32 desktop applications for Windows 11 and Windows 10, game titles for Xbox Series X\|S and Xbox One, and Universal Windows Platform (UWP) apps for Windows 11 and Windows 10.
 
-This code is designed to build with Visual Studio 2022, Visual Studio 2026, clang for Windows v12 or later, or MinGW 12.2. Use of the Windows 10 May 2020 Update SDK ([19041](https://walbourn.github.io/windows-10-may-2020-update-sdk/)) or later is required for Visual Studio.
+This code is designed to build with Visual Studio 2022, Visual Studio 2026, clang for Windows v12 or later, or MinGW. Use of the Windows 10 May 2020 Update SDK ([19041](https://walbourn.github.io/windows-10-may-2020-update-sdk/)) or later is required for Visual Studio.
 
 These components are designed to work without requiring any content from the legacy DirectX SDK. For details, see [Where is the DirectX SDK?](https://aka.ms/dxsdk).
 
@@ -104,6 +104,8 @@ FOR SECURITY ADVISORIES, see [GitHub](https://github.com/microsoft/DirectXTK12/s
 
 For a full change history, see [CHANGELOG.md](https://github.com/microsoft/DirectXTK12/blob/main/CHANGELOG.md).
 
+* The _directxtk12_desktop_win10_ and _directxtk12_uwp_ NuGet packages are deprecated. The best way to integrate the latest DirectX Tool Kit into your C++ project is using [vcpkg](https://github.com/microsoft/vcpkg/tree/master/ports/directxtk12).
+
 * The CMake projects require 3.21 or later.
 
 * In the June 2024 release, the defaulted parameter `initialState` for the ``CreateUploadBuffer`` function in _BufferHelpers_ was removed. Per the DirectX 12 validation layer, the only valid initial state for an upload buffer is ``D3D12_RESOURCE_STATE_GENERIC_READ``.
@@ -172,4 +174,6 @@ Thanks to Roberto Sonnino for his help with the CMO format and the VS Starter Ki
 
 Thanks to Richie Meyer for their contribution of Xbox PIX custom memory and type allocation tracking events support.
 
-Thanks to Andrew Farrier and Scott Matloff for their on-going help with code reviews.
+Thanks to Andrew Farrier, Jon Martin, and Scott Matloff for their help with code reviews.
+
+Thanks to Shawn Hargreaves and Nada Ouf for their continued support for this library.

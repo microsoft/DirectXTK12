@@ -329,6 +329,17 @@ When reviewing documentation, do the following:
 - Read the documentation on the wiki located in [this git repository](https://github.com/microsoft/DirectXTK12.wiki.git).
 - Report any specific gaps in the documentation compared to the public interface.
 
+## Code Change Rules
+
+- Make precise, surgical changes that **fully** address the request. Don't modify unrelated code, but ensure changes are complete and correct.
+- Don't fix pre-existing issues unrelated to your task. However, if you discover bugs directly caused by or tightly coupled to the code you're changing, fix those too.
+- Update documentation if it is directly related to the changes you are making.
+- Always validate that your changes don't break existing behavior.
+- Only run linters, builds and tests that already exist. Do not add new linting, building or testing tools unless necessary.
+- Use the smallest targeted test, build, or lint command that covers the changed behavior.
+- Prefer ecosystem tools (package managers, scaffolding, refactoring tools, linters) over manual changes.
+- Only comment code that needs clarification. Do not comment otherwise.
+
 ## Release Process
 
 The release process is documented in the [release skill](.github/skills/release/SKILL.md). Invoke the `release` skill for step-by-step guidance when performing a release.
