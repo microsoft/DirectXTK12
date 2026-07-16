@@ -737,6 +737,11 @@ void NPREffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_
 // Cel shading setting.
 void NPREffect::SetCelShaderBands(int bands)
 {
+    if (bands < 1)
+    {
+        throw std::invalid_argument("Cel shading bands must be greater than 0");
+    }
+
     // Set w of lightDirectionAndCelBands.
     pImpl->constants.lightDirectionAndCelBands = XMVectorSetW(pImpl->constants.lightDirectionAndCelBands, static_cast<float>(bands));
 
