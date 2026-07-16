@@ -788,7 +788,7 @@ namespace DirectX
             // Material settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetSpecularPower(float value);
+            DIRECTX_TOOLKIT_API void __cdecl SetSpecularThreshold(float threshold, float smoothing);
             DIRECTX_TOOLKIT_API void __cdecl DisableSpecular();
             DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
@@ -802,12 +802,19 @@ namespace DirectX
             // Texture setting.
             DIRECTX_TOOLKIT_API void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
-            // Cel shading settings.
+            // Cel shading setting.
             DIRECTX_TOOLKIT_API void __cdecl SetCelShaderBands(int bands);
 
             // Gooch shading settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetGoochCoolColor(FXMVECTOR value, float alpha = 0.25f);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetGoochWarmColor(FXMVECTOR value, float beta = 0.25f);
+
+            // Rim lighting settings.
+            DIRECTX_TOOLKIT_API void XM_CALLCONV SetRimLightingColor(FXMVECTOR value);
+            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingPower(float power);
+            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingIntensity(float strength);
+            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingRange(float start, float end);
+            DIRECTX_TOOLKIT_API void __cdecl DisableRimLighting();
 
         private:
             // Private implementation.
