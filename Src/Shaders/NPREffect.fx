@@ -6,6 +6,7 @@
 
 Texture2D<float4> Texture : register(t0);
 SamplerState Sampler : register(s0);
+Texture2D<float4> Texture2 : register(t1);
 
 
 cbuffer Parameters : register(b0)
@@ -73,6 +74,12 @@ VSOutputPixelLighting VSNPREffect(VSInputNm vin)
     return vout;
 }
 
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectMC(VSInputNm vin)
+{
+    return VSNPREffect(vin);
+}
+
 [RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSNPREffectBn(VSInputNm vin)
 {
@@ -81,6 +88,12 @@ VSOutputPixelLighting VSNPREffectBn(VSInputNm vin)
     VSOutputPixelLighting vout = ComputeCommonVS(vin.Position, normal);
     vout.Diffuse = float4(DiffuseColor, Alpha);
     return vout;
+}
+
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectBnMC(VSInputNm vin)
+{
+    return VSNPREffectBn(vin);
 }
 
 
@@ -94,6 +107,12 @@ VSOutputPixelLighting VSNPREffectVc(VSInputNmVc vin)
     return vout;
 }
 
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectVcMC(VSInputNmVc vin)
+{
+    return VSNPREffectVc(vin);
+}
+
 [RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSNPREffectVcBn(VSInputNmVc vin)
 {
@@ -103,6 +122,13 @@ VSOutputPixelLighting VSNPREffectVcBn(VSInputNmVc vin)
     vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
     vout.Diffuse.a = vin.Color.a * Alpha;
     return vout;
+}
+
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectVcBnMC(VSInputNmVc vin)
+{
+    return VSNPREffectVcBn(vin);
+
 }
 
 
@@ -116,6 +142,12 @@ VSOutputPixelLighting VSNPREffectInst(VSInputNmInst vin)
     return vout;
 }
 
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectInstMC(VSInputNmInst vin)
+{
+    return VSNPREffectInst(vin);
+}
+
 [RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSNPREffectBnInst(VSInputNmInst vin)
 {
@@ -125,6 +157,12 @@ VSOutputPixelLighting VSNPREffectBnInst(VSInputNmInst vin)
     VSOutputPixelLighting vout = ComputeCommonVS(inst.Position, inst.Normal);
     vout.Diffuse = float4(DiffuseColor, Alpha);
     return vout;
+}
+
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectBnInstMC(VSInputNmInst vin)
+{
+    return VSNPREffectBnInst(vin);
 }
 
 
@@ -139,6 +177,12 @@ VSOutputPixelLighting VSNPREffectVcInst(VSInputNmVcInst vin)
     return vout;
 }
 
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectVcInstMC(VSInputNmVcInst vin)
+{
+    return VSNPREffectVcInst(vin);
+}
+
 [RootSignature(NoTextureRS)]
 VSOutputPixelLighting VSNPREffectVcBnInst(VSInputNmVcInst vin)
 {
@@ -151,6 +195,13 @@ VSOutputPixelLighting VSNPREffectVcBnInst(VSInputNmVcInst vin)
     return vout;
 }
 
+[RootSignature(MainRS)]
+VSOutputPixelLighting VSNPREffectVcBnInstMC(VSInputNmVcInst vin)
+{
+    return VSNPREffectVcBnInst(vin);
+
+}
+
 
 // Vertex shader: texture.
 [RootSignature(MainRS)]
@@ -161,6 +212,12 @@ VSOutputPixelLightingTx VSNPREffectTx(VSInputNmTx vin)
     return vout;
 }
 
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectTxMC(VSInputNmTx vin)
+{
+    return VSNPREffectTx(vin);
+}
+
 [RootSignature(MainRS)]
 VSOutputPixelLightingTx VSNPREffectBnTx(VSInputNmTx vin)
 {
@@ -169,6 +226,13 @@ VSOutputPixelLightingTx VSNPREffectBnTx(VSInputNmTx vin)
     VSOutputPixelLightingTx vout = ComputeCommonVSTx(vin.Position, normal, vin.TexCoord);
     vout.Diffuse = float4(DiffuseColor, Alpha);
     return vout;
+}
+
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectBnTxMC(VSInputNmTx vin)
+{
+    return VSNPREffectBnTx(vin);
+
 }
 
 
@@ -182,6 +246,12 @@ VSOutputPixelLightingTx VSNPREffectVcTx(VSInputNmTxVc vin)
     return vout;
 }
 
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectVcTxMC(VSInputNmTxVc vin)
+{
+    return VSNPREffectVcTx(vin);
+}
+
 [RootSignature(MainRS)]
 VSOutputPixelLightingTx VSNPREffectVcBnTx(VSInputNmTxVc vin)
 {
@@ -191,6 +261,13 @@ VSOutputPixelLightingTx VSNPREffectVcBnTx(VSInputNmTxVc vin)
     vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
     vout.Diffuse.a = vin.Color.a * Alpha;
     return vout;
+}
+
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectVcBnTxMC(VSInputNmTxVc vin)
+{
+    return VSNPREffectVcBnTx(vin);
+
 }
 
 
@@ -204,6 +281,12 @@ VSOutputPixelLightingTx VSNPREffectInstTx(VSInputNmTxInst vin)
     return vout;
 }
 
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectInstTxMC(VSInputNmTxInst vin)
+{
+    return VSNPREffectInstTx(vin);
+}
+
 [RootSignature(MainRS)]
 VSOutputPixelLightingTx VSNPREffectBnInstTx(VSInputNmTxInst vin)
 {
@@ -213,6 +296,13 @@ VSOutputPixelLightingTx VSNPREffectBnInstTx(VSInputNmTxInst vin)
     VSOutputPixelLightingTx vout = ComputeCommonVSTx(inst.Position, inst.Normal, vin.TexCoord);
     vout.Diffuse = float4(DiffuseColor, Alpha);
     return vout;
+}
+
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectBnInstTxMC(VSInputNmTxInst vin)
+{
+    return VSNPREffectBnInstTx(vin);
+
 }
 
 
@@ -227,6 +317,12 @@ VSOutputPixelLightingTx VSNPREffectVcInstTx(VSInputNmTxVcInst vin)
     return vout;
 }
 
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectVcInstTxMC(VSInputNmTxVcInst vin)
+{
+    return VSNPREffectVcInstTx(vin);
+}
+
 [RootSignature(MainRS)]
 VSOutputPixelLightingTx VSNPREffectVcBnInstTx(VSInputNmTxVcInst vin)
 {
@@ -237,6 +333,13 @@ VSOutputPixelLightingTx VSNPREffectVcBnInstTx(VSInputNmTxVcInst vin)
     vout.Diffuse.rgb = vin.Color.rgb * DiffuseColor;
     vout.Diffuse.a = vin.Color.a * Alpha;
     return vout;
+}
+
+[RootSignature(DualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSNPREffectVcBnInstTxMC(VSInputNmTxVcInst vin)
+{
+    return VSNPREffectVcBnInstTx(vin);
+
 }
 
 
@@ -393,6 +496,49 @@ float4 PSGoochShadingTx(PSInputPixelLightingTx pin) : SV_Target0
     // Specular highlight
     float specular = HardEdgeSpecular(RdotV);
     color += SpecularColor * specular;
+
+    return float4(color, pin.Diffuse.a * texColor.a);
+}
+
+
+//--- MatCap shading ---
+
+// Pixel shader: MatCap shading.
+[RootSignature(MainRS)]
+float4 PSMatCapShading(PSInputPixelLighting pin) : SV_Target0
+{
+    float3 normal = normalize(pin.NormalWS);
+    float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 reflectDir = reflect(viewDir, normal);
+
+    float2 uv = reflectDir.xy * 0.5 + 0.5;
+
+    // Sample matcap texture
+    float4 matcap = Texture.Sample(Sampler, uv);
+
+    float3 color = pin.Diffuse.rgb * matcap.rgb;
+
+    return float4(color, pin.Diffuse.a);
+}
+
+
+// Pixel shader: MatCap shading + texture.
+[RootSignature(DualTextureOneSamplerRS)]
+float4 PSMatCapShadingTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    float3 normal = normalize(pin.NormalWS);
+    float3 viewDir = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 reflectDir = reflect(viewDir, normal);
+
+    float2 uv = reflectDir.xy * 0.5 + 0.5;
+
+    // Sample base texture
+    float4 texColor = Texture.Sample(Sampler, pin.TexCoord);
+
+    // Sample matcap texture
+    float4 matcap = Texture2.Sample(Sampler, uv);
+
+    float3 color = pin.Diffuse.rgb * texColor.rgb * matcap.rgb;
 
     return float4(color, pin.Diffuse.a * texColor.a);
 }

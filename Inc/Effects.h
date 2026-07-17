@@ -752,7 +752,7 @@ namespace DirectX
 
 
         //------------------------------------------------------------------------------
-        // Built-in shader for non-photorealistic rendering (cel shading, Gooch shading).
+        // Built-in shader for non-photorealistic rendering
         class NPREffect : public IEffect, public IEffectMatrices, public IEffectLights
         {
         public:
@@ -760,6 +760,7 @@ namespace DirectX
             {
                 Mode_Cel = 0,       // Cel (toon) shading
                 Mode_Gooch,         // Gooch shading
+                Mode_MatCap,        // Material Capture shading
             };
 
             DIRECTX_TOOLKIT_API NPREffect(
@@ -808,6 +809,10 @@ namespace DirectX
             // Gooch shading settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetGoochCoolColor(FXMVECTOR value, float alpha = 0.25f);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetGoochWarmColor(FXMVECTOR value, float beta = 0.25f);
+
+            // MatCap shading settings.
+            DIRECTX_TOOLKIT_API void __cdecl SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+            DIRECTX_TOOLKIT_API void __cdecl SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
             // Rim lighting settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetRimLightingColor(FXMVECTOR value);

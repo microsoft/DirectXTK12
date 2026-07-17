@@ -38,10 +38,10 @@ namespace
     {
         using ConstantBufferType = NPREffectConstants;
 
-        static constexpr int VertexShaderCount = 16;
-        static constexpr int PixelShaderCount = 4;
-        static constexpr int ShaderPermutationCount = 32;
-        static constexpr int RootSignatureCount = 2;
+        static constexpr int VertexShaderCount = 32;
+        static constexpr int PixelShaderCount = 6;
+        static constexpr int ShaderPermutationCount = 48;
+        static constexpr int RootSignatureCount = 3;
     };
 
 
@@ -74,13 +74,16 @@ public:
         ConstantBuffer,
         TextureSRV,
         TextureSampler,
+        Texture2SRV,
         RootParameterCount
     };
 
+    bool matCapEnabled;
     bool textureEnabled;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE sampler;
+    D3D12_GPU_DESCRIPTOR_HANDLE matcap;
 
     int GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32_t effectFlags) const noexcept;
 
@@ -122,6 +125,33 @@ namespace
 
 #include "XboxGamingScarlettNPREffect_PSGoochShading.inc"
 #include "XboxGamingScarlettNPREffect_PSGoochShadingTx.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectInstMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcInstMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectBnMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectBnInstMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcBnMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcBnInstMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectTxMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectInstTxMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcTxMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcInstTxMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectBnTxMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectBnInstTxMC.inc"
+
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcBnTxMC.inc"
+#include "XboxGamingScarlettNPREffect_VSNPREffectVcBnInstTxMC.inc"
+
+#include "XboxGamingScarlettNPREffect_PSMatCapShading.inc"
+#include "XboxGamingScarlettNPREffect_PSMatCapShadingTx.inc"
 #elif defined(_GAMING_XBOX)
 #include "XboxGamingXboxOneNPREffect_VSNPREffect.inc"
 #include "XboxGamingXboxOneNPREffect_VSNPREffectInst.inc"
@@ -152,6 +182,33 @@ namespace
 
 #include "XboxGamingXboxOneNPREffect_PSGoochShading.inc"
 #include "XboxGamingXboxOneNPREffect_PSGoochShadingTx.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectInstMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcInstMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectBnMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectBnInstMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcBnMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcBnInstMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectTxMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectInstTxMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcTxMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcInstTxMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectBnTxMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectBnInstTxMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcBnTxMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSNPREffectVcBnInstTxMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_PSMatCapShading.inc"
+#include "XboxGamingXboxOneNPREffect_PSMatCapShadingTx.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
 #include "XboxOneNPREffect_VSNPREffect.inc"
 #include "XboxOneNPREffect_VSNPREffectInst.inc"
@@ -182,6 +239,33 @@ namespace
 
 #include "XboxOneNPREffect_PSGoochShading.inc"
 #include "XboxOneNPREffect_PSGoochShadingTx.inc"
+
+#include "XboxOneNPREffect_VSNPREffectMC.inc"
+#include "XboxOneNPREffect_VSNPREffectInstMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectVcMC.inc"
+#include "XboxOneNPREffect_VSNPREffectVcInstMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectBnMC.inc"
+#include "XboxOneNPREffect_VSNPREffectBnInstMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectVcBnMC.inc"
+#include "XboxOneNPREffect_VSNPREffectVcBnInstMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectTxMC.inc"
+#include "XboxOneNPREffect_VSNPREffectInstTxMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectVcTxMC.inc"
+#include "XboxOneNPREffect_VSNPREffectVcInstTxMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectBnTxMC.inc"
+#include "XboxOneNPREffect_VSNPREffectBnInstTxMC.inc"
+
+#include "XboxOneNPREffect_VSNPREffectVcBnTxMC.inc"
+#include "XboxOneNPREffect_VSNPREffectVcBnInstTxMC.inc"
+
+#include "XboxOneNPREffect_PSMatCapShading.inc"
+#include "XboxOneNPREffect_PSMatCapShadingTx.inc"
 #else
 #include "NPREffect_VSNPREffect.inc"
 #include "NPREffect_VSNPREffectInst.inc"
@@ -212,6 +296,33 @@ namespace
 
 #include "NPREffect_PSGoochShading.inc"
 #include "NPREffect_PSGoochShadingTx.inc"
+
+#include "NPREffect_VSNPREffectMC.inc"
+#include "NPREffect_VSNPREffectInstMC.inc"
+
+#include "NPREffect_VSNPREffectVcMC.inc"
+#include "NPREffect_VSNPREffectVcInstMC.inc"
+
+#include "NPREffect_VSNPREffectBnMC.inc"
+#include "NPREffect_VSNPREffectBnInstMC.inc"
+
+#include "NPREffect_VSNPREffectVcBnMC.inc"
+#include "NPREffect_VSNPREffectVcBnInstMC.inc"
+
+#include "NPREffect_VSNPREffectTxMC.inc"
+#include "NPREffect_VSNPREffectInstTxMC.inc"
+
+#include "NPREffect_VSNPREffectVcTxMC.inc"
+#include "NPREffect_VSNPREffectVcInstTxMC.inc"
+
+#include "NPREffect_VSNPREffectBnTxMC.inc"
+#include "NPREffect_VSNPREffectBnInstTxMC.inc"
+
+#include "NPREffect_VSNPREffectVcBnTxMC.inc"
+#include "NPREffect_VSNPREffectVcBnInstTxMC.inc"
+
+#include "NPREffect_PSMatCapShading.inc"
+#include "NPREffect_PSMatCapShadingTx.inc"
 #endif
 }
 
@@ -219,22 +330,38 @@ namespace
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::VertexShaderBytecode[] =
 {
-    { NPREffect_VSNPREffect,           sizeof(NPREffect_VSNPREffect)           },
-    { NPREffect_VSNPREffectVc,         sizeof(NPREffect_VSNPREffectVc)         },
-    { NPREffect_VSNPREffectBn,         sizeof(NPREffect_VSNPREffectBn)         },
-    { NPREffect_VSNPREffectVcBn,       sizeof(NPREffect_VSNPREffectVcBn)       },
-    { NPREffect_VSNPREffectInst,       sizeof(NPREffect_VSNPREffectInst)       },
-    { NPREffect_VSNPREffectVcInst,     sizeof(NPREffect_VSNPREffectVcInst)     },
-    { NPREffect_VSNPREffectBnInst,     sizeof(NPREffect_VSNPREffectBnInst)     },
-    { NPREffect_VSNPREffectVcBnInst,   sizeof(NPREffect_VSNPREffectVcBnInst)   },
-    { NPREffect_VSNPREffectTx,         sizeof(NPREffect_VSNPREffectTx)         },
-    { NPREffect_VSNPREffectVcTx,       sizeof(NPREffect_VSNPREffectVcTx)       },
-    { NPREffect_VSNPREffectBnTx,       sizeof(NPREffect_VSNPREffectBnTx)       },
-    { NPREffect_VSNPREffectVcBnTx,     sizeof(NPREffect_VSNPREffectVcBnTx)     },
-    { NPREffect_VSNPREffectInstTx,     sizeof(NPREffect_VSNPREffectInstTx)     },
-    { NPREffect_VSNPREffectVcInstTx,   sizeof(NPREffect_VSNPREffectVcInstTx)   },
-    { NPREffect_VSNPREffectBnInstTx,   sizeof(NPREffect_VSNPREffectBnInstTx)   },
-    { NPREffect_VSNPREffectVcBnInstTx, sizeof(NPREffect_VSNPREffectVcBnInstTx) },
+    { NPREffect_VSNPREffect,             sizeof(NPREffect_VSNPREffect)             },
+    { NPREffect_VSNPREffectVc,           sizeof(NPREffect_VSNPREffectVc)           },
+    { NPREffect_VSNPREffectBn,           sizeof(NPREffect_VSNPREffectBn)           },
+    { NPREffect_VSNPREffectVcBn,         sizeof(NPREffect_VSNPREffectVcBn)         },
+    { NPREffect_VSNPREffectInst,         sizeof(NPREffect_VSNPREffectInst)         },
+    { NPREffect_VSNPREffectVcInst,       sizeof(NPREffect_VSNPREffectVcInst)       },
+    { NPREffect_VSNPREffectBnInst,       sizeof(NPREffect_VSNPREffectBnInst)       },
+    { NPREffect_VSNPREffectVcBnInst,     sizeof(NPREffect_VSNPREffectVcBnInst)     },
+    { NPREffect_VSNPREffectTx,           sizeof(NPREffect_VSNPREffectTx)           },
+    { NPREffect_VSNPREffectVcTx,         sizeof(NPREffect_VSNPREffectVcTx)         },
+    { NPREffect_VSNPREffectBnTx,         sizeof(NPREffect_VSNPREffectBnTx)         },
+    { NPREffect_VSNPREffectVcBnTx,       sizeof(NPREffect_VSNPREffectVcBnTx)       },
+    { NPREffect_VSNPREffectInstTx,       sizeof(NPREffect_VSNPREffectInstTx)       },
+    { NPREffect_VSNPREffectVcInstTx,     sizeof(NPREffect_VSNPREffectVcInstTx)     },
+    { NPREffect_VSNPREffectBnInstTx,     sizeof(NPREffect_VSNPREffectBnInstTx)     },
+    { NPREffect_VSNPREffectVcBnInstTx,   sizeof(NPREffect_VSNPREffectVcBnInstTx)   },
+    { NPREffect_VSNPREffectMC,           sizeof(NPREffect_VSNPREffectMC)           }, // Different rootsig
+    { NPREffect_VSNPREffectVcMC,         sizeof(NPREffect_VSNPREffectVcMC)         },
+    { NPREffect_VSNPREffectBnMC,         sizeof(NPREffect_VSNPREffectBnMC)         },
+    { NPREffect_VSNPREffectVcBnMC,       sizeof(NPREffect_VSNPREffectVcBnMC)       },
+    { NPREffect_VSNPREffectInstMC,       sizeof(NPREffect_VSNPREffectInstMC)       },
+    { NPREffect_VSNPREffectVcInstMC,     sizeof(NPREffect_VSNPREffectVcInstMC)     },
+    { NPREffect_VSNPREffectBnInstMC,     sizeof(NPREffect_VSNPREffectBnInstMC)     },
+    { NPREffect_VSNPREffectVcBnInstMC,   sizeof(NPREffect_VSNPREffectVcBnInstMC)   },
+    { NPREffect_VSNPREffectTxMC,         sizeof(NPREffect_VSNPREffectTxMC)         },
+    { NPREffect_VSNPREffectVcTxMC,       sizeof(NPREffect_VSNPREffectVcTxMC)       },
+    { NPREffect_VSNPREffectBnTxMC,       sizeof(NPREffect_VSNPREffectBnTxMC)       },
+    { NPREffect_VSNPREffectVcBnTxMC,     sizeof(NPREffect_VSNPREffectVcBnTxMC)     },
+    { NPREffect_VSNPREffectInstTxMC,     sizeof(NPREffect_VSNPREffectInstTxMC)     },
+    { NPREffect_VSNPREffectVcInstTxMC,   sizeof(NPREffect_VSNPREffectVcInstTxMC)   },
+    { NPREffect_VSNPREffectBnInstTxMC,   sizeof(NPREffect_VSNPREffectBnInstTxMC)   },
+    { NPREffect_VSNPREffectVcBnInstTxMC, sizeof(NPREffect_VSNPREffectVcBnInstTxMC) },
 };
 
 
@@ -243,61 +370,79 @@ const int EffectBase<NPREffectTraits>::VertexShaderIndices[] =
 {
     0,      // cel shading
     0,      // gooch shading
+    16,     // matcap shading
 
     1,      // vertex color + cel shading
     1,      // vertex color + gooch shading
+    17,     // vertex color + matcap shading
 
     2,      // cel shading (biased vertex normal)
     2,      // gooch shading (biased vertex normal)
+    18,     // matcap shading (biased vertex normal)
 
     3,      // vertex color (biased vertex normal) + cel shading
     3,      // vertex color (biased vertex normal) + gooch shading
+    19,     // vertex color (biased vertex normal) + matcap shading
 
     4,      // instancing + cel shading
     4,      // instancing + gooch shading
+    20,     // instancing + matcap shading
 
     5,      // instancing + vertex color + cel shading
     5,      // instancing + vertex color + gooch shading
+    21,     // instancing + vertex color + matcap shading
 
     6,      // instancing (biased vertex normal) + cel shading
     6,      // instancing (biased vertex normal) + gooch shading
+    22,     // instancing (biased vertex normal) + matcap shading
 
     7,      // instancing + vertex color (biased vertex normal) + cel shading
     7,      // instancing + vertex color (biased vertex normal) + gooch shading
+    23,     // instancing + vertex color (biased vertex normal) + matcap shading
 
     8,      // cel shading + texture
     8,      // gooch shading + texture
+    24,     // matcap shading + texture
 
     9,      // vertex color + cel shading + texture
     9,      // vertex color + gooch shading + texture
+    25,     // vertex color + matcap shading + texture
 
     10,     // cel shading (biased vertex normal) + texture
     10,     // gooch shading (biased vertex normal) + texture
+    26,     // matcap shading (biased vertex normal) + texture
 
     11,     // vertex color (biased vertex normal) + cel shading + texture
     11,     // vertex color (biased vertex normal) + gooch shading + texture
+    27,     // vertex color (biased vertex normal) + matcap shading + texture
 
     12,     // instancing + cel shading + texture
     12,     // instancing + gooch shading + texture
+    28,     // instancing + matcap shading + texture
 
     13,     // instancing + vertex color + cel shading + texture
     13,     // instancing + vertex color + gooch shading + texture
+    29,     // instancing + vertex color + matcap shading + texture
 
     14,     // instancing (biased vertex normal) + cel shading + texture
     14,     // instancing (biased vertex normal) + gooch shading + texture
+    30,     // instancing (biased vertex normal) + matcap shading + texture
 
     15,     // instancing + vertex color (biased vertex normal) + cel shading + texture
     15,     // instancing + vertex color (biased vertex normal) + gooch shading + texture
+    31,     // instancing + vertex color (biased vertex normal) + matcap shading + texture
 };
 
 
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::PixelShaderBytecode[] =
 {
-    { NPREffect_PSCelShading,     sizeof(NPREffect_PSCelShading)     },
-    { NPREffect_PSGoochShading,   sizeof(NPREffect_PSGoochShading)   },
-    { NPREffect_PSCelShadingTx,   sizeof(NPREffect_PSCelShadingTx)   },
-    { NPREffect_PSGoochShadingTx, sizeof(NPREffect_PSGoochShadingTx) },
+    { NPREffect_PSCelShading,      sizeof(NPREffect_PSCelShading)      },
+    { NPREffect_PSGoochShading,    sizeof(NPREffect_PSGoochShading)    },
+    { NPREffect_PSMatCapShading,   sizeof(NPREffect_PSMatCapShading)   },
+    { NPREffect_PSCelShadingTx,    sizeof(NPREffect_PSCelShadingTx)    },
+    { NPREffect_PSGoochShadingTx,  sizeof(NPREffect_PSGoochShadingTx)  },
+    { NPREffect_PSMatCapShadingTx, sizeof(NPREffect_PSMatCapShadingTx) },
 };
 
 
@@ -306,51 +451,67 @@ const int EffectBase<NPREffectTraits>::PixelShaderIndices[] =
 {
     0,      // cel shading
     1,      // gooch shading
+    2,      // matcap shading
 
     0,      // vertex color + cel shading
     1,      // vertex color + gooch shading
+    2,      // vertex color + matcap shading
 
     0,      // cel shading (biased vertex normal)
     1,      // gooch shading (biased vertex normal)
+    2,      // matcap shading (biased vertex normal)
 
     0,      // vertex color (biased vertex normal) + cel shading
     1,      // vertex color (biased vertex normal) + gooch shading
+    2,      // vertex color (biased vertex normal) + matcap shading
 
     0,      // instancing + cel shading
     1,      // instancing + gooch shading
+    2,      // instancing + matcap shading
 
     0,      // instancing + vertex color + cel shading
     1,      // instancing + vertex color + gooch shading
+    2,      // instancing + vertex color + matcap shading
 
     0,      // instancing (biased vertex normal) + cel shading
     1,      // instancing (biased vertex normal) + gooch shading
+    2,      // instancing (biased vertex normal) + matcap shading
 
     0,      // instancing + vertex color (biased vertex normal) + cel shading
     1,      // instancing + vertex color (biased vertex normal) + gooch shading
+    2,      // instancing + vertex color (biased vertex normal) + matcap shading
 
-    2,      // cel shading + texture
-    3,      // gooch shading + texture
+    3,      // cel shading + texture
+    4,      // gooch shading + texture
+    5,      // matcap shading + texture
 
-    2,      // vertex color + cel shading + texture
-    3,      // vertex color + gooch shading + texture
+    3,      // vertex color + cel shading + texture
+    4,      // vertex color + gooch shading + texture
+    5,      // vertex color + matcap shading + texture
 
-    2,      // cel shading (biased vertex normal) + texture
-    3,      // gooch shading (biased vertex normal) + texture
+    3,      // cel shading (biased vertex normal) + texture
+    4,      // gooch shading (biased vertex normal) + texture
+    5,      // matcap shading (biased vertex normal) + texture
 
-    2,      // vertex color (biased vertex normal) + cel shading + texture
-    3,      // vertex color (biased vertex normal) + gooch shading + texture
+    3,      // vertex color (biased vertex normal) + cel shading + texture
+    4,      // vertex color (biased vertex normal) + gooch shading + texture
+    5,      // vertex color (biased vertex normal) + matcap shading + texture
 
-    2,      // instancing + cel shading + texture
-    3,      // instancing + gooch shading + texture
+    3,      // instancing + cel shading + texture
+    4,      // instancing + gooch shading + texture
+    5,      // instancing + matcap shading + texture
 
-    2,      // instancing + vertex color + cel shading + texture
-    3,      // instancing + vertex color + gooch shading + texture
+    3,      // instancing + vertex color + cel shading + texture
+    4,      // instancing + vertex color + gooch shading + texture
+    5,      // instancing + vertex color + matcap shading + texture
 
-    2,      // instancing (biased vertex normal) + cel shading + texture
-    3,      // instancing (biased vertex normal) + gooch shading + texture
+    3,      // instancing (biased vertex normal) + cel shading + texture
+    4,      // instancing (biased vertex normal) + gooch shading + texture
+    5,      // instancing (biased vertex normal) + matcap shading + texture
 
-    2,      // instancing + vertex color (biased vertex normal) + cel shading + texture
-    3,      // instancing + vertex color (biased vertex normal) + gooch shading + texture
+    3,      // instancing + vertex color (biased vertex normal) + cel shading + texture
+    4,      // instancing + vertex color (biased vertex normal) + gooch shading + texture
+    5,      // instancing + vertex color (biased vertex normal) + matcap shading + texture
 };
 #pragma endregion
 
@@ -367,7 +528,8 @@ NPREffect::Impl::Impl(
     NPREffect::Mode nprMode)
     : EffectBase(device),
     texture{},
-    sampler{}
+    sampler{},
+    matcap{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderIndices)) == NPREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderBytecode)) == NPREffectTraits::VertexShaderCount, "array/max mismatch");
@@ -387,6 +549,11 @@ NPREffect::Impl::Impl(
     {
     case Mode_Cel:
     case Mode_Gooch:
+        matCapEnabled = false;
+        break;
+
+    case Mode_MatCap:
+        matCapEnabled = true;
         break;
 
     default:
@@ -415,17 +582,34 @@ NPREffect::Impl::Impl(
         // Root parameter descriptor - conditionally initialized
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
 
-        if (textureEnabled)
+        if (textureEnabled && matCapEnabled)
         {
-            // Include texture and srv
+            // Include two textures and one sampler
             const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
             const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
             rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
             rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
 
+            const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+            rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
+
             // use all parameters
             rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(2, rsigDesc);
+        }
+        else if (textureEnabled || matCapEnabled)
+        {
+            // Include texture and sampler
+            const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+            const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
+            rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+            rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
+
+            // use all but last parameter
+            rsigDesc.Init(static_cast<UINT>(std::size(rootParameters) - 1), rootParameters, 0, nullptr, rootSignatureFlags);
 
             mRootSignature = GetRootSignature(1, rsigDesc);
         }
@@ -470,25 +654,25 @@ int NPREffect::Impl::GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32
     // Support vertex coloring?
     if (effectFlags & EffectFlags::VertexColor)
     {
-        permutation += 2;
+        permutation += 3;
     }
 
     if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
-        permutation += 4;
+        permutation += 6;
     }
 
     if (effectFlags & EffectFlags::Instancing)
     {
         // Vertex shader needs to use vertex matrix transform.
-        permutation += 8;
+        permutation += 12;
     }
 
     // Use shaders without texture coordinates?
     if (textureEnabled)
     {
-        permutation += 16;
+        permutation += 24;
     }
 
     return permutation;
@@ -536,12 +720,31 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         if (!texture.ptr || !sampler.ptr)
         {
-            DebugTrace("ERROR: Missing texture or sampler for NPREffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
+            DebugTrace("ERROR: Missing texture or sampler for NPREffect (texture %llu, sampler %llu)\n",
+                texture.ptr, sampler.ptr);
             throw std::runtime_error("NPREffect");
         }
 
-        // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
+        // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
+        // with the required descriptor heaps.
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
+    }
+
+    if (matCapEnabled)
+    {
+        if (!matcap.ptr || !sampler.ptr)
+        {
+            DebugTrace("ERROR: Missing matcap texture or sampler for NPREffect (texture %llu, sampler %llu)\n",
+                matcap.ptr, sampler.ptr);
+            throw std::runtime_error("NPREffect");
+        }
+
+        // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
+        // with the required descriptor heaps.
+        commandList->SetGraphicsRootDescriptorTable(
+            textureEnabled ? RootParameterIndex::Texture2SRV : RootParameterIndex::TextureSRV,
+            matcap);
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
     }
 
@@ -763,6 +966,20 @@ void NPREffect::SetGoochWarmColor(FXMVECTOR value, float beta)
     pImpl->constants.goochWarmColorAndBeta = XMVectorSetW(value, beta);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+
+// MatCap shading setting.
+void NPREffect::SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+{
+    pImpl->matcap = srvDescriptor;
+}
+
+
+void NPREffect::SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+{
+    pImpl->matcap = srvDescriptor;
+    pImpl->sampler = samplerDescriptor;
 }
 
 
