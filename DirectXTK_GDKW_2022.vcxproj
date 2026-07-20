@@ -438,6 +438,7 @@
     <ClCompile Include="Src\ModelLoadVBO.cpp" />
     <ClCompile Include="Src\Mouse.cpp" />
     <ClCompile Include="Src\NormalMapEffect.cpp" />
+    <ClCompile Include="Src\NPREffect.cpp" />
     <ClCompile Include="Src\PBREffect.cpp" />
     <ClCompile Include="Src\PBREffectFactory.cpp" />
     <ClCompile Include="Src\pch.cpp">
@@ -508,6 +509,11 @@
       <FileType>Document</FileType>
     </None>
     <None Include="Src\Shaders\ToneMap.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\NPREffect.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

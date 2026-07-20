@@ -202,6 +202,18 @@
 "            DENY_MESH_SHADER_ROOT_ACCESS )," \
 "CBV(b0)"
 
+#define DualTextureOneSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS |" \
+"            DENY_MESH_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
+
 #else // !__XBOX_SCARLETT
 
 #define NoTextureRS \
@@ -370,5 +382,15 @@
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
 "CBV(b0)"
+
+#define DualTextureOneSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
 
 #endif
