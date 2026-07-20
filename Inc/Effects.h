@@ -593,8 +593,8 @@ namespace DirectX
             ~SkinnedNormalMapEffect() override;
 
             // Animation settings.
-            void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
-            void __cdecl ResetBoneTransforms() override;
+            DIRECTX_TOOLKIT_API void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+            DIRECTX_TOOLKIT_API void __cdecl ResetBoneTransforms() override;
         };
 
 
@@ -699,8 +699,8 @@ namespace DirectX
             ~SkinnedPBREffect() override;
 
             // Animation settings.
-            void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
-            void __cdecl ResetBoneTransforms() override;
+            DIRECTX_TOOLKIT_API void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+            DIRECTX_TOOLKIT_API void __cdecl ResetBoneTransforms() override;
         };
 
 
@@ -868,8 +868,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
 
             // Animation settings.
-            void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
-            void __cdecl ResetBoneTransforms() override;
+            DIRECTX_TOOLKIT_API void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+            DIRECTX_TOOLKIT_API void __cdecl ResetBoneTransforms() override;
         };
 
 
