@@ -41,10 +41,17 @@ cbuffer Parameters : register(b0)
     float4x4 WorldViewProj           : packoffset(c15);
 };
 
+cbuffer SkinningParameters : register(b1)
+{
+    float4x3 Bones[72];
+}
+
 
 #include "RootSig.fxh"
 #include "Structures.fxh"
+#include "Skinning.fxh"
 #include "Utilities.fxh"
+
 
 VSOutputPixelLighting ComputeCommonVS(float4 position, float3 normal)
 {
@@ -343,6 +350,42 @@ VSOutputPixelLightingTx VSNPREffectVcBnInstTxMC(VSInputNmTxVcInst vin)
 }
 
 
+// Vertex shader: skinning (four bones) + texture.
+[RootSignature(SkinTextureSamplerRS)]
+VSOutputPixelLightingTx VSSkinnedNPREffectTx(VSInputNmTxWeights vin)
+{
+    float3 normal = Skin(vin, vin.Normal, 4);
+
+    VSOutputPixelLightingTx vout = ComputeCommonVSTx(vin.Position, normal, vin.TexCoord);
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+    return vout;
+}
+
+[RootSignature(SkinDualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSSkinnedNPREffectTxMC(VSInputNmTxWeights vin)
+{
+    return VSSkinnedNPREffectTx(vin);
+}
+
+[RootSignature(SkinTextureSamplerRS)]
+VSOutputPixelLightingTx VSSkinnedNPREffectTxBn(VSInputNmTxWeights vin)
+{
+    float3 normal = BiasX2(vin.Normal);
+
+    normal = Skin(vin, normal, 4);
+
+    VSOutputPixelLightingTx vout = ComputeCommonVSTx(vin.Position, normal, vin.TexCoord);
+    vout.Diffuse = float4(DiffuseColor, Alpha);
+    return vout;
+}
+
+[RootSignature(SkinDualTextureOneSamplerRS)]
+VSOutputPixelLightingTx VSSkinnedNPREffectTxBnMC(VSInputNmTxWeights vin)
+{
+    return VSSkinnedNPREffectTxBn(vin);
+}
+
+
 //--- Cel shading ---
 float Quantize(float intensity, float bands)
 {
@@ -427,6 +470,11 @@ float4 PSCelShadingTx(PSInputPixelLightingTx pin) : SV_Target0
     return float4(color, pin.Diffuse.a * texColor.a);
 }
 
+[RootSignature(SkinTextureSamplerRS)]
+float4 PSCelShadingSkinTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    return PSCelShadingTx(pin);
+}
 
 //--- Gooch shading ---
 float3 GoochShading(float dot1, float3 color)
@@ -500,6 +548,12 @@ float4 PSGoochShadingTx(PSInputPixelLightingTx pin) : SV_Target0
     return float4(color, pin.Diffuse.a * texColor.a);
 }
 
+[RootSignature(SkinTextureSamplerRS)]
+float4 PSGoochShadingSkinTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    return PSGoochShadingTx(pin);
+}
+
 
 //--- MatCap shading ---
 
@@ -541,4 +595,10 @@ float4 PSMatCapShadingTx(PSInputPixelLightingTx pin) : SV_Target0
     float3 color = pin.Diffuse.rgb * texColor.rgb * matcap.rgb;
 
     return float4(color, pin.Diffuse.a * texColor.a);
+}
+
+[RootSignature(SkinDualTextureOneSamplerRS)]
+float4 PSMatCapShadingSkinTx(PSInputPixelLightingTx pin) : SV_Target0
+{
+    return PSMatCapShadingTx(pin);
 }

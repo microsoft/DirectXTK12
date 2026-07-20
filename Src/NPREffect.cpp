@@ -10,6 +10,14 @@
 #include "pch.h"
 #include "EffectCommon.h"
 
+namespace DirectX
+{
+    namespace EffectDirtyFlags
+    {
+        constexpr int ConstantBufferBones = 0x100000;
+    }
+}
+
 using namespace DirectX;
 
 namespace
@@ -32,16 +40,23 @@ namespace
 
     static_assert((sizeof(NPREffectConstants) % 16) == 0, "CB size not padded correctly");
 
+    XM_ALIGNED_STRUCT(16) BoneConstants
+    {
+        XMVECTOR Bones[SkinnedNPREffect::MaxBones][3];
+    };
+
+    static_assert((sizeof(BoneConstants) % 16) == 0, "CB size not padded correctly");
+
 
     // Traits type describes our characteristics to the EffectBase template.
     struct NPREffectTraits
     {
         using ConstantBufferType = NPREffectConstants;
 
-        static constexpr int VertexShaderCount = 32;
-        static constexpr int PixelShaderCount = 6;
-        static constexpr int ShaderPermutationCount = 48;
-        static constexpr int RootSignatureCount = 3;
+        static constexpr int VertexShaderCount = 36;
+        static constexpr int PixelShaderCount = 9;
+        static constexpr int ShaderPermutationCount = 54;
+        static constexpr int RootSignatureCount = 5;
     };
 
 
@@ -60,14 +75,20 @@ namespace
 class NPREffect::Impl : public EffectBase<NPREffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-        NPREffect::Mode nprMode);
+    Impl(_In_ ID3D12Device* device);
 
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;
 
     Impl(Impl&&) = default;
     Impl& operator=(Impl&&) = default;
+
+    void Initialize(
+        _In_ ID3D12Device* device,
+        uint32_t effectFlags,
+        const EffectPipelineStateDescription& pipelineDescription,
+        NPREffect::Mode nprMode,
+        bool enableSkinning);
 
     enum RootParameterIndex
     {
@@ -78,6 +99,17 @@ public:
         RootParameterCount
     };
 
+    enum SkinRootParameterIndex
+    {
+        SkinConstantBuffer,
+        SkinTextureSRV,
+        SkinTextureSampler,
+        SkinConstantBufferBones,
+        SkinTexture2SRV,
+        SkinRootParameterCount
+    };
+
+    int weightsPerVertex;
     bool matCapEnabled;
     bool textureEnabled;
 
@@ -88,6 +120,12 @@ public:
     int GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
+    void ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList);
+
+    BoneConstants boneConstants;
+
+private:
+    GraphicsResource mBones;
 };
 
 
@@ -152,6 +190,17 @@ namespace
 
 #include "XboxGamingScarlettNPREffect_PSMatCapShading.inc"
 #include "XboxGamingScarlettNPREffect_PSMatCapShadingTx.inc"
+
+#include "XboxGamingScarlettNPREffect_VSSkinnedNPREffectTx.inc"
+#include "XboxGamingScarlettNPREffect_VSSkinnedNPREffectTxBn.inc"
+
+#include "XboxGamingScarlettNPREffect_PSCelShadingSkinTx.inc"
+#include "XboxGamingScarlettNPREffect_PSGoochShadingSkinTx.inc"
+
+#include "XboxGamingScarlettNPREffect_VSSkinnedNPREffectTxMC.inc"
+#include "XboxGamingScarlettNPREffect_VSSkinnedNPREffectTxBnMC.inc"
+
+#include "XboxGamingScarlettNPREffect_PSMatCapShadingSkinTx.inc"
 #elif defined(_GAMING_XBOX)
 #include "XboxGamingXboxOneNPREffect_VSNPREffect.inc"
 #include "XboxGamingXboxOneNPREffect_VSNPREffectInst.inc"
@@ -209,6 +258,17 @@ namespace
 
 #include "XboxGamingXboxOneNPREffect_PSMatCapShading.inc"
 #include "XboxGamingXboxOneNPREffect_PSMatCapShadingTx.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSSkinnedNPREffectTx.inc"
+#include "XboxGamingXboxOneNPREffect_VSSkinnedNPREffectTxBn.inc"
+
+#include "XboxGamingXboxOneNPREffect_PSCelShadingSkinTx.inc"
+#include "XboxGamingXboxOneNPREffect_PSGoochShadingSkinTx.inc"
+
+#include "XboxGamingXboxOneNPREffect_VSSkinnedNPREffectTxMC.inc"
+#include "XboxGamingXboxOneNPREffect_VSSkinnedNPREffectTxBnMC.inc"
+
+#include "XboxGamingXboxOneNPREffect_PSMatCapShadingSkinTx.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
 #include "XboxOneNPREffect_VSNPREffect.inc"
 #include "XboxOneNPREffect_VSNPREffectInst.inc"
@@ -266,6 +326,17 @@ namespace
 
 #include "XboxOneNPREffect_PSMatCapShading.inc"
 #include "XboxOneNPREffect_PSMatCapShadingTx.inc"
+
+#include "XboxOneNPREffect_VSSkinnedNPREffectTx.inc"
+#include "XboxOneNPREffect_VSSkinnedNPREffectTxBn.inc"
+
+#include "XboxOneNPREffect_PSCelShadingSkinTx.inc"
+#include "XboxOneNPREffect_PSGoochShadingSkinTx.inc"
+
+#include "XboxOneNPREffect_VSSkinnedNPREffectTxMC.inc"
+#include "XboxOneNPREffect_VSSkinnedNPREffectTxBnMC.inc"
+
+#include "XboxOneNPREffect_PSMatCapShadingSkinTx.inc"
 #else
 #include "NPREffect_VSNPREffect.inc"
 #include "NPREffect_VSNPREffectInst.inc"
@@ -323,6 +394,17 @@ namespace
 
 #include "NPREffect_PSMatCapShading.inc"
 #include "NPREffect_PSMatCapShadingTx.inc"
+
+#include "NPREffect_VSSkinnedNPREffectTx.inc"
+#include "NPREffect_VSSkinnedNPREffectTxBn.inc"
+
+#include "NPREffect_PSCelShadingSkinTx.inc"
+#include "NPREffect_PSGoochShadingSkinTx.inc"
+
+#include "NPREffect_VSSkinnedNPREffectTxMC.inc"
+#include "NPREffect_VSSkinnedNPREffectTxBnMC.inc"
+
+#include "NPREffect_PSMatCapShadingSkinTx.inc"
 #endif
 }
 
@@ -330,38 +412,42 @@ namespace
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::VertexShaderBytecode[] =
 {
-    { NPREffect_VSNPREffect,             sizeof(NPREffect_VSNPREffect)             },
-    { NPREffect_VSNPREffectVc,           sizeof(NPREffect_VSNPREffectVc)           },
-    { NPREffect_VSNPREffectBn,           sizeof(NPREffect_VSNPREffectBn)           },
-    { NPREffect_VSNPREffectVcBn,         sizeof(NPREffect_VSNPREffectVcBn)         },
-    { NPREffect_VSNPREffectInst,         sizeof(NPREffect_VSNPREffectInst)         },
-    { NPREffect_VSNPREffectVcInst,       sizeof(NPREffect_VSNPREffectVcInst)       },
-    { NPREffect_VSNPREffectBnInst,       sizeof(NPREffect_VSNPREffectBnInst)       },
-    { NPREffect_VSNPREffectVcBnInst,     sizeof(NPREffect_VSNPREffectVcBnInst)     },
-    { NPREffect_VSNPREffectTx,           sizeof(NPREffect_VSNPREffectTx)           },
-    { NPREffect_VSNPREffectVcTx,         sizeof(NPREffect_VSNPREffectVcTx)         },
-    { NPREffect_VSNPREffectBnTx,         sizeof(NPREffect_VSNPREffectBnTx)         },
-    { NPREffect_VSNPREffectVcBnTx,       sizeof(NPREffect_VSNPREffectVcBnTx)       },
-    { NPREffect_VSNPREffectInstTx,       sizeof(NPREffect_VSNPREffectInstTx)       },
-    { NPREffect_VSNPREffectVcInstTx,     sizeof(NPREffect_VSNPREffectVcInstTx)     },
-    { NPREffect_VSNPREffectBnInstTx,     sizeof(NPREffect_VSNPREffectBnInstTx)     },
-    { NPREffect_VSNPREffectVcBnInstTx,   sizeof(NPREffect_VSNPREffectVcBnInstTx)   },
-    { NPREffect_VSNPREffectMC,           sizeof(NPREffect_VSNPREffectMC)           }, // Different rootsig
-    { NPREffect_VSNPREffectVcMC,         sizeof(NPREffect_VSNPREffectVcMC)         },
-    { NPREffect_VSNPREffectBnMC,         sizeof(NPREffect_VSNPREffectBnMC)         },
-    { NPREffect_VSNPREffectVcBnMC,       sizeof(NPREffect_VSNPREffectVcBnMC)       },
-    { NPREffect_VSNPREffectInstMC,       sizeof(NPREffect_VSNPREffectInstMC)       },
-    { NPREffect_VSNPREffectVcInstMC,     sizeof(NPREffect_VSNPREffectVcInstMC)     },
-    { NPREffect_VSNPREffectBnInstMC,     sizeof(NPREffect_VSNPREffectBnInstMC)     },
-    { NPREffect_VSNPREffectVcBnInstMC,   sizeof(NPREffect_VSNPREffectVcBnInstMC)   },
-    { NPREffect_VSNPREffectTxMC,         sizeof(NPREffect_VSNPREffectTxMC)         },
-    { NPREffect_VSNPREffectVcTxMC,       sizeof(NPREffect_VSNPREffectVcTxMC)       },
-    { NPREffect_VSNPREffectBnTxMC,       sizeof(NPREffect_VSNPREffectBnTxMC)       },
-    { NPREffect_VSNPREffectVcBnTxMC,     sizeof(NPREffect_VSNPREffectVcBnTxMC)     },
-    { NPREffect_VSNPREffectInstTxMC,     sizeof(NPREffect_VSNPREffectInstTxMC)     },
-    { NPREffect_VSNPREffectVcInstTxMC,   sizeof(NPREffect_VSNPREffectVcInstTxMC)   },
-    { NPREffect_VSNPREffectBnInstTxMC,   sizeof(NPREffect_VSNPREffectBnInstTxMC)   },
-    { NPREffect_VSNPREffectVcBnInstTxMC, sizeof(NPREffect_VSNPREffectVcBnInstTxMC) },
+    { NPREffect_VSNPREffect,               sizeof(NPREffect_VSNPREffect)              },
+    { NPREffect_VSNPREffectVc,             sizeof(NPREffect_VSNPREffectVc)            },
+    { NPREffect_VSNPREffectBn,             sizeof(NPREffect_VSNPREffectBn)            },
+    { NPREffect_VSNPREffectVcBn,           sizeof(NPREffect_VSNPREffectVcBn)          },
+    { NPREffect_VSNPREffectInst,           sizeof(NPREffect_VSNPREffectInst)          },
+    { NPREffect_VSNPREffectVcInst,         sizeof(NPREffect_VSNPREffectVcInst)        },
+    { NPREffect_VSNPREffectBnInst,         sizeof(NPREffect_VSNPREffectBnInst)        },
+    { NPREffect_VSNPREffectVcBnInst,       sizeof(NPREffect_VSNPREffectVcBnInst)      },
+    { NPREffect_VSNPREffectTx,             sizeof(NPREffect_VSNPREffectTx)            },
+    { NPREffect_VSNPREffectVcTx,           sizeof(NPREffect_VSNPREffectVcTx)          },
+    { NPREffect_VSNPREffectBnTx,           sizeof(NPREffect_VSNPREffectBnTx)          },
+    { NPREffect_VSNPREffectVcBnTx,         sizeof(NPREffect_VSNPREffectVcBnTx)        },
+    { NPREffect_VSNPREffectInstTx,         sizeof(NPREffect_VSNPREffectInstTx)        },
+    { NPREffect_VSNPREffectVcInstTx,       sizeof(NPREffect_VSNPREffectVcInstTx)      },
+    { NPREffect_VSNPREffectBnInstTx,       sizeof(NPREffect_VSNPREffectBnInstTx)      },
+    { NPREffect_VSNPREffectVcBnInstTx,     sizeof(NPREffect_VSNPREffectVcBnInstTx)    },
+    { NPREffect_VSNPREffectMC,             sizeof(NPREffect_VSNPREffectMC)            }, // Different rootsig
+    { NPREffect_VSNPREffectVcMC,           sizeof(NPREffect_VSNPREffectVcMC)          },
+    { NPREffect_VSNPREffectBnMC,           sizeof(NPREffect_VSNPREffectBnMC)          },
+    { NPREffect_VSNPREffectVcBnMC,         sizeof(NPREffect_VSNPREffectVcBnMC)        },
+    { NPREffect_VSNPREffectInstMC,         sizeof(NPREffect_VSNPREffectInstMC)        },
+    { NPREffect_VSNPREffectVcInstMC,       sizeof(NPREffect_VSNPREffectVcInstMC)      },
+    { NPREffect_VSNPREffectBnInstMC,       sizeof(NPREffect_VSNPREffectBnInstMC)      },
+    { NPREffect_VSNPREffectVcBnInstMC,     sizeof(NPREffect_VSNPREffectVcBnInstMC)    },
+    { NPREffect_VSNPREffectTxMC,           sizeof(NPREffect_VSNPREffectTxMC)          },
+    { NPREffect_VSNPREffectVcTxMC,         sizeof(NPREffect_VSNPREffectVcTxMC)        },
+    { NPREffect_VSNPREffectBnTxMC,         sizeof(NPREffect_VSNPREffectBnTxMC)        },
+    { NPREffect_VSNPREffectVcBnTxMC,       sizeof(NPREffect_VSNPREffectVcBnTxMC)      },
+    { NPREffect_VSNPREffectInstTxMC,       sizeof(NPREffect_VSNPREffectInstTxMC)      },
+    { NPREffect_VSNPREffectVcInstTxMC,     sizeof(NPREffect_VSNPREffectVcInstTxMC)    },
+    { NPREffect_VSNPREffectBnInstTxMC,     sizeof(NPREffect_VSNPREffectBnInstTxMC)    },
+    { NPREffect_VSNPREffectVcBnInstTxMC,   sizeof(NPREffect_VSNPREffectVcBnInstTxMC)  },
+    { NPREffect_VSSkinnedNPREffectTx,      sizeof(NPREffect_VSSkinnedNPREffectTx)     },
+    { NPREffect_VSSkinnedNPREffectTxBn,    sizeof(NPREffect_VSSkinnedNPREffectTxBn)   },
+    { NPREffect_VSSkinnedNPREffectTxMC,    sizeof(NPREffect_VSSkinnedNPREffectTxMC)   },
+    { NPREffect_VSSkinnedNPREffectTxBnMC,  sizeof(NPREffect_VSSkinnedNPREffectTxBnMC) },
 };
 
 
@@ -431,18 +517,29 @@ const int EffectBase<NPREffectTraits>::VertexShaderIndices[] =
     15,     // instancing + vertex color (biased vertex normal) + cel shading + texture
     15,     // instancing + vertex color (biased vertex normal) + gooch shading + texture
     31,     // instancing + vertex color (biased vertex normal) + matcap shading + texture
+
+    32,     // skinning + cel shading
+    32,     // skinning + gooch shading
+    34,     // skinning + matcap shading
+
+    33,     // skinning (biased vertex normal) + cel shading
+    33,     // skinning (biased vertex normal) + gooch shading
+    35,     // skinning (biased vertex normal) + matcap shading
 };
 
 
 template<>
 const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::PixelShaderBytecode[] =
 {
-    { NPREffect_PSCelShading,      sizeof(NPREffect_PSCelShading)      },
-    { NPREffect_PSGoochShading,    sizeof(NPREffect_PSGoochShading)    },
-    { NPREffect_PSMatCapShading,   sizeof(NPREffect_PSMatCapShading)   },
-    { NPREffect_PSCelShadingTx,    sizeof(NPREffect_PSCelShadingTx)    },
-    { NPREffect_PSGoochShadingTx,  sizeof(NPREffect_PSGoochShadingTx)  },
-    { NPREffect_PSMatCapShadingTx, sizeof(NPREffect_PSMatCapShadingTx) },
+    { NPREffect_PSCelShading,          sizeof(NPREffect_PSCelShading)          },
+    { NPREffect_PSGoochShading,        sizeof(NPREffect_PSGoochShading)        },
+    { NPREffect_PSMatCapShading,       sizeof(NPREffect_PSMatCapShading)       },
+    { NPREffect_PSCelShadingTx,        sizeof(NPREffect_PSCelShadingTx)        },
+    { NPREffect_PSGoochShadingTx,      sizeof(NPREffect_PSGoochShadingTx)      },
+    { NPREffect_PSMatCapShadingTx,     sizeof(NPREffect_PSMatCapShadingTx)     },
+    { NPREffect_PSCelShadingSkinTx,    sizeof(NPREffect_PSCelShadingSkinTx)    }, // Different rootsig
+    { NPREffect_PSGoochShadingSkinTx,  sizeof(NPREffect_PSGoochShadingSkinTx)  },
+    { NPREffect_PSMatCapShadingSkinTx, sizeof(NPREffect_PSMatCapShadingSkinTx) },
 };
 
 
@@ -512,6 +609,14 @@ const int EffectBase<NPREffectTraits>::PixelShaderIndices[] =
     3,      // instancing + vertex color (biased vertex normal) + cel shading + texture
     4,      // instancing + vertex color (biased vertex normal) + gooch shading + texture
     5,      // instancing + vertex color (biased vertex normal) + matcap shading + texture
+
+    6,      // skinning + cel shading
+    7,      // skinning + gooch shading
+    8,      // skinning + matcap shading
+
+    6,      // skinning (biased vertex normal) + cel shading
+    7,      // skinning (biased vertex normal) + gooch shading
+    8,      // skinning (biased vertex normal) + matcap shading
 };
 #pragma endregion
 
@@ -522,34 +627,33 @@ SharedResourcePool<ID3D12Device*, EffectBase<NPREffectTraits>::DeviceResources> 
 
 // Constructor.
 NPREffect::Impl::Impl(
-    _In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    NPREffect::Mode nprMode)
+    _In_ ID3D12Device* device)
     : EffectBase(device),
+    weightsPerVertex(0),
+    matCapEnabled(false),
+    textureEnabled(false),
     texture{},
     sampler{},
-    matcap{}
+    matcap{},
+    boneConstants{}
 {
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderIndices)) == NPREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderBytecode)) == NPREffectTraits::VertexShaderCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderBytecode)) == NPREffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderIndices)) == NPREffectTraits::ShaderPermutationCount, "array/max mismatch");
+}
 
-    constants.lightDirectionAndCelBands = s_defaultLightDir;
-    constants.diffuseColorAndAlpha = s_defaultDiffuse;
-    constants.specularColorAndSpecularThreshold = s_defaultSpecular;
-    constants.rimColorAndPower = s_defaultRim;
-    constants.extraSettings = s_defaultExtraSettings;
-    constants.goochCoolColorAndAlpha = s_defaultCool;
-    constants.goochWarmColorAndBeta = s_defaultWarm;
-    constants.eyePosition = g_XMZero;
-
+void NPREffect::Impl::Initialize(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    NPREffect::Mode nprMode,
+    bool enableSkinning)
+{
     switch (nprMode)
     {
     case Mode_Cel:
     case Mode_Gooch:
-        matCapEnabled = false;
         break;
 
     case Mode_MatCap:
@@ -561,6 +665,39 @@ NPREffect::Impl::Impl(
     }
 
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
+
+    constants.lightDirectionAndCelBands = s_defaultLightDir;
+    constants.diffuseColorAndAlpha = s_defaultDiffuse;
+    constants.specularColorAndSpecularThreshold = s_defaultSpecular;
+    constants.rimColorAndPower = s_defaultRim;
+    constants.extraSettings = s_defaultExtraSettings;
+    constants.goochCoolColorAndAlpha = s_defaultCool;
+    constants.goochWarmColorAndBeta = s_defaultWarm;
+    constants.eyePosition = g_XMZero;
+
+    if (enableSkinning)
+    {
+        if (effectFlags & EffectFlags::VertexColor)
+        {
+            DebugTrace("ERROR: SkinnedNPREffect does not implement EffectFlags::VertexColor\n");
+            throw std::invalid_argument("VertexColor effect flag is invalid");
+        }
+        else if (effectFlags & EffectFlags::Instancing)
+        {
+            DebugTrace("ERROR: SkinnedNPREffect does not implement EffectFlags::Instancing\n");
+            throw std::invalid_argument("Instancing effect flag is invalid");
+        }
+
+        weightsPerVertex = 4;
+        textureEnabled = true;
+
+        for (size_t j = 0; j < SkinnedNPREffect::MaxBones; ++j)
+        {
+            boneConstants.Bones[j][0] = g_XMIdentityR0;
+            boneConstants.Bones[j][1] = g_XMIdentityR1;
+            boneConstants.Bones[j][2] = g_XMIdentityR2;
+        }
+    }
 
     // Create root signature.
     {
@@ -575,50 +712,90 @@ NPREffect::Impl::Impl(
         #endif
             ;
 
-        // Create root parameters and initialize first (constants)
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
-        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-
-        // Root parameter descriptor - conditionally initialized
-        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
-
-        if (textureEnabled && matCapEnabled)
+        if (enableSkinning)
         {
-            // Include two textures and one sampler
-            const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-            const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+            // Create root parameters and initialize first (constants)
+            CD3DX12_ROOT_PARAMETER rootParameters[SkinRootParameterIndex::SkinRootParameterCount] = {};
+            rootParameters[SkinRootParameterIndex::SkinConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-            rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
-            rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
-
-            const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-            rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
-
-            // use all parameters
-            rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
-
-            mRootSignature = GetRootSignature(2, rsigDesc);
-        }
-        else if (textureEnabled || matCapEnabled)
-        {
             // Include texture and sampler
             const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
             const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-            rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
-            rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
+            rootParameters[SkinRootParameterIndex::SkinTextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+            rootParameters[SkinRootParameterIndex::SkinTextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
 
-            // use all but last parameter
-            rsigDesc.Init(static_cast<UINT>(std::size(rootParameters) - 1), rootParameters, 0, nullptr, rootSignatureFlags);
+            rootParameters[SkinRootParameterIndex::SkinConstantBufferBones].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
-            mRootSignature = GetRootSignature(1, rsigDesc);
+            // Root parameter descriptor - conditionally initialized
+            CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
+
+            if (matCapEnabled)
+            {
+                // Include second texture
+                const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+                rootParameters[SkinRootParameterIndex::SkinTexture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
+
+                // use all parameters
+                rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
+
+                mRootSignature = GetRootSignature(4, rsigDesc);
+            }
+            else
+            {
+                // use all but last parameter
+                rsigDesc.Init(static_cast<UINT>(std::size(rootParameters) - 1), rootParameters, 0, nullptr, rootSignatureFlags);
+
+                mRootSignature = GetRootSignature(3, rsigDesc);
+            }
         }
-        else
+        else // !enableSkinning
         {
-            // only use constant
-            rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
+            // Create root parameters and initialize first (constants)
+            CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
+            rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-            mRootSignature = GetRootSignature(0, rsigDesc);
+            // Root parameter descriptor - conditionally initialized
+            CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
+
+            if (textureEnabled && matCapEnabled)
+            {
+                // Include two textures and one sampler
+                const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+                const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
+                rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+                rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
+
+                const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+                rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
+
+                // use all parameters
+                rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
+
+                mRootSignature = GetRootSignature(2, rsigDesc);
+            }
+            else if (textureEnabled || matCapEnabled)
+            {
+                // Include texture and sampler
+                const CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+                const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
+                rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+                rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
+
+                // use all but last parameter
+                rsigDesc.Init(static_cast<UINT>(std::size(rootParameters) - 1), rootParameters, 0, nullptr, rootSignatureFlags);
+
+                mRootSignature = GetRootSignature(1, rsigDesc);
+            }
+            else
+            {
+                // only use constant
+                rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
+
+                mRootSignature = GetRootSignature(0, rsigDesc);
+            }
         }
     }
 
@@ -643,13 +820,34 @@ NPREffect::Impl::Impl(
         EffectBase<NPREffectTraits>::PixelShaderBytecode[pi],
         mPipelineState.GetAddressOf());
 
-    SetDebugObjectName(mPipelineState.Get(), L"NPREffect");
+    if (enableSkinning)
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"SkinnedNPREffect");
+    }
+    else
+    {
+        SetDebugObjectName(mPipelineState.Get(), L"NPREffect");
+    }
 }
 
 
 int NPREffect::Impl::GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32_t effectFlags) const noexcept
 {
     int permutation = static_cast<int>(nprMode);
+
+    if (weightsPerVertex > 0)
+    {
+        if (effectFlags & EffectFlags::BiasedVertexNormals)
+        {
+            // Compressed normals need to be scaled and biased in the vertex shader.
+            permutation += 3;
+        }
+
+        // Vertex skinning does not support vertex colors or instancing, always includes a texture.
+        permutation += 48;
+
+        return permutation;
+    }
 
     // Support vertex coloring?
     if (effectFlags & EffectFlags::VertexColor)
@@ -682,6 +880,8 @@ int NPREffect::Impl::GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32
 // Sets our state onto the D3D device.
 void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
+    assert(weightsPerVertex == 0);
+
     // Compute derived parameter values.
     matrices.SetConstants(
         dirtyFlags,
@@ -695,7 +895,7 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature);
 
-    // Set the texture
+    // Set the texture(s)
     if (textureEnabled)
     {
         if (!texture.ptr || !sampler.ptr)
@@ -709,9 +909,21 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         // with the required descriptor heaps.
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
-    }
 
-    if (matCapEnabled)
+        if (matCapEnabled)
+        {
+            if (!matcap.ptr)
+            {
+                DebugTrace("ERROR: Missing matcap texture or sampler for NPREffect\n");
+                throw std::runtime_error("NPREffect");
+            }
+
+            // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
+            // with the required descriptor heaps.
+            commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2SRV, matcap);
+        }
+    }
+    else if (matCapEnabled)
     {
         if (!matcap.ptr || !sampler.ptr)
         {
@@ -722,9 +934,7 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
         // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
         // with the required descriptor heaps.
-        commandList->SetGraphicsRootDescriptorTable(
-            textureEnabled ? RootParameterIndex::Texture2SRV : RootParameterIndex::TextureSRV,
-            matcap);
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, matcap);
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
     }
 
@@ -736,14 +946,82 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 
+void NPREffect::Impl::ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList)
+{
+    assert(weightsPerVertex > 0);
+    assert(textureEnabled);
+
+    // Compute derived parameter values.
+    matrices.SetConstants(
+        dirtyFlags,
+        constants.world,
+        constants.worldInverseTranspose,
+        constants.worldViewProj,
+        constants.eyePosition);
+
+    UpdateConstants();
+
+    if (dirtyFlags & EffectDirtyFlags::ConstantBufferBones)
+    {
+        mBones = GraphicsMemory::Get(GetDevice()).AllocateConstant(boneConstants);
+        dirtyFlags &= ~EffectDirtyFlags::ConstantBufferBones;
+    }
+
+    // Set the root signature
+    commandList->SetGraphicsRootSignature(mRootSignature);
+
+    // Set the texture(s)
+    if (!texture.ptr || !sampler.ptr)
+    {
+        DebugTrace("ERROR: Missing texture or sampler for SkinnedNPREffect (texture %llu, sampler %llu)\n",
+            texture.ptr, sampler.ptr);
+        throw std::runtime_error("SkinnedNPREffect");
+    }
+
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
+    // with the required descriptor heaps.
+    commandList->SetGraphicsRootDescriptorTable(SkinRootParameterIndex::SkinTextureSRV, texture);
+    commandList->SetGraphicsRootDescriptorTable(SkinRootParameterIndex::SkinTextureSampler, sampler);
+
+    if (matCapEnabled)
+    {
+        if (!matcap.ptr)
+        {
+            DebugTrace("ERROR: Missing matcap texture for SkinnedNPREffect\n");
+            throw std::runtime_error("SkinnedNPREffect");
+        }
+
+        // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps()
+        // with the required descriptor heaps.
+        commandList->SetGraphicsRootDescriptorTable(SkinRootParameterIndex::SkinTexture2SRV, matcap);
+    }
+
+    // Set bone constants
+    commandList->SetGraphicsRootConstantBufferView(SkinRootParameterIndex::SkinConstantBufferBones, mBones.GpuAddress());
+
+    // Set constants
+    commandList->SetGraphicsRootConstantBufferView(SkinRootParameterIndex::SkinConstantBuffer, GetConstantBufferGpuAddress());
+
+    // Set the pipeline state
+    commandList->SetPipelineState(EffectBase::mPipelineState.Get());
+}
+
+
+//--------------------------------------------------------------------------------------
+// NPREffect
+//--------------------------------------------------------------------------------------
+
 // Public constructor.
 NPREffect::NPREffect(
     _In_ ID3D12Device* device,
     uint32_t effectFlags,
     const EffectPipelineStateDescription& pipelineDescription,
-    Mode nprMode)
-    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, nprMode))
-{}
+    Mode nprMode,
+    bool skinningEnabled)
+    : pImpl(std::make_unique<Impl>(device))
+{
+    pImpl->Initialize(device, effectFlags, pipelineDescription, nprMode, skinningEnabled);
+}
 
 
 NPREffect::NPREffect(NPREffect&&) noexcept = default;
@@ -1016,4 +1294,60 @@ void NPREffect::DisableRimLighting()
     pImpl->constants.rimColorAndPower = g_XMIdentityR3;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+
+//--------------------------------------------------------------------------------------
+// SkinnedNPREffect
+//--------------------------------------------------------------------------------------
+
+SkinnedNPREffect::~SkinnedNPREffect()
+{}
+
+
+// IEffect methods.
+void SkinnedNPREffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
+{
+    pImpl->ApplySkinning(commandList);
+}
+
+
+// Animation settings.
+void SkinnedNPREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
+{
+    if (count > MaxBones)
+        throw std::invalid_argument("count parameter exceeds MaxBones");
+
+    auto boneConstant = pImpl->boneConstants.Bones;
+
+    for (size_t i = 0; i < count; i++)
+    {
+    #if DIRECTX_MATH_VERSION >= 313
+        XMStoreFloat3x4A(reinterpret_cast<XMFLOAT3X4A*>(&boneConstant[i]), value[i]);
+    #else
+            // Xbox One XDK has an older version of DirectXMath
+        XMMATRIX boneMatrix = XMMatrixTranspose(value[i]);
+
+        boneConstant[i][0] = boneMatrix.r[0];
+        boneConstant[i][1] = boneMatrix.r[1];
+        boneConstant[i][2] = boneMatrix.r[2];
+    #endif
+    }
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;
+}
+
+
+void SkinnedNPREffect::ResetBoneTransforms()
+{
+    auto boneConstant = pImpl->boneConstants.Bones;
+
+    for (size_t i = 0; i < MaxBones; ++i)
+    {
+        boneConstant[i][0] = g_XMIdentityR0;
+        boneConstant[i][1] = g_XMIdentityR1;
+        boneConstant[i][2] = g_XMIdentityR2;
+    }
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;
 }
