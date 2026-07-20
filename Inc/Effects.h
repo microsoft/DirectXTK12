@@ -764,7 +764,7 @@ namespace DirectX
                 Mode_MatCap,        // Material Capture shading
             };
 
-            NPREffect(
+            DIRECTX_TOOLKIT_API inline NPREffect(
                 _In_ ID3D12Device* device,
                 uint32_t effectFlags,
                 const EffectPipelineStateDescription& pipelineDescription,
