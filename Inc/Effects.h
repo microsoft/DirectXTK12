@@ -1055,6 +1055,9 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API void __cdecl EnableInstancing(bool enabled) noexcept;
 
+            // Properties.
+            DIRECTX_TOOLKIT_API ID3D12Device* GetDevice() const noexcept;
+
         private:
             // Private implementation.
             class Impl;
@@ -1095,6 +1098,59 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl SetSharing(bool enabled) noexcept;
 
             DIRECTX_TOOLKIT_API void __cdecl EnableInstancing(bool enabled) noexcept;
+
+            // Properties.
+            DIRECTX_TOOLKIT_API ID3D12Device* GetDevice() const noexcept;
+
+        private:
+            // Private implementation.
+            class Impl;
+
+            std::shared_ptr<Impl> pImpl;
+        };
+
+
+        // Factory for Non-Photorealistic Rendering (NPR)
+        class NPREffectFactory : public IEffectFactory
+        {
+        public:
+            DIRECTX_TOOLKIT_API NPREffectFactory(_In_ ID3D12Device* device);
+            DIRECTX_TOOLKIT_API NPREffectFactory(
+                _In_ ID3D12DescriptorHeap* textureDescriptors,
+                _In_ ID3D12DescriptorHeap* samplerDescriptors);
+
+            DIRECTX_TOOLKIT_API NPREffectFactory(NPREffectFactory&&) noexcept;
+            DIRECTX_TOOLKIT_API NPREffectFactory& operator= (NPREffectFactory&&) noexcept;
+
+            NPREffectFactory(NPREffectFactory const&) = delete;
+            NPREffectFactory& operator= (NPREffectFactory const&) = delete;
+
+            DIRECTX_TOOLKIT_API ~NPREffectFactory() override;
+
+            // IEffectFactory methods.
+            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(
+                const EffectInfo& info,
+                const EffectPipelineStateDescription& opaquePipelineState,
+                const EffectPipelineStateDescription& alphaPipelineState,
+                const D3D12_INPUT_LAYOUT_DESC& inputLayout,
+                int textureDescriptorOffset = 0,
+                int samplerDescriptorOffset = 0) override;
+
+            // Settings.
+            DIRECTX_TOOLKIT_API void __cdecl ReleaseCache();
+
+            DIRECTX_TOOLKIT_API void __cdecl SetSharing(bool enabled) noexcept;
+
+            DIRECTX_TOOLKIT_API void __cdecl EnableInstancing(bool enabled) noexcept;
+
+            DIRECTX_TOOLKIT_API void __cdecl SetMode(NPREffect::Mode mode) noexcept;
+
+            DIRECTX_TOOLKIT_API void __cdecl SetDefaultMatCap(int textureIndex, int samplerIndex) noexcept;
+
+            DIRECTX_TOOLKIT_API void __cdecl SetEmissiveAsMatCap(bool value) noexcept;
+
+            // Properties.
+            DIRECTX_TOOLKIT_API ID3D12Device* GetDevice() const noexcept;
 
         private:
             // Private implementation.

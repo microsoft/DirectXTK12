@@ -152,6 +152,7 @@ set(LIBRARY_SOURCES
     Src/ModelLoadVBO.cpp
     Src/NormalMapEffect.cpp
     Src/NPREffect.cpp
+    Src/NPREffectFactory.cpp
     Src/PBREffect.cpp
     Src/PBREffectFactory.cpp
     Src/pch.h

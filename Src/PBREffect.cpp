@@ -407,12 +407,12 @@ void PBREffect::Impl::Initialize(
 
         for (size_t i = 0; i < std::size(textureSRV); i++)
         {
-            rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i]);
+            rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i], D3D12_SHADER_VISIBILITY_PIXEL);
         }
 
         for (size_t i = 0; i < std::size(textureSampler); i++)
         {
-            rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i]);
+            rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i], D3D12_SHADER_VISIBILITY_PIXEL);
         }
 
         rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
