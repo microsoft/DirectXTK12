@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------
-// File: EffectFactory.cpp
+// File: NPREffectFactory.cpp
 //
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
@@ -38,35 +38,28 @@ namespace
         {
             color = XMLoadFloat3(&info.specularColor);
             effect->SetSpecularColor(color);
-            effect->SetSpecularPower(info.specularPower);
         }
         else
         {
             effect->DisableSpecular();
         }
-
-        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
-        {
-            color = XMLoadFloat3(&info.emissiveColor);
-            effect->SetEmissiveColor(color);
-        }
     }
 }
 
-// Internal EffectFactory implementation class. Only one of these helpers is allocated
-// per D3D device, even if there are multiple public facing EffectFactory instances.
-class EffectFactory::Impl
+// Internal NPREffectFactory implementation class. Only one of these helpers is allocated
+// per D3D device, even if there are multiple public facing NPREffectFactory instances.
+class NPREffectFactory::Impl
 {
 public:
     Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
         : mTextureDescriptors(nullptr)
         , mSamplerDescriptors(nullptr)
+        , mMode(NPREffect::Mode_Cel)
         , mSharing(true)
-        , mUseNormalMapEffect(true)
-        , mEnableLighting(true)
-        , mEnablePerPixelLighting(true)
-        , mEnableFog(false)
         , mEnableInstancing(false)
+        , mUseEmissiveForMatCap(true)
+        , mMatcapTextureIndex(-1)
+        , mMatcapSamplerIndex(-1)
         , mDevice(device)
     {
         if (!device)
@@ -97,12 +90,12 @@ public:
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
 
+    NPREffect::Mode mMode;
     bool mSharing;
-    bool mUseNormalMapEffect;
-    bool mEnableLighting;
-    bool mEnablePerPixelLighting;
-    bool mEnableFog;
     bool mEnableInstancing;
+    bool mUseEmissiveForMatCap;
+    int mMatcapTextureIndex;
+    int mMatcapSamplerIndex;
 
     ComPtr<ID3D12Device> mDevice;
 
@@ -112,14 +105,12 @@ private:
     EffectCache  mEffectCache;
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
-    EffectCache  mEffectCacheNormalMap;
-    EffectCache  mEffectCacheNormalMapSkinned;
 
     std::mutex mutex;
 };
 
 
-std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
+std::shared_ptr<IEffect> NPREffectFactory::Impl::CreateEffect(
     const EffectInfo& info,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
@@ -128,37 +119,36 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     int samplerDescriptorOffset)
 {
     // If textures are required, make sure we have a descriptor heap
-    if (!mTextureDescriptors && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.normalTextureIndex != -1 || info.emissiveTextureIndex != -1))
+    if (!mTextureDescriptors && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.emissiveTextureIndex != -1))
     {
-        DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, normal %d, emissive %d)!\n",
-            info.diffuseTextureIndex, info.specularTextureIndex, info.normalTextureIndex, info.emissiveTextureIndex);
-        throw std::runtime_error("EffectFactory");
+        DebugTrace("ERROR: NPREffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, emissive %d)!\n",
+            info.diffuseTextureIndex, info.specularTextureIndex, info.emissiveTextureIndex);
+        throw std::runtime_error("NPREffectFactory");
     }
     if (!mSamplerDescriptors && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
     {
-        DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
+        DebugTrace("ERROR: NPREffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
             info.samplerIndex, info.samplerIndex2);
-        throw std::runtime_error("EffectFactory");
+        throw std::runtime_error("NPREffectFactory");
     }
 
     // If we have descriptors, make sure we have both texture and sampler descriptors
     if ((mTextureDescriptors == nullptr) != (mSamplerDescriptors == nullptr))
     {
         DebugTrace("ERROR: A texture or sampler descriptor heap was provided, but both are required.\n");
-        throw std::runtime_error("EffectFactory");
+        throw std::runtime_error("NPREffectFactory");
     }
 
     // Validate the we have either both texture and sampler descriptors, or neither
     if ((info.diffuseTextureIndex == -1) != (info.samplerIndex == -1))
     {
         DebugTrace("ERROR: Material provides either a texture or sampler, but both are required.\n");
-        throw std::runtime_error("EffectFactory");
+        throw std::runtime_error("NPREffectFactory");
     }
 
     const int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
     const int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
     const int emissiveTextureIndex = (info.emissiveTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
-    const int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
     const int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
     const int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
 
@@ -169,113 +159,80 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     std::wstring cacheName;
     if (info.enableSkinning)
     {
-        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
-
-        if (mEnableFog)
-        {
-            effectflags |= EffectFlags::Fog;
-        }
+        int effectflags = EffectFlags::None;
 
         if (info.biasedVertexNormals)
         {
             effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
-        if (info.enableNormalMaps && mUseNormalMapEffect)
+        // SkinnedNPREffect
+        if (mSharing && !info.name.empty())
         {
-            // SkinnedNormalMapEffect
-            if (specularTextureIndex != -1)
+            const uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + std::to_wstring(mMode) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCacheSkinning.find(cacheName);
+            if (mSharing && it != mEffectCacheSkinning.end())
             {
-                effectflags |= EffectFlags::Specular;
+                return it->second;
             }
+        }
 
-            if (mSharing && !info.name.empty())
+        auto effect = std::make_shared<SkinnedNPREffect>(mDevice.Get(), effectflags, derivedPSD, mMode);
+
+        SetMaterialProperties(effect.get(), info);
+
+        if (diffuseTextureIndex != -1)
+        {
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+        }
+
+        if (mMode == NPREffect::Mode_MatCap)
+        {
+            if (mUseEmissiveForMatCap && emissiveTextureIndex != -1)
             {
-                const uint32_t hash = derivedPSD.ComputeHash();
-                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-
-                auto it = mEffectCacheNormalMapSkinned.find(cacheName);
-                if (mSharing && it != mEffectCacheNormalMapSkinned.end())
+                if (samplerIndex == -1)
                 {
-                    return it->second;
+                    DebugTrace("ERROR: SkinnedNPREffect (matcap) requires a sampler (emissive %d)\n", emissiveTextureIndex);
+                    throw std::runtime_error("NPREffectFactory");
                 }
-            }
 
-            auto effect = std::make_shared<SkinnedNormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
-
-            SetMaterialProperties(effect.get(), info);
-
-            if (diffuseTextureIndex != -1)
-            {
-                effect->SetTexture(
-                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
+                effect->SetMatCap(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)),
                     mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
             }
-
-            if (specularTextureIndex != -1)
+            else if (mMatcapTextureIndex != -1)
             {
-                effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)));
-            }
-
-            if (normalTextureIndex != -1)
-            {
-                effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)));
-            }
-
-            if (mSharing && !info.name.empty())
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                EffectCache::value_type v(cacheName, effect);
-                mEffectCacheNormalMapSkinned.insert(v);
-            }
-
-            return std::move(effect);
-        }
-        else
-        {
-            // SkinnedEffect
-            if (mSharing && !info.name.empty())
-            {
-                const uint32_t hash = derivedPSD.ComputeHash();
-                cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-
-                auto it = mEffectCacheSkinning.find(cacheName);
-                if (mSharing && it != mEffectCacheSkinning.end())
+                auto matcap = mTextureDescriptors->GetGpuHandle(static_cast<size_t>(mMatcapTextureIndex));
+                if (samplerIndex != -1)
                 {
-                    return it->second;
+                    effect->SetMatCap(matcap,
+                        mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+                }
+                else if (mMatcapSamplerIndex != -1)
+                {
+                    effect->SetMatCap(matcap,
+                        mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(mMatcapSamplerIndex)));
                 }
             }
-
-            auto effect = std::make_shared<SkinnedEffect>(mDevice.Get(), effectflags, derivedPSD);
-
-            SetMaterialProperties(effect.get(), info);
-
-            if (diffuseTextureIndex != -1)
-            {
-                effect->SetTexture(
-                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
-                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
-            }
-
-            if (mSharing && !info.name.empty())
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                EffectCache::value_type v(cacheName, effect);
-                mEffectCacheSkinning.insert(v);
-            }
-
-            return std::move(effect);
         }
+
+        if (mSharing && !info.name.empty())
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            EffectCache::value_type v(cacheName, effect);
+            mEffectCacheSkinning.insert(v);
+        }
+
+        return std::move(effect);
     }
     else if (info.enableDualTexture)
     {
         // DualTextureEffect
         int effectflags = EffectFlags::None;
-
-        if (mEnableFog)
-        {
-            effectflags |= EffectFlags::Fog;
-        }
 
         if (mSharing && !info.name.empty())
         {
@@ -314,7 +271,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             if (samplerIndex2 == -1)
             {
                 DebugTrace("ERROR: Dual-texture requires a second sampler (emissive %d)\n", emissiveTextureIndex);
-                throw std::runtime_error("EffectFactory");
+                throw std::runtime_error("NPREffectFactory");
             }
 
             effect->SetTexture2(
@@ -327,7 +284,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             if (samplerIndex2 == -1)
             {
                 DebugTrace("ERROR: Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
-                throw std::runtime_error("EffectFactory");
+                throw std::runtime_error("NPREffectFactory");
             }
 
             effect->SetTexture2(
@@ -344,92 +301,10 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
 
         return std::move(effect);
     }
-    else if (info.enableNormalMaps && mUseNormalMapEffect)
-    {
-        // NormalMapEffect
-        int effectflags = EffectFlags::PerPixelLighting;
-
-        if (mEnableFog)
-        {
-            effectflags |= EffectFlags::Fog;
-        }
-
-        if (mEnableInstancing)
-        {
-            effectflags |= EffectFlags::Instancing;
-        }
-
-        if (info.perVertexColor)
-        {
-            effectflags |= EffectFlags::VertexColor;
-        }
-
-        if (info.biasedVertexNormals)
-        {
-            effectflags |= EffectFlags::BiasedVertexNormals;
-        }
-
-        if (specularTextureIndex != -1)
-        {
-            effectflags |= EffectFlags::Specular;
-        }
-
-        if (mSharing && !info.name.empty())
-        {
-            const uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
-
-            auto it = mEffectCacheNormalMap.find(cacheName);
-            if (mSharing && it != mEffectCacheNormalMap.end())
-            {
-                return it->second;
-            }
-        }
-
-        auto effect = std::make_shared<NormalMapEffect>(mDevice.Get(), effectflags, derivedPSD);
-
-        SetMaterialProperties(effect.get(), info);
-
-        if (diffuseTextureIndex != -1)
-        {
-            effect->SetTexture(
-                mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
-                mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
-        }
-
-        if (specularTextureIndex != -1)
-        {
-            effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(specularTextureIndex)));
-        }
-
-        if (normalTextureIndex != -1)
-        {
-            effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(static_cast<size_t>(normalTextureIndex)));
-        }
-
-        if (mSharing && !info.name.empty())
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            EffectCache::value_type v(cacheName, effect);
-            mEffectCacheNormalMap.insert(v);
-        }
-
-        return std::move(effect);
-    }
     else
     {
         // set effect flags for creation
         int effectflags = EffectFlags::None;
-
-        if (mEnableLighting)
-        {
-            effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
-        }
-
-        if (mEnableFog)
-        {
-            effectflags |= EffectFlags::Fog;
-        }
 
         if (info.perVertexColor)
         {
@@ -446,11 +321,11 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effectflags |= EffectFlags::BiasedVertexNormals;
         }
 
-        // BasicEffect
+        // NPREffect
         if (mSharing && !info.name.empty())
         {
             const uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+            cacheName = std::to_wstring(effectflags) + std::to_wstring(mMode) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCache.find(cacheName);
             if (mSharing && it != mEffectCache.end())
@@ -459,7 +334,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             }
         }
 
-        auto effect = std::make_shared<BasicEffect>(mDevice.Get(), effectflags, derivedPSD);
+        auto effect = std::make_shared<NPREffect>(mDevice.Get(), effectflags, derivedPSD, mMode);
 
         SetMaterialProperties(effect.get(), info);
 
@@ -468,6 +343,36 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetTexture(
                 mTextureDescriptors->GetGpuHandle(static_cast<size_t>(diffuseTextureIndex)),
                 mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+        }
+
+        if (mMode == NPREffect::Mode_MatCap)
+        {
+            if (mUseEmissiveForMatCap && emissiveTextureIndex != -1)
+            {
+                if (samplerIndex == -1)
+                {
+                    DebugTrace("ERROR: NPREffect (matcap) requires a sampler (emissive %d)\n", emissiveTextureIndex);
+                    throw std::runtime_error("NPREffectFactory");
+                }
+
+                effect->SetMatCap(
+                    mTextureDescriptors->GetGpuHandle(static_cast<size_t>(emissiveTextureIndex)),
+                    mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+            }
+            else if (mMatcapTextureIndex != -1)
+            {
+                auto matcap = mTextureDescriptors->GetGpuHandle(static_cast<size_t>(mMatcapTextureIndex));
+                if (samplerIndex != -1)
+                {
+                    effect->SetMatCap(matcap,
+                        mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(samplerIndex)));
+                }
+                else if (mMatcapSamplerIndex != -1)
+                {
+                    effect->SetMatCap(matcap,
+                        mSamplerDescriptors->GetGpuHandle(static_cast<size_t>(mMatcapSamplerIndex)));
+                }
+            }
         }
 
         if (mSharing && !info.name.empty())
@@ -481,35 +386,33 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     }
 }
 
-void EffectFactory::Impl::ReleaseCache()
+void NPREffectFactory::Impl::ReleaseCache()
 {
     std::lock_guard<std::mutex> lock(mutex);
     mEffectCache.clear();
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
-    mEffectCacheNormalMap.clear();
-    mEffectCacheNormalMapSkinned.clear();
 }
 
 
 
 //--------------------------------------------------------------------------------------
-// EffectFactory
+// NPREffectFactory
 //--------------------------------------------------------------------------------------
 
-EffectFactory::EffectFactory(_In_ ID3D12Device* device) :
+NPREffectFactory::NPREffectFactory(_In_ ID3D12Device* device) :
     pImpl(std::make_shared<Impl>(device, nullptr, nullptr))
 {}
 
-EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
+NPREffectFactory::NPREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
 {
     if (!textureDescriptors)
     {
-        throw std::invalid_argument("Texture descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::invalid_argument("Texture descriptor heap cannot be null if no device is provided. Use the alternative NPREffectFactory constructor instead.");
     }
     if (!samplerDescriptors)
     {
-        throw std::invalid_argument("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::invalid_argument("Descriptor heap cannot be null if no device is provided. Use the alternative NPREffectFactory constructor instead.");
     }
 
 #if defined(_MSC_VER) || !defined(_WIN32)
@@ -523,11 +426,11 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
 
     if (textureHeapType != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
     {
-        throw std::invalid_argument("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
+        throw std::invalid_argument("NPREffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
     }
     if (samplerHeapType != D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
     {
-        throw std::invalid_argument("EffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
+        throw std::invalid_argument("NPREffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
     }
 
     ComPtr<ID3D12Device> device;
@@ -542,12 +445,12 @@ EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_
 }
 
 
-EffectFactory::EffectFactory(EffectFactory&&) noexcept = default;
-EffectFactory& EffectFactory::operator= (EffectFactory&&) noexcept = default;
-EffectFactory::~EffectFactory() = default;
+NPREffectFactory::NPREffectFactory(NPREffectFactory&&) noexcept = default;
+NPREffectFactory& NPREffectFactory::operator= (NPREffectFactory&&) noexcept = default;
+NPREffectFactory::~NPREffectFactory() = default;
 
 
-std::shared_ptr<IEffect> EffectFactory::CreateEffect(
+std::shared_ptr<IEffect> NPREffectFactory::CreateEffect(
     const EffectInfo& info,
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
@@ -559,44 +462,40 @@ std::shared_ptr<IEffect> EffectFactory::CreateEffect(
 }
 
 
-void EffectFactory::ReleaseCache()
+void NPREffectFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
 
 
 // Properties.
-void EffectFactory::SetSharing(bool enabled) noexcept
+void NPREffectFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->mSharing = enabled;
 }
 
-void EffectFactory::EnableLighting(bool enabled) noexcept
-{
-    pImpl->mEnableLighting = enabled;
-}
-
-void EffectFactory::EnablePerPixelLighting(bool enabled) noexcept
-{
-    pImpl->mEnablePerPixelLighting = enabled;
-}
-
-void EffectFactory::EnableFogging(bool enabled) noexcept
-{
-    pImpl->mEnableFog = enabled;
-}
-
-void EffectFactory::EnableInstancing(bool enabled) noexcept
+void NPREffectFactory::EnableInstancing(bool enabled) noexcept
 {
     pImpl->mEnableInstancing = enabled;
 }
 
-void EffectFactory::EnableNormalMapEffect(bool enabled) noexcept
+void NPREffectFactory::SetMode(NPREffect::Mode mode) noexcept
 {
-    pImpl->mUseNormalMapEffect = enabled;
+    pImpl->mMode = mode;
 }
 
-ID3D12Device* EffectFactory::GetDevice() const noexcept
+void NPREffectFactory::SetDefaultMatCap(int textureIndex, int samplerIndex) noexcept
+{
+    pImpl->mMatcapTextureIndex = textureIndex;
+    pImpl->mMatcapSamplerIndex = samplerIndex;
+}
+
+void NPREffectFactory::SetEmissiveAsMatCap(bool value) noexcept
+{
+    pImpl->mUseEmissiveForMatCap = value;
+}
+
+ID3D12Device* NPREffectFactory::GetDevice() const noexcept
 {
     return pImpl->mDevice.Get();
 }

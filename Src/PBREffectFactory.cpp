@@ -119,9 +119,9 @@ public:
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
 
-private:
     ComPtr<ID3D12Device> mDevice;
 
+private:
     using EffectCache = std::map< std::wstring, std::shared_ptr<IEffect> >;
 
     EffectCache  mEffectCache;
@@ -326,4 +326,9 @@ void PBREffectFactory::SetSharing(bool enabled) noexcept
 void PBREffectFactory::EnableInstancing(bool enabled) noexcept
 {
     pImpl->mEnableInstancing = enabled;
+}
+
+ID3D12Device* PBREffectFactory::GetDevice() const noexcept
+{
+    return pImpl->mDevice.Get();
 }

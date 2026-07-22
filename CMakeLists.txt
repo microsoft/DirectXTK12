@@ -152,6 +152,7 @@ set(LIBRARY_SOURCES
     Src/ModelLoadVBO.cpp
     Src/NormalMapEffect.cpp
     Src/NPREffect.cpp
+    Src/NPREffectFactory.cpp
     Src/PBREffect.cpp
     Src/PBREffectFactory.cpp
     Src/pch.h
@@ -346,7 +347,7 @@ if(WIN32 AND BUILD_SHARED_LIBS)
   elseif(XBOX_CONSOLE_TARGET MATCHES "durango")
     target_link_libraries(${PROJECT_NAME} PRIVATE kernelx.lib combase.lib d3d12_x.lib xi.lib)
   else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE d3d12.lib)
+    target_link_libraries(${PROJECT_NAME} PRIVATE d3d12.lib dxguid.lib)
   endif()
 
   if(MINGW AND BUILD_XINPUT)
