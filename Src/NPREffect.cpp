@@ -801,6 +801,12 @@ void NPREffect::Impl::Initialize(
 
     assert(mRootSignature != nullptr);
 
+    if (effectFlags & EffectFlags::Fog)
+    {
+        DebugTrace("ERROR: NPREffect does not implement EffectFlags::Fog\n");
+        throw std::invalid_argument("Fog effect flag is invalid");
+    }
+
     // Create pipeline state.
     const int sp = GetPipelineStatePermutation(nprMode, effectFlags);
     assert(sp >= 0 && sp < NPREffectTraits::ShaderPermutationCount);

@@ -428,7 +428,7 @@ void PBREffect::Impl::Initialize(
 
     if (effectFlags & EffectFlags::Fog)
     {
-        DebugTrace("ERROR: PBEffect does not implement EffectFlags::Fog\n");
+        DebugTrace("ERROR: PBREffect does not implement EffectFlags::Fog\n");
         throw std::invalid_argument("Fog effect flag is invalid");
     }
     else if (effectFlags & EffectFlags::VertexColor)
