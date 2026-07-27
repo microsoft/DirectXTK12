@@ -51,13 +51,13 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }}
-          DirectXTK_Desktop_2022_Win10.sln
+          DirectXTK_Desktop_2022_Win10.slnx
 
       - name: 'Build (UWP)'
         working-directory: ${{ github.workspace }}
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }}
-          DirectXTK_Windows10_2022.sln
+          DirectXTK_Windows10_2022.slnx
 
       - if: matrix.platform != 'ARM64'
         name: 'Build (Spectre Windows 10)'
@@ -65,7 +65,7 @@ jobs:
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=${{ matrix.platform }}
           /p:SpectreMitigation=Spectre
-          DirectXTK_Desktop_2022_Win10.sln
+          DirectXTK_Desktop_2022_Win10.slnx
 
   build2026:
     runs-on: windows-2025-vs2026
@@ -112,10 +112,10 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=ARM64
-          DirectXTK_Desktop_2022_Win10.sln
+          DirectXTK_Desktop_2022_Win10.slnx
 
       - name: 'Build (UWP)'
         working-directory: ${{ github.workspace }}
         run: >
           msbuild /m /p:Configuration=${{ matrix.build_type }} /p:Platform=ARM64
-          DirectXTK_Windows10_2022.sln
+          DirectXTK_Windows10_2022.slnx

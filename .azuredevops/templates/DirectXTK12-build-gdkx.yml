@@ -26,7 +26,7 @@ steps:
     displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} pcdbg
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: x64
       configuration: Debug
@@ -36,7 +36,7 @@ steps:
     displayName: Build solution DirectXTK_GDKX_${{ parameters.vsYear }} pcrel
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: x64
       configuration: Release
@@ -47,7 +47,7 @@ steps:
     condition: eq(${{ parameters.xboxone }}, true)
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.XboxOne.x64
       configuration: Debug
@@ -58,7 +58,7 @@ steps:
     condition: eq(${{ parameters.xboxone }}, true)
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.XboxOne.x64
       configuration: Release
@@ -69,7 +69,7 @@ steps:
     condition: eq(${{ parameters.scarlett }}, true)
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.Scarlett.x64
       configuration: Debug
@@ -80,7 +80,7 @@ steps:
     condition: eq(${{ parameters.scarlett }}, true)
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDKX_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.Scarlett.x64
       configuration: Release

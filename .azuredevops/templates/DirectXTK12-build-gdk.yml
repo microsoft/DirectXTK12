@@ -21,7 +21,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} pcdbg
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Desktop.x64
       configuration: Debug
@@ -31,7 +31,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} pcrel
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Desktop.x64
       configuration: Release
@@ -41,7 +41,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} xbdbg
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.XboxOne.x64
       configuration: Debug
@@ -51,7 +51,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} xbrel
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.XboxOne.x64
       configuration: Release
@@ -61,7 +61,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} scardbg
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.Scarlett.x64
       configuration: Debug
@@ -71,7 +71,7 @@ steps:
     displayName: Build solution DirectXTK_GDK_${{ parameters.vsYear }} scarrel
     continueOnError: true
     inputs:
-      solution: DirectXTK_GDK_${{ parameters.vsYear }}.sln
+      solution: DirectXTK_GDK_${{ parameters.vsYear }}.slnx
       vsVersion: ${{ parameters.msVersion }}
       platform: Gaming.Xbox.Scarlett.x64
       configuration: Release
