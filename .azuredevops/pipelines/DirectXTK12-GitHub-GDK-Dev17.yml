@@ -545,7 +545,7 @@ jobs:
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
-          solution: Tests\D3D12Test\D3D12Test_GDKX_2022.sln
+          solution: Tests\D3D12Test\D3D12Test_GDKX_2022.slnx
           selectOrConfig: config
           nugetConfigPath: NuGet.Config
           packagesDirectory: $(Build.SourcesDirectory)\Tests\packages
@@ -573,7 +573,7 @@ jobs:
         displayName: Build Tests xbdbg
         continueOnError: true
         inputs:
-          solution: '**\*GDKX_2022*.sln'
+          solution: '**\*GDKX_2022*.slnx'
           vsVersion: 17.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Debug
@@ -583,7 +583,7 @@ jobs:
         displayName: Build Tests xbrel
         continueOnError: true
         inputs:
-          solution: '**\*GDKX_2022*.sln'
+          solution: '**\*GDKX_2022*.slnx'
           vsVersion: 17.0
           platform: Gaming.Xbox.XboxOne.x64
           configuration: Release
@@ -639,7 +639,7 @@ jobs:
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
-          solution: Tests\D3D12Test\D3D12Test_GDKX_2022.sln
+          solution: Tests\D3D12Test\D3D12Test_GDKX_2022.slnx
           selectOrConfig: config
           nugetConfigPath: NuGet.Config
           packagesDirectory: $(Build.SourcesDirectory)\Tests\packages
@@ -667,7 +667,7 @@ jobs:
         displayName: Build Tests scardbg
         continueOnError: true
         inputs:
-          solution: '**\*GDKX_2022*.sln'
+          solution: '**\*GDKX_2022*.slnx'
           vsVersion: 17.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Debug
@@ -677,7 +677,7 @@ jobs:
         displayName: Build Tests scarrel
         continueOnError: true
         inputs:
-          solution: '**\*GDKX_2022*.sln'
+          solution: '**\*GDKX_2022*.slnx'
           vsVersion: 17.0
           platform: Gaming.Xbox.Scarlett.x64
           configuration: Release
@@ -745,7 +745,7 @@ jobs:
       - task: NuGetCommand@2
         displayName: NuGet restore
         inputs:
-          solution: Tests\D3D12Test\D3D12Test_GDKW_2022.sln
+          solution: Tests\D3D12Test\D3D12Test_GDKW_2022.slnx
           selectOrConfig: config
           nugetConfigPath: NuGet.Config
           packagesDirectory: $(Build.SourcesDirectory)\Tests\packages
@@ -765,7 +765,7 @@ jobs:
         displayName: Build arm64dbg
         continueOnError: true
         inputs:
-          solution: '**\*GDKW_2022*.sln'
+          solution: '**\*GDKW_2022*.slnx'
           vsVersion: 17.0
           platform: ARM64
           configuration: Debug
@@ -775,7 +775,7 @@ jobs:
         displayName: Build arm64rel
         continueOnError: true
         inputs:
-          solution: '**\*GDKW_2022*.sln'
+          solution: '**\*GDKW_2022*.slnx'
           vsVersion: 17.0
           platform: ARM64
           configuration: Release
@@ -785,7 +785,7 @@ jobs:
         displayName: Build x64dbg
         continueOnError: true
         inputs:
-          solution: '**\*GDKW_2022*.sln'
+          solution: '**\*GDKW_2022*.slnx'
           vsVersion: 17.0
           platform: x64
           configuration: Debug
@@ -795,7 +795,7 @@ jobs:
         displayName: Build x64rel
         continueOnError: true
         inputs:
-          solution: '**\*GDKW_2022*.sln'
+          solution: '**\*GDKW_2022*.slnx'
           vsVersion: 17.0
           platform: x64
           configuration: Release
