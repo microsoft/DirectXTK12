@@ -182,14 +182,14 @@
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS |" \
 "            DENY_MESH_SHADER_ROOT_ACCESS )," \
-"DescriptorTable ( SRV(t0) ),"\
-"DescriptorTable ( SRV(t1) ),"\
-"DescriptorTable ( SRV(t2) ),"\
-"DescriptorTable ( SRV(t3) ),"\
-"DescriptorTable ( SRV(t4) ),"\
-"DescriptorTable ( SRV(t5) ),"\
-"DescriptorTable ( Sampler(s0) ),"\
-"DescriptorTable ( Sampler(s1) ),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t2), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t3), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t4), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t5), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s1), visibility = SHADER_VISIBILITY_PIXEL ),"\
 "CBV(b0)," \
 "CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
 
@@ -212,6 +212,31 @@
 "CBV(b0),"\
 "DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
 "DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
+
+#define SkinTextureSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS |" \
+"            DENY_MESH_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
+
+#define SkinDualTextureOneSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS |" \
+"            DENY_MESH_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX ),"\
 "DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
 
 #else // !__XBOX_SCARLETT
@@ -365,14 +390,14 @@
 "            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
 "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
 "            DENY_HULL_SHADER_ROOT_ACCESS )," \
-"DescriptorTable ( SRV(t0) ),"\
-"DescriptorTable ( SRV(t1) ),"\
-"DescriptorTable ( SRV(t2) ),"\
-"DescriptorTable ( SRV(t3) ),"\
-"DescriptorTable ( SRV(t4) ),"\
-"DescriptorTable ( SRV(t5) ),"\
-"DescriptorTable ( Sampler(s0) ),"\
-"DescriptorTable ( Sampler(s1) ),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t2), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t3), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t4), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t5), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s1), visibility = SHADER_VISIBILITY_PIXEL ),"\
 "CBV(b0)," \
 "CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
 
@@ -391,6 +416,27 @@
 "CBV(b0),"\
 "DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
 "DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
+
+#define SkinTextureSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX )"
+
+#define SkinDualTextureOneSamplerRS \
+"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+"CBV(b0),"\
+"DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"DescriptorTable ( Sampler(s0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+"CBV(b1, visibility = SHADER_VISIBILITY_VERTEX ),"\
 "DescriptorTable ( SRV(t1), visibility = SHADER_VISIBILITY_PIXEL )"
 
 #endif

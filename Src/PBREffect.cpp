@@ -407,12 +407,12 @@ void PBREffect::Impl::Initialize(
 
         for (size_t i = 0; i < std::size(textureSRV); i++)
         {
-            rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i]);
+            rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i], D3D12_SHADER_VISIBILITY_PIXEL);
         }
 
         for (size_t i = 0; i < std::size(textureSampler); i++)
         {
-            rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i]);
+            rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i], D3D12_SHADER_VISIBILITY_PIXEL);
         }
 
         rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
@@ -428,7 +428,7 @@ void PBREffect::Impl::Initialize(
 
     if (effectFlags & EffectFlags::Fog)
     {
-        DebugTrace("ERROR: PBEffect does not implement EffectFlags::Fog\n");
+        DebugTrace("ERROR: PBREffect does not implement EffectFlags::Fog\n");
         throw std::invalid_argument("Fog effect flag is invalid");
     }
     else if (effectFlags & EffectFlags::VertexColor)

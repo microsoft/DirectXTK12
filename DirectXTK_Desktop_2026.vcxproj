@@ -112,6 +112,7 @@
     <ClCompile Include="Src\GraphicsMemory.cpp" />
     <ClCompile Include="Src\NormalMapEffect.cpp" />
     <ClCompile Include="Src\NPREffect.cpp" />
+    <ClCompile Include="Src\NPREffectFactory.cpp" />
     <ClCompile Include="Src\PBREffect.cpp" />
     <ClCompile Include="Src\PBREffectFactory.cpp" />
     <ClCompile Include="Src\pch.cpp">
