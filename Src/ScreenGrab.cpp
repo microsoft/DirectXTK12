@@ -37,13 +37,13 @@ namespace
 {
     //--------------------------------------------------------------------------------------
     HRESULT CaptureTexture(_In_ ID3D12Device* device,
-        _In_ ID3D12CommandQueue* pCommandQ,
-        _In_ ID3D12Resource* pSource,
-        UINT64 srcPitch,
-        const D3D12_RESOURCE_DESC& desc,
-        _COM_Outptr_ ID3D12Resource** pStaging,
-        D3D12_RESOURCE_STATES beforeState,
-        D3D12_RESOURCE_STATES afterState) noexcept
+        _In_ ID3D12CommandQueue*              pCommandQ,
+        _In_ ID3D12Resource*                  pSource,
+        UINT64                                srcPitch,
+        const D3D12_RESOURCE_DESC&            desc,
+        _COM_Outptr_ ID3D12Resource**         pStaging,
+        D3D12_RESOURCE_STATES                 beforeState,
+        D3D12_RESOURCE_STATES                 afterState) noexcept
     {
         if (pStaging)
         {
@@ -61,7 +61,9 @@ namespace
 
         if (desc.DepthOrArraySize > 1 || desc.MipLevels > 1)
         {
-            DebugTrace("WARNING: ScreenGrab does not support 2D arrays, cubemaps, or mipmaps; only the first surface is written. Consider using DirectXTex instead.\n");
+            DebugTrace(
+                "WARNING: ScreenGrab does not support 2D arrays, cubemaps, or mipmaps; only the first surface is written. Consider using "
+                "DirectXTex instead.\n");
         }
 
         if (srcPitch > UINT32_MAX)
@@ -72,7 +74,7 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 
         D3D12_HEAP_PROPERTIES sourceHeapProperties;
-        HRESULT hr = pSource->GetHeapProperties(&sourceHeapProperties, nullptr);
+        HRESULT               hr = pSource->GetHeapProperties(&sourceHeapProperties, nullptr);
         if (SUCCEEDED(hr) && sourceHeapProperties.Type == D3D12_HEAP_TYPE_READBACK)
         {
             // Handle case where the source is already a staging texture we can use directly
@@ -91,7 +93,11 @@ namespace
 
         // Spin up a new command list
         ComPtr<ID3D12GraphicsCommandList> commandList;
-        hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAlloc.Get(), nullptr, IID_GRAPHICS_PPV_ARGS(commandList.GetAddressOf()));
+        hr = device->CreateCommandList(0,
+            D3D12_COMMAND_LIST_TYPE_DIRECT,
+            commandAlloc.Get(),
+            nullptr,
+            IID_GRAPHICS_PPV_ARGS(commandList.GetAddressOf()));
         if (FAILED(hr))
             return hr;
 
@@ -112,31 +118,30 @@ namespace
 
         // Readback resources must be buffers
         D3D12_RESOURCE_DESC bufferDesc = {};
-        bufferDesc.DepthOrArraySize = 1;
-        bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-        bufferDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
-        bufferDesc.Height = 1;
-        bufferDesc.Width = srcPitch * desc.Height;
-        bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-        bufferDesc.MipLevels = 1;
-        bufferDesc.SampleDesc.Count = 1;
+        bufferDesc.DepthOrArraySize    = 1;
+        bufferDesc.Dimension           = D3D12_RESOURCE_DIMENSION_BUFFER;
+        bufferDesc.Flags               = D3D12_RESOURCE_FLAG_NONE;
+        bufferDesc.Format              = DXGI_FORMAT_UNKNOWN;
+        bufferDesc.Height              = 1;
+        bufferDesc.Width               = srcPitch * desc.Height;
+        bufferDesc.Layout              = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+        bufferDesc.MipLevels           = 1;
+        bufferDesc.SampleDesc.Count    = 1;
 
         ComPtr<ID3D12Resource> copySource(pSource);
-        D3D12_RESOURCE_STATES beforeStateSource = beforeState;
+        D3D12_RESOURCE_STATES  beforeStateSource = beforeState;
         if (desc.SampleDesc.Count > 1)
         {
             TransitionResource(commandList.Get(), pSource, beforeState, D3D12_RESOURCE_STATE_RESOLVE_SOURCE);
 
             // MSAA content must be resolved before being copied to a staging texture
-            auto descCopy = desc;
-            descCopy.SampleDesc.Count = 1;
+            auto descCopy               = desc;
+            descCopy.SampleDesc.Count   = 1;
             descCopy.SampleDesc.Quality = 0;
-            descCopy.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
+            descCopy.Alignment          = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
 
             ComPtr<ID3D12Resource> pTemp;
-            hr = device->CreateCommittedResource(
-                &defaultHeapProperties,
+            hr = device->CreateCommittedResource(&defaultHeapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &descCopy,
                 D3D12_RESOURCE_STATE_RESOLVE_DEST,
@@ -168,7 +173,7 @@ namespace
                 }
             }
 
-            copySource = pTemp;
+            copySource  = pTemp;
             beforeState = D3D12_RESOURCE_STATE_RESOLVE_DEST;
         }
         else
@@ -177,8 +182,7 @@ namespace
         }
 
         // Create a staging texture
-        hr = device->CreateCommittedResource(
-            &readBackHeapProperties,
+        hr = device->CreateCommittedResource(&readBackHeapProperties,
             D3D12_HEAP_FLAG_NONE,
             &bufferDesc,
             D3D12_RESOURCE_STATE_COPY_DEST,
@@ -203,11 +207,11 @@ namespace
 
         // Get the copy target location
         D3D12_PLACED_SUBRESOURCE_FOOTPRINT bufferFootprint = {};
-        bufferFootprint.Footprint.Width = static_cast<UINT>(desc.Width);
-        bufferFootprint.Footprint.Height = desc.Height;
-        bufferFootprint.Footprint.Depth = 1;
-        bufferFootprint.Footprint.RowPitch = static_cast<UINT>(srcPitch);
-        bufferFootprint.Footprint.Format = desc.Format;
+        bufferFootprint.Footprint.Width                    = static_cast<UINT>(desc.Width);
+        bufferFootprint.Footprint.Height                   = desc.Height;
+        bufferFootprint.Footprint.Depth                    = 1;
+        bufferFootprint.Footprint.RowPitch                 = static_cast<UINT>(srcPitch);
+        bufferFootprint.Footprint.Format                   = desc.Format;
 
         const CD3DX12_TEXTURE_COPY_LOCATION copyDest(*pStaging, bufferFootprint);
         const CD3DX12_TEXTURE_COPY_LOCATION copySrc(copySource.Get(), 0);
@@ -246,15 +250,12 @@ namespace
     }
 } // anonymous namespace
 
-
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT DirectX::SaveDDSTextureToFile(
-    ID3D12CommandQueue* pCommandQ,
-    ID3D12Resource* pSource,
-    const wchar_t* fileName,
-    D3D12_RESOURCE_STATES beforeState,
-    D3D12_RESOURCE_STATES afterState) noexcept
+_Use_decl_annotations_ HRESULT DirectX::SaveDDSTextureToFile(ID3D12CommandQueue* pCommandQ,
+    ID3D12Resource*                                                              pSource,
+    const wchar_t*                                                               fileName,
+    D3D12_RESOURCE_STATES                                                        beforeState,
+    D3D12_RESOURCE_STATES                                                        afterState) noexcept
 {
     if (!fileName)
         return E_INVALIDARG;
@@ -267,29 +268,22 @@ HRESULT DirectX::SaveDDSTextureToFile(
     const auto desc = pSource->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto& desc = *pSource->GetDesc(&tmpDesc);
+    const auto&         desc = *pSource->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Width > UINT32_MAX)
         return E_INVALIDARG;
 
     UINT64 totalResourceSize = 0;
-    UINT64 fpRowPitch = 0;
-    UINT fpRowCount = 0;
+    UINT64 fpRowPitch        = 0;
+    UINT   fpRowCount        = 0;
     // Get the rowcount, pitch and size of the top mip
-    device->GetCopyableFootprints(
-        &desc,
-        0,
-        1,
-        0,
-        nullptr,
-        &fpRowCount,
-        &fpRowPitch,
-        &totalResourceSize);
+    device->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, &fpRowCount, &fpRowPitch, &totalResourceSize);
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
-    const UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
+    const UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u)
+                               & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
     // Round up the srcPitch to multiples of 256
     const UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;
@@ -304,10 +298,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
         return hr;
 
     // Create file
-    ScopedHandle hFile(safe_handle(CreateFile2(
-        fileName,
-        GENERIC_WRITE, 0, CREATE_ALWAYS,
-        nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(fileName, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
     if (!hFile)
         return HRESULT_FROM_WIN32(GetLastError());
 
@@ -318,53 +309,87 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
     *reinterpret_cast<uint32_t*>(&fileHeader[0]) = DDS_MAGIC;
 
-    auto header = reinterpret_cast<DDS_HEADER*>(&fileHeader[0] + sizeof(uint32_t));
-    size_t headerSize = DDS_MIN_HEADER_SIZE;
-    header->size = sizeof(DDS_HEADER);
-    header->flags = DDS_HEADER_FLAGS_TEXTURE | DDS_HEADER_FLAGS_MIPMAP;
-    header->height = desc.Height;
-    header->width = static_cast<uint32_t>(desc.Width);
+    auto   header       = reinterpret_cast<DDS_HEADER*>(&fileHeader[0] + sizeof(uint32_t));
+    size_t headerSize   = DDS_MIN_HEADER_SIZE;
+    header->size        = sizeof(DDS_HEADER);
+    header->flags       = DDS_HEADER_FLAGS_TEXTURE | DDS_HEADER_FLAGS_MIPMAP;
+    header->height      = desc.Height;
+    header->width       = static_cast<uint32_t>(desc.Width);
     header->mipMapCount = 1;
-    header->caps = DDS_SURFACE_FLAGS_TEXTURE;
+    header->caps        = DDS_SURFACE_FLAGS_TEXTURE;
 
     // Try to use a legacy .DDS pixel format for better tools support, otherwise fallback to 'DX10' header extension
     DDS_HEADER_DXT10* extHeader = nullptr;
     switch (desc.Format)
     {
-    case DXGI_FORMAT_R8G8B8A8_UNORM:        memcpy(&header->ddspf, &DDSPF_A8B8G8R8, sizeof(DDS_PIXELFORMAT));    break;
-    case DXGI_FORMAT_R16G16_UNORM:          memcpy(&header->ddspf, &DDSPF_G16R16, sizeof(DDS_PIXELFORMAT));      break;
-    case DXGI_FORMAT_R8G8_UNORM:            memcpy(&header->ddspf, &DDSPF_A8L8, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_R16_UNORM:             memcpy(&header->ddspf, &DDSPF_L16, sizeof(DDS_PIXELFORMAT));         break;
-    case DXGI_FORMAT_R8_UNORM:              memcpy(&header->ddspf, &DDSPF_L8, sizeof(DDS_PIXELFORMAT));          break;
-    case DXGI_FORMAT_A8_UNORM:              memcpy(&header->ddspf, &DDSPF_A8, sizeof(DDS_PIXELFORMAT));          break;
-    case DXGI_FORMAT_R8G8_B8G8_UNORM:       memcpy(&header->ddspf, &DDSPF_R8G8_B8G8, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_G8R8_G8B8_UNORM:       memcpy(&header->ddspf, &DDSPF_G8R8_G8B8, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_BC1_UNORM:             memcpy(&header->ddspf, &DDSPF_DXT1, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_BC2_UNORM:             memcpy(&header->ddspf, &DDSPF_DXT3, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_BC3_UNORM:             memcpy(&header->ddspf, &DDSPF_DXT5, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_BC4_UNORM:             memcpy(&header->ddspf, &DDSPF_BC4_UNORM, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_BC4_SNORM:             memcpy(&header->ddspf, &DDSPF_BC4_SNORM, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_BC5_UNORM:             memcpy(&header->ddspf, &DDSPF_BC5_UNORM, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_BC5_SNORM:             memcpy(&header->ddspf, &DDSPF_BC5_SNORM, sizeof(DDS_PIXELFORMAT));   break;
-    case DXGI_FORMAT_B5G6R5_UNORM:          memcpy(&header->ddspf, &DDSPF_R5G6B5, sizeof(DDS_PIXELFORMAT));      break;
-    case DXGI_FORMAT_B5G5R5A1_UNORM:        memcpy(&header->ddspf, &DDSPF_A1R5G5B5, sizeof(DDS_PIXELFORMAT));    break;
-    case DXGI_FORMAT_R8G8_SNORM:            memcpy(&header->ddspf, &DDSPF_V8U8, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_R8G8B8A8_SNORM:        memcpy(&header->ddspf, &DDSPF_Q8W8V8U8, sizeof(DDS_PIXELFORMAT));    break;
-    case DXGI_FORMAT_R16G16_SNORM:          memcpy(&header->ddspf, &DDSPF_V16U16, sizeof(DDS_PIXELFORMAT));      break;
-    case DXGI_FORMAT_B8G8R8A8_UNORM:        memcpy(&header->ddspf, &DDSPF_A8R8G8B8, sizeof(DDS_PIXELFORMAT));    break;
-    case DXGI_FORMAT_B8G8R8X8_UNORM:        memcpy(&header->ddspf, &DDSPF_X8R8G8B8, sizeof(DDS_PIXELFORMAT));    break;
-    case DXGI_FORMAT_YUY2:                  memcpy(&header->ddspf, &DDSPF_YUY2, sizeof(DDS_PIXELFORMAT));        break;
-    case DXGI_FORMAT_B4G4R4A4_UNORM:        memcpy(&header->ddspf, &DDSPF_A4R4G4B4, sizeof(DDS_PIXELFORMAT));    break;
+    case DXGI_FORMAT_R8G8B8A8_UNORM:  memcpy(&header->ddspf, &DDSPF_A8B8G8R8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R16G16_UNORM:    memcpy(&header->ddspf, &DDSPF_G16R16, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R8G8_UNORM:      memcpy(&header->ddspf, &DDSPF_A8L8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R16_UNORM:       memcpy(&header->ddspf, &DDSPF_L16, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R8_UNORM:        memcpy(&header->ddspf, &DDSPF_L8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_A8_UNORM:        memcpy(&header->ddspf, &DDSPF_A8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R8G8_B8G8_UNORM: memcpy(&header->ddspf, &DDSPF_R8G8_B8G8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_G8R8_G8B8_UNORM: memcpy(&header->ddspf, &DDSPF_G8R8_G8B8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC1_UNORM:       memcpy(&header->ddspf, &DDSPF_DXT1, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC2_UNORM:       memcpy(&header->ddspf, &DDSPF_DXT3, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC3_UNORM:       memcpy(&header->ddspf, &DDSPF_DXT5, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC4_UNORM:       memcpy(&header->ddspf, &DDSPF_BC4_UNORM, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC4_SNORM:       memcpy(&header->ddspf, &DDSPF_BC4_SNORM, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC5_UNORM:       memcpy(&header->ddspf, &DDSPF_BC5_UNORM, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_BC5_SNORM:       memcpy(&header->ddspf, &DDSPF_BC5_SNORM, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_B5G6R5_UNORM:    memcpy(&header->ddspf, &DDSPF_R5G6B5, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_B5G5R5A1_UNORM:  memcpy(&header->ddspf, &DDSPF_A1R5G5B5, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R8G8_SNORM:      memcpy(&header->ddspf, &DDSPF_V8U8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R8G8B8A8_SNORM:  memcpy(&header->ddspf, &DDSPF_Q8W8V8U8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_R16G16_SNORM:    memcpy(&header->ddspf, &DDSPF_V16U16, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_B8G8R8A8_UNORM:  memcpy(&header->ddspf, &DDSPF_A8R8G8B8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_B8G8R8X8_UNORM:  memcpy(&header->ddspf, &DDSPF_X8R8G8B8, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_YUY2:            memcpy(&header->ddspf, &DDSPF_YUY2, sizeof(DDS_PIXELFORMAT)); break;
+    case DXGI_FORMAT_B4G4R4A4_UNORM:
+        memcpy(&header->ddspf, &DDSPF_A4R4G4B4, sizeof(DDS_PIXELFORMAT));
+        break;
 
         // Legacy D3DX formats using D3DFMT enum value as FourCC
-    case DXGI_FORMAT_R32G32B32A32_FLOAT:    header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 116; break; // D3DFMT_A32B32G32R32F
-    case DXGI_FORMAT_R16G16B16A16_FLOAT:    header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 113; break; // D3DFMT_A16B16G16R16F
-    case DXGI_FORMAT_R16G16B16A16_UNORM:    header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 36;  break; // D3DFMT_A16B16G16R16
-    case DXGI_FORMAT_R16G16B16A16_SNORM:    header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 110; break; // D3DFMT_Q16W16V16U16
-    case DXGI_FORMAT_R32G32_FLOAT:          header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 115; break; // D3DFMT_G32R32F
-    case DXGI_FORMAT_R16G16_FLOAT:          header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 112; break; // D3DFMT_G16R16F
-    case DXGI_FORMAT_R32_FLOAT:             header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 114; break; // D3DFMT_R32F
-    case DXGI_FORMAT_R16_FLOAT:             header->ddspf.size = sizeof(DDS_PIXELFORMAT); header->ddspf.flags = DDS_FOURCC; header->ddspf.fourCC = 111; break; // D3DFMT_R16F
+    case DXGI_FORMAT_R32G32B32A32_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 116;
+        break; // D3DFMT_A32B32G32R32F
+    case DXGI_FORMAT_R16G16B16A16_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 113;
+        break; // D3DFMT_A16B16G16R16F
+    case DXGI_FORMAT_R16G16B16A16_UNORM:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 36;
+        break; // D3DFMT_A16B16G16R16
+    case DXGI_FORMAT_R16G16B16A16_SNORM:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 110;
+        break; // D3DFMT_Q16W16V16U16
+    case DXGI_FORMAT_R32G32_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 115;
+        break; // D3DFMT_G32R32F
+    case DXGI_FORMAT_R16G16_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 112;
+        break; // D3DFMT_G16R16F
+    case DXGI_FORMAT_R32_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 114;
+        break; // D3DFMT_R32F
+    case DXGI_FORMAT_R16_FLOAT:
+        header->ddspf.size   = sizeof(DDS_PIXELFORMAT);
+        header->ddspf.flags  = DDS_FOURCC;
+        header->ddspf.fourCC = 111;
+        break; // D3DFMT_R16F
 
     case DXGI_FORMAT_AI44:
     case DXGI_FORMAT_IA44:
@@ -377,10 +402,10 @@ HRESULT DirectX::SaveDDSTextureToFile(
         memcpy(&header->ddspf, &DDSPF_DX10, sizeof(DDS_PIXELFORMAT));
 
         headerSize += sizeof(DDS_HEADER_DXT10);
-        extHeader = reinterpret_cast<DDS_HEADER_DXT10*>(fileHeader + DDS_MIN_HEADER_SIZE);
-        extHeader->dxgiFormat = desc.Format;
+        extHeader                    = reinterpret_cast<DDS_HEADER_DXT10*>(fileHeader + DDS_MIN_HEADER_SIZE);
+        extHeader->dxgiFormat        = desc.Format;
         extHeader->resourceDimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-        extHeader->arraySize = 1;
+        extHeader->arraySize         = 1;
         break;
     }
 
@@ -415,10 +440,10 @@ HRESULT DirectX::SaveDDSTextureToFile(
     if (imageSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
-    void* pMappedMemory = nullptr;
-    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(imageSize) };
-    D3D12_RANGE writeRange = { 0, 0 };
-    hr = pStaging->Map(0, &readRange, &pMappedMemory);
+    void*       pMappedMemory = nullptr;
+    D3D12_RANGE readRange     = { 0, static_cast<SIZE_T>(imageSize) };
+    D3D12_RANGE writeRange    = { 0, 0 };
+    hr                        = pStaging->Map(0, &readRange, &pMappedMemory);
     if (FAILED(hr))
         return hr;
 
@@ -469,20 +494,18 @@ namespace DirectX
         {
             extern IWICImagingFactory2* GetWIC() noexcept;
         }
-    }
-}
+    } // namespace DX12
+} // namespace DirectX
 
-_Use_decl_annotations_
-HRESULT DirectX::SaveWICTextureToFile(
-    ID3D12CommandQueue* pCommandQ,
-    ID3D12Resource* pSource,
-    REFGUID guidContainerFormat,
-    const wchar_t* fileName,
-    D3D12_RESOURCE_STATES beforeState,
-    D3D12_RESOURCE_STATES afterState,
-    const GUID* targetFormat,
-    std::function<void(IPropertyBag2*)> setCustomProps,
-    bool forceSRGB)
+_Use_decl_annotations_ HRESULT DirectX::SaveWICTextureToFile(ID3D12CommandQueue* pCommandQ,
+    ID3D12Resource*                                                              pSource,
+    REFGUID                                                                      guidContainerFormat,
+    const wchar_t*                                                               fileName,
+    D3D12_RESOURCE_STATES                                                        beforeState,
+    D3D12_RESOURCE_STATES                                                        afterState,
+    const GUID*                                                                  targetFormat,
+    std::function<void(IPropertyBag2*)>                                          setCustomProps,
+    bool                                                                         forceSRGB)
 {
     using namespace DirectX::DX12::ToolKitInternal;
 
@@ -497,29 +520,22 @@ HRESULT DirectX::SaveWICTextureToFile(
     const auto desc = pSource->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto& desc = *pSource->GetDesc(&tmpDesc);
+    const auto&         desc = *pSource->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Width > UINT32_MAX)
         return E_INVALIDARG;
 
     UINT64 totalResourceSize = 0;
-    UINT64 fpRowPitch = 0;
-    UINT fpRowCount = 0;
+    UINT64 fpRowPitch        = 0;
+    UINT   fpRowCount        = 0;
     // Get the rowcount, pitch and size of the top mip
-    device->GetCopyableFootprints(
-        &desc,
-        0,
-        1,
-        0,
-        nullptr,
-        &fpRowCount,
-        &fpRowPitch,
-        &totalResourceSize);
+    device->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, &fpRowCount, &fpRowPitch, &totalResourceSize);
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
-    UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
+    UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u)
+                         & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
     // Round up the srcPitch to multiples of 256 (D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
     const UINT64 dstRowPitch = (fpRowPitch + 255) & ~0xFFu;
@@ -535,51 +551,46 @@ HRESULT DirectX::SaveWICTextureToFile(
 
     // Determine source format's WIC equivalent
     WICPixelFormatGUID pfGuid = {};
-    bool sRGB = forceSRGB;
+    bool               sRGB   = forceSRGB;
     switch (desc.Format)
     {
-    case DXGI_FORMAT_R32G32B32A32_FLOAT:            pfGuid = GUID_WICPixelFormat128bppRGBAFloat; break;
-    case DXGI_FORMAT_R16G16B16A16_FLOAT:            pfGuid = GUID_WICPixelFormat64bppRGBAHalf; break;
-    case DXGI_FORMAT_R16G16B16A16_UNORM:            pfGuid = GUID_WICPixelFormat64bppRGBA; break;
-    case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:    pfGuid = GUID_WICPixelFormat32bppRGBA1010102XR; break;
-    case DXGI_FORMAT_R10G10B10A2_UNORM:             pfGuid = GUID_WICPixelFormat32bppRGBA1010102; break;
-    case DXGI_FORMAT_B5G5R5A1_UNORM:                pfGuid = GUID_WICPixelFormat16bppBGRA5551; break;
-    case DXGI_FORMAT_B5G6R5_UNORM:                  pfGuid = GUID_WICPixelFormat16bppBGR565; break;
-    case DXGI_FORMAT_R32_FLOAT:                     pfGuid = GUID_WICPixelFormat32bppGrayFloat; break;
-    case DXGI_FORMAT_R16_FLOAT:                     pfGuid = GUID_WICPixelFormat16bppGrayHalf; break;
-    case DXGI_FORMAT_R16_UNORM:                     pfGuid = GUID_WICPixelFormat16bppGray; break;
-    case DXGI_FORMAT_R8_UNORM:                      pfGuid = GUID_WICPixelFormat8bppGray; break;
-    case DXGI_FORMAT_A8_UNORM:                      pfGuid = GUID_WICPixelFormat8bppAlpha; break;
+    case DXGI_FORMAT_R32G32B32A32_FLOAT:         pfGuid = GUID_WICPixelFormat128bppRGBAFloat; break;
+    case DXGI_FORMAT_R16G16B16A16_FLOAT:         pfGuid = GUID_WICPixelFormat64bppRGBAHalf; break;
+    case DXGI_FORMAT_R16G16B16A16_UNORM:         pfGuid = GUID_WICPixelFormat64bppRGBA; break;
+    case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM: pfGuid = GUID_WICPixelFormat32bppRGBA1010102XR; break;
+    case DXGI_FORMAT_R10G10B10A2_UNORM:          pfGuid = GUID_WICPixelFormat32bppRGBA1010102; break;
+    case DXGI_FORMAT_B5G5R5A1_UNORM:             pfGuid = GUID_WICPixelFormat16bppBGRA5551; break;
+    case DXGI_FORMAT_B5G6R5_UNORM:               pfGuid = GUID_WICPixelFormat16bppBGR565; break;
+    case DXGI_FORMAT_R32_FLOAT:                  pfGuid = GUID_WICPixelFormat32bppGrayFloat; break;
+    case DXGI_FORMAT_R16_FLOAT:                  pfGuid = GUID_WICPixelFormat16bppGrayHalf; break;
+    case DXGI_FORMAT_R16_UNORM:                  pfGuid = GUID_WICPixelFormat16bppGray; break;
+    case DXGI_FORMAT_R8_UNORM:                   pfGuid = GUID_WICPixelFormat8bppGray; break;
+    case DXGI_FORMAT_A8_UNORM:                   pfGuid = GUID_WICPixelFormat8bppAlpha; break;
 
-    case DXGI_FORMAT_R8G8B8A8_UNORM:
-        pfGuid = GUID_WICPixelFormat32bppRGBA;
-        break;
+    case DXGI_FORMAT_R8G8B8A8_UNORM:             pfGuid = GUID_WICPixelFormat32bppRGBA; break;
 
     case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
         pfGuid = GUID_WICPixelFormat32bppRGBA;
-        sRGB = true;
+        sRGB   = true;
         break;
 
-    case DXGI_FORMAT_B8G8R8A8_UNORM:
-        pfGuid = GUID_WICPixelFormat32bppBGRA;
-        break;
+    case DXGI_FORMAT_B8G8R8A8_UNORM: pfGuid = GUID_WICPixelFormat32bppBGRA; break;
 
     case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
         pfGuid = GUID_WICPixelFormat32bppBGRA;
-        sRGB = true;
+        sRGB   = true;
         break;
 
-    case DXGI_FORMAT_B8G8R8X8_UNORM:
-        pfGuid = GUID_WICPixelFormat32bppBGR;
-        break;
+    case DXGI_FORMAT_B8G8R8X8_UNORM: pfGuid = GUID_WICPixelFormat32bppBGR; break;
 
     case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
         pfGuid = GUID_WICPixelFormat32bppBGR;
-        sRGB = true;
+        sRGB   = true;
         break;
 
     default:
-        DebugTrace("ERROR: ScreenGrab does not support all DXGI formats (%u). Consider using DirectXTex.\n", static_cast<uint32_t>(desc.Format));
+        DebugTrace("ERROR: ScreenGrab does not support all DXGI formats (%u). Consider using DirectXTex.\n",
+            static_cast<uint32_t>(desc.Format));
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
@@ -608,7 +619,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         return hr;
 
     ComPtr<IWICBitmapFrameEncode> frame;
-    ComPtr<IPropertyBag2> props;
+    ComPtr<IPropertyBag2>         props;
     hr = encoder->CreateNewFrame(frame.GetAddressOf(), props.GetAddressOf());
     if (FAILED(hr))
         return hr;
@@ -620,9 +631,9 @@ HRESULT DirectX::SaveWICTextureToFile(
         option.pstrName = const_cast<wchar_t*>(L"EnableV5Header32bppBGRA");
 
         VARIANT varValue;
-        varValue.vt = VT_BOOL;
+        varValue.vt      = VT_BOOL;
         varValue.boolVal = VARIANT_TRUE;
-        std::ignore = props->Write(1, &option, &varValue);
+        std::ignore      = props->Write(1, &option, &varValue);
     }
 
     if (setCustomProps)
@@ -666,13 +677,9 @@ HRESULT DirectX::SaveWICTextureToFile(
         case DXGI_FORMAT_R16_FLOAT:
         case DXGI_FORMAT_R16_UNORM:
         case DXGI_FORMAT_R8_UNORM:
-        case DXGI_FORMAT_A8_UNORM:
-            targetGuid = GUID_WICPixelFormat8bppGray;
-            break;
+        case DXGI_FORMAT_A8_UNORM:           targetGuid = GUID_WICPixelFormat8bppGray; break;
 
-        default:
-            targetGuid = GUID_WICPixelFormat24bppBGR;
-            break;
+        default:                             targetGuid = GUID_WICPixelFormat24bppBGR; break;
         }
     }
 
@@ -693,7 +700,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         PROPVARIANT value;
         PropVariantInit(&value);
 
-        value.vt = VT_LPSTR;
+        value.vt     = VT_LPSTR;
         value.pszVal = const_cast<char*>("DirectXTK");
 
         if (memcmp(&guidContainerFormat, &GUID_ContainerFormatPng, sizeof(GUID)) == 0)
@@ -704,22 +711,22 @@ HRESULT DirectX::SaveWICTextureToFile(
             // Set sRGB chunk
             if (sRGB)
             {
-                value.vt = VT_UI1;
-                value.bVal = 0;
+                value.vt    = VT_UI1;
+                value.bVal  = 0;
                 std::ignore = metawriter->SetMetadataByName(L"/sRGB/RenderingIntent", &value);
             }
             else
             {
                 // add gAMA chunk with gamma 1.0
-                value.vt = VT_UI4;
+                value.vt      = VT_UI4;
                 value.uintVal = 100000; // gama value * 100,000 -- i.e. gamma 1.0
-                std::ignore = metawriter->SetMetadataByName(L"/gAMA/ImageGamma", &value);
+                std::ignore   = metawriter->SetMetadataByName(L"/gAMA/ImageGamma", &value);
 
                 // remove sRGB chunk which is added by default.
                 std::ignore = metawriter->RemoveMetadataByName(L"/sRGB/RenderingIntent");
             }
         }
-    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         else if (memcmp(&guidContainerFormat, &GUID_ContainerFormatJpeg, sizeof(GUID)) == 0)
         {
             // Set Software name
@@ -728,7 +735,7 @@ HRESULT DirectX::SaveWICTextureToFile(
             if (sRGB)
             {
                 // Set EXIF Colorspace of sRGB
-                value.vt = VT_UI2;
+                value.vt    = VT_UI2;
                 value.uiVal = 1;
                 std::ignore = metawriter->SetMetadataByName(L"/app1/ifd/exif/{ushort=40961}", &value);
             }
@@ -741,12 +748,12 @@ HRESULT DirectX::SaveWICTextureToFile(
             if (sRGB)
             {
                 // Set EXIF Colorspace of sRGB
-                value.vt = VT_UI2;
+                value.vt    = VT_UI2;
                 value.uiVal = 1;
                 std::ignore = metawriter->SetMetadataByName(L"/ifd/exif/{ushort=40961}", &value);
             }
         }
-    #else
+#else
         else
         {
             // Set Software name
@@ -755,22 +762,22 @@ HRESULT DirectX::SaveWICTextureToFile(
             if (sRGB)
             {
                 // Set EXIF Colorspace of sRGB
-                value.vt = VT_UI2;
+                value.vt    = VT_UI2;
                 value.uiVal = 1;
                 std::ignore = metawriter->SetMetadataByName(L"System.Image.ColorSpace", &value);
             }
         }
-    #endif
+#endif
     }
 
     const UINT64 imageSize = dstRowPitch * UINT64(desc.Height);
     if (imageSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
-    void* pMappedMemory = nullptr;
-    D3D12_RANGE readRange = { 0, static_cast<SIZE_T>(imageSize) };
-    D3D12_RANGE writeRange = { 0, 0 };
-    hr = pStaging->Map(0, &readRange, &pMappedMemory);
+    void*       pMappedMemory = nullptr;
+    D3D12_RANGE readRange     = { 0, static_cast<SIZE_T>(imageSize) };
+    D3D12_RANGE writeRange    = { 0, 0 };
+    hr                        = pStaging->Map(0, &readRange, &pMappedMemory);
     if (FAILED(hr))
         return hr;
 
@@ -778,10 +785,13 @@ HRESULT DirectX::SaveWICTextureToFile(
     {
         // Conversion required to write
         ComPtr<IWICBitmap> source;
-        hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height,
+        hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width),
+            desc.Height,
             pfGuid,
-            static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize),
-            static_cast<BYTE*>(pMappedMemory), source.GetAddressOf());
+            static_cast<UINT>(dstRowPitch),
+            static_cast<UINT>(imageSize),
+            static_cast<BYTE*>(pMappedMemory),
+            source.GetAddressOf());
         if (FAILED(hr))
         {
             pStaging->Unmap(0, &writeRange);
@@ -797,7 +807,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         }
 
         BOOL canConvert = FALSE;
-        hr = FC->CanConvert(pfGuid, targetGuid, &canConvert);
+        hr              = FC->CanConvert(pfGuid, targetGuid, &canConvert);
         if (FAILED(hr) || !canConvert)
         {
             pStaging->Unmap(0, &writeRange);
@@ -812,13 +822,14 @@ HRESULT DirectX::SaveWICTextureToFile(
         }
 
         WICRect rect = { 0, 0, static_cast<INT>(desc.Width), static_cast<INT>(desc.Height) };
-        hr = frame->WriteSource(FC.Get(), &rect);
+        hr           = frame->WriteSource(FC.Get(), &rect);
     }
     else
     {
         // No conversion required
         hr = frame->WritePixels(desc.Height,
-            static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize),
+            static_cast<UINT>(dstRowPitch),
+            static_cast<UINT>(imageSize),
             static_cast<BYTE*>(pMappedMemory));
     }
 
@@ -840,7 +851,6 @@ HRESULT DirectX::SaveWICTextureToFile(
     return S_OK;
 }
 
-
 //--------------------------------------------------------------------------------------
 // Adapters for /Zc:wchar_t- clients
 
@@ -848,33 +858,35 @@ HRESULT DirectX::SaveWICTextureToFile(
 
 namespace DirectX
 {
-    HRESULT __cdecl SaveDDSTextureToFile(
-        _In_ ID3D12CommandQueue* pCommandQueue,
-        _In_ ID3D12Resource* pSource,
-        _In_z_ const __wchar_t* fileName,
-        D3D12_RESOURCE_STATES beforeState,
-        D3D12_RESOURCE_STATES afterState) noexcept
+    HRESULT __cdecl SaveDDSTextureToFile(_In_ ID3D12CommandQueue* pCommandQueue,
+        _In_ ID3D12Resource*                                      pSource,
+        _In_z_ const __wchar_t*                                   fileName,
+        D3D12_RESOURCE_STATES                                     beforeState,
+        D3D12_RESOURCE_STATES                                     afterState) noexcept
     {
-        return SaveDDSTextureToFile(pCommandQueue, pSource,
-            reinterpret_cast<const unsigned short*>(fileName),
-            beforeState, afterState);
+        return SaveDDSTextureToFile(pCommandQueue, pSource, reinterpret_cast<const unsigned short*>(fileName), beforeState, afterState);
     }
 
-    HRESULT __cdecl SaveWICTextureToFile(
-        _In_ ID3D12CommandQueue* pCommandQ,
-        _In_ ID3D12Resource* pSource,
-        REFGUID guidContainerFormat,
-        _In_z_ const __wchar_t* fileName,
-        D3D12_RESOURCE_STATES beforeState,
-        D3D12_RESOURCE_STATES afterState,
-        _In_opt_ const GUID* targetFormat,
+    HRESULT __cdecl SaveWICTextureToFile(_In_ ID3D12CommandQueue* pCommandQ,
+        _In_ ID3D12Resource*                                      pSource,
+        REFGUID                                                   guidContainerFormat,
+        _In_z_ const __wchar_t*                                   fileName,
+        D3D12_RESOURCE_STATES                                     beforeState,
+        D3D12_RESOURCE_STATES                                     afterState,
+        _In_opt_ const GUID*                                      targetFormat,
         _In_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps,
-        bool forceSRGB)
+        bool                                             forceSRGB)
     {
-        return SaveWICTextureToFile(pCommandQ, pSource, guidContainerFormat,
+        return SaveWICTextureToFile(pCommandQ,
+            pSource,
+            guidContainerFormat,
             reinterpret_cast<const unsigned short*>(fileName),
-            beforeState, afterState, targetFormat, setCustomProps, forceSRGB);
+            beforeState,
+            afterState,
+            targetFormat,
+            setCustomProps,
+            forceSRGB);
     }
-}
+} // namespace DirectX
 
 #endif // !_NATIVE_WCHAR_T_DEFINED

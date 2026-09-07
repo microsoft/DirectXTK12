@@ -28,13 +28,13 @@
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -43,7 +43,6 @@
 #endif
 #endif
 
-
 namespace DirectX
 {
     // Encapsulates all render target state when creating pipeline state objects
@@ -51,89 +50,82 @@ namespace DirectX
     {
     public:
         RenderTargetState() noexcept
-            : sampleMask(~0U)
-            , numRenderTargets(0)
-            , rtvFormats{}
-            , dsvFormat(DXGI_FORMAT_UNKNOWN)
-            , sampleDesc{}
-            , nodeMask(0)
+            : sampleMask(~0U),
+              numRenderTargets(0),
+              rtvFormats{},
+              dsvFormat(DXGI_FORMAT_UNKNOWN),
+              sampleDesc{},
+              nodeMask(0)
         {}
 
-        RenderTargetState(const RenderTargetState&) = default;
+        RenderTargetState(const RenderTargetState&)            = default;
         RenderTargetState& operator=(const RenderTargetState&) = default;
 
-        RenderTargetState(RenderTargetState&&) = default;
+        RenderTargetState(RenderTargetState&&)            = default;
         RenderTargetState& operator=(RenderTargetState&&) = default;
 
         // Single render target convenience constructor
-        RenderTargetState(
-            _In_ DXGI_FORMAT rtFormat,
-            _In_ DXGI_FORMAT dsFormat) noexcept
-            : sampleMask(UINT_MAX)
-            , numRenderTargets(1)
-            , rtvFormats{}
-            , dsvFormat(dsFormat)
-            , sampleDesc{}
-            , nodeMask(0)
+        RenderTargetState(_In_ DXGI_FORMAT rtFormat, _In_ DXGI_FORMAT dsFormat) noexcept
+            : sampleMask(UINT_MAX),
+              numRenderTargets(1),
+              rtvFormats{},
+              dsvFormat(dsFormat),
+              sampleDesc{},
+              nodeMask(0)
         {
             sampleDesc.Count = 1;
-            rtvFormats[0] = rtFormat;
+            rtvFormats[0]    = rtFormat;
         }
 
         // MSAA single render target convenience constructor
-        RenderTargetState(
-            _In_ DXGI_FORMAT rtFormat,
-            _In_ DXGI_FORMAT dsFormat,
-            _In_ uint32_t sampleCount,
-            _In_ uint32_t quality = 0) noexcept
-            : sampleMask(UINT_MAX)
-            , numRenderTargets(1)
-            , rtvFormats{}
-            , dsvFormat(dsFormat)
-            , sampleDesc{ sampleCount, quality }
-            , nodeMask(0)
+        RenderTargetState(_In_ DXGI_FORMAT rtFormat,
+            _In_ DXGI_FORMAT               dsFormat,
+            _In_ uint32_t                  sampleCount,
+            _In_ uint32_t                  quality = 0) noexcept
+            : sampleMask(UINT_MAX),
+              numRenderTargets(1),
+              rtvFormats{},
+              dsvFormat(dsFormat),
+              sampleDesc{ sampleCount, quality },
+              nodeMask(0)
         {
             rtvFormats[0] = rtFormat;
         }
 
         // Convenience constructors converting from DXGI_SWAPCHAIN_DESC
-    #if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-        RenderTargetState(
-            _In_ const DXGI_SWAP_CHAIN_DESC* desc,
-            _In_ DXGI_FORMAT dsFormat) noexcept
-            : sampleMask(UINT_MAX)
-            , numRenderTargets(1)
-            , rtvFormats{}
-            , dsvFormat(dsFormat)
-            , sampleDesc{}
-            , nodeMask(0)
+#if defined(__dxgi_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+        RenderTargetState(_In_ const DXGI_SWAP_CHAIN_DESC* desc, _In_ DXGI_FORMAT dsFormat) noexcept
+            : sampleMask(UINT_MAX),
+              numRenderTargets(1),
+              rtvFormats{},
+              dsvFormat(dsFormat),
+              sampleDesc{},
+              nodeMask(0)
         {
             rtvFormats[0] = desc->BufferDesc.Format;
-            sampleDesc = desc->SampleDesc;
+            sampleDesc    = desc->SampleDesc;
         }
-    #endif
+#endif
 
-    #if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-        RenderTargetState(
-            _In_ const DXGI_SWAP_CHAIN_DESC1* desc,
-            _In_ DXGI_FORMAT dsFormat) noexcept
-            : sampleMask(UINT_MAX)
-            , numRenderTargets(1)
-            , rtvFormats{}
-            , dsvFormat(dsFormat)
-            , sampleDesc{}
-            , nodeMask(0)
+#if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+        RenderTargetState(_In_ const DXGI_SWAP_CHAIN_DESC1* desc, _In_ DXGI_FORMAT dsFormat) noexcept
+            : sampleMask(UINT_MAX),
+              numRenderTargets(1),
+              rtvFormats{},
+              dsvFormat(dsFormat),
+              sampleDesc{},
+              nodeMask(0)
         {
             rtvFormats[0] = desc->Format;
-            sampleDesc = desc->SampleDesc;
+            sampleDesc    = desc->SampleDesc;
         }
-    #endif
+#endif
 
-        uint32_t            sampleMask;
-        uint32_t            numRenderTargets;
-        DXGI_FORMAT         rtvFormats[D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT];
-        DXGI_FORMAT         dsvFormat;
-        DXGI_SAMPLE_DESC    sampleDesc;
-        uint32_t            nodeMask;
+        uint32_t         sampleMask;
+        uint32_t         numRenderTargets;
+        DXGI_FORMAT      rtvFormats[D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT];
+        DXGI_FORMAT      dsvFormat;
+        DXGI_SAMPLE_DESC sampleDesc;
+        uint32_t         nodeMask;
     };
-}
+} // namespace DirectX

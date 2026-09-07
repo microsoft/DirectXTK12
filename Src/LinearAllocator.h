@@ -44,7 +44,6 @@
 
 #include <atomic>
 
-
 namespace DirectX
 {
     class LinearAllocatorPage
@@ -52,39 +51,39 @@ namespace DirectX
     public:
         LinearAllocatorPage() noexcept;
 
-        LinearAllocatorPage(LinearAllocatorPage&&) = delete;
-        LinearAllocatorPage& operator= (LinearAllocatorPage&&) = delete;
+        LinearAllocatorPage(LinearAllocatorPage&&)            = delete;
+        LinearAllocatorPage& operator=(LinearAllocatorPage&&) = delete;
 
-        LinearAllocatorPage(LinearAllocatorPage const&) = delete;
+        LinearAllocatorPage(LinearAllocatorPage const&)            = delete;
         LinearAllocatorPage& operator=(LinearAllocatorPage const&) = delete;
 
         size_t Suballocate(_In_ size_t size, _In_ size_t alignment);
 
-        void* BaseMemory() const noexcept { return mMemory; }
-        ID3D12Resource* UploadResource() const noexcept { return mUploadResource.Get(); }
+        void*                     BaseMemory() const noexcept { return mMemory; }
+        ID3D12Resource*           UploadResource() const noexcept { return mUploadResource.Get(); }
         D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mGpuAddress; }
-        size_t BytesUsed() const noexcept { return mOffset; }
-        size_t Size() const noexcept { return mSize; }
+        size_t                    BytesUsed() const noexcept { return mOffset; }
+        size_t                    Size() const noexcept { return mSize; }
 
-        void AddRef() noexcept { mRefCount.fetch_add(1); }
+        void    AddRef() noexcept { mRefCount.fetch_add(1); }
         int32_t RefCount() const noexcept { return mRefCount.load(); }
-        void Release() noexcept;
+        void    Release() noexcept;
 
     protected:
         friend class LinearAllocator;
 
-        LinearAllocatorPage*                    pPrevPage;
-        LinearAllocatorPage*                    pNextPage;
+        LinearAllocatorPage* pPrevPage;
+        LinearAllocatorPage* pNextPage;
 
-        void*                                   mMemory;
-        uint64_t                                mPendingFence;
-        D3D12_GPU_VIRTUAL_ADDRESS               mGpuAddress;
-        size_t                                  mOffset;
-        size_t                                  mSize;
-        Microsoft::WRL::ComPtr<ID3D12Resource>  mUploadResource;
+        void*                                  mMemory;
+        uint64_t                               mPendingFence;
+        D3D12_GPU_VIRTUAL_ADDRESS              mGpuAddress;
+        size_t                                 mOffset;
+        size_t                                 mSize;
+        Microsoft::WRL::ComPtr<ID3D12Resource> mUploadResource;
 
     private:
-        std::atomic<int32_t>                    mRefCount;
+        std::atomic<int32_t> mRefCount;
     };
 
     class LinearAllocator
@@ -93,15 +92,12 @@ namespace DirectX
         // These values will be rounded up to the nearest 64k.
         // You can specify zero for incrementalSizeBytes to increment
         // by 1 page (64k).
-        LinearAllocator(
-            _In_ ID3D12Device* pDevice,
-            _In_ size_t pageSize,
-            _In_ size_t preallocateBytes = 0) noexcept(false);
+        LinearAllocator(_In_ ID3D12Device* pDevice, _In_ size_t pageSize, _In_ size_t preallocateBytes = 0) noexcept(false);
 
-        LinearAllocator(LinearAllocator&&) = default;
-        LinearAllocator& operator= (LinearAllocator&&) = default;
+        LinearAllocator(LinearAllocator&&)            = default;
+        LinearAllocator& operator=(LinearAllocator&&) = default;
 
-        LinearAllocator(LinearAllocator const&) = delete;
+        LinearAllocator(LinearAllocator const&)            = delete;
         LinearAllocator& operator=(LinearAllocator const&) = delete;
 
         ~LinearAllocator();
@@ -125,23 +121,23 @@ namespace DirectX
         size_t TotalMemoryUsage() const noexcept { return m_totalPages * m_increment; }
         size_t PageSize() const noexcept { return m_increment; }
 
-    #if defined(_DEBUG) || defined(PROFILE)
-            // Debug info
+#if defined(_DEBUG) || defined(PROFILE)
+        // Debug info
         const wchar_t* GetDebugName() const noexcept { return m_debugName.c_str(); }
-        void SetDebugName(const wchar_t* name);
-        void SetDebugName(const char* name);
-    #endif
+        void           SetDebugName(const wchar_t* name);
+        void           SetDebugName(const char* name);
+#endif
 
     private:
-        LinearAllocatorPage*                    m_pendingPages; // Pages in use by the GPU
-        LinearAllocatorPage*                    m_usedPages;    // Pages to be submitted to the GPU
-        LinearAllocatorPage*                    m_unusedPages;  // Pages not being used right now
-        size_t                                  m_increment;
-        size_t                                  m_numPending;
-        size_t                                  m_totalPages;
-        uint64_t                                m_fenceCount;
-        Microsoft::WRL::ComPtr<ID3D12Device>    m_device;
-        Microsoft::WRL::ComPtr<ID3D12Fence>     m_fence;
+        LinearAllocatorPage*                 m_pendingPages; // Pages in use by the GPU
+        LinearAllocatorPage*                 m_usedPages;    // Pages to be submitted to the GPU
+        LinearAllocatorPage*                 m_unusedPages;  // Pages not being used right now
+        size_t                               m_increment;
+        size_t                               m_numPending;
+        size_t                               m_totalPages;
+        uint64_t                             m_fenceCount;
+        Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+        Microsoft::WRL::ComPtr<ID3D12Fence>  m_fence;
 
         LinearAllocatorPage* GetPageForAlloc(size_t sizeBytes, size_t alignment);
         LinearAllocatorPage* GetCleanPageForAlloc();
@@ -156,13 +152,13 @@ namespace DirectX
         void ReleasePage(LinearAllocatorPage* page) noexcept;
         void FreePages(LinearAllocatorPage* list) noexcept;
 
-    #if defined(_DEBUG) || defined(PROFILE)
+#if defined(_DEBUG) || defined(PROFILE)
         std::wstring m_debugName;
 
         static void ValidateList(LinearAllocatorPage* list);
-        void ValidatePageLists();
+        void        ValidatePageLists();
 
         void SetPageDebugName(LinearAllocatorPage* list) noexcept;
-    #endif
+#endif
     };
-}
+} // namespace DirectX

@@ -37,13 +37,13 @@
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -57,40 +57,38 @@
 #pragma warning(disable : 4251)
 #endif
 
-
 namespace DirectX
 {
     class LinearAllocatorPage;
 
     inline namespace DX12
     {
-    // Works a little like a smart pointer. The memory will only be fenced by the GPU once the pointer
-    // has been invalidated or the user explicitly marks it for fencing.
+        // Works a little like a smart pointer. The memory will only be fenced by the GPU once the pointer
+        // has been invalidated or the user explicitly marks it for fencing.
         class DIRECTX_TOOLKIT_API GraphicsResource
         {
         public:
             GraphicsResource() noexcept;
-            GraphicsResource(
-                _In_ LinearAllocatorPage* page,
-                _In_ D3D12_GPU_VIRTUAL_ADDRESS gpuAddress,
-                _In_ ID3D12Resource* resource,
-                _In_ void* memory,
-                _In_ size_t offset,
-                _In_ size_t size) noexcept;
+            GraphicsResource(_In_ LinearAllocatorPage* page,
+                _In_ D3D12_GPU_VIRTUAL_ADDRESS         gpuAddress,
+                _In_ ID3D12Resource*                   resource,
+                _In_ void*                             memory,
+                _In_ size_t                            offset,
+                _In_ size_t                            size) noexcept;
 
             GraphicsResource(GraphicsResource&& other) noexcept;
-            GraphicsResource&& operator= (GraphicsResource&&) noexcept;
+            GraphicsResource&& operator=(GraphicsResource&&) noexcept;
 
-            GraphicsResource(const GraphicsResource&) = delete;
-            GraphicsResource& operator= (const GraphicsResource&) = delete;
+            GraphicsResource(const GraphicsResource&)            = delete;
+            GraphicsResource& operator=(const GraphicsResource&) = delete;
 
             ~GraphicsResource();
 
             D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mGpuAddress; }
-            ID3D12Resource* Resource() const noexcept { return mResource; }
-            void* Memory() const noexcept { return mMemory; }
-            size_t ResourceOffset() const noexcept { return mBufferOffset; }
-            size_t Size() const noexcept { return mSize; }
+            ID3D12Resource*           Resource() const noexcept { return mResource; }
+            void*                     Memory() const noexcept { return mMemory; }
+            size_t                    ResourceOffset() const noexcept { return mBufferOffset; }
+            size_t                    Size() const noexcept { return mSize; }
 
             explicit operator bool() const noexcept { return mResource != nullptr; }
 
@@ -99,12 +97,12 @@ namespace DirectX
             void __cdecl Reset(GraphicsResource&&) noexcept;
 
         private:
-            LinearAllocatorPage*        mPage;
-            D3D12_GPU_VIRTUAL_ADDRESS   mGpuAddress;
-            ID3D12Resource*             mResource;
-            void*                       mMemory;
-            size_t                      mBufferOffset;
-            size_t                      mSize;
+            LinearAllocatorPage*      mPage;
+            D3D12_GPU_VIRTUAL_ADDRESS mGpuAddress;
+            ID3D12Resource*           mResource;
+            void*                     mMemory;
+            size_t                    mBufferOffset;
+            size_t                    mSize;
         };
 
         class DIRECTX_TOOLKIT_API SharedGraphicsResource
@@ -113,29 +111,35 @@ namespace DirectX
             SharedGraphicsResource() noexcept;
 
             SharedGraphicsResource(SharedGraphicsResource&&) noexcept;
-            SharedGraphicsResource&& operator= (SharedGraphicsResource&&) noexcept;
+            SharedGraphicsResource&& operator=(SharedGraphicsResource&&) noexcept;
 
             SharedGraphicsResource(GraphicsResource&&);
-            SharedGraphicsResource&& operator= (GraphicsResource&&);
+            SharedGraphicsResource&& operator=(GraphicsResource&&);
 
             SharedGraphicsResource(const SharedGraphicsResource&) noexcept;
-            SharedGraphicsResource& operator= (const SharedGraphicsResource&) noexcept;
+            SharedGraphicsResource& operator=(const SharedGraphicsResource&) noexcept;
 
-            SharedGraphicsResource(const GraphicsResource&) = delete;
-            SharedGraphicsResource& operator= (const GraphicsResource&) = delete;
+            SharedGraphicsResource(const GraphicsResource&)            = delete;
+            SharedGraphicsResource& operator=(const GraphicsResource&) = delete;
 
             ~SharedGraphicsResource();
 
             D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mSharedResource->GpuAddress(); }
-            ID3D12Resource* Resource() const noexcept { return mSharedResource->Resource(); }
-            void* Memory() const noexcept { return mSharedResource->Memory(); }
-            size_t ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
-            size_t Size() const noexcept { return mSharedResource->Size(); }
+            ID3D12Resource*           Resource() const noexcept { return mSharedResource->Resource(); }
+            void*                     Memory() const noexcept { return mSharedResource->Memory(); }
+            size_t                    ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
+            size_t                    Size() const noexcept { return mSharedResource->Size(); }
 
             explicit operator bool() const noexcept { return mSharedResource != nullptr; }
 
-            bool operator == (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() == other.mSharedResource.get(); }
-            bool operator != (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() != other.mSharedResource.get(); }
+            bool operator==(const SharedGraphicsResource& other) const noexcept
+            {
+                return mSharedResource.get() == other.mSharedResource.get();
+            }
+            bool operator!=(const SharedGraphicsResource& other) const noexcept
+            {
+                return mSharedResource.get() != other.mSharedResource.get();
+            }
 
             // Clear the pointer. Using operator -> will produce bad results.
             void __cdecl Reset() noexcept;
@@ -150,12 +154,12 @@ namespace DirectX
         //------------------------------------------------------------------------------
         struct GraphicsMemoryStatistics
         {
-            size_t committedMemory;     // Bytes of memory currently committed/in-flight
-            size_t totalMemory;         // Total bytes of memory used by the allocators
-            size_t totalPages;          // Total page count
-            size_t peakCommitedMemory;  // Peak commited memory value since last reset
-            size_t peakTotalMemory;     // Peak total bytes
-            size_t peakTotalPages;      // Peak total page count
+            size_t committedMemory;    // Bytes of memory currently committed/in-flight
+            size_t totalMemory;        // Total bytes of memory used by the allocators
+            size_t totalPages;         // Total page count
+            size_t peakCommitedMemory; // Peak commited memory value since last reset
+            size_t peakTotalMemory;    // Peak total bytes
+            size_t peakTotalPages;     // Peak total page count
         };
 
         //------------------------------------------------------------------------------
@@ -175,10 +179,10 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API explicit GraphicsMemory(_In_ ID3D12Device* device);
 
-            DIRECTX_TOOLKIT_API GraphicsMemory(GraphicsMemory&&) noexcept;
-            DIRECTX_TOOLKIT_API GraphicsMemory& operator= (GraphicsMemory&&) noexcept;
+            DIRECTX_TOOLKIT_API                 GraphicsMemory(GraphicsMemory&&) noexcept;
+            DIRECTX_TOOLKIT_API GraphicsMemory& operator=(GraphicsMemory&&) noexcept;
 
-            GraphicsMemory(GraphicsMemory const&) = delete;
+            GraphicsMemory(GraphicsMemory const&)            = delete;
             GraphicsMemory& operator=(GraphicsMemory const&) = delete;
 
             DIRECTX_TOOLKIT_API virtual ~GraphicsMemory();
@@ -189,27 +193,29 @@ namespace DirectX
             DIRECTX_TOOLKIT_API inline GraphicsResource __cdecl Allocate(size_t size, size_t alignment = 16, uint32_t tag = TAG_GENERIC)
             {
                 auto alloc = AllocateImpl(size, alignment);
-            #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
                 std::ignore = ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), tag);
-            #else
+#else
                 UNREFERENCED_PARAMETER(tag);
-            #endif
+#endif
                 return alloc;
             }
 
             // Version of Allocate that aligns to D3D12 constant buffer requirements
-            template<typename T> GraphicsResource AllocateConstant()
+            template<typename T>
+            GraphicsResource AllocateConstant()
             {
-                constexpr size_t alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+                constexpr size_t alignment   = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
                 constexpr size_t alignedSize = (sizeof(T) + alignment - 1) & ~(alignment - 1);
-                auto alloc = AllocateImpl(alignedSize, alignment);
-            #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
-                            // This cast is needed to capture the type information in the PDB
+                auto             alloc       = AllocateImpl(alignedSize, alignment);
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+                // This cast is needed to capture the type information in the PDB
                 std::ignore = reinterpret_cast<T*>(ReportCustomMemoryAlloc(alloc.Memory(), alloc.Size(), TAG_CONSTANT));
-            #endif
+#endif
                 return alloc;
             }
-            template<typename T> GraphicsResource AllocateConstant(const T& setData)
+            template<typename T>
+            GraphicsResource AllocateConstant(const T& setData)
             {
                 GraphicsResource alloc = AllocateConstant<T>();
                 memcpy(alloc.Memory(), &setData, sizeof(T));
@@ -243,15 +249,16 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API GraphicsResource __cdecl AllocateImpl(size_t size, size_t alignment);
 
-        #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
-                    // The declspec is required to ensure the proper information is captured in the PDB
-            DIRECTX_TOOLKIT_API __declspec(allocator) static void* __cdecl ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
-        #endif
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+            // The declspec is required to ensure the proper information is captured in the PDB
+            DIRECTX_TOOLKIT_API
+            __declspec(allocator) static void* __cdecl ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata);
+#endif
 
             std::unique_ptr<Impl> pImpl;
         };
-    }
-}
+    } // namespace DX12
+} // namespace DirectX
 
 #if defined(DIRECTX_TOOLKIT_IMPORT) && defined(_MSC_VER)
 #pragma warning(pop)
