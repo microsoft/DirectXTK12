@@ -79,9 +79,8 @@ namespace DirectX
         DIRECTX_TOOLKIT_API void __cdecl GenerateMips(_In_ ID3D12Resource* resource);
 
         // Transition a resource once you're done with it
-        DIRECTX_TOOLKIT_API void __cdecl Transition(_In_ ID3D12Resource* resource,
-            D3D12_RESOURCE_STATES                                        stateBefore,
-            D3D12_RESOURCE_STATES                                        stateAfter);
+        DIRECTX_TOOLKIT_API void __cdecl
+        Transition(_In_ ID3D12Resource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
 
         // Submits all the uploads to the driver.
         // No more uploads can happen after this call until Begin is called again.

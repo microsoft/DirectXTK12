@@ -112,7 +112,7 @@ namespace DirectX
 
             virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
 
-            virtual void __cdecl SetLightEnabled(int whichLight, bool value)                = 0;
+            virtual void __cdecl     SetLightEnabled(int whichLight, bool value)            = 0;
             virtual void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value)     = 0;
             virtual void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value)  = 0;
             virtual void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) = 0;
@@ -136,8 +136,8 @@ namespace DirectX
             IEffectFog(const IEffectFog&)            = delete;
             IEffectFog& operator=(const IEffectFog&) = delete;
 
-            virtual void __cdecl SetFogStart(float value)         = 0;
-            virtual void __cdecl SetFogEnd(float value)           = 0;
+            virtual void __cdecl     SetFogStart(float value)     = 0;
+            virtual void __cdecl     SetFogEnd(float value)       = 0;
             virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
 
         protected:
@@ -225,15 +225,15 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetSpecularPower(float value);
-            DIRECTX_TOOLKIT_API void __cdecl DisableSpecular();
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetSpecularPower(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     DisableSpecular();
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Light settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
@@ -241,8 +241,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture setting.
@@ -284,12 +284,12 @@ namespace DirectX
 
             // Material settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture setting.
@@ -332,12 +332,12 @@ namespace DirectX
 
             // Material settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture settings.
@@ -389,21 +389,21 @@ namespace DirectX
             // Material settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Light settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
 
             DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture setting.
@@ -413,7 +413,7 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler);
             DIRECTX_TOOLKIT_API void __cdecl SetEnvironmentMapAmount(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetFresnelFactor(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetFresnelFactor(float value);
 
         private:
             // Private implementation.
@@ -453,15 +453,15 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetSpecularPower(float value);
-            DIRECTX_TOOLKIT_API void __cdecl DisableSpecular();
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetSpecularPower(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     DisableSpecular();
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Light settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
@@ -469,8 +469,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture setting.
@@ -520,15 +520,15 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetEmissiveColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetSpecularPower(float value);
-            DIRECTX_TOOLKIT_API void __cdecl DisableSpecular();
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetSpecularPower(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     DisableSpecular();
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Light settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
 
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
@@ -536,8 +536,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
 
             // Fog settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetFogStart(float value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetFogEnd(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogStart(float value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetFogEnd(float value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
             // Texture settings - albedo, normal and specular intensity.
@@ -609,17 +609,17 @@ namespace DirectX
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection) override;
 
             // Light settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
 
             DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
 
             // PBR Settings.
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetConstantAlbedo(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetConstantMetallic(float value);
-            DIRECTX_TOOLKIT_API void __cdecl SetConstantRoughness(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetConstantMetallic(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetConstantRoughness(float value);
 
             // Texture settings.
             DIRECTX_TOOLKIT_API void __cdecl SetAlbedoTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor,
@@ -716,7 +716,7 @@ namespace DirectX
 
             // Debug Settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetHemisphericalAmbientColor(FXMVECTOR upper, FXMVECTOR lower);
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
 
         private:
             // Private implementation.
@@ -764,14 +764,14 @@ namespace DirectX
             // Material settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetDiffuseColor(FXMVECTOR value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetSpecularColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetSpecularThreshold(float threshold, float smoothing);
-            DIRECTX_TOOLKIT_API void __cdecl DisableSpecular();
-            DIRECTX_TOOLKIT_API void __cdecl SetAlpha(float value);
+            DIRECTX_TOOLKIT_API void __cdecl     SetSpecularThreshold(float threshold, float smoothing);
+            DIRECTX_TOOLKIT_API void __cdecl     DisableSpecular();
+            DIRECTX_TOOLKIT_API void __cdecl     SetAlpha(float value);
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetColorAndAlpha(FXMVECTOR value);
 
             // Light settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDirection(int whichLight, FXMVECTOR value) override;
-            DIRECTX_TOOLKIT_API void __cdecl EnableDefaultLighting() override;
+            DIRECTX_TOOLKIT_API void __cdecl     EnableDefaultLighting() override;
 
             static constexpr int MaxDirectionalLights = 1;
 
@@ -793,10 +793,10 @@ namespace DirectX
 
             // Rim lighting settings.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetRimLightingColor(FXMVECTOR value);
-            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingPower(float power);
-            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingIntensity(float strength);
-            DIRECTX_TOOLKIT_API void __cdecl SetRimLightingRange(float start, float end);
-            DIRECTX_TOOLKIT_API void __cdecl DisableRimLighting();
+            DIRECTX_TOOLKIT_API void __cdecl     SetRimLightingPower(float power);
+            DIRECTX_TOOLKIT_API void __cdecl     SetRimLightingIntensity(float strength);
+            DIRECTX_TOOLKIT_API void __cdecl     SetRimLightingRange(float start, float end);
+            DIRECTX_TOOLKIT_API void __cdecl     DisableRimLighting();
 
         protected:
             // Internal implementation.
@@ -813,7 +813,7 @@ namespace DirectX
         private:
             // Unsupported interface methods.
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
-            DIRECTX_TOOLKIT_API void __cdecl SetLightEnabled(int whichLight, bool value) override;
+            DIRECTX_TOOLKIT_API void __cdecl     SetLightEnabled(int whichLight, bool value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightDiffuseColor(int whichLight, FXMVECTOR value) override;
             DIRECTX_TOOLKIT_API void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
         };

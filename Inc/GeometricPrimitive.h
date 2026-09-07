@@ -58,22 +58,17 @@ namespace DirectX
             using IndexCollection  = std::vector<uint16_t>;
 
             // Factory methods.
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateCube(float size     = 1,
-                bool                                                                                rhcoords = true,
-                _In_opt_ ID3D12Device*                                                              device   = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateBox(const XMFLOAT3& size,
-                bool                                                                                         rhcoords = true,
-                bool                                                                                         invertn  = false,
-                _In_opt_ ID3D12Device*                                                                       device   = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateCube(float size = 1, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateBox(const XMFLOAT3& size, bool rhcoords = true, bool invertn = false, _In_opt_ ID3D12Device* device = nullptr);
             DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateSphere(float diameter     = 1,
                 size_t                                                                                tessellation = 16,
                 bool                                                                                  rhcoords     = true,
                 bool                                                                                  invertn      = false,
                 _In_opt_ ID3D12Device*                                                                device       = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateGeoSphere(float diameter     = 1,
-                size_t                                                                                   tessellation = 3,
-                bool                                                                                     rhcoords     = true,
-                _In_opt_ ID3D12Device*                                                                   device       = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateGeoSphere(float diameter = 1, size_t tessellation = 3, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
             DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateCylinder(float height       = 1,
                 float                                                                                   diameter     = 1,
                 size_t                                                                                  tessellation = 32,
@@ -89,30 +84,21 @@ namespace DirectX
                 size_t                                                                               tessellation = 32,
                 bool                                                                                 rhcoords     = true,
                 _In_opt_ ID3D12Device*                                                               device       = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateTetrahedron(float size     = 1,
-                bool                                                                                       rhcoords = true,
-                _In_opt_ ID3D12Device*                                                                     device   = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateOctahedron(float size     = 1,
-                bool                                                                                      rhcoords = true,
-                _In_opt_ ID3D12Device*                                                                    device   = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateDodecahedron(float size     = 1,
-                bool                                                                                        rhcoords = true,
-                _In_opt_ ID3D12Device*                                                                      device   = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateIcosahedron(float size     = 1,
-                bool                                                                                       rhcoords = true,
-                _In_opt_ ID3D12Device*                                                                     device   = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateTeapot(float size         = 1,
-                size_t                                                                                tessellation = 8,
-                bool                                                                                  rhcoords     = true,
-                _In_opt_ ID3D12Device*                                                                device       = nullptr);
-            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl CreateCustom(const VertexCollection& vertices,
-                const IndexCollection&                                                                                  indices,
-                _In_opt_ ID3D12Device*                                                                                  device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateTetrahedron(float size = 1, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateOctahedron(float size = 1, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateDodecahedron(float size = 1, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateIcosahedron(float size = 1, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateTeapot(float size = 1, size_t tessellation = 8, bool rhcoords = true, _In_opt_ ID3D12Device* device = nullptr);
+            DIRECTX_TOOLKIT_API static std::unique_ptr<GeometricPrimitive> __cdecl
+            CreateCustom(const VertexCollection& vertices, const IndexCollection& indices, _In_opt_ ID3D12Device* device = nullptr);
 
-            DIRECTX_TOOLKIT_API static void __cdecl CreateCube(VertexCollection& vertices,
-                IndexCollection&                                                 indices,
-                float                                                            size     = 1,
-                bool                                                             rhcoords = true);
+            DIRECTX_TOOLKIT_API static void __cdecl
+            CreateCube(VertexCollection& vertices, IndexCollection& indices, float size = 1, bool rhcoords = true);
             DIRECTX_TOOLKIT_API static void __cdecl CreateBox(VertexCollection& vertices,
                 IndexCollection&                                                indices,
                 const XMFLOAT3&                                                 size,
@@ -147,22 +133,14 @@ namespace DirectX
                 float                                                             thickness    = 0.333f,
                 size_t                                                            tessellation = 32,
                 bool                                                              rhcoords     = true);
-            DIRECTX_TOOLKIT_API static void __cdecl CreateTetrahedron(VertexCollection& vertices,
-                IndexCollection&                                                        indices,
-                float                                                                   size     = 1,
-                bool                                                                    rhcoords = true);
-            DIRECTX_TOOLKIT_API static void __cdecl CreateOctahedron(VertexCollection& vertices,
-                IndexCollection&                                                       indices,
-                float                                                                  size     = 1,
-                bool                                                                   rhcoords = true);
-            DIRECTX_TOOLKIT_API static void __cdecl CreateDodecahedron(VertexCollection& vertices,
-                IndexCollection&                                                         indices,
-                float                                                                    size     = 1,
-                bool                                                                     rhcoords = true);
-            DIRECTX_TOOLKIT_API static void __cdecl CreateIcosahedron(VertexCollection& vertices,
-                IndexCollection&                                                        indices,
-                float                                                                   size     = 1,
-                bool                                                                    rhcoords = true);
+            DIRECTX_TOOLKIT_API static void __cdecl
+            CreateTetrahedron(VertexCollection& vertices, IndexCollection& indices, float size = 1, bool rhcoords = true);
+            DIRECTX_TOOLKIT_API static void __cdecl
+            CreateOctahedron(VertexCollection& vertices, IndexCollection& indices, float size = 1, bool rhcoords = true);
+            DIRECTX_TOOLKIT_API static void __cdecl
+            CreateDodecahedron(VertexCollection& vertices, IndexCollection& indices, float size = 1, bool rhcoords = true);
+            DIRECTX_TOOLKIT_API static void __cdecl
+            CreateIcosahedron(VertexCollection& vertices, IndexCollection& indices, float size = 1, bool rhcoords = true);
             DIRECTX_TOOLKIT_API static void __cdecl CreateTeapot(VertexCollection& vertices,
                 IndexCollection&                                                   indices,
                 float                                                              size         = 1,
@@ -182,9 +160,8 @@ namespace DirectX
             // Draw the primitive.
             DIRECTX_TOOLKIT_API void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
-            DIRECTX_TOOLKIT_API void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList,
-                uint32_t                                                                   instanceCount,
-                uint32_t                                                                   startInstanceLocation = 0) const;
+            DIRECTX_TOOLKIT_API void __cdecl
+            DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation = 0) const;
 
         private:
             DIRECTX_TOOLKIT_API GeometricPrimitive() noexcept(false);

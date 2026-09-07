@@ -167,9 +167,8 @@ namespace DirectX
             // Draw mesh part
             void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
 
-            void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList,
-                uint32_t                                               instanceCount,
-                uint32_t                                               startInstance = 0) const;
+            void __cdecl
+            DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstance = 0) const;
 
             //
             // Utilities for drawing multiple mesh parts
@@ -179,14 +178,12 @@ namespace DirectX
             static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts);
 
             // Draw the mesh with an effect
-            static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList,
-                const Collection&                                             meshParts,
-                _In_ IEffect*                                                 effect);
+            static void __cdecl
+            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts, _In_ IEffect* effect);
 
             // Draw the mesh with a callback for each mesh part
-            static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList,
-                const Collection&                                             meshParts,
-                DrawCallback                                                  callback);
+            static void __cdecl
+            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts, DrawCallback callback);
 
             // Draw the mesh with a range of effects that mesh parts will index into.
             // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
@@ -539,9 +536,8 @@ namespace DirectX
                 _In_reads_bytes_(dataSize) const uint8_t*                              meshData,
                 _In_ size_t                                                            dataSize,
                 ModelLoaderFlags                                                       flags = ModelLoader_Default);
-            static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_opt_ ID3D12Device* device,
-                _In_z_ const wchar_t*                                                  szFileName,
-                ModelLoaderFlags                                                       flags = ModelLoader_Default);
+            static std::unique_ptr<Model> __cdecl
+            CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z_ const wchar_t* szFileName, ModelLoaderFlags flags = ModelLoader_Default);
 
 #ifdef __cpp_lib_byte
             static std::unique_ptr<Model> __cdecl CreateFromCMO(_In_opt_ ID3D12Device* device,
@@ -631,9 +627,8 @@ namespace DirectX
                 _In_z_ const __wchar_t*                                                    szFileName,
                 ModelLoaderFlags                                                           flags = ModelLoader_Default);
 
-            static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_opt_ ID3D12Device* device,
-                _In_z_ const __wchar_t*                                                szFileName,
-                ModelLoaderFlags                                                       flags = ModelLoader_Default);
+            static std::unique_ptr<Model> __cdecl
+            CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z_ const __wchar_t* szFileName, ModelLoaderFlags flags = ModelLoader_Default);
 
 #endif // !_NATIVE_WCHAR_T_DEFINED
 

@@ -234,7 +234,7 @@ namespace DirectX
 
             // Memory statistics
             DIRECTX_TOOLKIT_API GraphicsMemoryStatistics __cdecl GetStatistics();
-            DIRECTX_TOOLKIT_API void __cdecl ResetStatistics();
+            DIRECTX_TOOLKIT_API void __cdecl                     ResetStatistics();
 
             // Properties
             DIRECTX_TOOLKIT_API ID3D12Device* __cdecl GetDevice() const noexcept;
