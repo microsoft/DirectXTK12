@@ -104,6 +104,13 @@ FOR SECURITY ADVISORIES, see [GitHub](https://github.com/microsoft/DirectXTK12/s
 
 For a full change history, see [CHANGELOG.md](https://github.com/microsoft/DirectXTK12/blob/main/CHANGELOG.md).
 
+* clang-format use for this project must match the version use by GitHub Super-Linter to pass the validation. VS 2022 and VS 2026 come with different versions, so to match use:
+
+```cmd
+winget install --id=LLVM.LLVM --version 21.1.2
+powershell -File build/Format.ps1 -LLVM
+```
+
 * The _directxtk12_desktop_win10_ and _directxtk12_uwp_ NuGet packages are deprecated. The best way to integrate the latest DirectX Tool Kit into your C++ project is using [vcpkg](https://github.com/microsoft/vcpkg/tree/master/ports/directxtk12).
 
 * The CMake projects require 3.21 or later.
