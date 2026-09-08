@@ -26,30 +26,31 @@ namespace
 
     static_assert((sizeof(AlphaTestEffectConstants) % 16) == 0, "CB size not padded correctly");
 
-
     // Traits type describes our characteristics to the EffectBase template.
     struct AlphaTestEffectTraits
     {
         using ConstantBufferType = AlphaTestEffectConstants;
 
-        static constexpr int VertexShaderCount = 4;
-        static constexpr int PixelShaderCount = 4;
+        static constexpr int VertexShaderCount      = 4;
+        static constexpr int PixelShaderCount       = 4;
         static constexpr int ShaderPermutationCount = 8;
-        static constexpr int RootSignatureCount = 1;
+        static constexpr int RootSignatureCount     = 1;
     };
-}
+} // namespace
 
 // Internal AlphaTestEffect implementation class.
 class AlphaTestEffect::Impl : public EffectBase<AlphaTestEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
-        D3D12_COMPARISON_FUNC alphaFunction);
+    Impl(_In_ ID3D12Device*                   device,
+        uint32_t                              effectFlags,
+        const EffectPipelineStateDescription& pipelineDescription,
+        D3D12_COMPARISON_FUNC                 alphaFunction);
 
-    Impl(const Impl&) = delete;
+    Impl(const Impl&)            = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = default;
+    Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     enum RootParameterIndex
@@ -61,7 +62,7 @@ public:
     };
 
     D3D12_COMPARISON_FUNC mAlphaFunction;
-    int referenceAlpha;
+    int                   referenceAlpha;
 
     EffectColor color;
 
@@ -72,7 +73,6 @@ public:
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
-
 
 #pragma region Shaders
 // Include the precompiled shader code.
@@ -119,91 +119,88 @@ namespace
 #include "AlphaTestEffect_PSAlphaTestEqNe.inc"
 #include "AlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
 #endif
-}
-
+} // namespace
 
 template<>
-const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[] =
-{
-    { AlphaTestEffect_VSAlphaTest,        sizeof(AlphaTestEffect_VSAlphaTest)        },
-    { AlphaTestEffect_VSAlphaTestNoFog,   sizeof(AlphaTestEffect_VSAlphaTestNoFog)   },
-    { AlphaTestEffect_VSAlphaTestVc,      sizeof(AlphaTestEffect_VSAlphaTestVc)      },
+const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[] = {
+    { AlphaTestEffect_VSAlphaTest, sizeof(AlphaTestEffect_VSAlphaTest) },
+    { AlphaTestEffect_VSAlphaTestNoFog, sizeof(AlphaTestEffect_VSAlphaTestNoFog) },
+    { AlphaTestEffect_VSAlphaTestVc, sizeof(AlphaTestEffect_VSAlphaTestVc) },
     { AlphaTestEffect_VSAlphaTestVcNoFog, sizeof(AlphaTestEffect_VSAlphaTestVcNoFog) },
 };
 
-
 template<>
-const int EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] =
-{
-    0,      // lt/gt
-    1,      // lt/gt, no fog
-    2,      // lt/gt, vertex color
-    3,      // lt/gt, vertex color, no fog
+const int EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] = {
+    0, // lt/gt
+    1, // lt/gt, no fog
+    2, // lt/gt, vertex color
+    3, // lt/gt, vertex color, no fog
 
-    0,      // eq/ne
-    1,      // eq/ne, no fog
-    2,      // eq/ne, vertex color
-    3,      // eq/ne, vertex color, no fog
+    0, // eq/ne
+    1, // eq/ne, no fog
+    2, // eq/ne, vertex color
+    3, // eq/ne, vertex color, no fog
 };
 
-
 template<>
-const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[] =
-{
-    { AlphaTestEffect_PSAlphaTestLtGt,      sizeof(AlphaTestEffect_PSAlphaTestLtGt)      },
+const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[] = {
+    { AlphaTestEffect_PSAlphaTestLtGt, sizeof(AlphaTestEffect_PSAlphaTestLtGt) },
     { AlphaTestEffect_PSAlphaTestLtGtNoFog, sizeof(AlphaTestEffect_PSAlphaTestLtGtNoFog) },
-    { AlphaTestEffect_PSAlphaTestEqNe,      sizeof(AlphaTestEffect_PSAlphaTestEqNe)      },
+    { AlphaTestEffect_PSAlphaTestEqNe, sizeof(AlphaTestEffect_PSAlphaTestEqNe) },
     { AlphaTestEffect_PSAlphaTestEqNeNoFog, sizeof(AlphaTestEffect_PSAlphaTestEqNeNoFog) },
 };
 
-
 template<>
-const int EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] =
-{
-    0,      // lt/gt
-    1,      // lt/gt, no fog
-    0,      // lt/gt, vertex color
-    1,      // lt/gt, vertex color, no fog
+const int EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] = {
+    0, // lt/gt
+    1, // lt/gt, no fog
+    0, // lt/gt, vertex color
+    1, // lt/gt, vertex color, no fog
 
-    2,      // eq/ne
-    3,      // eq/ne, no fog
-    2,      // eq/ne, vertex color
-    3,      // eq/ne, vertex color, no fog
+    2, // eq/ne
+    3, // eq/ne, no fog
+    2, // eq/ne, vertex color
+    3, // eq/ne, vertex color, no fog
 };
 #pragma endregion
 
 // Global pool of per-device AlphaTestEffect resources.
 template<>
-SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResources> EffectBase<AlphaTestEffectTraits>::deviceResourcesPool = {};
+SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResources> EffectBase<AlphaTestEffectTraits>::deviceResourcesPool
+    = {};
 
 // Constructor.
-AlphaTestEffect::Impl::Impl(
-    _In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    D3D12_COMPARISON_FUNC alphaFunction)
+AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
+    uint32_t                                   effectFlags,
+    const EffectPipelineStateDescription&      pipelineDescription,
+    D3D12_COMPARISON_FUNC                      alphaFunction)
     : EffectBase(device),
-    mAlphaFunction(alphaFunction),
-    referenceAlpha(0),
-    texture{},
-    textureSampler{}
+      mAlphaFunction(alphaFunction),
+      referenceAlpha(0),
+      texture{},
+      textureSampler{}
 {
-    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices)) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode)) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode)) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices)) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices))
+                      == AlphaTestEffectTraits::ShaderPermutationCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode))
+                      == AlphaTestEffectTraits::VertexShaderCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode))
+                      == AlphaTestEffectTraits::PixelShaderCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices))
+                      == AlphaTestEffectTraits::ShaderPermutationCount,
+        "array/max mismatch");
 
     // Create root signature.
     {
-        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-        #ifdef _GAMING_XBOX_SCARLETT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-        #endif
+        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags
+            = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
+#ifdef _GAMING_XBOX_SCARLETT
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
+#endif
             ;
 
         const CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -252,8 +249,7 @@ AlphaTestEffect::Impl::Impl(
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
 
-    pipelineDescription.CreatePipelineState(
-        device,
+    pipelineDescription.CreatePipelineState(device,
         mRootSignature,
         EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
@@ -261,7 +257,6 @@ AlphaTestEffect::Impl::Impl(
 
     SetDebugObjectName(mPipelineState.Get(), L"AlphaTestEffect");
 }
-
 
 int AlphaTestEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
@@ -280,15 +275,13 @@ int AlphaTestEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) con
     }
 
     // Which alpha compare mode?
-    if (mAlphaFunction == D3D12_COMPARISON_FUNC_EQUAL ||
-        mAlphaFunction == D3D12_COMPARISON_FUNC_NOT_EQUAL)
+    if (mAlphaFunction == D3D12_COMPARISON_FUNC_EQUAL || mAlphaFunction == D3D12_COMPARISON_FUNC_NOT_EQUAL)
     {
         permutation += 4;
     }
 
     return permutation;
 }
-
 
 // Sets our state onto the D3D device.
 void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
@@ -310,66 +303,65 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         constexpr float threshold = 0.5f / 255.0f;
 
         // What to do if the alpha comparison passes or fails. Positive accepts the pixel, negative clips it.
-        static const XMVECTORF32 selectIfTrue = { { {  1, -1 } } };
-        static const XMVECTORF32 selectIfFalse = { { { -1,  1 } } };
-        static const XMVECTORF32 selectNever = { { { -1, -1 } } };
-        static const XMVECTORF32 selectAlways = { { {  1,  1 } } };
+        static const XMVECTORF32 selectIfTrue  = { { { 1, -1 } } };
+        static const XMVECTORF32 selectIfFalse = { { { -1, 1 } } };
+        static const XMVECTORF32 selectNever   = { { { -1, -1 } } };
+        static const XMVECTORF32 selectAlways  = { { { 1, 1 } } };
 
-        float compareTo;
+        float    compareTo;
         XMVECTOR resultSelector;
 
         switch (mAlphaFunction)
         {
         case D3D12_COMPARISON_FUNC_LESS:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = reference - threshold;
+            compareTo      = reference - threshold;
             resultSelector = selectIfTrue;
             break;
 
         case D3D12_COMPARISON_FUNC_LESS_EQUAL:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = reference + threshold;
+            compareTo      = reference + threshold;
             resultSelector = selectIfTrue;
             break;
 
         case D3D12_COMPARISON_FUNC_GREATER_EQUAL:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = reference - threshold;
+            compareTo      = reference - threshold;
             resultSelector = selectIfFalse;
             break;
 
         case D3D12_COMPARISON_FUNC_GREATER:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = reference + threshold;
+            compareTo      = reference + threshold;
             resultSelector = selectIfFalse;
             break;
 
         case D3D12_COMPARISON_FUNC_EQUAL:
             // Shader will evaluate: clip((abs(a - x) < y) ? z : w)
-            compareTo = reference;
+            compareTo      = reference;
             resultSelector = selectIfTrue;
             break;
 
         case D3D12_COMPARISON_FUNC_NOT_EQUAL:
             // Shader will evaluate: clip((abs(a - x) < y) ? z : w)
-            compareTo = reference;
+            compareTo      = reference;
             resultSelector = selectIfFalse;
             break;
 
         case D3D12_COMPARISON_FUNC_NEVER:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = 0;
+            compareTo      = 0;
             resultSelector = selectNever;
             break;
 
         case D3D12_COMPARISON_FUNC_ALWAYS:
             // Shader will evaluate: clip((a < x) ? z : w)
-            compareTo = 0;
+            compareTo      = 0;
             resultSelector = selectAlways;
             break;
 
-        default:
-            throw std::runtime_error("Unknown alpha test function");
+        default: throw std::runtime_error("Unknown alpha test function");
         }
 
         // x = compareTo, y = threshold, zw = resultSelector.
@@ -389,7 +381,8 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         throw std::runtime_error("AlphaTestEffect");
     }
 
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor
+    // heaps.
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, textureSampler);
 
@@ -401,26 +394,22 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-AlphaTestEffect::AlphaTestEffect(
-    _In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    D3D12_COMPARISON_FUNC alphaFunction)
+AlphaTestEffect::AlphaTestEffect(_In_ ID3D12Device* device,
+    uint32_t                                        effectFlags,
+    const EffectPipelineStateDescription&           pipelineDescription,
+    D3D12_COMPARISON_FUNC                           alphaFunction)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, alphaFunction))
 {}
 
-
-AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&&) noexcept = default;
-AlphaTestEffect& AlphaTestEffect::operator= (AlphaTestEffect&&) noexcept = default;
-AlphaTestEffect::~AlphaTestEffect() = default;
-
+AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&&) noexcept            = default;
+AlphaTestEffect& AlphaTestEffect::operator=(AlphaTestEffect&&) noexcept = default;
+AlphaTestEffect::~AlphaTestEffect()                                     = default;
 
 // IEffect methods
 void AlphaTestEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
-
 
 // Camera settings
 void XM_CALLCONV AlphaTestEffect::SetWorld(FXMMATRIX value)
@@ -430,14 +419,12 @@ void XM_CALLCONV AlphaTestEffect::SetWorld(FXMMATRIX value)
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::FogVector;
 }
 
-
 void XM_CALLCONV AlphaTestEffect::SetView(FXMMATRIX value)
 {
     pImpl->matrices.view = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
 }
-
 
 void XM_CALLCONV AlphaTestEffect::SetProjection(FXMMATRIX value)
 {
@@ -446,16 +433,15 @@ void XM_CALLCONV AlphaTestEffect::SetProjection(FXMMATRIX value)
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj;
 }
 
-
 void XM_CALLCONV AlphaTestEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
 {
-    pImpl->matrices.world = world;
-    pImpl->matrices.view = view;
+    pImpl->matrices.world      = world;
+    pImpl->matrices.view       = view;
     pImpl->matrices.projection = projection;
 
-    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition
+                         | EffectDirtyFlags::FogVector;
 }
-
 
 // Material settings
 void XM_CALLCONV AlphaTestEffect::SetDiffuseColor(FXMVECTOR value)
@@ -465,7 +451,6 @@ void XM_CALLCONV AlphaTestEffect::SetDiffuseColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
-
 void AlphaTestEffect::SetAlpha(float value)
 {
     pImpl->color.alpha = value;
@@ -473,15 +458,13 @@ void AlphaTestEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
-
 void XM_CALLCONV AlphaTestEffect::SetColorAndAlpha(FXMVECTOR value)
 {
     pImpl->color.diffuseColor = value;
-    pImpl->color.alpha = XMVectorGetW(value);
+    pImpl->color.alpha        = XMVectorGetW(value);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
-
 
 // Fog settings.
 void AlphaTestEffect::SetFogStart(float value)
@@ -491,14 +474,12 @@ void AlphaTestEffect::SetFogStart(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::FogVector;
 }
 
-
 void AlphaTestEffect::SetFogEnd(float value)
 {
     pImpl->fog.end = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::FogVector;
 }
-
 
 void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
 {
@@ -507,14 +488,12 @@ void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 // Texture settings.
 void AlphaTestEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
-    pImpl->texture = srvDescriptor;
+    pImpl->texture        = srvDescriptor;
     pImpl->textureSampler = samplerDescriptor;
 }
-
 
 void AlphaTestEffect::SetReferenceAlpha(int value)
 {

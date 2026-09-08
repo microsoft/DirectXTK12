@@ -25,7 +25,6 @@
 // out common functionality into a set of helpers which can be assembled in different
 // combinations to build up whatever subset is needed by each effect.
 
-
 namespace DirectX
 {
     inline namespace DX12
@@ -36,21 +35,21 @@ namespace DirectX
             constexpr int PerPixelLightingBit = 0x04;
         }
 
-        static_assert(((EffectFlags::PerPixelLighting)& EffectFlags::PerPixelLightingBit) != 0, "PerPixelLighting enum flags mismatch");
-    }
+        static_assert(((EffectFlags::PerPixelLighting)&EffectFlags::PerPixelLightingBit) != 0, "PerPixelLighting enum flags mismatch");
+    } // namespace DX12
 
     // Bitfield tracks which derived parameter values need to be recomputed.
     namespace EffectDirtyFlags
     {
-        constexpr int ConstantBuffer = 0x01;
-        constexpr int WorldViewProj = 0x02;
+        constexpr int ConstantBuffer        = 0x01;
+        constexpr int WorldViewProj         = 0x02;
         constexpr int WorldInverseTranspose = 0x04;
-        constexpr int EyePosition = 0x08;
-        constexpr int MaterialColor = 0x10;
-        constexpr int FogVector = 0x20;
-        constexpr int FogEnable = 0x40;
-        constexpr int AlphaTest = 0x80;
-    }
+        constexpr int EyePosition           = 0x08;
+        constexpr int MaterialColor         = 0x10;
+        constexpr int FogVector             = 0x20;
+        constexpr int FogEnable             = 0x40;
+        constexpr int AlphaTest             = 0x80;
+    } // namespace EffectDirtyFlags
 
     // Helper stores matrix parameter values, and computes derived matrices.
     struct EffectMatrices
@@ -65,30 +64,24 @@ namespace DirectX
         void SetConstants(_Inout_ int& dirtyFlags, _Inout_ XMMATRIX& worldViewProjConstant);
 
         // Helper for effects that don't use EffectLights, but have eye position.
-        void SetConstants(
-            _Inout_ int& dirtyFlags,
-            _Inout_ XMMATRIX& worldConstant,
+        void SetConstants(_Inout_ int&  dirtyFlags,
+            _Inout_ XMMATRIX&           worldConstant,
             _Inout_updates_(3) XMVECTOR worldInverseTransposeConstant[3],
-            _Inout_ XMMATRIX& worldViewProjConstant,
-            _Inout_ XMVECTOR& eyePositionConstant);
+            _Inout_ XMMATRIX&           worldViewProjConstant,
+            _Inout_ XMVECTOR&           eyePositionConstant);
     };
-
 
     // Helper stores the current fog settings, and computes derived shader parameters.
     struct EffectFog
     {
         EffectFog() noexcept;
 
-        bool enabled;
+        bool  enabled;
         float start;
         float end;
 
-        void XM_CALLCONV SetConstants(
-            _Inout_ int& dirtyFlags,
-            _In_ FXMMATRIX worldView,
-            _Inout_ XMVECTOR& fogVectorConstant);
+        void XM_CALLCONV SetConstants(_Inout_ int& dirtyFlags, _In_ FXMMATRIX worldView, _Inout_ XMVECTOR& fogVectorConstant);
     };
-
 
     // Helper stores material color settings, and computes derived parameters for shaders that do not support realtime lighting.
     struct EffectColor
@@ -96,11 +89,10 @@ namespace DirectX
         EffectColor() noexcept;
 
         XMVECTOR diffuseColor;
-        float alpha;
+        float    alpha;
 
         void SetConstants(_Inout_ int& dirtyFlags, _Inout_ XMVECTOR& diffuseColorConstant);
     };
-
 
     // Helper stores the current light settings, and computes derived shader parameters.
     struct EffectLights : public EffectColor
@@ -109,44 +101,37 @@ namespace DirectX
 
         static constexpr int MaxDirectionalLights = IEffectLights::MaxDirectionalLights;
 
-
         // Fields.
         XMVECTOR emissiveColor;
         XMVECTOR ambientLightColor;
 
-        bool lightEnabled[MaxDirectionalLights];
+        bool     lightEnabled[MaxDirectionalLights];
         XMVECTOR lightDiffuseColor[MaxDirectionalLights];
         XMVECTOR lightSpecularColor[MaxDirectionalLights];
 
-
         // Methods.
-        void InitializeConstants(
-            _Out_ XMVECTOR& specularColorAndPowerConstant,
+        void InitializeConstants(_Out_ XMVECTOR&             specularColorAndPowerConstant,
             _Out_writes_all_(MaxDirectionalLights) XMVECTOR* lightDirectionConstant,
             _Out_writes_all_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant,
             _Out_writes_all_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant) const;
-        void SetConstants(
-            _Inout_ int& dirtyFlags,
-            _In_ EffectMatrices const& matrices,
-            _Inout_ XMMATRIX& worldConstant,
+        void SetConstants(_Inout_ int&  dirtyFlags,
+            _In_ EffectMatrices const&  matrices,
+            _Inout_ XMMATRIX&           worldConstant,
             _Inout_updates_(3) XMVECTOR worldInverseTransposeConstant[3],
-            _Inout_ XMVECTOR& eyePositionConstant,
-            _Inout_ XMVECTOR& diffuseColorConstant,
-            _Inout_ XMVECTOR& emissiveColorConstant,
-            bool lightingEnabled);
+            _Inout_ XMVECTOR&           eyePositionConstant,
+            _Inout_ XMVECTOR&           diffuseColorConstant,
+            _Inout_ XMVECTOR&           emissiveColorConstant,
+            bool                        lightingEnabled);
 
-        int SetLightEnabled(
-            int whichLight,
-            bool value,
-            _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant,
-            _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant);
-        int XM_CALLCONV SetLightDiffuseColor(
-            int whichLight,
-            FXMVECTOR value,
+        int             SetLightEnabled(int                             whichLight,
+                        bool                                            value,
+                        _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant,
+                        _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant);
+        int XM_CALLCONV SetLightDiffuseColor(int            whichLight,
+            FXMVECTOR                                       value,
             _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant);
-        int XM_CALLCONV SetLightSpecularColor(
-            int whichLight,
-            FXMVECTOR value,
+        int XM_CALLCONV SetLightSpecularColor(int           whichLight,
+            FXMVECTOR                                       value,
             _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant);
 
         static void ValidateLightIndex(int whichLight);
@@ -161,7 +146,8 @@ namespace DirectX
             : mDevice(device)
         {}
 
-        ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
+        ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig,
+            D3D12_ROOT_SIGNATURE_DESC const&                                                          desc);
 
     protected:
         Microsoft::WRL::ComPtr<ID3D12Device> mDevice;
@@ -179,8 +165,8 @@ namespace DirectX
         // Constructor.
         EffectBase(_In_ ID3D12Device* device)
             : constants{},
-            dirtyFlags(INT_MAX),
-            mRootSignature(nullptr)
+              dirtyFlags(INT_MAX),
+              mRootSignature(nullptr)
         {
             if (!device)
                 throw std::invalid_argument("Direct3D device is null");
@@ -203,25 +189,19 @@ namespace DirectX
             }
         }
 
-        D3D12_GPU_VIRTUAL_ADDRESS GetConstantBufferGpuAddress() noexcept
-        {
-            return mConstantBuffer.GpuAddress();
-        }
+        D3D12_GPU_VIRTUAL_ADDRESS GetConstantBufferGpuAddress() noexcept { return mConstantBuffer.GpuAddress(); }
 
         ID3D12RootSignature* GetRootSignature(int slot, CD3DX12_ROOT_SIGNATURE_DESC const& rootSig)
         {
             return mDeviceResources->GetRootSignature(slot, rootSig);
         }
 
-        ID3D12Device* GetDevice() const noexcept
-        {
-            return mDeviceResources->GetDevice();
-        }
+        ID3D12Device* GetDevice() const noexcept { return mDeviceResources->GetDevice(); }
 
         // Fields.
         EffectMatrices matrices;
-        EffectFog fog;
-        int dirtyFlags;
+        EffectFog      fog;
+        int            dirtyFlags;
 
     protected:
         // Static arrays hold all the precompiled shader permutations.
@@ -249,7 +229,7 @@ namespace DirectX
         public:
             DeviceResources(_In_ ID3D12Device* device) noexcept
                 : EffectDeviceResources(device),
-                mRootSignature{}
+                  mRootSignature{}
             {}
 
             // Gets or lazily creates the specified root signature
@@ -272,4 +252,4 @@ namespace DirectX
 
         static SharedResourcePool<ID3D12Device*, DeviceResources> deviceResourcesPool;
     };
-}
+} // namespace DirectX

@@ -14,21 +14,18 @@
 #include "LoaderHelpers.h"
 #include "PlatformHelpers.h"
 
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT DirectX::CreateStaticBuffer(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUpload,
-    const void* ptr,
-    size_t count,
-    size_t stride,
-    D3D12_RESOURCE_STATES afterState,
-    ID3D12Resource** pBuffer,
-    D3D12_RESOURCE_FLAGS resFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateStaticBuffer(ID3D12Device* device,
+    ResourceUploadBatch&                                                 resourceUpload,
+    const void*                                                          ptr,
+    size_t                                                               count,
+    size_t                                                               stride,
+    D3D12_RESOURCE_STATES                                                afterState,
+    ID3D12Resource**                                                     pBuffer,
+    D3D12_RESOURCE_FLAGS                                                 resFlags) noexcept
 {
     if (!pBuffer)
         return E_INVALIDARG;
@@ -53,8 +50,7 @@ HRESULT DirectX::CreateStaticBuffer(
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         c_initialCopyTargetState,
@@ -85,15 +81,12 @@ HRESULT DirectX::CreateStaticBuffer(
     return S_OK;
 }
 
-
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT DirectX::CreateUAVBuffer(
-    ID3D12Device* device,
-    uint64_t bufferSize,
-    ID3D12Resource** pBuffer,
-    D3D12_RESOURCE_STATES initialState,
-    D3D12_RESOURCE_FLAGS additionalResFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateUAVBuffer(ID3D12Device* device,
+    uint64_t                                                          bufferSize,
+    ID3D12Resource**                                                  pBuffer,
+    D3D12_RESOURCE_STATES                                             initialState,
+    D3D12_RESOURCE_FLAGS                                              additionalResFlags) noexcept
 {
     if (!pBuffer)
         return E_INVALIDARG;
@@ -116,8 +109,7 @@ HRESULT DirectX::CreateUAVBuffer(
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         initialState,
@@ -131,16 +123,13 @@ HRESULT DirectX::CreateUAVBuffer(
     return S_OK;
 }
 
-
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT DirectX::CreateUploadBuffer(
-    ID3D12Device* device,
-    const void* ptr,
-    size_t count,
-    size_t stride,
-    ID3D12Resource** pBuffer,
-    D3D12_RESOURCE_FLAGS resFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateUploadBuffer(ID3D12Device* device,
+    const void*                                                          ptr,
+    size_t                                                               count,
+    size_t                                                               stride,
+    ID3D12Resource**                                                     pBuffer,
+    D3D12_RESOURCE_FLAGS                                                 resFlags) noexcept
 {
     if (!pBuffer)
         return E_INVALIDARG;
@@ -165,8 +154,7 @@ HRESULT DirectX::CreateUploadBuffer(
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -178,7 +166,7 @@ HRESULT DirectX::CreateUploadBuffer(
     if (ptr)
     {
         void* mappedPtr = nullptr;
-        hr = res->Map(0, nullptr, &mappedPtr);
+        hr              = res->Map(0, nullptr, &mappedPtr);
         if (FAILED(hr))
             return hr;
 
@@ -191,18 +179,15 @@ HRESULT DirectX::CreateUploadBuffer(
     return S_OK;
 }
 
-
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT DirectX::CreateTextureFromMemory(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUpload,
-    size_t width,
-    DXGI_FORMAT format,
-    const D3D12_SUBRESOURCE_DATA& initData,
-    ID3D12Resource** texture,
-    D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateTextureFromMemory(ID3D12Device* device,
+    ResourceUploadBatch&                                                      resourceUpload,
+    size_t                                                                    width,
+    DXGI_FORMAT                                                               format,
+    const D3D12_SUBRESOURCE_DATA&                                             initData,
+    ID3D12Resource**                                                          texture,
+    D3D12_RESOURCE_STATES                                                     afterState,
+    D3D12_RESOURCE_FLAGS                                                      resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;
@@ -225,8 +210,7 @@ HRESULT DirectX::CreateTextureFromMemory(
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         c_initialCopyTargetState,
@@ -255,32 +239,28 @@ HRESULT DirectX::CreateTextureFromMemory(
     return S_OK;
 }
 
-_Use_decl_annotations_
-HRESULT DirectX::CreateTextureFromMemory(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUpload,
-    size_t width,
-    size_t height,
-    DXGI_FORMAT format,
-    const D3D12_SUBRESOURCE_DATA& initData,
-    ID3D12Resource** texture,
-    bool generateMips,
-    D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateTextureFromMemory(ID3D12Device* device,
+    ResourceUploadBatch&                                                      resourceUpload,
+    size_t                                                                    width,
+    size_t                                                                    height,
+    DXGI_FORMAT                                                               format,
+    const D3D12_SUBRESOURCE_DATA&                                             initData,
+    ID3D12Resource**                                                          texture,
+    bool                                                                      generateMips,
+    D3D12_RESOURCE_STATES                                                     afterState,
+    D3D12_RESOURCE_FLAGS                                                      resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;
 
     *texture = nullptr;
 
-    if (!device || !width || !height
-        || !initData.pData || !initData.RowPitch)
+    if (!device || !width || !height || !initData.pData || !initData.RowPitch)
         return E_INVALIDARG;
 
     static_assert(D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION <= UINT32_MAX, "Exceeded integer limits");
 
-    if ((width > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION)
-        || (height > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION))
+    if ((width > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION) || (height > D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION))
     {
         DebugTrace("ERROR: Resource dimensions too large for DirectX 12 (2D: size %zu by %zu)\n", width, height);
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
@@ -296,14 +276,13 @@ HRESULT DirectX::CreateTextureFromMemory(
         }
     }
 
-    const auto desc = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height),
-        1u, mipCount, 1u, 0u, resFlags);
+    const auto desc
+        = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(width), static_cast<UINT>(height), 1u, mipCount, 1u, 0u, resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         c_initialCopyTargetState,
@@ -337,31 +316,28 @@ HRESULT DirectX::CreateTextureFromMemory(
     return S_OK;
 }
 
-
-_Use_decl_annotations_
-HRESULT DirectX::CreateTextureFromMemory(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUpload,
-    size_t width, size_t height, size_t depth,
-    DXGI_FORMAT format,
-    const D3D12_SUBRESOURCE_DATA& initData,
-    ID3D12Resource** texture,
-    D3D12_RESOURCE_STATES afterState,
-    D3D12_RESOURCE_FLAGS resFlags) noexcept
+_Use_decl_annotations_ HRESULT DirectX::CreateTextureFromMemory(ID3D12Device* device,
+    ResourceUploadBatch&                                                      resourceUpload,
+    size_t                                                                    width,
+    size_t                                                                    height,
+    size_t                                                                    depth,
+    DXGI_FORMAT                                                               format,
+    const D3D12_SUBRESOURCE_DATA&                                             initData,
+    ID3D12Resource**                                                          texture,
+    D3D12_RESOURCE_STATES                                                     afterState,
+    D3D12_RESOURCE_FLAGS                                                      resFlags) noexcept
 {
     if (!texture)
         return E_INVALIDARG;
 
     *texture = nullptr;
 
-    if (!device || !width || !height || !depth
-        || !initData.pData || !initData.RowPitch || !initData.SlicePitch)
+    if (!device || !width || !height || !depth || !initData.pData || !initData.RowPitch || !initData.SlicePitch)
         return E_INVALIDARG;
 
     static_assert(D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION <= UINT16_MAX, "Exceeded integer limits");
 
-    if ((width > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
-        || (height > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+    if ((width > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) || (height > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
         || (depth > D3D12_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
     {
         DebugTrace("ERROR: Resource dimensions too large for DirectX 12 (3D: size %zu by %zu by %zu)\n", width, height, depth);
@@ -369,14 +345,16 @@ HRESULT DirectX::CreateTextureFromMemory(
     }
 
     const auto desc = CD3DX12_RESOURCE_DESC::Tex3D(format,
-        static_cast<UINT64>(width), static_cast<UINT>(height), static_cast<UINT16>(depth),
-        1u, resFlags);
+        static_cast<UINT64>(width),
+        static_cast<UINT>(height),
+        static_cast<UINT16>(depth),
+        1u,
+        resFlags);
 
     const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     ComPtr<ID3D12Resource> res;
-    HRESULT hr = device->CreateCommittedResource(
-        &heapProperties,
+    HRESULT                hr = device->CreateCommittedResource(&heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &desc,
         c_initialCopyTargetState,

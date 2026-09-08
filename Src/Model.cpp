@@ -23,36 +23,33 @@ using namespace DirectX;
 #error Model requires RTTI
 #endif
 
-
 //--------------------------------------------------------------------------------------
 // ModelMeshPart
 //--------------------------------------------------------------------------------------
 
-ModelMeshPart::ModelMeshPart(uint32_t ipartIndex) noexcept :
-    partIndex(ipartIndex),
-    materialIndex(0),
-    indexCount(0),
-    startIndex(0),
-    vertexOffset(0),
-    vertexStride(0),
-    vertexCount(0),
-    indexBufferSize(0),
-    vertexBufferSize(0),
-    primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-    indexFormat(DXGI_FORMAT_R16_UINT)
+ModelMeshPart::ModelMeshPart(uint32_t ipartIndex) noexcept
+    : partIndex(ipartIndex),
+      materialIndex(0),
+      indexCount(0),
+      startIndex(0),
+      vertexOffset(0),
+      vertexStride(0),
+      vertexCount(0),
+      indexBufferSize(0),
+      vertexBufferSize(0),
+      primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+      indexFormat(DXGI_FORMAT_R16_UINT)
 {}
 
+ModelMeshPart::~ModelMeshPart() {}
 
-ModelMeshPart::~ModelMeshPart()
-{}
-
-
-_Use_decl_annotations_
-void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
+_Use_decl_annotations_ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     if (!indexBufferSize || !vertexBufferSize)
     {
-        DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n", indexBufferSize, vertexBufferSize);
+        DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n",
+            indexBufferSize,
+            vertexBufferSize);
         throw std::runtime_error("ModelMeshPart");
     }
 
@@ -70,14 +67,14 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = staticVertexBuffer ? staticVertexBuffer->GetGPUVirtualAddress() : vertexBuffer.GpuAddress();
-    vbv.StrideInBytes = vertexStride;
-    vbv.SizeInBytes = vertexBufferSize;
+    vbv.StrideInBytes  = vertexStride;
+    vbv.SizeInBytes    = vertexBufferSize;
     commandList->IASetVertexBuffers(0, 1, &vbv);
 
     D3D12_INDEX_BUFFER_VIEW ibv;
     ibv.BufferLocation = staticIndexBuffer ? staticIndexBuffer->GetGPUVirtualAddress() : indexBuffer.GpuAddress();
-    ibv.SizeInBytes = indexBufferSize;
-    ibv.Format = indexFormat;
+    ibv.SizeInBytes    = indexBufferSize;
+    ibv.Format         = indexFormat;
     commandList->IASetIndexBuffer(&ibv);
 
     commandList->IASetPrimitiveTopology(primitiveType);
@@ -85,16 +82,14 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
     commandList->DrawIndexedInstanced(indexCount, 1, startIndex, vertexOffset, 0);
 }
 
-
-_Use_decl_annotations_
-void ModelMeshPart::DrawInstanced(
-    ID3D12GraphicsCommandList* commandList,
-    uint32_t instanceCount,
-    uint32_t startInstance) const
+_Use_decl_annotations_ void
+ModelMeshPart::DrawInstanced(ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstance) const
 {
     if (!indexBufferSize || !vertexBufferSize)
     {
-        DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n", indexBufferSize, vertexBufferSize);
+        DebugTrace("ERROR: Model part missing values for vertex and/or index buffer size (indexBufferSize %u, vertexBufferSize %u)!\n",
+            indexBufferSize,
+            vertexBufferSize);
         throw std::runtime_error("ModelMeshPart");
     }
 
@@ -112,14 +107,14 @@ void ModelMeshPart::DrawInstanced(
 
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = staticVertexBuffer ? staticVertexBuffer->GetGPUVirtualAddress() : vertexBuffer.GpuAddress();
-    vbv.StrideInBytes = vertexStride;
-    vbv.SizeInBytes = vertexBufferSize;
+    vbv.StrideInBytes  = vertexStride;
+    vbv.SizeInBytes    = vertexBufferSize;
     commandList->IASetVertexBuffers(0, 1, &vbv);
 
     D3D12_INDEX_BUFFER_VIEW ibv;
     ibv.BufferLocation = staticIndexBuffer ? staticIndexBuffer->GetGPUVirtualAddress() : indexBuffer.GpuAddress();
-    ibv.SizeInBytes = indexBufferSize;
-    ibv.Format = indexFormat;
+    ibv.SizeInBytes    = indexBufferSize;
+    ibv.Format         = indexFormat;
     commandList->IASetIndexBuffer(&ibv);
 
     commandList->IASetPrimitiveTopology(primitiveType);
@@ -127,11 +122,7 @@ void ModelMeshPart::DrawInstanced(
     commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, startInstance);
 }
 
-
-_Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(
-    ID3D12GraphicsCommandList* commandList,
-    const ModelMeshPart::Collection& meshParts)
+_Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
 {
     for (const auto& it : meshParts)
     {
@@ -142,12 +133,9 @@ void ModelMeshPart::DrawMeshParts(
     }
 }
 
-
-_Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(
-    ID3D12GraphicsCommandList* commandList,
-    const ModelMeshPart::Collection& meshParts,
-    ModelMeshPart::DrawCallback callback)
+_Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
+    const ModelMeshPart::Collection&                                                meshParts,
+    ModelMeshPart::DrawCallback                                                     callback)
 {
     for (const auto& it : meshParts)
     {
@@ -159,29 +147,22 @@ void ModelMeshPart::DrawMeshParts(
     }
 }
 
-
-_Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(
-    ID3D12GraphicsCommandList* commandList,
-    const ModelMeshPart::Collection& meshParts,
-    IEffect* effect)
+_Use_decl_annotations_ void
+ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, IEffect* effect)
 {
     effect->Apply(commandList);
     DrawMeshParts(commandList, meshParts);
 }
 
-
 //--------------------------------------------------------------------------------------
 // ModelMesh
 //--------------------------------------------------------------------------------------
 
-ModelMesh::ModelMesh() noexcept :
-    boneIndex(ModelBone::c_Invalid)
+ModelMesh::ModelMesh() noexcept
+    : boneIndex(ModelBone::c_Invalid)
 {}
 
-
-ModelMesh::~ModelMesh()
-{}
+ModelMesh::~ModelMesh() {}
 
 // Draw the mesh
 void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
@@ -194,7 +175,6 @@ void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
 }
 
-
 // Draw the mesh with an effect
 void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
@@ -205,7 +185,6 @@ void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEff
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
 }
-
 
 // Draw the mesh with a callback for each mesh part
 void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
@@ -218,23 +197,20 @@ void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMesh
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
 }
 
-
 //--------------------------------------------------------------------------------------
 // Model
 //--------------------------------------------------------------------------------------
 
-Model::Model() noexcept
-{}
+Model::Model() noexcept {}
 
-Model::~Model()
-{}
+Model::~Model() {}
 
-Model::Model(Model const& other) :
-    meshes(other.meshes),
-    materials(other.materials),
-    textureNames(other.textureNames),
-    bones(other.bones),
-    name(other.name)
+Model::Model(Model const& other)
+    : meshes(other.meshes),
+      materials(other.materials),
+      textureNames(other.textureNames),
+      bones(other.bones),
+      name(other.name)
 {
     const size_t nbones = other.bones.size();
     if (nbones > 0)
@@ -252,7 +228,7 @@ Model::Model(Model const& other) :
     }
 }
 
-Model& Model::operator= (Model const& rhs)
+Model& Model::operator=(Model const& rhs)
 {
     if (this != &rhs)
     {
@@ -268,7 +244,6 @@ Model& Model::operator= (Model const& rhs)
     return *this;
 }
 
-
 // Load texture resources.
 int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset) const
 {
@@ -280,23 +255,17 @@ int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescri
     return static_cast<int>(textureNames.size());
 }
 
-
 // Load texture resources (helper function).
-_Use_decl_annotations_
-std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUploadBatch,
-    const wchar_t* texturesPath,
-    D3D12_DESCRIPTOR_HEAP_FLAGS flags) const
+_Use_decl_annotations_ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device,
+    ResourceUploadBatch&                                                                       resourceUploadBatch,
+    const wchar_t*                                                                             texturesPath,
+    D3D12_DESCRIPTOR_HEAP_FLAGS                                                                flags) const
 {
     if (textureNames.empty())
         return nullptr;
 
-    std::unique_ptr<EffectTextureFactory> texFactory = std::make_unique<EffectTextureFactory>(
-        device,
-        resourceUploadBatch,
-        textureNames.size(),
-        flags);
+    std::unique_ptr<EffectTextureFactory> texFactory
+        = std::make_unique<EffectTextureFactory>(device, resourceUploadBatch, textureNames.size(), flags);
     if (texturesPath != nullptr && *texturesPath != 0)
     {
         texFactory->SetDirectory(texturesPath);
@@ -307,13 +276,8 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
     return texFactory;
 }
 
-
 // Load VB/IB resources for static geometry.
-_Use_decl_annotations_
-void Model::LoadStaticBuffers(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUploadBatch,
-    bool keepMemory)
+_Use_decl_annotations_ void Model::LoadStaticBuffers(ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch, bool keepMemory)
 {
     if (!device)
         throw std::invalid_argument("Direct3D device is null");
@@ -351,21 +315,20 @@ void Model::LoadStaticBuffers(
 
             const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
 
-            ThrowIfFailed(device->CreateCommittedResource(
-                &heapProperties,
+            ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &desc,
                 c_initialCopyTargetState,
                 nullptr,
-                IID_GRAPHICS_PPV_ARGS(part->staticVertexBuffer.GetAddressOf())
-            ));
+                IID_GRAPHICS_PPV_ARGS(part->staticVertexBuffer.GetAddressOf())));
 
             SetDebugObjectName(part->staticVertexBuffer.Get(), L"ModelMeshPart");
 
             resourceUploadBatch.Upload(part->staticVertexBuffer.Get(), part->vertexBuffer);
 
             resourceUploadBatch.Transition(part->staticVertexBuffer.Get(),
-                D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+                D3D12_RESOURCE_STATE_COPY_DEST,
+                D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
             // Scan for any other part with the same vertex buffer for sharing
             for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
@@ -378,7 +341,7 @@ void Model::LoadStaticBuffers(
 
                 if (sharePart->vertexBuffer == part->vertexBuffer)
                 {
-                    sharePart->vertexBufferSize = part->vertexBufferSize;
+                    sharePart->vertexBufferSize   = part->vertexBufferSize;
                     sharePart->staticVertexBuffer = part->staticVertexBuffer;
 
                     if (!keepMemory)
@@ -407,21 +370,20 @@ void Model::LoadStaticBuffers(
 
             const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
 
-            ThrowIfFailed(device->CreateCommittedResource(
-                &heapProperties,
+            ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &desc,
                 c_initialCopyTargetState,
                 nullptr,
-                IID_GRAPHICS_PPV_ARGS(part->staticIndexBuffer.GetAddressOf())
-            ));
+                IID_GRAPHICS_PPV_ARGS(part->staticIndexBuffer.GetAddressOf())));
 
             SetDebugObjectName(part->staticIndexBuffer.Get(), L"ModelMeshPart");
 
             resourceUploadBatch.Upload(part->staticIndexBuffer.Get(), part->indexBuffer);
 
             resourceUploadBatch.Transition(part->staticIndexBuffer.Get(),
-                D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+                D3D12_RESOURCE_STATE_COPY_DEST,
+                D3D12_RESOURCE_STATE_INDEX_BUFFER);
 
             // Scan for any other part with the same index buffer for sharing
             for (auto sit = std::next(it); sit != uniqueParts.cend(); ++sit)
@@ -434,7 +396,7 @@ void Model::LoadStaticBuffers(
 
                 if (sharePart->indexBuffer == part->indexBuffer)
                 {
-                    sharePart->indexBufferSize = part->indexBufferSize;
+                    sharePart->indexBufferSize   = part->indexBufferSize;
                     sharePart->staticIndexBuffer = part->staticIndexBuffer;
 
                     if (!keepMemory)
@@ -452,14 +414,12 @@ void Model::LoadStaticBuffers(
     }
 }
 
-
 // Create effects for each mesh piece.
-Model::EffectCollection Model::CreateEffects(
-    IEffectFactory& fxFactory,
-    const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    int textureDescriptorOffset,
-    int samplerDescriptorOffset) const
+Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
+    const EffectPipelineStateDescription&                    opaquePipelineState,
+    const EffectPipelineStateDescription&                    alphaPipelineState,
+    int                                                      textureDescriptorOffset,
+    int                                                      samplerDescriptorOffset) const
 {
     if (materials.empty())
     {
@@ -501,7 +461,12 @@ Model::EffectCollection Model::CreateEffects(
             // If this fires, you have multiple parts with the same unique ID
             assert(effects[part->partIndex] == nullptr);
 
-            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get());
+            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory,
+                opaquePipelineState,
+                alphaPipelineState,
+                textureDescriptorOffset,
+                samplerDescriptorOffset,
+                part.get());
         }
 
         for (const auto& part : mesh->alphaMeshParts)
@@ -514,23 +479,25 @@ Model::EffectCollection Model::CreateEffects(
             // If this fires, you have multiple parts with the same unique ID
             assert(effects[part->partIndex] == nullptr);
 
-            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get());
+            effects[part->partIndex] = CreateEffectForMeshPart(fxFactory,
+                opaquePipelineState,
+                alphaPipelineState,
+                textureDescriptorOffset,
+                samplerDescriptorOffset,
+                part.get());
         }
     }
 
     return effects;
 }
 
-
 // Private helper for creating an effect for a mesh part.
-_Use_decl_annotations_
-std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
-    IEffectFactory& fxFactory,
-    const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    int textureDescriptorOffset,
-    int samplerDescriptorOffset,
-    const ModelMeshPart* part) const
+_Use_decl_annotations_ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(IEffectFactory& fxFactory,
+    const EffectPipelineStateDescription&                                                      opaquePipelineState,
+    const EffectPipelineStateDescription&                                                      alphaPipelineState,
+    int                                                                                        textureDescriptorOffset,
+    int                                                                                        samplerDescriptorOffset,
+    const ModelMeshPart*                                                                       part) const
 {
     assert(part->materialIndex < materials.size());
     const auto& m = materials[part->materialIndex];
@@ -542,33 +509,26 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
         throw std::runtime_error("Model mesh part input layout size is too large for DirectX 12");
 
     D3D12_INPUT_LAYOUT_DESC il = {};
-    il.NumElements = static_cast<UINT>(part->vbDecl->size());
-    il.pInputElementDescs = part->vbDecl->data();
+    il.NumElements             = static_cast<UINT>(part->vbDecl->size());
+    il.pInputElementDescs      = part->vbDecl->data();
 
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
-
 // Create effects for each mesh piece with the default factory.
-_Use_decl_annotations_
-Model::EffectCollection Model::CreateEffects(
-    const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    ID3D12DescriptorHeap* textureDescriptorHeap,
-    ID3D12DescriptorHeap* samplerDescriptorHeap,
-    int textureDescriptorOffset,
-    int samplerDescriptorOffset) const
+_Use_decl_annotations_ Model::EffectCollection Model::CreateEffects(const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription&                                                                 alphaPipelineState,
+    ID3D12DescriptorHeap*                                                                                 textureDescriptorHeap,
+    ID3D12DescriptorHeap*                                                                                 samplerDescriptorHeap,
+    int                                                                                                   textureDescriptorOffset,
+    int                                                                                                   samplerDescriptorOffset) const
 {
     EffectFactory fxFactory(textureDescriptorHeap, samplerDescriptorHeap);
     return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
-
 // Compute using bone hierarchy from model bone matrices to an array.
-_Use_decl_annotations_
-void Model::CopyAbsoluteBoneTransformsTo(
-    size_t nbones,
-    XMMATRIX* boneTransforms) const
+_Use_decl_annotations_ void Model::CopyAbsoluteBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
 {
     if (!nbones || !boneTransforms)
     {
@@ -587,18 +547,14 @@ void Model::CopyAbsoluteBoneTransformsTo(
 
     memset(boneTransforms, 0, sizeof(XMMATRIX) * nbones);
 
-    const XMMATRIX id = XMMatrixIdentity();
-    size_t visited = 0;
+    const XMMATRIX id      = XMMatrixIdentity();
+    size_t         visited = 0;
     ComputeAbsolute(0, id, bones.size(), boneMatrices.get(), boneTransforms, visited);
 }
 
-
 // Compute using bone hierarchy from one array to another array.
-_Use_decl_annotations_
-void Model::CopyAbsoluteBoneTransforms(
-    size_t nbones,
-    const XMMATRIX* inBoneTransforms,
-    XMMATRIX* outBoneTransforms) const
+_Use_decl_annotations_ void
+Model::CopyAbsoluteBoneTransforms(size_t nbones, const XMMATRIX* inBoneTransforms, XMMATRIX* outBoneTransforms) const
 {
     if (!nbones || !inBoneTransforms || !outBoneTransforms)
     {
@@ -617,21 +573,18 @@ void Model::CopyAbsoluteBoneTransforms(
 
     memset(outBoneTransforms, 0, sizeof(XMMATRIX) * nbones);
 
-    const XMMATRIX id = XMMatrixIdentity();
-    size_t visited = 0;
+    const XMMATRIX id      = XMMatrixIdentity();
+    size_t         visited = 0;
     ComputeAbsolute(0, id, bones.size(), inBoneTransforms, outBoneTransforms, visited);
 }
 
-
 // Private helper for computing hierarchical transforms using bones via recursion.
-_Use_decl_annotations_
-void Model::ComputeAbsolute(
-    uint32_t index,
-    CXMMATRIX parent,
-    size_t nbones,
-    const XMMATRIX* inBoneTransforms,
-    XMMATRIX* outBoneTransforms,
-    size_t& visited) const
+_Use_decl_annotations_ void Model::ComputeAbsolute(uint32_t index,
+    CXMMATRIX                                               parent,
+    size_t                                                  nbones,
+    const XMMATRIX*                                         inBoneTransforms,
+    XMMATRIX*                                               outBoneTransforms,
+    size_t&                                                 visited) const
 {
     if (index == ModelBone::c_Invalid || index >= nbones)
         return;
@@ -645,27 +598,23 @@ void Model::ComputeAbsolute(
         throw std::runtime_error("Model bones form an invalid graph");
     }
 
-    XMMATRIX local = inBoneTransforms[index];
-    local = XMMatrixMultiply(local, parent);
+    XMMATRIX local           = inBoneTransforms[index];
+    local                    = XMMatrixMultiply(local, parent);
     outBoneTransforms[index] = local;
 
     if (bones[index].siblingIndex != ModelBone::c_Invalid)
     {
-        ComputeAbsolute(bones[index].siblingIndex, parent, nbones,
-            inBoneTransforms, outBoneTransforms, visited);
+        ComputeAbsolute(bones[index].siblingIndex, parent, nbones, inBoneTransforms, outBoneTransforms, visited);
     }
 
     if (bones[index].childIndex != ModelBone::c_Invalid)
     {
-        ComputeAbsolute(bones[index].childIndex, local, nbones,
-            inBoneTransforms, outBoneTransforms, visited);
+        ComputeAbsolute(bones[index].childIndex, local, nbones, inBoneTransforms, outBoneTransforms, visited);
     }
 }
 
-
 // Copy the model bone matrices from an array.
-_Use_decl_annotations_
-void Model::CopyBoneTransformsFrom(size_t nbones, const XMMATRIX* boneTransforms)
+_Use_decl_annotations_ void Model::CopyBoneTransformsFrom(size_t nbones, const XMMATRIX* boneTransforms)
 {
     if (!nbones || !boneTransforms)
     {
@@ -690,10 +639,8 @@ void Model::CopyBoneTransformsFrom(size_t nbones, const XMMATRIX* boneTransforms
     memcpy(boneMatrices.get(), boneTransforms, bones.size() * sizeof(XMMATRIX));
 }
 
-
 // Copy the model bone matrices to an array.
-_Use_decl_annotations_
-void Model::CopyBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
+_Use_decl_annotations_ void Model::CopyBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
 {
     if (!nbones || !boneTransforms)
     {
@@ -713,13 +660,8 @@ void Model::CopyBoneTransformsTo(size_t nbones, XMMATRIX* boneTransforms) const
     memcpy(boneTransforms, boneMatrices.get(), bones.size() * sizeof(XMMATRIX));
 }
 
-
 // Updates effect matrices (if applicable).
-void XM_CALLCONV Model::UpdateEffectMatrices(
-    EffectCollection& effects,
-    FXMMATRIX world,
-    CXMMATRIX view,
-    CXMMATRIX proj)
+void XM_CALLCONV Model::UpdateEffectMatrices(EffectCollection& effects, FXMMATRIX world, CXMMATRIX view, CXMMATRIX proj)
 {
     for (auto& fx : effects)
     {
@@ -731,16 +673,14 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
     }
 }
 
-
 // Transition static VB/IB resources (if applicable).
-void Model::Transition(
-    _In_ ID3D12GraphicsCommandList* commandList,
-    D3D12_RESOURCE_STATES stateBeforeVB,
-    D3D12_RESOURCE_STATES stateAfterVB,
-    D3D12_RESOURCE_STATES stateBeforeIB,
-    D3D12_RESOURCE_STATES stateAfterIB)
+void Model::Transition(_In_ ID3D12GraphicsCommandList* commandList,
+    D3D12_RESOURCE_STATES                              stateBeforeVB,
+    D3D12_RESOURCE_STATES                              stateAfterVB,
+    D3D12_RESOURCE_STATES                              stateBeforeIB,
+    D3D12_RESOURCE_STATES                              stateAfterIB)
 {
-    UINT count = 0;
+    UINT                   count       = 0;
     D3D12_RESOURCE_BARRIER barrier[64] = {};
 
     for (auto& mit : meshes)
@@ -752,11 +692,11 @@ void Model::Transition(
 
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
-                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
                 barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-                barrier[count].Transition.pResource = pit->staticIndexBuffer.Get();
+                barrier[count].Transition.pResource   = pit->staticIndexBuffer.Get();
                 barrier[count].Transition.StateBefore = stateBeforeIB;
-                barrier[count].Transition.StateAfter = stateAfterIB;
+                barrier[count].Transition.StateAfter  = stateAfterIB;
                 ++count;
 
                 if (count >= std::size(barrier))
@@ -768,11 +708,11 @@ void Model::Transition(
 
             if (stateBeforeVB != stateAfterVB && pit->staticVertexBuffer)
             {
-                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
                 barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-                barrier[count].Transition.pResource = pit->staticVertexBuffer.Get();
+                barrier[count].Transition.pResource   = pit->staticVertexBuffer.Get();
                 barrier[count].Transition.StateBefore = stateBeforeVB;
-                barrier[count].Transition.StateAfter = stateAfterVB;
+                barrier[count].Transition.StateAfter  = stateAfterVB;
                 ++count;
 
                 if (count >= std::size(barrier))
@@ -790,11 +730,11 @@ void Model::Transition(
 
             if (stateBeforeIB != stateAfterIB && pit->staticIndexBuffer)
             {
-                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
                 barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-                barrier[count].Transition.pResource = pit->staticIndexBuffer.Get();
+                barrier[count].Transition.pResource   = pit->staticIndexBuffer.Get();
                 barrier[count].Transition.StateBefore = stateBeforeIB;
-                barrier[count].Transition.StateAfter = stateAfterIB;
+                barrier[count].Transition.StateAfter  = stateAfterIB;
                 ++count;
 
                 if (count >= std::size(barrier))
@@ -806,11 +746,11 @@ void Model::Transition(
 
             if (stateBeforeVB != stateAfterVB && pit->staticVertexBuffer)
             {
-                barrier[count].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+                barrier[count].Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
                 barrier[count].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-                barrier[count].Transition.pResource = pit->staticVertexBuffer.Get();
+                barrier[count].Transition.pResource   = pit->staticVertexBuffer.Get();
                 barrier[count].Transition.StateBefore = stateBeforeVB;
-                barrier[count].Transition.StateAfter = stateAfterVB;
+                barrier[count].Transition.StateAfter  = stateAfterVB;
                 ++count;
 
                 if (count >= std::size(barrier))
@@ -828,18 +768,15 @@ void Model::Transition(
     }
 }
 
-
 //--------------------------------------------------------------------------------------
 // Adapters for /Zc:wchar_t- clients
 
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
-_Use_decl_annotations_
-std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
-    ID3D12Device* device,
-    ResourceUploadBatch& resourceUploadBatch,
-    const __wchar_t* texturesPath,
-    D3D12_DESCRIPTOR_HEAP_FLAGS flags) const
+_Use_decl_annotations_ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device,
+    ResourceUploadBatch&                                                                       resourceUploadBatch,
+    const __wchar_t*                                                                           texturesPath,
+    D3D12_DESCRIPTOR_HEAP_FLAGS                                                                flags) const
 {
     return LoadTextures(device, resourceUploadBatch, reinterpret_cast<const unsigned short*>(texturesPath), flags);
 }

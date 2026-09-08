@@ -36,19 +36,19 @@
 #endif
 
 #ifdef _MSC_VER
-#pragma comment(lib,"uuid.lib")
+#pragma comment(lib, "uuid.lib")
 #endif
 
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -57,26 +57,23 @@
 #endif
 #endif
 
-
 namespace DirectX
 {
     DIRECTX_TOOLKIT_API
-        HRESULT __cdecl SaveDDSTextureToFile(
-            _In_ ID3D12CommandQueue* pCommandQueue,
-            _In_ ID3D12Resource* pSource,
-            _In_z_ const wchar_t* fileName,
-            D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET,
-            D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
+    HRESULT __cdecl SaveDDSTextureToFile(_In_ ID3D12CommandQueue* pCommandQueue,
+        _In_ ID3D12Resource*                                      pSource,
+        _In_z_ const wchar_t*                                     fileName,
+        D3D12_RESOURCE_STATES                                     beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATES                                     afterState  = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
 
     DIRECTX_TOOLKIT_API
-        HRESULT __cdecl SaveWICTextureToFile(
-            _In_ ID3D12CommandQueue* pCommandQ,
-            _In_ ID3D12Resource* pSource,
-            REFGUID guidContainerFormat,
-            _In_z_ const wchar_t* fileName,
-            D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET,
-            D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET,
-            _In_opt_ const GUID* targetFormat = nullptr,
-            _In_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr,
-            bool forceSRGB = false);
-}
+    HRESULT __cdecl SaveWICTextureToFile(_In_ ID3D12CommandQueue* pCommandQ,
+        _In_ ID3D12Resource*                                      pSource,
+        REFGUID                                                   guidContainerFormat,
+        _In_z_ const wchar_t*                                     fileName,
+        D3D12_RESOURCE_STATES                                     beforeState  = D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATES                                     afterState   = D3D12_RESOURCE_STATE_RENDER_TARGET,
+        _In_opt_ const GUID*                                      targetFormat = nullptr,
+        _In_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps        = nullptr,
+        bool                                             forceSRGB             = false);
+} // namespace DirectX

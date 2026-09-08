@@ -16,7 +16,7 @@ namespace DirectX
     {
         constexpr int ConstantBufferBones = 0x100000;
     }
-}
+} // namespace DirectX
 
 using namespace DirectX;
 
@@ -47,29 +47,26 @@ namespace
 
     static_assert((sizeof(BoneConstants) % 16) == 0, "CB size not padded correctly");
 
-
     // Traits type describes our characteristics to the EffectBase template.
     struct NPREffectTraits
     {
         using ConstantBufferType = NPREffectConstants;
 
-        static constexpr int VertexShaderCount = 36;
-        static constexpr int PixelShaderCount = 9;
+        static constexpr int VertexShaderCount      = 36;
+        static constexpr int PixelShaderCount       = 9;
         static constexpr int ShaderPermutationCount = 54;
-        static constexpr int RootSignatureCount = 5;
+        static constexpr int RootSignatureCount     = 5;
     };
 
-
     // Default values
-    constexpr XMVECTORF32 s_defaultLightDir = { { { 0.f, -1.f, 0.f, 4.f } } };
-    constexpr XMVECTORF32 s_defaultDiffuse = { { { 1.f, 1.f, 1.f, 1.f } } };
-    constexpr XMVECTORF32 s_defaultSpecular = { { { 1.f, 1.f, 1.f, 0.95f } } };
-    constexpr XMVECTORF32 s_defaultRim = { { { 0.f, 0.f, 0.f, 4.f } } };
+    constexpr XMVECTORF32 s_defaultLightDir      = { { { 0.f, -1.f, 0.f, 4.f } } };
+    constexpr XMVECTORF32 s_defaultDiffuse       = { { { 1.f, 1.f, 1.f, 1.f } } };
+    constexpr XMVECTORF32 s_defaultSpecular      = { { { 1.f, 1.f, 1.f, 0.95f } } };
+    constexpr XMVECTORF32 s_defaultRim           = { { { 0.f, 0.f, 0.f, 4.f } } };
     constexpr XMVECTORF32 s_defaultExtraSettings = { { { 0.004f, 0.75f, 0.2f, 0.6f } } };
-    constexpr XMVECTORF32 s_defaultCool = { { { 0.f, 0.f, 0.55f, 0.25f } } };
-    constexpr XMVECTORF32 s_defaultWarm = { { { 0.3f, 0.3f, 0.f, 0.25f } } };
-}
-
+    constexpr XMVECTORF32 s_defaultCool          = { { { 0.f, 0.f, 0.55f, 0.25f } } };
+    constexpr XMVECTORF32 s_defaultWarm          = { { { 0.3f, 0.3f, 0.f, 0.25f } } };
+} // namespace
 
 // Internal NPREffect implementation class.
 class NPREffect::Impl : public EffectBase<NPREffectTraits>
@@ -77,18 +74,17 @@ class NPREffect::Impl : public EffectBase<NPREffectTraits>
 public:
     Impl(_In_ ID3D12Device* device);
 
-    Impl(const Impl&) = delete;
+    Impl(const Impl&)            = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = default;
+    Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
-    void Initialize(
-        _In_ ID3D12Device* device,
-        uint32_t effectFlags,
+    void Initialize(_In_ ID3D12Device*        device,
+        uint32_t                              effectFlags,
         const EffectPipelineStateDescription& pipelineDescription,
-        NPREffect::Mode nprMode,
-        bool enableSkinning);
+        NPREffect::Mode                       nprMode,
+        bool                                  enableSkinning);
 
     enum RootParameterIndex
     {
@@ -109,7 +105,7 @@ public:
         SkinRootParameterCount
     };
 
-    int weightsPerVertex;
+    int  weightsPerVertex;
     bool matCapEnabled;
     bool textureEnabled;
 
@@ -127,7 +123,6 @@ public:
 private:
     GraphicsResource mBones;
 };
-
 
 #pragma region Shaders
 // Include the precompiled shader code.
@@ -406,217 +401,209 @@ namespace
 
 #include "NPREffect_PSMatCapShadingSkinTx.inc"
 #endif
-}
-
+} // namespace
 
 template<>
-const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::VertexShaderBytecode[] =
-{
-    { NPREffect_VSNPREffect,               sizeof(NPREffect_VSNPREffect)              },
-    { NPREffect_VSNPREffectVc,             sizeof(NPREffect_VSNPREffectVc)            },
-    { NPREffect_VSNPREffectBn,             sizeof(NPREffect_VSNPREffectBn)            },
-    { NPREffect_VSNPREffectVcBn,           sizeof(NPREffect_VSNPREffectVcBn)          },
-    { NPREffect_VSNPREffectInst,           sizeof(NPREffect_VSNPREffectInst)          },
-    { NPREffect_VSNPREffectVcInst,         sizeof(NPREffect_VSNPREffectVcInst)        },
-    { NPREffect_VSNPREffectBnInst,         sizeof(NPREffect_VSNPREffectBnInst)        },
-    { NPREffect_VSNPREffectVcBnInst,       sizeof(NPREffect_VSNPREffectVcBnInst)      },
-    { NPREffect_VSNPREffectTx,             sizeof(NPREffect_VSNPREffectTx)            },
-    { NPREffect_VSNPREffectVcTx,           sizeof(NPREffect_VSNPREffectVcTx)          },
-    { NPREffect_VSNPREffectBnTx,           sizeof(NPREffect_VSNPREffectBnTx)          },
-    { NPREffect_VSNPREffectVcBnTx,         sizeof(NPREffect_VSNPREffectVcBnTx)        },
-    { NPREffect_VSNPREffectInstTx,         sizeof(NPREffect_VSNPREffectInstTx)        },
-    { NPREffect_VSNPREffectVcInstTx,       sizeof(NPREffect_VSNPREffectVcInstTx)      },
-    { NPREffect_VSNPREffectBnInstTx,       sizeof(NPREffect_VSNPREffectBnInstTx)      },
-    { NPREffect_VSNPREffectVcBnInstTx,     sizeof(NPREffect_VSNPREffectVcBnInstTx)    },
-    { NPREffect_VSNPREffectMC,             sizeof(NPREffect_VSNPREffectMC)            }, // Different rootsig
-    { NPREffect_VSNPREffectVcMC,           sizeof(NPREffect_VSNPREffectVcMC)          },
-    { NPREffect_VSNPREffectBnMC,           sizeof(NPREffect_VSNPREffectBnMC)          },
-    { NPREffect_VSNPREffectVcBnMC,         sizeof(NPREffect_VSNPREffectVcBnMC)        },
-    { NPREffect_VSNPREffectInstMC,         sizeof(NPREffect_VSNPREffectInstMC)        },
-    { NPREffect_VSNPREffectVcInstMC,       sizeof(NPREffect_VSNPREffectVcInstMC)      },
-    { NPREffect_VSNPREffectBnInstMC,       sizeof(NPREffect_VSNPREffectBnInstMC)      },
-    { NPREffect_VSNPREffectVcBnInstMC,     sizeof(NPREffect_VSNPREffectVcBnInstMC)    },
-    { NPREffect_VSNPREffectTxMC,           sizeof(NPREffect_VSNPREffectTxMC)          },
-    { NPREffect_VSNPREffectVcTxMC,         sizeof(NPREffect_VSNPREffectVcTxMC)        },
-    { NPREffect_VSNPREffectBnTxMC,         sizeof(NPREffect_VSNPREffectBnTxMC)        },
-    { NPREffect_VSNPREffectVcBnTxMC,       sizeof(NPREffect_VSNPREffectVcBnTxMC)      },
-    { NPREffect_VSNPREffectInstTxMC,       sizeof(NPREffect_VSNPREffectInstTxMC)      },
-    { NPREffect_VSNPREffectVcInstTxMC,     sizeof(NPREffect_VSNPREffectVcInstTxMC)    },
-    { NPREffect_VSNPREffectBnInstTxMC,     sizeof(NPREffect_VSNPREffectBnInstTxMC)    },
-    { NPREffect_VSNPREffectVcBnInstTxMC,   sizeof(NPREffect_VSNPREffectVcBnInstTxMC)  },
-    { NPREffect_VSSkinnedNPREffectTx,      sizeof(NPREffect_VSSkinnedNPREffectTx)     },
-    { NPREffect_VSSkinnedNPREffectTxBn,    sizeof(NPREffect_VSSkinnedNPREffectTxBn)   },
-    { NPREffect_VSSkinnedNPREffectTxMC,    sizeof(NPREffect_VSSkinnedNPREffectTxMC)   },
-    { NPREffect_VSSkinnedNPREffectTxBnMC,  sizeof(NPREffect_VSSkinnedNPREffectTxBnMC) },
+const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::VertexShaderBytecode[] = {
+    { NPREffect_VSNPREffect, sizeof(NPREffect_VSNPREffect) },
+    { NPREffect_VSNPREffectVc, sizeof(NPREffect_VSNPREffectVc) },
+    { NPREffect_VSNPREffectBn, sizeof(NPREffect_VSNPREffectBn) },
+    { NPREffect_VSNPREffectVcBn, sizeof(NPREffect_VSNPREffectVcBn) },
+    { NPREffect_VSNPREffectInst, sizeof(NPREffect_VSNPREffectInst) },
+    { NPREffect_VSNPREffectVcInst, sizeof(NPREffect_VSNPREffectVcInst) },
+    { NPREffect_VSNPREffectBnInst, sizeof(NPREffect_VSNPREffectBnInst) },
+    { NPREffect_VSNPREffectVcBnInst, sizeof(NPREffect_VSNPREffectVcBnInst) },
+    { NPREffect_VSNPREffectTx, sizeof(NPREffect_VSNPREffectTx) },
+    { NPREffect_VSNPREffectVcTx, sizeof(NPREffect_VSNPREffectVcTx) },
+    { NPREffect_VSNPREffectBnTx, sizeof(NPREffect_VSNPREffectBnTx) },
+    { NPREffect_VSNPREffectVcBnTx, sizeof(NPREffect_VSNPREffectVcBnTx) },
+    { NPREffect_VSNPREffectInstTx, sizeof(NPREffect_VSNPREffectInstTx) },
+    { NPREffect_VSNPREffectVcInstTx, sizeof(NPREffect_VSNPREffectVcInstTx) },
+    { NPREffect_VSNPREffectBnInstTx, sizeof(NPREffect_VSNPREffectBnInstTx) },
+    { NPREffect_VSNPREffectVcBnInstTx, sizeof(NPREffect_VSNPREffectVcBnInstTx) },
+    { NPREffect_VSNPREffectMC, sizeof(NPREffect_VSNPREffectMC) }, // Different rootsig
+    { NPREffect_VSNPREffectVcMC, sizeof(NPREffect_VSNPREffectVcMC) },
+    { NPREffect_VSNPREffectBnMC, sizeof(NPREffect_VSNPREffectBnMC) },
+    { NPREffect_VSNPREffectVcBnMC, sizeof(NPREffect_VSNPREffectVcBnMC) },
+    { NPREffect_VSNPREffectInstMC, sizeof(NPREffect_VSNPREffectInstMC) },
+    { NPREffect_VSNPREffectVcInstMC, sizeof(NPREffect_VSNPREffectVcInstMC) },
+    { NPREffect_VSNPREffectBnInstMC, sizeof(NPREffect_VSNPREffectBnInstMC) },
+    { NPREffect_VSNPREffectVcBnInstMC, sizeof(NPREffect_VSNPREffectVcBnInstMC) },
+    { NPREffect_VSNPREffectTxMC, sizeof(NPREffect_VSNPREffectTxMC) },
+    { NPREffect_VSNPREffectVcTxMC, sizeof(NPREffect_VSNPREffectVcTxMC) },
+    { NPREffect_VSNPREffectBnTxMC, sizeof(NPREffect_VSNPREffectBnTxMC) },
+    { NPREffect_VSNPREffectVcBnTxMC, sizeof(NPREffect_VSNPREffectVcBnTxMC) },
+    { NPREffect_VSNPREffectInstTxMC, sizeof(NPREffect_VSNPREffectInstTxMC) },
+    { NPREffect_VSNPREffectVcInstTxMC, sizeof(NPREffect_VSNPREffectVcInstTxMC) },
+    { NPREffect_VSNPREffectBnInstTxMC, sizeof(NPREffect_VSNPREffectBnInstTxMC) },
+    { NPREffect_VSNPREffectVcBnInstTxMC, sizeof(NPREffect_VSNPREffectVcBnInstTxMC) },
+    { NPREffect_VSSkinnedNPREffectTx, sizeof(NPREffect_VSSkinnedNPREffectTx) },
+    { NPREffect_VSSkinnedNPREffectTxBn, sizeof(NPREffect_VSSkinnedNPREffectTxBn) },
+    { NPREffect_VSSkinnedNPREffectTxMC, sizeof(NPREffect_VSSkinnedNPREffectTxMC) },
+    { NPREffect_VSSkinnedNPREffectTxBnMC, sizeof(NPREffect_VSSkinnedNPREffectTxBnMC) },
 };
 
-
 template<>
-const int EffectBase<NPREffectTraits>::VertexShaderIndices[] =
-{
-    0,      // cel shading
-    0,      // gooch shading
-    16,     // matcap shading
+const int EffectBase<NPREffectTraits>::VertexShaderIndices[] = {
+    0,  // cel shading
+    0,  // gooch shading
+    16, // matcap shading
 
-    1,      // vertex color + cel shading
-    1,      // vertex color + gooch shading
-    17,     // vertex color + matcap shading
+    1,  // vertex color + cel shading
+    1,  // vertex color + gooch shading
+    17, // vertex color + matcap shading
 
-    2,      // cel shading (biased vertex normal)
-    2,      // gooch shading (biased vertex normal)
-    18,     // matcap shading (biased vertex normal)
+    2,  // cel shading (biased vertex normal)
+    2,  // gooch shading (biased vertex normal)
+    18, // matcap shading (biased vertex normal)
 
-    3,      // vertex color (biased vertex normal) + cel shading
-    3,      // vertex color (biased vertex normal) + gooch shading
-    19,     // vertex color (biased vertex normal) + matcap shading
+    3,  // vertex color (biased vertex normal) + cel shading
+    3,  // vertex color (biased vertex normal) + gooch shading
+    19, // vertex color (biased vertex normal) + matcap shading
 
-    4,      // instancing + cel shading
-    4,      // instancing + gooch shading
-    20,     // instancing + matcap shading
+    4,  // instancing + cel shading
+    4,  // instancing + gooch shading
+    20, // instancing + matcap shading
 
-    5,      // instancing + vertex color + cel shading
-    5,      // instancing + vertex color + gooch shading
-    21,     // instancing + vertex color + matcap shading
+    5,  // instancing + vertex color + cel shading
+    5,  // instancing + vertex color + gooch shading
+    21, // instancing + vertex color + matcap shading
 
-    6,      // instancing (biased vertex normal) + cel shading
-    6,      // instancing (biased vertex normal) + gooch shading
-    22,     // instancing (biased vertex normal) + matcap shading
+    6,  // instancing (biased vertex normal) + cel shading
+    6,  // instancing (biased vertex normal) + gooch shading
+    22, // instancing (biased vertex normal) + matcap shading
 
-    7,      // instancing + vertex color (biased vertex normal) + cel shading
-    7,      // instancing + vertex color (biased vertex normal) + gooch shading
-    23,     // instancing + vertex color (biased vertex normal) + matcap shading
+    7,  // instancing + vertex color (biased vertex normal) + cel shading
+    7,  // instancing + vertex color (biased vertex normal) + gooch shading
+    23, // instancing + vertex color (biased vertex normal) + matcap shading
 
-    8,      // cel shading + texture
-    8,      // gooch shading + texture
-    24,     // matcap shading + texture
+    8,  // cel shading + texture
+    8,  // gooch shading + texture
+    24, // matcap shading + texture
 
-    9,      // vertex color + cel shading + texture
-    9,      // vertex color + gooch shading + texture
-    25,     // vertex color + matcap shading + texture
+    9,  // vertex color + cel shading + texture
+    9,  // vertex color + gooch shading + texture
+    25, // vertex color + matcap shading + texture
 
-    10,     // cel shading (biased vertex normal) + texture
-    10,     // gooch shading (biased vertex normal) + texture
-    26,     // matcap shading (biased vertex normal) + texture
+    10, // cel shading (biased vertex normal) + texture
+    10, // gooch shading (biased vertex normal) + texture
+    26, // matcap shading (biased vertex normal) + texture
 
-    11,     // vertex color (biased vertex normal) + cel shading + texture
-    11,     // vertex color (biased vertex normal) + gooch shading + texture
-    27,     // vertex color (biased vertex normal) + matcap shading + texture
+    11, // vertex color (biased vertex normal) + cel shading + texture
+    11, // vertex color (biased vertex normal) + gooch shading + texture
+    27, // vertex color (biased vertex normal) + matcap shading + texture
 
-    12,     // instancing + cel shading + texture
-    12,     // instancing + gooch shading + texture
-    28,     // instancing + matcap shading + texture
+    12, // instancing + cel shading + texture
+    12, // instancing + gooch shading + texture
+    28, // instancing + matcap shading + texture
 
-    13,     // instancing + vertex color + cel shading + texture
-    13,     // instancing + vertex color + gooch shading + texture
-    29,     // instancing + vertex color + matcap shading + texture
+    13, // instancing + vertex color + cel shading + texture
+    13, // instancing + vertex color + gooch shading + texture
+    29, // instancing + vertex color + matcap shading + texture
 
-    14,     // instancing (biased vertex normal) + cel shading + texture
-    14,     // instancing (biased vertex normal) + gooch shading + texture
-    30,     // instancing (biased vertex normal) + matcap shading + texture
+    14, // instancing (biased vertex normal) + cel shading + texture
+    14, // instancing (biased vertex normal) + gooch shading + texture
+    30, // instancing (biased vertex normal) + matcap shading + texture
 
-    15,     // instancing + vertex color (biased vertex normal) + cel shading + texture
-    15,     // instancing + vertex color (biased vertex normal) + gooch shading + texture
-    31,     // instancing + vertex color (biased vertex normal) + matcap shading + texture
+    15, // instancing + vertex color (biased vertex normal) + cel shading + texture
+    15, // instancing + vertex color (biased vertex normal) + gooch shading + texture
+    31, // instancing + vertex color (biased vertex normal) + matcap shading + texture
 
-    32,     // skinning + cel shading
-    32,     // skinning + gooch shading
-    34,     // skinning + matcap shading
+    32, // skinning + cel shading
+    32, // skinning + gooch shading
+    34, // skinning + matcap shading
 
-    33,     // skinning (biased vertex normal) + cel shading
-    33,     // skinning (biased vertex normal) + gooch shading
-    35,     // skinning (biased vertex normal) + matcap shading
+    33, // skinning (biased vertex normal) + cel shading
+    33, // skinning (biased vertex normal) + gooch shading
+    35, // skinning (biased vertex normal) + matcap shading
 };
 
-
 template<>
-const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::PixelShaderBytecode[] =
-{
-    { NPREffect_PSCelShading,          sizeof(NPREffect_PSCelShading)          },
-    { NPREffect_PSGoochShading,        sizeof(NPREffect_PSGoochShading)        },
-    { NPREffect_PSMatCapShading,       sizeof(NPREffect_PSMatCapShading)       },
-    { NPREffect_PSCelShadingTx,        sizeof(NPREffect_PSCelShadingTx)        },
-    { NPREffect_PSGoochShadingTx,      sizeof(NPREffect_PSGoochShadingTx)      },
-    { NPREffect_PSMatCapShadingTx,     sizeof(NPREffect_PSMatCapShadingTx)     },
-    { NPREffect_PSCelShadingSkinTx,    sizeof(NPREffect_PSCelShadingSkinTx)    }, // Different rootsig
-    { NPREffect_PSGoochShadingSkinTx,  sizeof(NPREffect_PSGoochShadingSkinTx)  },
+const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::PixelShaderBytecode[] = {
+    { NPREffect_PSCelShading, sizeof(NPREffect_PSCelShading) },
+    { NPREffect_PSGoochShading, sizeof(NPREffect_PSGoochShading) },
+    { NPREffect_PSMatCapShading, sizeof(NPREffect_PSMatCapShading) },
+    { NPREffect_PSCelShadingTx, sizeof(NPREffect_PSCelShadingTx) },
+    { NPREffect_PSGoochShadingTx, sizeof(NPREffect_PSGoochShadingTx) },
+    { NPREffect_PSMatCapShadingTx, sizeof(NPREffect_PSMatCapShadingTx) },
+    { NPREffect_PSCelShadingSkinTx, sizeof(NPREffect_PSCelShadingSkinTx) }, // Different rootsig
+    { NPREffect_PSGoochShadingSkinTx, sizeof(NPREffect_PSGoochShadingSkinTx) },
     { NPREffect_PSMatCapShadingSkinTx, sizeof(NPREffect_PSMatCapShadingSkinTx) },
 };
 
-
 template<>
-const int EffectBase<NPREffectTraits>::PixelShaderIndices[] =
-{
-    0,      // cel shading
-    1,      // gooch shading
-    2,      // matcap shading
+const int EffectBase<NPREffectTraits>::PixelShaderIndices[] = {
+    0, // cel shading
+    1, // gooch shading
+    2, // matcap shading
 
-    0,      // vertex color + cel shading
-    1,      // vertex color + gooch shading
-    2,      // vertex color + matcap shading
+    0, // vertex color + cel shading
+    1, // vertex color + gooch shading
+    2, // vertex color + matcap shading
 
-    0,      // cel shading (biased vertex normal)
-    1,      // gooch shading (biased vertex normal)
-    2,      // matcap shading (biased vertex normal)
+    0, // cel shading (biased vertex normal)
+    1, // gooch shading (biased vertex normal)
+    2, // matcap shading (biased vertex normal)
 
-    0,      // vertex color (biased vertex normal) + cel shading
-    1,      // vertex color (biased vertex normal) + gooch shading
-    2,      // vertex color (biased vertex normal) + matcap shading
+    0, // vertex color (biased vertex normal) + cel shading
+    1, // vertex color (biased vertex normal) + gooch shading
+    2, // vertex color (biased vertex normal) + matcap shading
 
-    0,      // instancing + cel shading
-    1,      // instancing + gooch shading
-    2,      // instancing + matcap shading
+    0, // instancing + cel shading
+    1, // instancing + gooch shading
+    2, // instancing + matcap shading
 
-    0,      // instancing + vertex color + cel shading
-    1,      // instancing + vertex color + gooch shading
-    2,      // instancing + vertex color + matcap shading
+    0, // instancing + vertex color + cel shading
+    1, // instancing + vertex color + gooch shading
+    2, // instancing + vertex color + matcap shading
 
-    0,      // instancing (biased vertex normal) + cel shading
-    1,      // instancing (biased vertex normal) + gooch shading
-    2,      // instancing (biased vertex normal) + matcap shading
+    0, // instancing (biased vertex normal) + cel shading
+    1, // instancing (biased vertex normal) + gooch shading
+    2, // instancing (biased vertex normal) + matcap shading
 
-    0,      // instancing + vertex color (biased vertex normal) + cel shading
-    1,      // instancing + vertex color (biased vertex normal) + gooch shading
-    2,      // instancing + vertex color (biased vertex normal) + matcap shading
+    0, // instancing + vertex color (biased vertex normal) + cel shading
+    1, // instancing + vertex color (biased vertex normal) + gooch shading
+    2, // instancing + vertex color (biased vertex normal) + matcap shading
 
-    3,      // cel shading + texture
-    4,      // gooch shading + texture
-    5,      // matcap shading + texture
+    3, // cel shading + texture
+    4, // gooch shading + texture
+    5, // matcap shading + texture
 
-    3,      // vertex color + cel shading + texture
-    4,      // vertex color + gooch shading + texture
-    5,      // vertex color + matcap shading + texture
+    3, // vertex color + cel shading + texture
+    4, // vertex color + gooch shading + texture
+    5, // vertex color + matcap shading + texture
 
-    3,      // cel shading (biased vertex normal) + texture
-    4,      // gooch shading (biased vertex normal) + texture
-    5,      // matcap shading (biased vertex normal) + texture
+    3, // cel shading (biased vertex normal) + texture
+    4, // gooch shading (biased vertex normal) + texture
+    5, // matcap shading (biased vertex normal) + texture
 
-    3,      // vertex color (biased vertex normal) + cel shading + texture
-    4,      // vertex color (biased vertex normal) + gooch shading + texture
-    5,      // vertex color (biased vertex normal) + matcap shading + texture
+    3, // vertex color (biased vertex normal) + cel shading + texture
+    4, // vertex color (biased vertex normal) + gooch shading + texture
+    5, // vertex color (biased vertex normal) + matcap shading + texture
 
-    3,      // instancing + cel shading + texture
-    4,      // instancing + gooch shading + texture
-    5,      // instancing + matcap shading + texture
+    3, // instancing + cel shading + texture
+    4, // instancing + gooch shading + texture
+    5, // instancing + matcap shading + texture
 
-    3,      // instancing + vertex color + cel shading + texture
-    4,      // instancing + vertex color + gooch shading + texture
-    5,      // instancing + vertex color + matcap shading + texture
+    3, // instancing + vertex color + cel shading + texture
+    4, // instancing + vertex color + gooch shading + texture
+    5, // instancing + vertex color + matcap shading + texture
 
-    3,      // instancing (biased vertex normal) + cel shading + texture
-    4,      // instancing (biased vertex normal) + gooch shading + texture
-    5,      // instancing (biased vertex normal) + matcap shading + texture
+    3, // instancing (biased vertex normal) + cel shading + texture
+    4, // instancing (biased vertex normal) + gooch shading + texture
+    5, // instancing (biased vertex normal) + matcap shading + texture
 
-    3,      // instancing + vertex color (biased vertex normal) + cel shading + texture
-    4,      // instancing + vertex color (biased vertex normal) + gooch shading + texture
-    5,      // instancing + vertex color (biased vertex normal) + matcap shading + texture
+    3, // instancing + vertex color (biased vertex normal) + cel shading + texture
+    4, // instancing + vertex color (biased vertex normal) + gooch shading + texture
+    5, // instancing + vertex color (biased vertex normal) + matcap shading + texture
 
-    6,      // skinning + cel shading
-    7,      // skinning + gooch shading
-    8,      // skinning + matcap shading
+    6, // skinning + cel shading
+    7, // skinning + gooch shading
+    8, // skinning + matcap shading
 
-    6,      // skinning (biased vertex normal) + cel shading
-    7,      // skinning (biased vertex normal) + gooch shading
-    8,      // skinning (biased vertex normal) + matcap shading
+    6, // skinning (biased vertex normal) + cel shading
+    7, // skinning (biased vertex normal) + gooch shading
+    8, // skinning (biased vertex normal) + matcap shading
 };
 #pragma endregion
 
@@ -624,56 +611,53 @@ const int EffectBase<NPREffectTraits>::PixelShaderIndices[] =
 template<>
 SharedResourcePool<ID3D12Device*, EffectBase<NPREffectTraits>::DeviceResources> EffectBase<NPREffectTraits>::deviceResourcesPool = {};
 
-
 // Constructor.
-NPREffect::Impl::Impl(
-    _In_ ID3D12Device* device)
+NPREffect::Impl::Impl(_In_ ID3D12Device* device)
     : EffectBase(device),
-    weightsPerVertex(0),
-    matCapEnabled(false),
-    textureEnabled(false),
-    texture{},
-    sampler{},
-    matcap{},
-    boneConstants{}
+      weightsPerVertex(0),
+      matCapEnabled(false),
+      textureEnabled(false),
+      texture{},
+      sampler{},
+      matcap{},
+      boneConstants{}
 {
-    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderIndices)) == NPREffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderBytecode)) == NPREffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderBytecode)) == NPREffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderIndices)) == NPREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderIndices)) == NPREffectTraits::ShaderPermutationCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::VertexShaderBytecode)) == NPREffectTraits::VertexShaderCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderBytecode)) == NPREffectTraits::PixelShaderCount,
+        "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NPREffectTraits>::PixelShaderIndices)) == NPREffectTraits::ShaderPermutationCount,
+        "array/max mismatch");
 }
 
-void NPREffect::Impl::Initialize(
-    _In_ ID3D12Device* device,
-    uint32_t effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    NPREffect::Mode nprMode,
-    bool enableSkinning)
+void NPREffect::Impl::Initialize(_In_ ID3D12Device* device,
+    uint32_t                                        effectFlags,
+    const EffectPipelineStateDescription&           pipelineDescription,
+    NPREffect::Mode                                 nprMode,
+    bool                                            enableSkinning)
 {
     switch (nprMode)
     {
     case Mode_Cel:
-    case Mode_Gooch:
-        break;
+    case Mode_Gooch:  break;
 
-    case Mode_MatCap:
-        matCapEnabled = true;
-        break;
+    case Mode_MatCap: matCapEnabled = true; break;
 
-    default:
-        throw std::invalid_argument("Invalid nprMode");
+    default:          throw std::invalid_argument("Invalid nprMode");
     }
 
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
 
-    constants.lightDirectionAndCelBands = s_defaultLightDir;
-    constants.diffuseColorAndAlpha = s_defaultDiffuse;
+    constants.lightDirectionAndCelBands         = s_defaultLightDir;
+    constants.diffuseColorAndAlpha              = s_defaultDiffuse;
     constants.specularColorAndSpecularThreshold = s_defaultSpecular;
-    constants.rimColorAndPower = s_defaultRim;
-    constants.extraSettings = s_defaultExtraSettings;
-    constants.goochCoolColorAndAlpha = s_defaultCool;
-    constants.goochWarmColorAndBeta = s_defaultWarm;
-    constants.eyePosition = g_XMZero;
+    constants.rimColorAndPower                  = s_defaultRim;
+    constants.extraSettings                     = s_defaultExtraSettings;
+    constants.goochCoolColorAndAlpha            = s_defaultCool;
+    constants.goochWarmColorAndBeta             = s_defaultWarm;
+    constants.eyePosition                       = g_XMZero;
 
     if (enableSkinning)
     {
@@ -689,7 +673,7 @@ void NPREffect::Impl::Initialize(
         }
 
         weightsPerVertex = 4;
-        textureEnabled = true;
+        textureEnabled   = true;
 
         for (size_t j = 0; j < SkinnedNPREffect::MaxBones; ++j)
         {
@@ -701,15 +685,12 @@ void NPREffect::Impl::Initialize(
 
     // Create root signature.
     {
-        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-        #ifdef _GAMING_XBOX_SCARLETT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-        #endif
+        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags
+            = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
+#ifdef _GAMING_XBOX_SCARLETT
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
+#endif
             ;
 
         if (enableSkinning)
@@ -723,7 +704,9 @@ void NPREffect::Impl::Initialize(
             const CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
             rootParameters[SkinRootParameterIndex::SkinTextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
-            rootParameters[SkinRootParameterIndex::SkinTextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
+            rootParameters[SkinRootParameterIndex::SkinTextureSampler].InitAsDescriptorTable(1,
+                &textureSampler,
+                D3D12_SHADER_VISIBILITY_PIXEL);
 
             rootParameters[SkinRootParameterIndex::SkinConstantBufferBones].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
@@ -734,7 +717,9 @@ void NPREffect::Impl::Initialize(
             {
                 // Include second texture
                 const CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-                rootParameters[SkinRootParameterIndex::SkinTexture2SRV].InitAsDescriptorTable(1, &texture2Range, D3D12_SHADER_VISIBILITY_PIXEL);
+                rootParameters[SkinRootParameterIndex::SkinTexture2SRV].InitAsDescriptorTable(1,
+                    &texture2Range,
+                    D3D12_SHADER_VISIBILITY_PIXEL);
 
                 // use all parameters
                 rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
@@ -819,8 +804,7 @@ void NPREffect::Impl::Initialize(
     assert(pi >= 0 && pi < NPREffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < NPREffectTraits::PixelShaderCount);
 
-    pipelineDescription.CreatePipelineState(
-        device,
+    pipelineDescription.CreatePipelineState(device,
         mRootSignature,
         EffectBase<NPREffectTraits>::VertexShaderBytecode[vi],
         EffectBase<NPREffectTraits>::PixelShaderBytecode[pi],
@@ -835,7 +819,6 @@ void NPREffect::Impl::Initialize(
         SetDebugObjectName(mPipelineState.Get(), L"NPREffect");
     }
 }
-
 
 int NPREffect::Impl::GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32_t effectFlags) const noexcept
 {
@@ -882,19 +865,13 @@ int NPREffect::Impl::GetPipelineStatePermutation(NPREffect::Mode nprMode, uint32
     return permutation;
 }
 
-
 // Sets our state onto the D3D device.
 void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     assert(weightsPerVertex == 0);
 
     // Compute derived parameter values.
-    matrices.SetConstants(
-        dirtyFlags,
-        constants.world,
-        constants.worldInverseTranspose,
-        constants.worldViewProj,
-        constants.eyePosition);
+    matrices.SetConstants(dirtyFlags, constants.world, constants.worldInverseTranspose, constants.worldViewProj, constants.eyePosition);
 
     UpdateConstants();
 
@@ -906,8 +883,7 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         if (!texture.ptr || !sampler.ptr)
         {
-            DebugTrace("ERROR: Missing texture or sampler for NPREffect (texture %llu, sampler %llu)\n",
-                texture.ptr, sampler.ptr);
+            DebugTrace("ERROR: Missing texture or sampler for NPREffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
             throw std::runtime_error("NPREffect");
         }
 
@@ -933,8 +909,7 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     {
         if (!matcap.ptr || !sampler.ptr)
         {
-            DebugTrace("ERROR: Missing matcap texture or sampler for NPREffect (texture %llu, sampler %llu)\n",
-                matcap.ptr, sampler.ptr);
+            DebugTrace("ERROR: Missing matcap texture or sampler for NPREffect (texture %llu, sampler %llu)\n", matcap.ptr, sampler.ptr);
             throw std::runtime_error("NPREffect");
         }
 
@@ -951,19 +926,13 @@ void NPREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetPipelineState(EffectBase::mPipelineState.Get());
 }
 
-
 void NPREffect::Impl::ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList)
 {
     assert(weightsPerVertex > 0);
     assert(textureEnabled);
 
     // Compute derived parameter values.
-    matrices.SetConstants(
-        dirtyFlags,
-        constants.world,
-        constants.worldInverseTranspose,
-        constants.worldViewProj,
-        constants.eyePosition);
+    matrices.SetConstants(dirtyFlags, constants.world, constants.worldInverseTranspose, constants.worldViewProj, constants.eyePosition);
 
     UpdateConstants();
 
@@ -979,8 +948,7 @@ void NPREffect::Impl::ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the texture(s)
     if (!texture.ptr || !sampler.ptr)
     {
-        DebugTrace("ERROR: Missing texture or sampler for SkinnedNPREffect (texture %llu, sampler %llu)\n",
-            texture.ptr, sampler.ptr);
+        DebugTrace("ERROR: Missing texture or sampler for SkinnedNPREffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
         throw std::runtime_error("SkinnedNPREffect");
     }
 
@@ -1012,35 +980,30 @@ void NPREffect::Impl::ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetPipelineState(EffectBase::mPipelineState.Get());
 }
 
-
 //--------------------------------------------------------------------------------------
 // NPREffect
 //--------------------------------------------------------------------------------------
 
 // Public constructor.
-NPREffect::NPREffect(
-    _In_ ID3D12Device* device,
-    uint32_t effectFlags,
+NPREffect::NPREffect(_In_ ID3D12Device*   device,
+    uint32_t                              effectFlags,
     const EffectPipelineStateDescription& pipelineDescription,
-    Mode nprMode,
-    bool skinningEnabled)
+    Mode                                  nprMode,
+    bool                                  skinningEnabled)
     : pImpl(std::make_unique<Impl>(device))
 {
     pImpl->Initialize(device, effectFlags, pipelineDescription, nprMode, skinningEnabled);
 }
 
-
-NPREffect::NPREffect(NPREffect&&) noexcept = default;
-NPREffect& NPREffect::operator= (NPREffect&&) noexcept = default;
-NPREffect::~NPREffect() = default;
-
+NPREffect::NPREffect(NPREffect&&) noexcept            = default;
+NPREffect& NPREffect::operator=(NPREffect&&) noexcept = default;
+NPREffect::~NPREffect()                               = default;
 
 // IEffect methods.
 void NPREffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
-
 
 // Camera settings.
 void NPREffect::SetWorld(FXMMATRIX value)
@@ -1050,14 +1013,12 @@ void NPREffect::SetWorld(FXMMATRIX value)
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose;
 }
 
-
 void NPREffect::SetView(FXMMATRIX value)
 {
     pImpl->matrices.view = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::EyePosition;
 }
-
 
 void NPREffect::SetProjection(FXMMATRIX value)
 {
@@ -1066,16 +1027,14 @@ void NPREffect::SetProjection(FXMMATRIX value)
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj;
 }
 
-
 void NPREffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
 {
-    pImpl->matrices.world = world;
-    pImpl->matrices.view = view;
+    pImpl->matrices.world      = world;
+    pImpl->matrices.view       = view;
     pImpl->matrices.projection = projection;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition;
 }
-
 
 // Light settings.
 void NPREffect::SetAmbientLightColor(FXMVECTOR)
@@ -1083,12 +1042,10 @@ void NPREffect::SetAmbientLightColor(FXMVECTOR)
     // Unsupported interface.
 }
 
-
 void NPREffect::SetLightEnabled(int, bool)
 {
     // Unsupported interface.
 }
-
 
 void NPREffect::SetLightDirection(int whichLight, FXMVECTOR value)
 {
@@ -1104,27 +1061,24 @@ void NPREffect::SetLightDirection(int whichLight, FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetLightDiffuseColor(int, FXMVECTOR)
 {
     // Unsupported interface.
 }
-
 
 void NPREffect::SetLightSpecularColor(int, FXMVECTOR)
 {
     // Unsupported interface.
 }
 
-
 void NPREffect::EnableDefaultLighting()
 {
     // Set xyz to new value, but preserve existing w (cel bands).
-    pImpl->constants.lightDirectionAndCelBands = XMVectorSelect(pImpl->constants.lightDirectionAndCelBands, s_defaultLightDir, g_XMSelect1110);
+    pImpl->constants.lightDirectionAndCelBands
+        = XMVectorSelect(pImpl->constants.lightDirectionAndCelBands, s_defaultLightDir, g_XMSelect1110);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
-
 
 // Material settings.
 void NPREffect::SetDiffuseColor(FXMVECTOR value)
@@ -1135,15 +1089,14 @@ void NPREffect::SetDiffuseColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetSpecularColor(FXMVECTOR value)
 {
     // Set xyz, preserve w (specular threshold).
-    pImpl->constants.specularColorAndSpecularThreshold = XMVectorSelect(pImpl->constants.specularColorAndSpecularThreshold, value, g_XMSelect1110);
+    pImpl->constants.specularColorAndSpecularThreshold
+        = XMVectorSelect(pImpl->constants.specularColorAndSpecularThreshold, value, g_XMSelect1110);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
-
 
 void NPREffect::SetSpecularThreshold(float threshold, float smoothing)
 {
@@ -1166,7 +1119,6 @@ void NPREffect::SetSpecularThreshold(float threshold, float smoothing)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::DisableSpecular()
 {
     // Set specular color to black, threshold to 1
@@ -1174,7 +1126,6 @@ void NPREffect::DisableSpecular()
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
-
 
 void NPREffect::SetAlpha(float value)
 {
@@ -1184,7 +1135,6 @@ void NPREffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetColorAndAlpha(FXMVECTOR value)
 {
     pImpl->constants.diffuseColorAndAlpha = value;
@@ -1192,14 +1142,12 @@ void NPREffect::SetColorAndAlpha(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 // Texture setting.
 void NPREffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->sampler = samplerDescriptor;
 }
-
 
 // Cel shading setting.
 void NPREffect::SetCelShaderBands(int bands)
@@ -1215,7 +1163,6 @@ void NPREffect::SetCelShaderBands(int bands)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 // Gooch shading settings.
 void NPREffect::SetGoochCoolColor(FXMVECTOR value, float alpha)
 {
@@ -1224,7 +1171,6 @@ void NPREffect::SetGoochCoolColor(FXMVECTOR value, float alpha)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetGoochWarmColor(FXMVECTOR value, float beta)
 {
     pImpl->constants.goochWarmColorAndBeta = XMVectorSetW(value, beta);
@@ -1232,20 +1178,17 @@ void NPREffect::SetGoochWarmColor(FXMVECTOR value, float beta)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 // MatCap shading setting.
 void NPREffect::SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
 {
     pImpl->matcap = srvDescriptor;
 }
 
-
 void NPREffect::SetMatCap(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
-    pImpl->matcap = srvDescriptor;
+    pImpl->matcap  = srvDescriptor;
     pImpl->sampler = samplerDescriptor;
 }
-
 
 // Rim lighting settings.
 void NPREffect::SetRimLightingColor(FXMVECTOR value)
@@ -1256,7 +1199,6 @@ void NPREffect::SetRimLightingColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetRimLightingPower(float power)
 {
     // Set w of rimColorAndPower.
@@ -1264,7 +1206,6 @@ void NPREffect::SetRimLightingPower(float power)
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
-
 
 void NPREffect::SetRimLightingIntensity(float strength)
 {
@@ -1279,7 +1220,6 @@ void NPREffect::SetRimLightingIntensity(float strength)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 void NPREffect::SetRimLightingRange(float start, float end)
 {
     if (start < 0.f || end > 1.f || start > end)
@@ -1288,12 +1228,11 @@ void NPREffect::SetRimLightingRange(float start, float end)
     }
 
     // Set zw of extraSettings.
-    XMVECTORF32 range = { { { 0.f, 0.f, start, end } } };
+    XMVECTORF32 range              = { { { 0.f, 0.f, start, end } } };
     pImpl->constants.extraSettings = XMVectorSelect(range, pImpl->constants.extraSettings, g_XMSelect1100);
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
-
 
 void NPREffect::DisableRimLighting()
 {
@@ -1302,21 +1241,17 @@ void NPREffect::DisableRimLighting()
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-
 //--------------------------------------------------------------------------------------
 // SkinnedNPREffect
 //--------------------------------------------------------------------------------------
 
-SkinnedNPREffect::~SkinnedNPREffect()
-{}
-
+SkinnedNPREffect::~SkinnedNPREffect() {}
 
 // IEffect methods.
 void SkinnedNPREffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->ApplySkinning(commandList);
 }
-
 
 // Animation settings.
 void SkinnedNPREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count)
@@ -1328,21 +1263,20 @@ void SkinnedNPREffect::SetBoneTransforms(_In_reads_(count) XMMATRIX const* value
 
     for (size_t i = 0; i < count; i++)
     {
-    #if DIRECTX_MATH_VERSION >= 313
+#if DIRECTX_MATH_VERSION >= 313
         XMStoreFloat3x4A(reinterpret_cast<XMFLOAT3X4A*>(&boneConstant[i]), value[i]);
-    #else
-            // Xbox One XDK has an older version of DirectXMath
+#else
+        // Xbox One XDK has an older version of DirectXMath
         XMMATRIX boneMatrix = XMMatrixTranspose(value[i]);
 
         boneConstant[i][0] = boneMatrix.r[0];
         boneConstant[i][1] = boneMatrix.r[1];
         boneConstant[i][2] = boneMatrix.r[2];
-    #endif
+#endif
     }
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBufferBones;
 }
-
 
 void SkinnedNPREffect::ResetBoneTransforms()
 {
