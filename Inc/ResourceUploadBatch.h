@@ -31,13 +31,13 @@
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -45,7 +45,6 @@
 #define DIRECTX_TOOLKIT_API
 #endif
 #endif
-
 
 namespace DirectX
 {
@@ -55,11 +54,11 @@ namespace DirectX
     public:
         DIRECTX_TOOLKIT_API explicit ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false);
 
-        DIRECTX_TOOLKIT_API ResourceUploadBatch(ResourceUploadBatch&&) noexcept;
-        DIRECTX_TOOLKIT_API ResourceUploadBatch& operator= (ResourceUploadBatch&&) noexcept;
+        DIRECTX_TOOLKIT_API                      ResourceUploadBatch(ResourceUploadBatch&&) noexcept;
+        DIRECTX_TOOLKIT_API ResourceUploadBatch& operator=(ResourceUploadBatch&&) noexcept;
 
-        ResourceUploadBatch(ResourceUploadBatch const&) = delete;
-        ResourceUploadBatch& operator= (ResourceUploadBatch const&) = delete;
+        ResourceUploadBatch(ResourceUploadBatch const&)            = delete;
+        ResourceUploadBatch& operator=(ResourceUploadBatch const&) = delete;
 
         DIRECTX_TOOLKIT_API virtual ~ResourceUploadBatch();
 
@@ -68,25 +67,20 @@ namespace DirectX
 
         // Asynchronously uploads a resource. The memory in subRes is copied.
         // The resource must be in the COPY_DEST state.
-        DIRECTX_TOOLKIT_API void __cdecl Upload(
-            _In_ ID3D12Resource* resource,
-            uint32_t subresourceIndexStart,
+        DIRECTX_TOOLKIT_API void __cdecl Upload(_In_ ID3D12Resource*  resource,
+            uint32_t                                                  subresourceIndexStart,
             _In_reads_(numSubresources) const D3D12_SUBRESOURCE_DATA* subRes,
-            uint32_t numSubresources);
+            uint32_t                                                  numSubresources);
 
-        DIRECTX_TOOLKIT_API void __cdecl Upload(
-            _In_ ID3D12Resource* resource,
-            const SharedGraphicsResource& buffer);
+        DIRECTX_TOOLKIT_API void __cdecl Upload(_In_ ID3D12Resource* resource, const SharedGraphicsResource& buffer);
 
         // Asynchronously generate mips from a resource.
         // Resource must be in the PIXEL_SHADER_RESOURCE state
         DIRECTX_TOOLKIT_API void __cdecl GenerateMips(_In_ ID3D12Resource* resource);
 
         // Transition a resource once you're done with it
-        DIRECTX_TOOLKIT_API void __cdecl Transition(
-            _In_ ID3D12Resource* resource,
-            D3D12_RESOURCE_STATES stateBefore,
-            D3D12_RESOURCE_STATES stateAfter);
+        DIRECTX_TOOLKIT_API void __cdecl
+        Transition(_In_ ID3D12Resource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
 
         // Submits all the uploads to the driver.
         // No more uploads can happen after this call until Begin is called again.
@@ -102,4 +96,4 @@ namespace DirectX
 
         std::unique_ptr<Impl> pImpl;
     };
-}
+} // namespace DirectX

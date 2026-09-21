@@ -16,21 +16,21 @@
 #define VALIDATE_LISTS 0
 
 #if VALIDATE_LISTS
-#   include <unordered_set>
+#include <unordered_set>
 #endif
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 LinearAllocatorPage::LinearAllocatorPage() noexcept
-    : pPrevPage(nullptr)
-    , pNextPage(nullptr)
-    , mMemory(nullptr)
-    , mPendingFence(0)
-    , mGpuAddress{}
-    , mOffset(0)
-    , mSize(0)
-    , mRefCount(1)
+    : pPrevPage(nullptr),
+      pNextPage(nullptr),
+      mMemory(nullptr),
+      mPendingFence(0),
+      mGpuAddress{},
+      mOffset(0),
+      mSize(0),
+      mRefCount(1)
 {}
 
 size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
@@ -57,20 +57,16 @@ void LinearAllocatorPage::Release() noexcept
     }
 }
 
-
 //--------------------------------------------------------------------------------------
-LinearAllocator::LinearAllocator(
-    _In_ ID3D12Device* pDevice,
-    _In_ size_t pageSize,
-    _In_ size_t preallocateBytes) noexcept(false)
-    : m_pendingPages(nullptr)
-    , m_usedPages(nullptr)
-    , m_unusedPages(nullptr)
-    , m_increment(pageSize)
-    , m_numPending(0)
-    , m_totalPages(0)
-    , m_fenceCount(0)
-    , m_device(pDevice)
+LinearAllocator::LinearAllocator(_In_ ID3D12Device* pDevice, _In_ size_t pageSize, _In_ size_t preallocateBytes) noexcept(false)
+    : m_pendingPages(nullptr),
+      m_usedPages(nullptr),
+      m_unusedPages(nullptr),
+      m_increment(pageSize),
+      m_numPending(0),
+      m_totalPages(0),
+      m_fenceCount(0),
+      m_device(pDevice)
 {
     assert(pDevice != nullptr);
 #if defined(_DEBUG) || defined(PROFILE)
@@ -83,15 +79,13 @@ LinearAllocator::LinearAllocator(
         if (GetNewPage() == nullptr)
         {
             DebugTrace("LinearAllocator failed to preallocate pages (%zu required bytes, %zu pages)\n",
-                preallocatePageCount * m_increment, preallocatePageCount);
+                preallocatePageCount * m_increment,
+                preallocatePageCount);
             throw std::bad_alloc();
         }
     }
 
-    ThrowIfFailed(pDevice->CreateFence(
-        0,
-        D3D12_FENCE_FLAG_NONE,
-        IID_GRAPHICS_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
+    ThrowIfFailed(pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_GRAPHICS_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
 }
 
 LinearAllocator::~LinearAllocator()
@@ -109,9 +103,9 @@ LinearAllocator::~LinearAllocator()
     FreePages(m_usedPages);
 
     m_pendingPages = nullptr;
-    m_usedPages = nullptr;
-    m_unusedPages = nullptr;
-    m_increment = 0;
+    m_usedPages    = nullptr;
+    m_unusedPages  = nullptr;
+    m_increment    = 0;
 }
 
 LinearAllocatorPage* LinearAllocator::FindPageForAlloc(_In_ size_t size, _In_ size_t alignment)
@@ -142,10 +136,10 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
         return;
 
     // For all the used pages, fence them
-    UINT numReady = 0;
-    LinearAllocatorPage* readyPages = nullptr;
+    UINT                 numReady     = 0;
+    LinearAllocatorPage* readyPages   = nullptr;
     LinearAllocatorPage* unreadyPages = nullptr;
-    LinearAllocatorPage* nextPage = nullptr;
+    LinearAllocatorPage* nextPage     = nullptr;
     for (auto page = m_usedPages; page != nullptr; page = nextPage)
     {
         nextPage = page->pNextPage;
@@ -163,14 +157,16 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
 
             // Link to the ready pages list
             page->pNextPage = readyPages;
-            if (readyPages) readyPages->pPrevPage = page;
+            if (readyPages)
+                readyPages->pPrevPage = page;
             readyPages = page;
         }
         else
         {
             // Link to the unready list
             page->pNextPage = unreadyPages;
-            if (unreadyPages) unreadyPages->pPrevPage = page;
+            if (unreadyPages)
+                unreadyPages->pPrevPage = page;
             unreadyPages = page;
         }
     }
@@ -248,9 +244,7 @@ LinearAllocatorPage* LinearAllocator::GetCleanPageForAlloc()
     return page;
 }
 
-LinearAllocatorPage* LinearAllocator::GetPageForAlloc(
-    size_t sizeBytes,
-    size_t alignment)
+LinearAllocatorPage* LinearAllocator::GetPageForAlloc(size_t sizeBytes, size_t alignment)
 {
     // Fast path
     if (sizeBytes == m_increment && (alignment == 0 || alignment == m_increment))
@@ -268,10 +262,7 @@ LinearAllocatorPage* LinearAllocator::GetPageForAlloc(
     return page;
 }
 
-LinearAllocatorPage* LinearAllocator::FindPageForAlloc(
-    LinearAllocatorPage* list,
-    size_t sizeBytes,
-    size_t alignment) noexcept
+LinearAllocatorPage* LinearAllocator::FindPageForAlloc(LinearAllocatorPage* list, size_t sizeBytes, size_t alignment) noexcept
 {
     for (auto page = list; page != nullptr; page = page->pNextPage)
     {
@@ -285,12 +276,11 @@ LinearAllocatorPage* LinearAllocator::FindPageForAlloc(
 LinearAllocatorPage* LinearAllocator::GetNewPage()
 {
     const CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    const CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(m_increment);
+    const CD3DX12_RESOURCE_DESC   bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(m_increment);
 
     // Allocate the upload heap
     ComPtr<ID3D12Resource> spResource;
-    HRESULT hr = m_device->CreateCommittedResource(
-        &uploadHeapProperties,
+    HRESULT                hr = m_device->CreateCommittedResource(&uploadHeapProperties,
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -300,7 +290,8 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     {
         if (hr != E_OUTOFMEMORY)
         {
-            DebugTrace("LinearAllocator::GetNewPage resource allocation failed due to unexpected error %08X\n", static_cast<unsigned int>(hr));
+            DebugTrace("LinearAllocator::GetNewPage resource allocation failed due to unexpected error %08X\n",
+                static_cast<unsigned int>(hr));
         }
         return nullptr;
     }
@@ -315,15 +306,16 @@ LinearAllocatorPage* LinearAllocator::GetNewPage()
     memset(pMemory, 0, m_increment);
 
     // Add the page to the page list
-    auto page = new LinearAllocatorPage;
-    page->mMemory = pMemory;
+    auto page         = new LinearAllocatorPage;
+    page->mMemory     = pMemory;
     page->mGpuAddress = spResource->GetGPUVirtualAddress();
-    page->mSize = m_increment;
+    page->mSize       = m_increment;
     page->mUploadResource.Swap(spResource);
 
     // Set as head of the list
     page->pNextPage = m_unusedPages;
-    if (m_unusedPages) m_unusedPages->pPrevPage = page;
+    if (m_unusedPages)
+        m_unusedPages->pPrevPage = page;
     m_unusedPages = page;
     m_totalPages++;
 
@@ -372,7 +364,8 @@ void LinearAllocator::LinkPageChain(LinearAllocatorPage* page, LinearAllocatorPa
 
     // Follow chain to the end and append
     LinearAllocatorPage* lastPage = nullptr;
-    for (lastPage = page; lastPage->pNextPage != nullptr; lastPage = lastPage->pNextPage) {}
+    for (lastPage = page; lastPage->pNextPage != nullptr; lastPage = lastPage->pNextPage)
+    {}
 
     lastPage->pNextPage = list;
     if (list)
@@ -446,9 +439,7 @@ void LinearAllocator::FreePages(LinearAllocatorPage* page) noexcept
 #if VALIDATE_LISTS
 void LinearAllocator::ValidateList(LinearAllocatorPage* list)
 {
-    for (auto page = list, *lastPage = nullptr;
-        page != nullptr;
-        lastPage = page, page = page->pNextPage)
+    for (auto page = list, *lastPage = nullptr; page != nullptr; lastPage = page, page = page->pNextPage)
     {
         if (page->pPrevPage != lastPage)
         {
@@ -468,8 +459,8 @@ void LinearAllocator::ValidatePageLists()
 #if defined(_DEBUG) || defined(PROFILE)
 void LinearAllocator::SetDebugName(const char* name)
 {
-    wchar_t wname[MAX_PATH] = {};
-    const int result = MultiByteToWideChar(CP_UTF8, 0, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
+    wchar_t   wname[MAX_PATH] = {};
+    const int result          = MultiByteToWideChar(CP_UTF8, 0, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
     if (result > 0)
     {
         SetDebugName(wname);

@@ -26,13 +26,13 @@
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -40,7 +40,6 @@
 #define DIRECTX_TOOLKIT_API
 #endif
 #endif
-
 
 namespace DirectX
 {
@@ -51,11 +50,11 @@ namespace DirectX
         public:
             DIRECTX_TOOLKIT_API explicit CommonStates(_In_ ID3D12Device* device);
 
-            DIRECTX_TOOLKIT_API CommonStates(CommonStates&&) noexcept;
-            DIRECTX_TOOLKIT_API CommonStates& operator = (CommonStates&&) noexcept;
+            DIRECTX_TOOLKIT_API               CommonStates(CommonStates&&) noexcept;
+            DIRECTX_TOOLKIT_API CommonStates& operator=(CommonStates&&) noexcept;
 
-            CommonStates(const CommonStates&) = delete;
-            CommonStates& operator = (const CommonStates&) = delete;
+            CommonStates(const CommonStates&)            = delete;
+            CommonStates& operator=(const CommonStates&) = delete;
 
             DIRECTX_TOOLKIT_API virtual ~CommonStates();
 
@@ -79,12 +78,24 @@ namespace DirectX
             DIRECTX_TOOLKIT_API static const D3D12_RASTERIZER_DESC Wireframe;
 
             // Static sampler states.
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicWrap(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
-            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicClamp(unsigned int shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, unsigned int registerSpace = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointWrap(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticPointClamp(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearWrap(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticLinearClamp(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicWrap(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
+            DIRECTX_TOOLKIT_API static const D3D12_STATIC_SAMPLER_DESC StaticAnisotropicClamp(unsigned int shaderRegister,
+                D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+                unsigned int            registerSpace    = 0) noexcept;
 
             // Sampler states.
             DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE PointWrap() const;
@@ -113,5 +124,5 @@ namespace DirectX
 
             std::unique_ptr<Impl> pImpl;
         };
-    }
-}
+    } // namespace DX12
+} // namespace DirectX

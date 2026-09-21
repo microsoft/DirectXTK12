@@ -30,13 +30,13 @@
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -45,95 +45,91 @@
 #endif
 #endif
 
-
 namespace DirectX
 {
     // Pipeline state information for creating effects.
     struct DIRECTX_TOOLKIT_API EffectPipelineStateDescription
     {
-        EffectPipelineStateDescription(
-            _In_opt_ const D3D12_INPUT_LAYOUT_DESC* iinputLayout,
-            const D3D12_BLEND_DESC& blend,
-            const D3D12_DEPTH_STENCIL_DESC& depthStencil,
-            const D3D12_RASTERIZER_DESC& rasterizer,
-            const RenderTargetState& renderTarget,
-            D3D12_PRIMITIVE_TOPOLOGY_TYPE iprimitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+        EffectPipelineStateDescription(_In_opt_ const D3D12_INPUT_LAYOUT_DESC* iinputLayout,
+            const D3D12_BLEND_DESC&                                            blend,
+            const D3D12_DEPTH_STENCIL_DESC&                                    depthStencil,
+            const D3D12_RASTERIZER_DESC&                                       rasterizer,
+            const RenderTargetState&                                           renderTarget,
+            D3D12_PRIMITIVE_TOPOLOGY_TYPE                                      iprimitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
             D3D12_INDEX_BUFFER_STRIP_CUT_VALUE istripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED) noexcept
-            :
-            inputLayout{},
-            blendDesc(blend),
-            depthStencilDesc(depthStencil),
-            rasterizerDesc(rasterizer),
-            renderTargetState(renderTarget),
-            primitiveTopology(iprimitiveTopology),
-            stripCutValue(istripCutValue)
+            : inputLayout{},
+              blendDesc(blend),
+              depthStencilDesc(depthStencil),
+              rasterizerDesc(rasterizer),
+              renderTargetState(renderTarget),
+              primitiveTopology(iprimitiveTopology),
+              stripCutValue(istripCutValue)
         {
             if (iinputLayout)
                 this->inputLayout = *iinputLayout;
         }
 
-        EffectPipelineStateDescription(const EffectPipelineStateDescription&) = default;
+        EffectPipelineStateDescription(const EffectPipelineStateDescription&)            = default;
         EffectPipelineStateDescription& operator=(const EffectPipelineStateDescription&) = default;
 
-        EffectPipelineStateDescription(EffectPipelineStateDescription&&) = default;
+        EffectPipelineStateDescription(EffectPipelineStateDescription&&)            = default;
         EffectPipelineStateDescription& operator=(EffectPipelineStateDescription&&) = default;
 
-        void CreatePipelineState(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12RootSignature* rootSignature,
-            const D3D12_SHADER_BYTECODE& vertexShader,
-            const D3D12_SHADER_BYTECODE& pixelShader,
-            _Outptr_ ID3D12PipelineState** pPipelineState) const;
+        void CreatePipelineState(_In_ ID3D12Device* device,
+            _In_ ID3D12RootSignature*               rootSignature,
+            const D3D12_SHADER_BYTECODE&            vertexShader,
+            const D3D12_SHADER_BYTECODE&            pixelShader,
+            _Outptr_ ID3D12PipelineState**          pPipelineState) const;
 
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         D3D12_GRAPHICS_PIPELINE_STATE_DESC GetDesc() const noexcept
         {
             D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-            psoDesc.BlendState = blendDesc;
-            psoDesc.SampleMask = renderTargetState.sampleMask;
-            psoDesc.RasterizerState = rasterizerDesc;
-            psoDesc.DepthStencilState = depthStencilDesc;
-            psoDesc.InputLayout = inputLayout;
-            psoDesc.IBStripCutValue = stripCutValue;
-            psoDesc.PrimitiveTopologyType = primitiveTopology;
-            psoDesc.NumRenderTargets = renderTargetState.numRenderTargets;
+            psoDesc.BlendState                         = blendDesc;
+            psoDesc.SampleMask                         = renderTargetState.sampleMask;
+            psoDesc.RasterizerState                    = rasterizerDesc;
+            psoDesc.DepthStencilState                  = depthStencilDesc;
+            psoDesc.InputLayout                        = inputLayout;
+            psoDesc.IBStripCutValue                    = stripCutValue;
+            psoDesc.PrimitiveTopologyType              = primitiveTopology;
+            psoDesc.NumRenderTargets                   = renderTargetState.numRenderTargets;
             memcpy(psoDesc.RTVFormats, renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
-            psoDesc.DSVFormat = renderTargetState.dsvFormat;
+            psoDesc.DSVFormat  = renderTargetState.dsvFormat;
             psoDesc.SampleDesc = renderTargetState.sampleDesc;
-            psoDesc.NodeMask = renderTargetState.nodeMask;
+            psoDesc.NodeMask   = renderTargetState.nodeMask;
             return psoDesc;
         }
-    #else
+#else
         D3D12_GRAPHICS_PIPELINE_STATE_DESC* GetDesc(_Out_ D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc) const noexcept
         {
             if (!psoDesc)
                 return nullptr;
 
-            *psoDesc = {};
-            psoDesc->BlendState = blendDesc;
-            psoDesc->SampleMask = renderTargetState.sampleMask;
-            psoDesc->RasterizerState = rasterizerDesc;
-            psoDesc->DepthStencilState = depthStencilDesc;
-            psoDesc->InputLayout = inputLayout;
-            psoDesc->IBStripCutValue = stripCutValue;
+            *psoDesc                       = {};
+            psoDesc->BlendState            = blendDesc;
+            psoDesc->SampleMask            = renderTargetState.sampleMask;
+            psoDesc->RasterizerState       = rasterizerDesc;
+            psoDesc->DepthStencilState     = depthStencilDesc;
+            psoDesc->InputLayout           = inputLayout;
+            psoDesc->IBStripCutValue       = stripCutValue;
             psoDesc->PrimitiveTopologyType = primitiveTopology;
-            psoDesc->NumRenderTargets = renderTargetState.numRenderTargets;
+            psoDesc->NumRenderTargets      = renderTargetState.numRenderTargets;
             memcpy(psoDesc->RTVFormats, renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
-            psoDesc->DSVFormat = renderTargetState.dsvFormat;
+            psoDesc->DSVFormat  = renderTargetState.dsvFormat;
             psoDesc->SampleDesc = renderTargetState.sampleDesc;
-            psoDesc->NodeMask = renderTargetState.nodeMask;
+            psoDesc->NodeMask   = renderTargetState.nodeMask;
             return psoDesc;
         }
-    #endif
+#endif
 
         uint32_t ComputeHash() const noexcept;
 
-        D3D12_INPUT_LAYOUT_DESC             inputLayout;
-        D3D12_BLEND_DESC                    blendDesc;
-        D3D12_DEPTH_STENCIL_DESC            depthStencilDesc;
-        D3D12_RASTERIZER_DESC               rasterizerDesc;
-        RenderTargetState                   renderTargetState;
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE       primitiveTopology;
-        D3D12_INDEX_BUFFER_STRIP_CUT_VALUE  stripCutValue;
+        D3D12_INPUT_LAYOUT_DESC            inputLayout;
+        D3D12_BLEND_DESC                   blendDesc;
+        D3D12_DEPTH_STENCIL_DESC           depthStencilDesc;
+        D3D12_RASTERIZER_DESC              rasterizerDesc;
+        RenderTargetState                  renderTargetState;
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE      primitiveTopology;
+        D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue;
     };
-}
+} // namespace DirectX

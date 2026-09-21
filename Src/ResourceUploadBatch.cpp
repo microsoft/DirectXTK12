@@ -99,8 +99,7 @@ namespace
             }
             return false;
 
-        default:
-            return false;
+        default: return false;
         }
     }
 
@@ -111,10 +110,8 @@ namespace
         case DXGI_FORMAT_B8G8R8A8_UNORM:
         case DXGI_FORMAT_B8G8R8X8_UNORM:
         case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
-            return true;
-        default:
-            return false;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB: return true;
+        default:                              return false;
         }
     }
 
@@ -124,10 +121,8 @@ namespace
         {
         case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
         case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
-            return true;
-        default:
-            return false;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB: return true;
+        default:                              return false;
         }
     }
 
@@ -137,64 +132,53 @@ namespace
         {
         case DXGI_FORMAT_R32G32B32A32_FLOAT:
         case DXGI_FORMAT_R32G32B32A32_UINT:
-        case DXGI_FORMAT_R32G32B32A32_SINT:
-            return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+        case DXGI_FORMAT_R32G32B32A32_SINT:  return DXGI_FORMAT_R32G32B32A32_TYPELESS;
 
         case DXGI_FORMAT_R16G16B16A16_FLOAT:
         case DXGI_FORMAT_R16G16B16A16_UNORM:
         case DXGI_FORMAT_R16G16B16A16_UINT:
         case DXGI_FORMAT_R16G16B16A16_SNORM:
-        case DXGI_FORMAT_R16G16B16A16_SINT:
-            return DXGI_FORMAT_R16G16B16A16_TYPELESS;
+        case DXGI_FORMAT_R16G16B16A16_SINT:  return DXGI_FORMAT_R16G16B16A16_TYPELESS;
 
         case DXGI_FORMAT_R32G32_FLOAT:
         case DXGI_FORMAT_R32G32_UINT:
-        case DXGI_FORMAT_R32G32_SINT:
-            return DXGI_FORMAT_R32G32_TYPELESS;
+        case DXGI_FORMAT_R32G32_SINT:        return DXGI_FORMAT_R32G32_TYPELESS;
 
         case DXGI_FORMAT_R10G10B10A2_UNORM:
-        case DXGI_FORMAT_R10G10B10A2_UINT:
-            return DXGI_FORMAT_R10G10B10A2_TYPELESS;
+        case DXGI_FORMAT_R10G10B10A2_UINT:   return DXGI_FORMAT_R10G10B10A2_TYPELESS;
 
         case DXGI_FORMAT_R8G8B8A8_UNORM:
         case DXGI_FORMAT_R8G8B8A8_UINT:
         case DXGI_FORMAT_R8G8B8A8_SNORM:
-        case DXGI_FORMAT_R8G8B8A8_SINT:
-            return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+        case DXGI_FORMAT_R8G8B8A8_SINT:      return DXGI_FORMAT_R8G8B8A8_TYPELESS;
 
         case DXGI_FORMAT_R16G16_FLOAT:
         case DXGI_FORMAT_R16G16_UNORM:
         case DXGI_FORMAT_R16G16_UINT:
         case DXGI_FORMAT_R16G16_SNORM:
-        case DXGI_FORMAT_R16G16_SINT:
-            return DXGI_FORMAT_R16G16_TYPELESS;
+        case DXGI_FORMAT_R16G16_SINT:        return DXGI_FORMAT_R16G16_TYPELESS;
 
         case DXGI_FORMAT_R32_FLOAT:
         case DXGI_FORMAT_R32_UINT:
-        case DXGI_FORMAT_R32_SINT:
-            return DXGI_FORMAT_R32_TYPELESS;
+        case DXGI_FORMAT_R32_SINT:           return DXGI_FORMAT_R32_TYPELESS;
 
         case DXGI_FORMAT_R8G8_UNORM:
         case DXGI_FORMAT_R8G8_UINT:
         case DXGI_FORMAT_R8G8_SNORM:
-        case DXGI_FORMAT_R8G8_SINT:
-            return DXGI_FORMAT_R8G8_TYPELESS;
+        case DXGI_FORMAT_R8G8_SINT:          return DXGI_FORMAT_R8G8_TYPELESS;
 
         case DXGI_FORMAT_R16_FLOAT:
         case DXGI_FORMAT_R16_UNORM:
         case DXGI_FORMAT_R16_UINT:
         case DXGI_FORMAT_R16_SNORM:
-        case DXGI_FORMAT_R16_SINT:
-            return DXGI_FORMAT_R16_TYPELESS;
+        case DXGI_FORMAT_R16_SINT:           return DXGI_FORMAT_R16_TYPELESS;
 
         case DXGI_FORMAT_R8_UNORM:
         case DXGI_FORMAT_R8_UINT:
         case DXGI_FORMAT_R8_SNORM:
-        case DXGI_FORMAT_R8_SINT:
-            return DXGI_FORMAT_R8_TYPELESS;
+        case DXGI_FORMAT_R8_SINT:            return DXGI_FORMAT_R8_TYPELESS;
 
-        default:
-            return format;
+        default:                             return format;
         }
     }
 
@@ -209,50 +193,44 @@ namespace
             RootParameterCount
         };
 
-    #pragma pack(push, 4)
+#pragma pack(push, 4)
         struct ConstantData
         {
             XMFLOAT2 InvOutTexelSize;
             uint32_t SrcMipIndex;
         };
-    #pragma pack(pop)
+#pragma pack(pop)
 
         static constexpr uint32_t Num32BitConstants = static_cast<uint32_t>(sizeof(ConstantData) / sizeof(uint32_t));
-        static constexpr uint32_t ThreadGroupSize = 8;
+        static constexpr uint32_t ThreadGroupSize   = 8;
 
         ComPtr<ID3D12RootSignature> rootSignature;
         ComPtr<ID3D12PipelineState> generateMipsPSO;
 
-        GenerateMipsResources(
-            _In_ ID3D12Device* device)
+        GenerateMipsResources(_In_ ID3D12Device* device)
         {
-            rootSignature = CreateGenMipsRootSignature(device);
+            rootSignature   = CreateGenMipsRootSignature(device);
             generateMipsPSO = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
         }
 
-        GenerateMipsResources(const GenerateMipsResources&) = delete;
+        GenerateMipsResources(const GenerateMipsResources&)            = delete;
         GenerateMipsResources& operator=(const GenerateMipsResources&) = delete;
 
-        GenerateMipsResources(GenerateMipsResources&&) = default;
+        GenerateMipsResources(GenerateMipsResources&&)            = default;
         GenerateMipsResources& operator=(GenerateMipsResources&&) = default;
 
     private:
-        static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(
-            _In_ ID3D12Device* device)
+        static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(_In_ ID3D12Device* device)
         {
-            ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-            #ifdef _GAMING_XBOX_SCARLETT
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-            #endif
-                | D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
+            ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags
+                = D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+                  | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
+#ifdef _GAMING_XBOX_SCARLETT
+                  | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
+#endif
+                  | D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
-            const CD3DX12_STATIC_SAMPLER_DESC sampler(
-                0, // register
+            const CD3DX12_STATIC_SAMPLER_DESC sampler(0, // register
                 D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT,
                 D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
                 D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
@@ -277,16 +255,15 @@ namespace
             return rootSignature;
         }
 
-        static ComPtr<ID3D12PipelineState> CreateGenMipsPipelineState(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12RootSignature* rootSignature,
-            _In_reads_(bytecodeSize) const uint8_t* bytecode,
-            _In_ size_t bytecodeSize)
+        static ComPtr<ID3D12PipelineState> CreateGenMipsPipelineState(_In_ ID3D12Device* device,
+            _In_ ID3D12RootSignature*                                                    rootSignature,
+            _In_reads_(bytecodeSize) const uint8_t*                                      bytecode,
+            _In_ size_t                                                                  bytecodeSize)
         {
             D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
-            desc.CS.BytecodeLength = bytecodeSize;
-            desc.CS.pShaderBytecode = bytecode;
-            desc.pRootSignature = rootSignature;
+            desc.CS.BytecodeLength                 = bytecodeSize;
+            desc.CS.pShaderBytecode                = bytecode;
+            desc.pRootSignature                    = rootSignature;
 
             ComPtr<ID3D12PipelineState> pso;
             ThrowIfFailed(device->CreateComputePipelineState(&desc, IID_GRAPHICS_PPV_ARGS(pso.GetAddressOf())));
@@ -301,32 +278,28 @@ namespace
 class ResourceUploadBatch::Impl
 {
 public:
-    Impl(
-        _In_ ID3D12Device* device)
-        : mDevice(device)
-        , mCommandType(D3D12_COMMAND_LIST_TYPE_DIRECT)
-        , mInBeginEndBlock(false)
-        , mTypedUAVLoadAdditionalFormats(false)
-        , mStandardSwizzle64KBSupported(false)
+    Impl(_In_ ID3D12Device* device)
+        : mDevice(device),
+          mCommandType(D3D12_COMMAND_LIST_TYPE_DIRECT),
+          mInBeginEndBlock(false),
+          mTypedUAVLoadAdditionalFormats(false),
+          mStandardSwizzle64KBSupported(false)
     {
         if (!device)
             throw std::invalid_argument("Direct3D device is null");
 
         D3D12_FEATURE_DATA_D3D12_OPTIONS options = {};
-        if (SUCCEEDED(device->CheckFeatureSupport(
-            D3D12_FEATURE_D3D12_OPTIONS,
-            &options,
-            sizeof(options))))
+        if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options, sizeof(options))))
         {
             mTypedUAVLoadAdditionalFormats = options.TypedUAVLoadAdditionalFormats != 0;
-            mStandardSwizzle64KBSupported = options.StandardSwizzle64KBSupported != 0;
+            mStandardSwizzle64KBSupported  = options.StandardSwizzle64KBSupported != 0;
         }
     }
 
-    Impl(const Impl&) = delete;
+    Impl(const Impl&)            = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = default;
+    Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     // Call this before your multiple calls to Upload.
@@ -339,8 +312,7 @@ public:
         {
         case D3D12_COMMAND_LIST_TYPE_DIRECT:
         case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-        case D3D12_COMMAND_LIST_TYPE_COPY:
-            break;
+        case D3D12_COMMAND_LIST_TYPE_COPY:    break;
 
         default:
             DebugTrace("ResourceUploadBatch only supports Direct, Compute, and Copy command queues\n");
@@ -351,21 +323,21 @@ public:
 
         SetDebugObjectName(mCmdAlloc.Get(), L"ResourceUploadBatch");
 
-        ThrowIfFailed(mDevice->CreateCommandList(1, commandType, mCmdAlloc.Get(), nullptr, IID_GRAPHICS_PPV_ARGS(mList.ReleaseAndGetAddressOf())));
+        ThrowIfFailed(
+            mDevice->CreateCommandList(1, commandType, mCmdAlloc.Get(), nullptr, IID_GRAPHICS_PPV_ARGS(mList.ReleaseAndGetAddressOf())));
 
         SetDebugObjectName(mList.Get(), L"ResourceUploadBatch");
 
-        mCommandType = commandType;
+        mCommandType     = commandType;
         mInBeginEndBlock = true;
     }
 
     // Asynchronously uploads a resource. The memory in subRes is copied.
     // The resource must be in the COPY_DEST or COMMON state.
-    void Upload(
-        _In_ ID3D12Resource* resource,
-        uint32_t subresourceIndexStart,
+    void Upload(_In_ ID3D12Resource*                              resource,
+        uint32_t                                                  subresourceIndexStart,
         _In_reads_(numSubresources) const D3D12_SUBRESOURCE_DATA* subRes,
-        uint32_t numSubresources)
+        uint32_t                                                  numSubresources)
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
@@ -373,18 +345,14 @@ public:
         if (!resource || !subRes || !numSubresources)
             throw std::invalid_argument("Resource/subresource are null");
 
-        const UINT64 uploadSize = GetRequiredIntermediateSize(
-            resource,
-            subresourceIndexStart,
-            numSubresources);
+        const UINT64 uploadSize = GetRequiredIntermediateSize(resource, subresourceIndexStart, numSubresources);
 
         const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-        const auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+        const auto                    resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
 
         // Create a temporary buffer
         ComPtr<ID3D12Resource> scratchResource = nullptr;
-        ThrowIfFailed(mDevice->CreateCommittedResource(
-            &heapProps,
+        ThrowIfFailed(mDevice->CreateCommittedResource(&heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resDesc,
             D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -394,22 +362,25 @@ public:
         SetDebugObjectName(scratchResource.Get(), L"ResourceUploadBatch Temporary");
 
         // Submit resource copy to command list
-        UpdateSubresources(mList.Get(), resource, scratchResource.Get(), 0, subresourceIndexStart, numSubresources,
-        #if defined(_XBOX_ONE) && defined(_TITLE)
-                    // Workaround for header constness issue
+        UpdateSubresources(mList.Get(),
+            resource,
+            scratchResource.Get(),
+            0,
+            subresourceIndexStart,
+            numSubresources,
+#if defined(_XBOX_ONE) && defined(_TITLE)
+            // Workaround for header constness issue
             const_cast<D3D12_SUBRESOURCE_DATA*>(subRes)
-        #else
+#else
             subRes
-        #endif
+#endif
         );
 
         // Remember this upload object for delayed release
         mTrackedObjects.push_back(scratchResource);
     }
 
-    void Upload(
-        _In_ ID3D12Resource* resource,
-        const SharedGraphicsResource& buffer)
+    void Upload(_In_ ID3D12Resource* resource, const SharedGraphicsResource& buffer)
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
@@ -440,12 +411,12 @@ public:
             throw std::runtime_error("GenerateMips cannot operate on a copy queue");
         }
 
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& desc = *resource->GetDesc(&tmpDesc);
-    #endif
+        const auto&         desc = *resource->GetDesc(&tmpDesc);
+#endif
 
         if (desc.MipLevels == 1)
         {
@@ -490,12 +461,12 @@ public:
         }
         else if (FormatIsBGR(desc.Format))
         {
-        #if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
+#if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
             if (!mStandardSwizzle64KBSupported)
             {
                 throw std::runtime_error("GenerateMips needs StandardSwizzle64KBSupported device support for BGR");
             }
-        #endif
+#endif
 
             GenerateMips_TexturePathBGR(resource);
         }
@@ -506,10 +477,7 @@ public:
     }
 
     // Transition a resource once you're done with it
-    void Transition(
-        _In_ ID3D12Resource* resource,
-        _In_ D3D12_RESOURCE_STATES stateBefore,
-        _In_ D3D12_RESOURCE_STATES stateAfter)
+    void Transition(_In_ ID3D12Resource* resource, _In_ D3D12_RESOURCE_STATES stateBefore, _In_ D3D12_RESOURCE_STATES stateAfter)
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
@@ -522,8 +490,7 @@ public:
             switch (stateAfter)
             {
             case D3D12_RESOURCE_STATE_COPY_DEST:
-            case D3D12_RESOURCE_STATE_COPY_SOURCE:
-                break;
+            case D3D12_RESOURCE_STATE_COPY_SOURCE: break;
 
             default:
                 // Ignore other states for copy queues.
@@ -539,8 +506,7 @@ public:
             case D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE:
             case D3D12_RESOURCE_STATE_INDIRECT_ARGUMENT:
             case D3D12_RESOURCE_STATE_COPY_DEST:
-            case D3D12_RESOURCE_STATE_COPY_SOURCE:
-                break;
+            case D3D12_RESOURCE_STATE_COPY_SOURCE:                break;
 
             default:
                 // Ignore other states for compute queues.
@@ -554,8 +520,7 @@ public:
     // Submits all the uploads to the driver.
     // No more uploads can happen after this call until Begin is called again.
     // This returns a handle to an event that can be waited on.
-    std::future<void> End(
-        _In_ ID3D12CommandQueue* commandQueue)
+    std::future<void> End(_In_ ID3D12CommandQueue* commandQueue)
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("ResourceUploadBatch already closed.");
@@ -582,16 +547,17 @@ public:
         ThrowIfFailed(fence->SetEventOnCompletion(1ULL, gpuCompletedEvent));
 
         // Create a packet of data that'll be passed to our waiting upload thread
-        auto uploadBatch = new UploadBatch();
+        auto uploadBatch         = new UploadBatch();
         uploadBatch->CommandList = mList;
-        uploadBatch->Fence = fence;
+        uploadBatch->Fence       = fence;
         uploadBatch->GpuCompleteEvent.reset(gpuCompletedEvent);
         std::swap(mTrackedObjects, uploadBatch->TrackedObjects);
         std::swap(mTrackedMemoryResources, uploadBatch->TrackedMemoryResources);
 
         // Kick off a thread that waits for the upload to complete on the GPU timeline.
         // Let the thread run autonomously, but provide a future the user can wait on.
-        std::future<void> future = std::async(std::launch::async, [uploadBatch]()
+        std::future<void> future = std::async(std::launch::async,
+            [uploadBatch]()
             {
                 // Wait on the GPU-complete notification
                 const DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent.get(), INFINITE);
@@ -599,7 +565,8 @@ public:
                 {
                     if (wr == WAIT_FAILED)
                     {
-                        throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForSingleObject");
+                        throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()),
+                            "WaitForSingleObject");
                     }
                     else
                     {
@@ -613,8 +580,8 @@ public:
                 delete uploadBatch;
             });
 
-            // Reset our state
-        mCommandType = D3D12_COMMAND_LIST_TYPE_DIRECT;
+        // Reset our state
+        mCommandType     = D3D12_COMMAND_LIST_TYPE_DIRECT;
         mInBeginEndBlock = false;
         mList.Reset();
         mCmdAlloc.Reset();
@@ -636,13 +603,13 @@ public:
 
         if (FormatIsBGR(format))
         {
-        #if defined(_GAMING_XBOX) || (defined(_XBOX_ONE) && defined(_TITLE))
-                    // We know the RGB and BGR memory layouts match for Xbox One
+#if defined(_GAMING_XBOX) || (defined(_XBOX_ONE) && defined(_TITLE))
+            // We know the RGB and BGR memory layouts match for Xbox One
             return true;
-        #else
-                    // BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store plus matching layouts
+#else
+            // BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store plus matching layouts
             return mTypedUAVLoadAdditionalFormats && mStandardSwizzle64KBSupported;
-        #endif
+#endif
         }
 
         if (FormatIsSRGB(format))
@@ -656,22 +623,22 @@ public:
 
 private:
     // Resource is UAV compatible
-    void GenerateMips_UnorderedAccessPath(
-        _In_ ID3D12Resource* resource)
+    void GenerateMips_UnorderedAccessPath(_In_ ID3D12Resource* resource)
     {
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& desc = *resource->GetDesc(&tmpDesc);
-    #endif
+        const auto&         desc = *resource->GetDesc(&tmpDesc);
+#endif
         assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
 
         const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
-        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE) ?
+                                                        D3D12_RESOURCE_STATE_COPY_DEST :
+                                                        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Create a staging resource if we have to
         ComPtr<ID3D12Resource> staging;
@@ -681,8 +648,7 @@ private:
             stagingDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
             stagingDesc.Format = ConvertSRVtoResourceFormat(desc.Format);
 
-            ThrowIfFailed(mDevice->CreateCommittedResource(
-                &defaultHeapProperties,
+            ThrowIfFailed(mDevice->CreateCommittedResource(&defaultHeapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &stagingDesc,
                 D3D12_RESOURCE_STATE_COPY_DEST,
@@ -710,10 +676,10 @@ private:
 
         // Create a descriptor heap that holds our resource descriptors
         ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-        D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
-        descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-        descriptorHeapDesc.NumDescriptors = desc.MipLevels;
+        D3D12_DESCRIPTOR_HEAP_DESC   descriptorHeapDesc = {};
+        descriptorHeapDesc.Type                         = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        descriptorHeapDesc.Flags                        = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+        descriptorHeapDesc.NumDescriptors               = desc.MipLevels;
         mDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_GRAPHICS_PPV_ARGS(descriptorHeap.GetAddressOf()));
 
         SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
@@ -721,18 +687,18 @@ private:
         const auto descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         // Create the top-level SRV
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         CD3DX12_CPU_DESCRIPTOR_HANDLE handleIt(descriptorHeap->GetCPUDescriptorHandleForHeapStart());
-    #else
+#else
         CD3DX12_CPU_DESCRIPTOR_HANDLE handleIt;
         std::ignore = descriptorHeap->GetCPUDescriptorHandleForHeapStart(&handleIt);
-    #endif
+#endif
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = desc.Format;
-        srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-        srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-        srvDesc.Texture2D.MostDetailedMip = 0;
-        srvDesc.Texture2D.MipLevels = desc.MipLevels;
+        srvDesc.Format                          = desc.Format;
+        srvDesc.ViewDimension                   = D3D12_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Shader4ComponentMapping         = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+        srvDesc.Texture2D.MostDetailedMip       = 0;
+        srvDesc.Texture2D.MipLevels             = desc.MipLevels;
 
         mDevice->CreateShaderResourceView(staging.Get(), &srvDesc, handleIt);
 
@@ -740,9 +706,9 @@ private:
         for (uint16_t mip = 1; mip < desc.MipLevels; ++mip)
         {
             D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-            uavDesc.Format = desc.Format;
-            uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-            uavDesc.Texture2D.MipSlice = mip;
+            uavDesc.Format                           = desc.Format;
+            uavDesc.ViewDimension                    = D3D12_UAV_DIMENSION_TEXTURE2D;
+            uavDesc.Texture2D.MipSlice               = mip;
 
             handleIt.Offset(descriptorSize);
             mDevice->CreateUnorderedAccessView(staging.Get(), nullptr, &uavDesc, handleIt);
@@ -750,25 +716,25 @@ private:
 
         // Set up UAV barrier (used in loop)
         D3D12_RESOURCE_BARRIER barrierUAV = {};
-        barrierUAV.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
-        barrierUAV.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        barrierUAV.UAV.pResource = staging.Get();
+        barrierUAV.Type                   = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+        barrierUAV.Flags                  = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrierUAV.UAV.pResource          = staging.Get();
 
         // Barrier for transitioning the subresources to UAVs
         D3D12_RESOURCE_BARRIER srv2uavDesc = {};
-        srv2uavDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        srv2uavDesc.Transition.pResource = staging.Get();
+        srv2uavDesc.Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        srv2uavDesc.Transition.pResource   = staging.Get();
         srv2uavDesc.Transition.Subresource = 0;
         srv2uavDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-        srv2uavDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+        srv2uavDesc.Transition.StateAfter  = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 
         // Barrier for transitioning the subresources to SRVs
         D3D12_RESOURCE_BARRIER uav2srvDesc = {};
-        uav2srvDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        uav2srvDesc.Transition.pResource = staging.Get();
+        uav2srvDesc.Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        uav2srvDesc.Transition.pResource   = staging.Get();
         uav2srvDesc.Transition.Subresource = 0;
         uav2srvDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-        uav2srvDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+        uav2srvDesc.Transition.StateAfter  = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 
         // based on format, select srgb or not
         ComPtr<ID3D12PipelineState> pso = mGenMipsResources->generateMipsPSO;
@@ -778,23 +744,23 @@ private:
         mList->SetPipelineState(pso.Get());
         mList->SetDescriptorHeaps(1, descriptorHeap.GetAddressOf());
 
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         D3D12_GPU_DESCRIPTOR_HANDLE handle(descriptorHeap->GetGPUDescriptorHandleForHeapStart());
-    #else
+#else
         D3D12_GPU_DESCRIPTOR_HANDLE handle;
         std::ignore = descriptorHeap->GetGPUDescriptorHandleForHeapStart(&handle);
-    #endif
+#endif
         mList->SetComputeRootDescriptorTable(GenerateMipsResources::SourceTexture, handle);
 
         // Get the descriptor handle -- uavH will increment over each loop
         CD3DX12_GPU_DESCRIPTOR_HANDLE uavH(handle, descriptorSize); // offset by 1 descriptor
 
         // Process each mip
-        auto mipWidth = static_cast<uint32_t>(desc.Width);
+        auto     mipWidth  = static_cast<uint32_t>(desc.Width);
         uint32_t mipHeight = desc.Height;
         for (uint32_t mip = 1; mip < desc.MipLevels; ++mip)
         {
-            mipWidth = std::max<uint32_t>(1, mipWidth >> 1);
+            mipWidth  = std::max<uint32_t>(1, mipWidth >> 1);
             mipHeight = std::max<uint32_t>(1, mipHeight >> 1);
 
             // Transition the mip to a UAV
@@ -806,17 +772,12 @@ private:
 
             // Set constants
             GenerateMipsResources::ConstantData constants;
-            constants.SrcMipIndex = mip - 1;
+            constants.SrcMipIndex     = mip - 1;
             constants.InvOutTexelSize = XMFLOAT2(1 / float(mipWidth), 1 / float(mipHeight));
-            mList->SetComputeRoot32BitConstants(
-                GenerateMipsResources::Constants,
-                GenerateMipsResources::Num32BitConstants,
-                &constants,
-                0);
+            mList->SetComputeRoot32BitConstants(GenerateMipsResources::Constants, GenerateMipsResources::Num32BitConstants, &constants, 0);
 
             // Process this mip
-            mList->Dispatch(
-                (mipWidth + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
+            mList->Dispatch((mipWidth + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
                 (mipHeight + GenerateMipsResources::ThreadGroupSize - 1) / GenerateMipsResources::ThreadGroupSize,
                 1);
 
@@ -837,13 +798,13 @@ private:
             D3D12_RESOURCE_BARRIER barrier[2] = {};
             barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
             barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-            barrier[0].Transition.pResource = staging.Get();
-            barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-            barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+            barrier[0].Transition.pResource                                       = staging.Get();
+            barrier[0].Transition.StateBefore                                     = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+            barrier[0].Transition.StateAfter                                      = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
-            barrier[1].Transition.pResource = resource;
+            barrier[1].Transition.pResource   = resource;
             barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
-            barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+            barrier[1].Transition.StateAfter  = D3D12_RESOURCE_STATE_COPY_DEST;
 
             mList->ResourceBarrier(2, barrier);
 
@@ -868,18 +829,17 @@ private:
     }
 
     // Resource is not UAV compatible
-    void GenerateMips_TexturePath(
-        _In_ ID3D12Resource* resource)
+    void GenerateMips_TexturePath(_In_ ID3D12Resource* resource)
     {
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto resourceDesc = resource->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& resourceDesc = *resource->GetDesc(&tmpDesc);
-    #endif
+        const auto&         resourceDesc = *resource->GetDesc(&tmpDesc);
+#endif
         assert(!FormatIsBGR(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
 
-        auto copyDesc = resourceDesc;
+        auto copyDesc   = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
@@ -887,8 +847,7 @@ private:
 
         // Create a resource with the same description, but without SRGB, and with UAV flags
         ComPtr<ID3D12Resource> resourceCopy;
-        ThrowIfFailed(mDevice->CreateCommittedResource(
-            &heapProperties,
+        ThrowIfFailed(mDevice->CreateCommittedResource(&heapProperties,
             D3D12_HEAP_FLAG_NONE,
             &copyDesc,
             D3D12_RESOURCE_STATE_COPY_DEST,
@@ -898,8 +857,8 @@ private:
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
         assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
-        const D3D12_RESOURCE_STATES originalState = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        const D3D12_RESOURCE_STATES originalState
+            = mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of resource data
         TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
@@ -917,13 +876,13 @@ private:
         D3D12_RESOURCE_BARRIER barrier[2] = {};
         barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
         barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        barrier[0].Transition.pResource = resourceCopy.Get();
-        barrier[0].Transition.StateBefore = originalState;
-        barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        barrier[0].Transition.pResource                                       = resourceCopy.Get();
+        barrier[0].Transition.StateBefore                                     = originalState;
+        barrier[0].Transition.StateAfter                                      = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
-        barrier[1].Transition.pResource = resource;
+        barrier[1].Transition.pResource   = resource;
         barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
-        barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+        barrier[1].Transition.StateAfter  = D3D12_RESOURCE_STATE_COPY_DEST;
 
         mList->ResourceBarrier(2, barrier);
 
@@ -938,34 +897,33 @@ private:
     }
 
     // Resource is not UAV compatible (copy via alias to avoid validation failure)
-    void GenerateMips_TexturePathBGR(
-        _In_ ID3D12Resource* resource)
+    void GenerateMips_TexturePathBGR(_In_ ID3D12Resource* resource)
     {
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto resourceDesc = resource->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& resourceDesc = *resource->GetDesc(&tmpDesc);
-    #endif
+        const auto&         resourceDesc = *resource->GetDesc(&tmpDesc);
+#endif
         assert(FormatIsBGR(resourceDesc.Format));
 
         // Create a resource with the same description with RGB and with UAV flags
-        auto copyDesc = resourceDesc;
+        auto copyDesc   = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-    #if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
+#if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
         copyDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE;
-    #endif
+#endif
 
         D3D12_HEAP_DESC heapDesc = {};
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
-    #else
+#else
         D3D12_RESOURCE_ALLOCATION_INFO allocInfo;
         std::ignore = mDevice->GetResourceAllocationInfo(&allocInfo, 0, 1, &copyDesc);
-    #endif
-        heapDesc.SizeInBytes = allocInfo.SizeInBytes;
-        heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
+#endif
+        heapDesc.SizeInBytes     = allocInfo.SizeInBytes;
+        heapDesc.Flags           = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
         ComPtr<ID3D12Heap> heap;
@@ -974,8 +932,7 @@ private:
         SetDebugObjectName(heap.Get(), L"ResourceUploadBatch");
 
         ComPtr<ID3D12Resource> resourceCopy;
-        ThrowIfFailed(mDevice->CreatePlacedResource(
-            heap.Get(),
+        ThrowIfFailed(mDevice->CreatePlacedResource(heap.Get(),
             0,
             &copyDesc,
             D3D12_RESOURCE_STATE_COPY_DEST,
@@ -985,14 +942,15 @@ private:
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
         // Create a BGRA alias
-        auto aliasDesc = resourceDesc;
-        aliasDesc.Format = (resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM || resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM_SRGB) ? DXGI_FORMAT_B8G8R8X8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM;
+        auto aliasDesc   = resourceDesc;
+        aliasDesc.Format = (resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM || resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM_SRGB) ?
+                               DXGI_FORMAT_B8G8R8X8_UNORM :
+                               DXGI_FORMAT_B8G8R8A8_UNORM;
         aliasDesc.Layout = copyDesc.Layout;
         aliasDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
         ComPtr<ID3D12Resource> aliasCopy;
-        ThrowIfFailed(mDevice->CreatePlacedResource(
-            heap.Get(),
+        ThrowIfFailed(mDevice->CreatePlacedResource(heap.Get(),
             0,
             &aliasDesc,
             D3D12_RESOURCE_STATE_COPY_DEST,
@@ -1002,19 +960,20 @@ private:
         SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
 
         assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
-        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
-            ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE) ?
+                                                        D3D12_RESOURCE_STATE_COPY_DEST :
+                                                        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
         // Copy the top mip of the resource data BGR to RGB
-        D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
-        aliasBarrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
+        D3D12_RESOURCE_BARRIER aliasBarrier[3]  = {};
+        aliasBarrier[0].Type                    = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
         aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
 
         aliasBarrier[1].Type = aliasBarrier[2].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
         aliasBarrier[1].Transition.Subresource = aliasBarrier[2].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        aliasBarrier[1].Transition.pResource = resource;
-        aliasBarrier[1].Transition.StateBefore = originalState;
-        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        aliasBarrier[1].Transition.pResource                                            = resource;
+        aliasBarrier[1].Transition.StateBefore                                          = originalState;
+        aliasBarrier[1].Transition.StateAfter                                           = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
         mList->ResourceBarrier(2, aliasBarrier);
 
@@ -1024,26 +983,26 @@ private:
 
         // Generate the mips
         aliasBarrier[0].Aliasing.pResourceBefore = aliasCopy.Get();
-        aliasBarrier[0].Aliasing.pResourceAfter = resourceCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter  = resourceCopy.Get();
 
-        aliasBarrier[1].Transition.pResource = resourceCopy.Get();
+        aliasBarrier[1].Transition.pResource   = resourceCopy.Get();
         aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-        aliasBarrier[1].Transition.StateAfter = originalState;
+        aliasBarrier[1].Transition.StateAfter  = originalState;
 
         mList->ResourceBarrier(2, aliasBarrier);
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
         // Direct copy back RGB to BGR
         aliasBarrier[0].Aliasing.pResourceBefore = resourceCopy.Get();
-        aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter  = aliasCopy.Get();
 
-        aliasBarrier[1].Transition.pResource = aliasCopy.Get();
+        aliasBarrier[1].Transition.pResource   = aliasCopy.Get();
         aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        aliasBarrier[1].Transition.StateAfter  = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
-        aliasBarrier[2].Transition.pResource = resource;
+        aliasBarrier[2].Transition.pResource   = resource;
         aliasBarrier[2].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
-        aliasBarrier[2].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+        aliasBarrier[2].Transition.StateAfter  = D3D12_RESOURCE_STATE_COPY_DEST;
 
         mList->ResourceBarrier(3, aliasBarrier);
 
@@ -1060,91 +1019,71 @@ private:
 
     struct UploadBatch
     {
-        std::vector<ComPtr<ID3D12DeviceChild>>  TrackedObjects;
-        std::vector<SharedGraphicsResource>     TrackedMemoryResources;
-        ComPtr<ID3D12GraphicsCommandList>       CommandList;
-        ComPtr<ID3D12Fence>                     Fence;
-        ScopedHandle                            GpuCompleteEvent;
+        std::vector<ComPtr<ID3D12DeviceChild>> TrackedObjects;
+        std::vector<SharedGraphicsResource>    TrackedMemoryResources;
+        ComPtr<ID3D12GraphicsCommandList>      CommandList;
+        ComPtr<ID3D12Fence>                    Fence;
+        ScopedHandle                           GpuCompleteEvent;
 
         UploadBatch() noexcept {}
     };
 
-    ComPtr<ID3D12Device>                        mDevice;
-    ComPtr<ID3D12CommandAllocator>              mCmdAlloc;
-    ComPtr<ID3D12GraphicsCommandList>           mList;
-    std::unique_ptr<GenerateMipsResources>      mGenMipsResources;
+    ComPtr<ID3D12Device>                   mDevice;
+    ComPtr<ID3D12CommandAllocator>         mCmdAlloc;
+    ComPtr<ID3D12GraphicsCommandList>      mList;
+    std::unique_ptr<GenerateMipsResources> mGenMipsResources;
 
-    std::vector<ComPtr<ID3D12DeviceChild>>      mTrackedObjects;
-    std::vector<SharedGraphicsResource>         mTrackedMemoryResources;
+    std::vector<ComPtr<ID3D12DeviceChild>> mTrackedObjects;
+    std::vector<SharedGraphicsResource>    mTrackedMemoryResources;
 
-    D3D12_COMMAND_LIST_TYPE                     mCommandType;
-    bool                                        mInBeginEndBlock;
-    bool                                        mTypedUAVLoadAdditionalFormats;
-    bool                                        mStandardSwizzle64KBSupported;
+    D3D12_COMMAND_LIST_TYPE mCommandType;
+    bool                    mInBeginEndBlock;
+    bool                    mTypedUAVLoadAdditionalFormats;
+    bool                    mStandardSwizzle64KBSupported;
 };
-
-
 
 // Public constructor.
 ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false)
     : pImpl(std::make_unique<Impl>(device))
 {}
 
-
-ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept = default;
-ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&&) noexcept = default;
-ResourceUploadBatch::~ResourceUploadBatch() = default;
-
+ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept            = default;
+ResourceUploadBatch& ResourceUploadBatch::operator=(ResourceUploadBatch&&) noexcept = default;
+ResourceUploadBatch::~ResourceUploadBatch()                                         = default;
 
 void ResourceUploadBatch::Begin(D3D12_COMMAND_LIST_TYPE commandType)
 {
     pImpl->Begin(commandType);
 }
 
-
-_Use_decl_annotations_
-void ResourceUploadBatch::Upload(
-    ID3D12Resource* resource,
-    uint32_t subresourceIndexStart,
-    const D3D12_SUBRESOURCE_DATA* subRes,
-    uint32_t numSubresources)
+_Use_decl_annotations_ void ResourceUploadBatch::Upload(ID3D12Resource* resource,
+    uint32_t                                                            subresourceIndexStart,
+    const D3D12_SUBRESOURCE_DATA*                                       subRes,
+    uint32_t                                                            numSubresources)
 {
     pImpl->Upload(resource, subresourceIndexStart, subRes, numSubresources);
 }
 
-
-_Use_decl_annotations_
-void ResourceUploadBatch::Upload(
-    ID3D12Resource* resource,
-    const SharedGraphicsResource& buffer
-)
+_Use_decl_annotations_ void ResourceUploadBatch::Upload(ID3D12Resource* resource, const SharedGraphicsResource& buffer)
 {
     pImpl->Upload(resource, buffer);
 }
-
-
 
 void ResourceUploadBatch::GenerateMips(_In_ ID3D12Resource* resource)
 {
     pImpl->GenerateMips(resource);
 }
 
-
-_Use_decl_annotations_
-void ResourceUploadBatch::Transition(
-    ID3D12Resource* resource,
-    D3D12_RESOURCE_STATES stateBefore,
-    D3D12_RESOURCE_STATES stateAfter)
+_Use_decl_annotations_ void
+ResourceUploadBatch::Transition(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter)
 {
     pImpl->Transition(resource, stateBefore, stateAfter);
 }
-
 
 std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue)
 {
     return pImpl->End(commandQueue);
 }
-
 
 bool ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
 {

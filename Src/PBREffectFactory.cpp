@@ -16,20 +16,18 @@
 
 #include <mutex>
 
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 namespace
 {
     template<typename T>
-    void SetPBRProperties(
-        _In_ T* effect,
+    void SetPBRProperties(_In_ T*        effect,
         const EffectFactory::EffectInfo& info,
-        _In_ const DescriptorHeap* textures,
-        int textureDescriptorOffset,
-        _In_ const DescriptorHeap* samplers,
-        int samplerDescriptorOffset)
+        _In_ const DescriptorHeap*       textures,
+        int                              textureDescriptorOffset,
+        _In_ const DescriptorHeap*       samplers,
+        int                              samplerDescriptorOffset)
     {
         // We don't use EnableDefaultLighting generally for PBR as it uses Image-Based Lighting instead.
 
@@ -39,12 +37,11 @@ namespace
         {
             // Textured PBR material
             const int albedoTextureIndex = info.diffuseTextureIndex + textureDescriptorOffset;
-            const int rmaTextureIndex = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+            const int rmaTextureIndex    = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
             const int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
-            const int samplerIndex = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
+            const int samplerIndex       = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
 
-            effect->SetSurfaceTextures(
-                textures->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
+            effect->SetSurfaceTextures(textures->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
                 textures->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
                 textures->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
                 samplers->GetGpuHandle(static_cast<size_t>(samplerIndex)));
@@ -74,19 +71,20 @@ namespace
             // info.ambientColor, info.specularColor, and info.emissiveColor are unused by PBR.
         }
     }
-}
+} // namespace
 
 // Internal PBREffectFactory implementation class. Only one of these helpers is allocated
 // per D3D device, even if there are multiple public facing PBREffectFactory instances.
 class PBREffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
-        : mSharing(true)
-        , mEnableInstancing(false)
-        , mTextureDescriptors(nullptr)
-        , mSamplerDescriptors(nullptr)
-        , mDevice(device)
+    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(
+        false)
+        : mSharing(true),
+          mEnableInstancing(false),
+          mTextureDescriptors(nullptr),
+          mSamplerDescriptors(nullptr),
+          mDevice(device)
     {
         if (!device)
             throw std::invalid_argument("Direct3D device is null");
@@ -97,19 +95,18 @@ public:
             mSamplerDescriptors = std::make_unique<DescriptorHeap>(samplerDescriptors);
     }
 
-    Impl(const Impl&) = delete;
+    Impl(const Impl&)            = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = delete;
+    Impl(Impl&&)            = delete;
     Impl& operator=(Impl&&) = delete;
 
-    std::shared_ptr<IEffect> CreateEffect(
-        const EffectInfo& info,
-        const EffectPipelineStateDescription& opaquePipelineState,
-        const EffectPipelineStateDescription& alphaPipelineState,
-        const D3D12_INPUT_LAYOUT_DESC& inputLayout,
-        int textureDescriptorOffset,
-        int samplerDescriptorOffset);
+    std::shared_ptr<IEffect> CreateEffect(const EffectInfo& info,
+        const EffectPipelineStateDescription&               opaquePipelineState,
+        const EffectPipelineStateDescription&               alphaPipelineState,
+        const D3D12_INPUT_LAYOUT_DESC&                      inputLayout,
+        int                                                 textureDescriptorOffset,
+        int                                                 samplerDescriptorOffset);
 
     void ReleaseCache();
 
@@ -122,22 +119,20 @@ public:
     ComPtr<ID3D12Device> mDevice;
 
 private:
-    using EffectCache = std::map< std::wstring, std::shared_ptr<IEffect> >;
+    using EffectCache = std::map<std::wstring, std::shared_ptr<IEffect>>;
 
-    EffectCache  mEffectCache;
-    EffectCache  mEffectCacheSkinning;
+    EffectCache mEffectCache;
+    EffectCache mEffectCacheSkinning;
 
     std::mutex mutex;
 };
 
-
-std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
-    const EffectInfo& info,
-    const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
-    int textureDescriptorOffset,
-    int samplerDescriptorOffset)
+std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(const EffectInfo& info,
+    const EffectPipelineStateDescription&                                       opaquePipelineState,
+    const EffectPipelineStateDescription&                                       alphaPipelineState,
+    const D3D12_INPUT_LAYOUT_DESC&                                              inputLayoutDesc,
+    int                                                                         textureDescriptorOffset,
+    int                                                                         samplerDescriptorOffset)
 {
     if (!mTextureDescriptors)
     {
@@ -152,7 +147,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
 
     // Modify base pipeline state
     EffectPipelineStateDescription derivedPSD = (info.alphaValue < 1.0f) ? alphaPipelineState : opaquePipelineState;
-    derivedPSD.inputLayout = inputLayoutDesc;
+    derivedPSD.inputLayout                    = inputLayoutDesc;
 
     // set effect flags for creation
     uint32_t effectflags = (info.diffuseTextureIndex != -1) ? EffectFlags::Texture : EffectFlags::None;
@@ -176,7 +171,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             const uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+            cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheSkinning.find(cacheName);
             if (mSharing && it != mEffectCacheSkinning.end())
@@ -187,14 +182,17 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<SkinnedPBREffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        SetPBRProperties(effect.get(), info,
-            mTextureDescriptors.get(), textureDescriptorOffset,
-            mSamplerDescriptors.get(), samplerDescriptorOffset);
+        SetPBRProperties(effect.get(),
+            info,
+            mTextureDescriptors.get(),
+            textureDescriptorOffset,
+            mSamplerDescriptors.get(),
+            samplerDescriptorOffset);
 
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            EffectCache::value_type v(cacheName, effect);
+            EffectCache::value_type     v(cacheName, effect);
             mEffectCacheSkinning.insert(v);
         }
 
@@ -212,7 +210,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
         if (mSharing && !info.name.empty())
         {
             const uint32_t hash = derivedPSD.ComputeHash();
-            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+            cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCache.find(cacheName);
             if (mSharing && it != mEffectCache.end())
@@ -223,14 +221,17 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(
 
         auto effect = std::make_shared<PBREffect>(mDevice.Get(), effectflags, derivedPSD);
 
-        SetPBRProperties(effect.get(), info,
-            mTextureDescriptors.get(), textureDescriptorOffset,
-            mSamplerDescriptors.get(), samplerDescriptorOffset);
+        SetPBRProperties(effect.get(),
+            info,
+            mTextureDescriptors.get(),
+            textureDescriptorOffset,
+            mSamplerDescriptors.get(),
+            samplerDescriptorOffset);
 
         if (mSharing && !info.name.empty())
         {
             std::lock_guard<std::mutex> lock(mutex);
-            EffectCache::value_type v(cacheName, effect);
+            EffectCache::value_type     v(cacheName, effect);
             mEffectCache.insert(v);
         }
 
@@ -245,31 +246,33 @@ void PBREffectFactory::Impl::ReleaseCache()
     mEffectCacheSkinning.clear();
 }
 
-
 //--------------------------------------------------------------------------------------
 // PBREffectFactory
 //--------------------------------------------------------------------------------------
 
-PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device) noexcept(false) :
-    pImpl(std::make_shared<Impl>(device, nullptr, nullptr))
+PBREffectFactory::PBREffectFactory(_In_ ID3D12Device* device) noexcept(false)
+    : pImpl(std::make_shared<Impl>(device, nullptr, nullptr))
 {}
 
-PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false)
+PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(
+    false)
 {
     if (!textureDescriptors)
     {
-        throw std::invalid_argument("Texture descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
+        throw std::invalid_argument(
+            "Texture descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
     }
     if (!samplerDescriptors)
     {
-        throw std::invalid_argument("Descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
+        throw std::invalid_argument(
+            "Descriptor heap cannot be null if no device is provided. Use the alternative PBREffectFactory constructor instead.");
     }
 
 #if defined(_MSC_VER) || !defined(_WIN32)
     const D3D12_DESCRIPTOR_HEAP_TYPE textureHeapType = textureDescriptors->GetDesc().Type;
     const D3D12_DESCRIPTOR_HEAP_TYPE samplerHeapType = samplerDescriptors->GetDesc().Type;
 #else
-    D3D12_DESCRIPTOR_HEAP_DESC tmpDesc1, tmpDesc2;
+    D3D12_DESCRIPTOR_HEAP_DESC       tmpDesc1, tmpDesc2;
     const D3D12_DESCRIPTOR_HEAP_TYPE textureHeapType = textureDescriptors->GetDesc(&tmpDesc1)->Type;
     const D3D12_DESCRIPTOR_HEAP_TYPE samplerHeapType = samplerDescriptors->GetDesc(&tmpDesc2)->Type;
 #endif
@@ -294,28 +297,25 @@ PBREffectFactory::PBREffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors
     pImpl = std::make_shared<Impl>(device.Get(), textureDescriptors, samplerDescriptors);
 }
 
-PBREffectFactory::PBREffectFactory(PBREffectFactory&&) noexcept = default;
-PBREffectFactory& PBREffectFactory::operator= (PBREffectFactory&&) noexcept = default;
-PBREffectFactory::~PBREffectFactory() = default;
+PBREffectFactory::PBREffectFactory(PBREffectFactory&&) noexcept            = default;
+PBREffectFactory& PBREffectFactory::operator=(PBREffectFactory&&) noexcept = default;
+PBREffectFactory::~PBREffectFactory()                                      = default;
 
-
-std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(
-    const EffectInfo& info,
-    const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState,
-    const D3D12_INPUT_LAYOUT_DESC& inputLayout,
-    int textureDescriptorOffset,
-    int samplerDescriptorOffset)
+std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(const EffectInfo& info,
+    const EffectPipelineStateDescription&                                 opaquePipelineState,
+    const EffectPipelineStateDescription&                                 alphaPipelineState,
+    const D3D12_INPUT_LAYOUT_DESC&                                        inputLayout,
+    int                                                                   textureDescriptorOffset,
+    int                                                                   samplerDescriptorOffset)
 {
-    return pImpl->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, textureDescriptorOffset, samplerDescriptorOffset);
+    return pImpl
+        ->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, textureDescriptorOffset, samplerDescriptorOffset);
 }
-
 
 void PBREffectFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
-
 
 // Properties.
 void PBREffectFactory::SetSharing(bool enabled) noexcept

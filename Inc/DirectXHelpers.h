@@ -31,19 +31,19 @@
 #include <DirectXMath.h>
 
 #if !defined(_GAMING_XBOX) && defined(_MSC_VER)
-#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib, "dxguid.lib")
 #endif
 
 #ifndef DIRECTX_TOOLKIT_API
 #ifdef DIRECTX_TOOLKIT_EXPORT
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllexport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllexport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllexport)
 #endif
 #elif defined(DIRECTX_TOOLKIT_IMPORT)
 #ifdef __GNUC__
-#define DIRECTX_TOOLKIT_API __attribute__ ((dllimport))
+#define DIRECTX_TOOLKIT_API __attribute__((dllimport))
 #else
 #define DIRECTX_TOOLKIT_API __declspec(dllimport)
 #endif
@@ -56,7 +56,6 @@
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #endif
-
 
 //
 // The d3dx12.h header includes the following helper C++ classes and functions
@@ -142,93 +141,91 @@ namespace DirectX
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COPY_DEST;
     constexpr D3D12_RESOURCE_STATES c_initialReadTargetState = D3D12_RESOURCE_STATE_GENERIC_READ;
-    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState  = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 #else
     constexpr D3D12_RESOURCE_STATES c_initialCopyTargetState = D3D12_RESOURCE_STATE_COMMON;
     constexpr D3D12_RESOURCE_STATES c_initialReadTargetState = D3D12_RESOURCE_STATE_COMMON;
-    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState = D3D12_RESOURCE_STATE_COMMON;
+    constexpr D3D12_RESOURCE_STATES c_initialUAVTargetState  = D3D12_RESOURCE_STATE_COMMON;
 #endif
 
     constexpr D3D12_CPU_DESCRIPTOR_HANDLE D3D12_CPU_DESCRIPTOR_HANDLE_ZERO = {};
 
     // Creates a shader resource view from an arbitrary resource
     DIRECTX_TOOLKIT_API
-        void __cdecl CreateShaderResourceView(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12Resource* tex,
-            D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
-            bool isCubeMap = false);
+    void __cdecl CreateShaderResourceView(_In_ ID3D12Device* device,
+        _In_ ID3D12Resource*                                 tex,
+        D3D12_CPU_DESCRIPTOR_HANDLE                          srvDescriptor,
+        bool                                                 isCubeMap = false);
 
-        // Creates an unordered access view from an arbitrary resource
+    // Creates an unordered access view from an arbitrary resource
     DIRECTX_TOOLKIT_API
-        void __cdecl CreateUnorderedAccessView(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12Resource* tex,
-            D3D12_CPU_DESCRIPTOR_HANDLE uavDescriptor,
-            uint32_t mipLevel = 0);
+    void __cdecl CreateUnorderedAccessView(_In_ ID3D12Device* device,
+        _In_ ID3D12Resource*                                  tex,
+        D3D12_CPU_DESCRIPTOR_HANDLE                           uavDescriptor,
+        uint32_t                                              mipLevel = 0);
 
-        // Creates an render target view from an arbitrary resource
+    // Creates an render target view from an arbitrary resource
     DIRECTX_TOOLKIT_API
-        void __cdecl CreateRenderTargetView(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12Resource* tex,
-            D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor,
-            uint32_t mipLevel = 0);
+    void __cdecl CreateRenderTargetView(_In_ ID3D12Device* device,
+        _In_ ID3D12Resource*                               tex,
+        D3D12_CPU_DESCRIPTOR_HANDLE                        rtvDescriptor,
+        uint32_t                                           mipLevel = 0);
 
-        // Creates a shader resource view from a buffer resource
+    // Creates a shader resource view from a buffer resource
     DIRECTX_TOOLKIT_API
-        void __cdecl CreateBufferShaderResourceView(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12Resource* buffer,
-            D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor,
-            uint32_t stride = 0);
+    void __cdecl CreateBufferShaderResourceView(_In_ ID3D12Device* device,
+        _In_ ID3D12Resource*                                       buffer,
+        D3D12_CPU_DESCRIPTOR_HANDLE                                srvDescriptor,
+        uint32_t                                                   stride = 0);
 
-        // Creates a unordered access view from a buffer resource
+    // Creates a unordered access view from a buffer resource
     DIRECTX_TOOLKIT_API
-        void __cdecl CreateBufferUnorderedAccessView(
-            _In_ ID3D12Device* device,
-            _In_ ID3D12Resource* buffer,
-            D3D12_CPU_DESCRIPTOR_HANDLE uavDescriptor,
-            uint32_t stride,
-            D3D12_BUFFER_UAV_FLAGS flag = D3D12_BUFFER_UAV_FLAG_NONE,
-            uint32_t counterOffset = 0,
-            _In_opt_ ID3D12Resource* counterResource = nullptr);
+    void __cdecl CreateBufferUnorderedAccessView(_In_ ID3D12Device* device,
+        _In_ ID3D12Resource*                                        buffer,
+        D3D12_CPU_DESCRIPTOR_HANDLE                                 uavDescriptor,
+        uint32_t                                                    stride,
+        D3D12_BUFFER_UAV_FLAGS                                      flag            = D3D12_BUFFER_UAV_FLAG_NONE,
+        uint32_t                                                    counterOffset   = 0,
+        _In_opt_ ID3D12Resource*                                    counterResource = nullptr);
 
-        // Shorthand for creating a root signature
+    // Shorthand for creating a root signature
     DIRECTX_TOOLKIT_API
-        inline HRESULT CreateRootSignature(
-            _In_ ID3D12Device* device,
-            _In_ const D3D12_ROOT_SIGNATURE_DESC* rootSignatureDesc,
-            _Out_ ID3D12RootSignature** rootSignature) noexcept
+    inline HRESULT CreateRootSignature(_In_ ID3D12Device* device,
+        _In_ const D3D12_ROOT_SIGNATURE_DESC*             rootSignatureDesc,
+        _Out_ ID3D12RootSignature**                       rootSignature) noexcept
     {
         if (!device || !rootSignatureDesc || !rootSignature)
             return E_INVALIDARG;
 
         Microsoft::WRL::ComPtr<ID3DBlob> pSignature;
         Microsoft::WRL::ComPtr<ID3DBlob> pError;
-        HRESULT hr = D3D12SerializeRootSignature(rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(), pError.GetAddressOf());
+        HRESULT                          hr = D3D12SerializeRootSignature(rootSignatureDesc,
+            D3D_ROOT_SIGNATURE_VERSION_1,
+            pSignature.GetAddressOf(),
+            pError.GetAddressOf());
         if (SUCCEEDED(hr))
         {
-            hr = device->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(rootSignature)
-            );
+            hr = device->CreateRootSignature(0,
+                pSignature->GetBufferPointer(),
+                pSignature->GetBufferSize(),
+                IID_GRAPHICS_PPV_ARGS(rootSignature));
         }
         return hr;
     }
 
     // Helper for obtaining texture size
     DIRECTX_TOOLKIT_API
-        inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
+    inline XMUINT2 GetTextureSize(_In_ ID3D12Resource* tex) noexcept
     {
         if (!tex)
             return XMUINT2(0, 0);
 
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = tex->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& desc = *tex->GetDesc(&tmpDesc);
-    #endif
+        const auto&         desc = *tex->GetDesc(&tmpDesc);
+#endif
         return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
     }
 
@@ -242,10 +239,7 @@ namespace DirectX
         {
             PIXBeginEvent(pCommandList, 0, pFormat);
         }
-        ~ScopedPixEvent()
-        {
-            PIXEndEvent(mCommandList);
-        }
+        ~ScopedPixEvent() { PIXEndEvent(mCommandList); }
 
     private:
         ID3D12GraphicsCommandList* mCommandList;
@@ -255,10 +249,10 @@ namespace DirectX
     // Helper sets a D3D resource name string (used by PIX and debug layer leak reporting).
 #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const char(&name)[TNameLength]) noexcept
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const char (&name)[TNameLength]) noexcept
     {
         wchar_t wname[MAX_PATH];
-        int result = MultiByteToWideChar(CP_UTF8, 0, name, TNameLength, wname, MAX_PATH);
+        int     result = MultiByteToWideChar(CP_UTF8, 0, name, TNameLength, wname, MAX_PATH);
         if (result > 0)
         {
             resource->SetName(wname);
@@ -266,27 +260,26 @@ namespace DirectX
     }
 
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength]) noexcept
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t (&name)[TNameLength]) noexcept
     {
         resource->SetName(name);
     }
 #else
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const char(&)[TNameLength]) noexcept
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const char (&)[TNameLength]) noexcept
     {}
 
     template<UINT TNameLength>
-    inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const wchar_t(&)[TNameLength]) noexcept
+    inline void SetDebugObjectName(_In_ ID3D12DeviceChild*, _In_z_ const wchar_t (&)[TNameLength]) noexcept
     {}
 #endif
 
-// Helper for resource barrier.
+    // Helper for resource barrier.
     DIRECTX_TOOLKIT_API
-        inline void TransitionResource(
-            _In_ ID3D12GraphicsCommandList* commandList,
-            _In_ ID3D12Resource* resource,
-            D3D12_RESOURCE_STATES stateBefore,
-            D3D12_RESOURCE_STATES stateAfter) noexcept
+    inline void TransitionResource(_In_ ID3D12GraphicsCommandList* commandList,
+        _In_ ID3D12Resource*                                       resource,
+        D3D12_RESOURCE_STATES                                      stateBefore,
+        D3D12_RESOURCE_STATES                                      stateAfter) noexcept
     {
         assert(commandList != nullptr);
         assert(resource != nullptr);
@@ -295,11 +288,11 @@ namespace DirectX
             return;
 
         D3D12_RESOURCE_BARRIER desc = {};
-        desc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        desc.Transition.pResource = resource;
+        desc.Type                   = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        desc.Transition.pResource   = resource;
         desc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
         desc.Transition.StateBefore = stateBefore;
-        desc.Transition.StateAfter = stateAfter;
+        desc.Transition.StateAfter  = stateAfter;
 
         commandList->ResourceBarrier(1, &desc);
     }
@@ -308,11 +301,9 @@ namespace DirectX
     class DIRECTX_TOOLKIT_API ScopedBarrier
     {
     public:
-        ScopedBarrier(
-            _In_ ID3D12GraphicsCommandList* commandList,
-            std::initializer_list<D3D12_RESOURCE_BARRIER> barriers) noexcept(false)
+        ScopedBarrier(_In_ ID3D12GraphicsCommandList* commandList, std::initializer_list<D3D12_RESOURCE_BARRIER> barriers) noexcept(false)
             : mCommandList(commandList),
-            mBarriers(barriers)
+              mBarriers(barriers)
         {
             assert(mBarriers.size() <= UINT32_MAX);
 
@@ -320,12 +311,11 @@ namespace DirectX
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }
 
-        ScopedBarrier(
-            _In_ ID3D12GraphicsCommandList* commandList,
-            _In_reads_(count) const D3D12_RESOURCE_BARRIER *barriers,
-            size_t count) noexcept(false)
+        ScopedBarrier(_In_ ID3D12GraphicsCommandList*       commandList,
+            _In_reads_(count) const D3D12_RESOURCE_BARRIER* barriers,
+            size_t                                          count) noexcept(false)
             : mCommandList(commandList),
-            mBarriers(barriers, barriers + count)
+              mBarriers(barriers, barriers + count)
         {
             assert(count <= UINT32_MAX);
 
@@ -334,11 +324,9 @@ namespace DirectX
         }
 
         template<size_t TBarrierLength>
-        ScopedBarrier(
-            _In_ ID3D12GraphicsCommandList* commandList,
-            const D3D12_RESOURCE_BARRIER(&barriers)[TBarrierLength]) noexcept(false)
+        ScopedBarrier(_In_ ID3D12GraphicsCommandList* commandList, const D3D12_RESOURCE_BARRIER (&barriers)[TBarrierLength]) noexcept(false)
             : mCommandList(commandList),
-            mBarriers(barriers, barriers + TBarrierLength)
+              mBarriers(barriers, barriers + TBarrierLength)
         {
             assert(TBarrierLength <= UINT32_MAX);
 
@@ -346,11 +334,11 @@ namespace DirectX
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }
 
-        ScopedBarrier(ScopedBarrier&&) = default;
-        ScopedBarrier& operator= (ScopedBarrier&&) = default;
+        ScopedBarrier(ScopedBarrier&&)            = default;
+        ScopedBarrier& operator=(ScopedBarrier&&) = default;
 
-        ScopedBarrier(ScopedBarrier const&) = delete;
-        ScopedBarrier& operator= (ScopedBarrier const&) = delete;
+        ScopedBarrier(ScopedBarrier const&)            = delete;
+        ScopedBarrier& operator=(ScopedBarrier const&) = delete;
 
         ~ScopedBarrier()
         {
@@ -365,7 +353,7 @@ namespace DirectX
         }
 
     private:
-        ID3D12GraphicsCommandList* mCommandList;
+        ID3D12GraphicsCommandList*          mCommandList;
         std::vector<D3D12_RESOURCE_BARRIER> mBarriers;
     };
 
@@ -373,7 +361,10 @@ namespace DirectX
     {
         // Helper to check for power-of-2
         template<typename T>
-        constexpr bool IsPowerOf2(T x) noexcept { return ((x != 0) && !(x & (x - 1))); }
+        constexpr bool IsPowerOf2(T x) noexcept
+        {
+            return ((x != 0) && !(x & (x - 1)));
+        }
 
         // Helpers for aligning values by a power of 2
         template<typename T>
@@ -399,8 +390,8 @@ namespace DirectX
             }
             return size;
         }
-    }
-}
+    } // namespace DX12
+} // namespace DirectX
 
 #if defined(DIRECTX_TOOLKIT_IMPORT) && defined(_MSC_VER)
 #pragma warning(pop)

@@ -28,7 +28,7 @@ namespace
     constexpr int c_MaxSamples = 16;
 
     constexpr int Dirty_ConstantBuffer = 0x01;
-    constexpr int Dirty_Parameters = 0x02;
+    constexpr int Dirty_Parameters     = 0x02;
 
     constexpr int RootSignatureCount = 2;
 
@@ -46,7 +46,7 @@ namespace
     {
         return expf(-(x * x + y * y) / (2 * rho * rho)) / sqrtf(2 * XM_PI * rho * rho);
     }
-}
+} // namespace
 
 #pragma region Shaders
 // Include the precompiled shader code.
@@ -101,26 +101,24 @@ namespace
 #include "PostProcess_PSBloomExtract.inc"
 #include "PostProcess_PSBloomBlur.inc"
 #endif
-}
+} // namespace
 
 namespace
 {
-    const D3D12_SHADER_BYTECODE vertexShader[] =
-    {
-        { PostProcess_VSQuadNoCB,               sizeof(PostProcess_VSQuadNoCB) },
-        { PostProcess_VSQuad,                   sizeof(PostProcess_VSQuad) },
+    const D3D12_SHADER_BYTECODE vertexShader[] = {
+        { PostProcess_VSQuadNoCB, sizeof(PostProcess_VSQuadNoCB) },
+        { PostProcess_VSQuad, sizeof(PostProcess_VSQuad) },
     };
 
-    const D3D12_SHADER_BYTECODE pixelShaders[] =
-    {
-        { PostProcess_PSCopy,                   sizeof(PostProcess_PSCopy) },
-        { PostProcess_PSMonochrome,             sizeof(PostProcess_PSMonochrome) },
-        { PostProcess_PSSepia,                  sizeof(PostProcess_PSSepia) },
-        { PostProcess_PSDownScale2x2,           sizeof(PostProcess_PSDownScale2x2) },
-        { PostProcess_PSDownScale4x4,           sizeof(PostProcess_PSDownScale4x4) },
-        { PostProcess_PSGaussianBlur5x5,        sizeof(PostProcess_PSGaussianBlur5x5) },
-        { PostProcess_PSBloomExtract,           sizeof(PostProcess_PSBloomExtract) },
-        { PostProcess_PSBloomBlur,              sizeof(PostProcess_PSBloomBlur) },
+    const D3D12_SHADER_BYTECODE pixelShaders[] = {
+        { PostProcess_PSCopy, sizeof(PostProcess_PSCopy) },
+        { PostProcess_PSMonochrome, sizeof(PostProcess_PSMonochrome) },
+        { PostProcess_PSSepia, sizeof(PostProcess_PSSepia) },
+        { PostProcess_PSDownScale2x2, sizeof(PostProcess_PSDownScale2x2) },
+        { PostProcess_PSDownScale4x4, sizeof(PostProcess_PSDownScale4x4) },
+        { PostProcess_PSGaussianBlur5x5, sizeof(PostProcess_PSGaussianBlur5x5) },
+        { PostProcess_PSBloomExtract, sizeof(PostProcess_PSBloomExtract) },
+        { PostProcess_PSBloomBlur, sizeof(PostProcess_PSBloomBlur) },
     };
 
     static_assert(static_cast<unsigned int>(std::size(pixelShaders)) == BasicPostProcess::Effect_Max, "array/max mismatch");
@@ -131,14 +129,14 @@ namespace
     public:
         DeviceResources(_In_ ID3D12Device* device) noexcept
             : mDevice(device),
-            mRootSignature{},
-            mMutex{}
+              mRootSignature{},
+              mMutex{}
         {}
 
-        DeviceResources(const DeviceResources&) = delete;
+        DeviceResources(const DeviceResources&)            = delete;
         DeviceResources& operator=(const DeviceResources&) = delete;
 
-        DeviceResources(DeviceResources&&) = delete;
+        DeviceResources(DeviceResources&&)            = delete;
         DeviceResources& operator=(DeviceResources&&) = delete;
 
         ID3D12RootSignature* GetRootSignature(int slot, const D3D12_ROOT_SIGNATURE_DESC& desc)
@@ -146,7 +144,9 @@ namespace
             assert(slot >= 0 && slot < RootSignatureCount);
             _Analysis_assume_(slot >= 0 && slot < RootSignatureCount);
 
-            return DemandCreate(mRootSignature[slot], mMutex, [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
+            return DemandCreate(mRootSignature[slot],
+                mMutex,
+                [&](ID3D12RootSignature** pResult) noexcept -> HRESULT
                 {
                     HRESULT hr = CreateRootSignature(mDevice.Get(), &desc, pResult);
 
@@ -164,7 +164,7 @@ namespace
         ComPtr<ID3D12RootSignature> mRootSignature[RootSignatureCount];
         std::mutex                  mMutex;
     };
-}
+} // namespace
 #pragma endregion
 
 class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
@@ -172,10 +172,10 @@ class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
 public:
     Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx);
 
-    Impl(const Impl&) = delete;
+    Impl(const Impl&)            = delete;
     Impl& operator=(const Impl&) = delete;
 
-    Impl(Impl&&) = default;
+    Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     void Process(_In_ ID3D12GraphicsCommandList* commandList);
@@ -190,25 +190,25 @@ public:
     };
 
     // Fields.
-    BasicPostProcess::Effect                fx;
-    PostProcessConstants                    constants;
-    D3D12_GPU_DESCRIPTOR_HANDLE             texture;
-    unsigned                                texWidth;
-    unsigned                                texHeight;
-    float                                   guassianMultiplier;
-    float                                   bloomSize;
-    float                                   bloomBrightness;
-    float                                   bloomThreshold;
-    bool                                    bloomHorizontal;
+    BasicPostProcess::Effect    fx;
+    PostProcessConstants        constants;
+    D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    unsigned                    texWidth;
+    unsigned                    texHeight;
+    float                       guassianMultiplier;
+    float                       bloomSize;
+    float                       bloomBrightness;
+    float                       bloomThreshold;
+    bool                        bloomHorizontal;
 
 private:
-    bool                                    mUseConstants;
-    int                                     mDirtyFlags;
+    bool mUseConstants;
+    int  mDirtyFlags;
 
-    void                                    DownScale2x2();
-    void                                    DownScale4x4();
-    void                                    GaussianBlur5x5(float multiplier);
-    void                                    Bloom(bool horizontal, float size, float brightness);
+    void DownScale2x2();
+    void DownScale4x4();
+    void GaussianBlur5x5(float multiplier);
+    void Bloom(bool horizontal, float size, float brightness);
 
     // D3D constant buffer holds a copy of the same data as the public 'constants' field.
     GraphicsResource mConstantBuffer;
@@ -225,24 +225,22 @@ private:
     static SharedResourcePool<ID3D12Device*, DeviceResources> deviceResourcesPool;
 };
 
-
 // Global pool of per-device BasicPostProcess resources.
 SharedResourcePool<ID3D12Device*, DeviceResources> BasicPostProcess::Impl::deviceResourcesPool;
-
 
 // Constructor.
 BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx)
     : fx(ifx),
-    constants{},
-    texture{},
-    texWidth(0),
-    texHeight(0),
-    guassianMultiplier(1.f),
-    bloomSize(1.f),
-    bloomBrightness(1.f),
-    bloomThreshold(0.25f),
-    bloomHorizontal(true),
-    mDirtyFlags(INT_MAX)
+      constants{},
+      texture{},
+      texWidth(0),
+      texHeight(0),
+      guassianMultiplier(1.f),
+      bloomSize(1.f),
+      bloomBrightness(1.f),
+      bloomThreshold(0.25f),
+      bloomHorizontal(true),
+      mDirtyFlags(INT_MAX)
 {
     if (ifx >= Effect_Max)
         throw std::invalid_argument("Effect not defined");
@@ -261,29 +259,23 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
         mUseConstants = false;
         break;
 
-    default:
-        mUseConstants = true;
-        break;
+    default: mUseConstants = true; break;
     }
 
     // Create root signature.
     {
-        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-        #ifdef _GAMING_XBOX_SCARLETT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-        #endif
+        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags
+            = D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
+#ifdef _GAMING_XBOX_SCARLETT
+              | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
+#endif
             ;
 
         const CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
         // Same as CommonStates::StaticLinearClamp
-        const CD3DX12_STATIC_SAMPLER_DESC sampler(
-            0, // register
+        const CD3DX12_STATIC_SAMPLER_DESC sampler(0, // register
             D3D12_FILTER_MIN_MAG_MIP_LINEAR,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
@@ -331,16 +323,10 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
         rtState,
         D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
-    psd.CreatePipelineState(
-        device,
-        mRootSignature,
-        vertexShader[mUseConstants ? 1 : 0],
-        pixelShaders[ifx],
-        mPipelineState.GetAddressOf());
+    psd.CreatePipelineState(device, mRootSignature, vertexShader[mUseConstants ? 1 : 0], pixelShaders[ifx], mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"BasicPostProcess");
 }
-
 
 // Sets our state onto the D3D device.
 void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
@@ -366,28 +352,17 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
 
             switch (fx)
             {
-            case DownScale_2x2:
-                DownScale2x2();
-                break;
+            case DownScale_2x2:    DownScale2x2(); break;
 
-            case DownScale_4x4:
-                DownScale4x4();
-                break;
+            case DownScale_4x4:    DownScale4x4(); break;
 
-            case GaussianBlur_5x5:
-                GaussianBlur5x5(guassianMultiplier);
-                break;
+            case GaussianBlur_5x5: GaussianBlur5x5(guassianMultiplier); break;
 
-            case BloomExtract:
-                constants.sampleWeights[0] = XMVectorReplicate(bloomThreshold);
-                break;
+            case BloomExtract:     constants.sampleWeights[0] = XMVectorReplicate(bloomThreshold); break;
 
-            case BloomBlur:
-                Bloom(bloomHorizontal, bloomSize, bloomBrightness);
-                break;
+            case BloomBlur:        Bloom(bloomHorizontal, bloomSize, bloomBrightness); break;
 
-            default:
-                break;
+            default:               break;
             }
         }
 
@@ -407,7 +382,6 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandList->DrawInstanced(3, 1, 0, 0);
 }
-
 
 void BasicPostProcess::Impl::DownScale2x2()
 {
@@ -435,7 +409,6 @@ void BasicPostProcess::Impl::DownScale2x2()
     }
 }
 
-
 void BasicPostProcess::Impl::DownScale4x4()
 {
     mUseConstants = true;
@@ -460,9 +433,7 @@ void BasicPostProcess::Impl::DownScale4x4()
             ++ptr;
         }
     }
-
 }
-
 
 void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
 {
@@ -476,10 +447,10 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
     const float tu = 1.0f / float(texWidth);
     const float tv = 1.0f / float(texHeight);
 
-    float totalWeight = 0.0f;
-    size_t index = 0;
-    auto offsets = reinterpret_cast<XMFLOAT4*>(constants.sampleOffsets);
-    auto weights = constants.sampleWeights;
+    float  totalWeight = 0.0f;
+    size_t index       = 0;
+    auto   offsets     = reinterpret_cast<XMFLOAT4*>(constants.sampleOffsets);
+    auto   weights     = constants.sampleWeights;
     for (int x = -2; x <= 2; ++x)
     {
         for (int y = -2; y <= 2; ++y)
@@ -497,7 +468,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
             offsets[index].z = 0.0f;
             offsets[index].w = 0.0f;
 
-            const float g = GaussianDistribution(float(x), float(y), 1.0f);
+            const float g  = GaussianDistribution(float(x), float(y), 1.0f);
             weights[index] = XMVectorReplicate(g);
 
             totalWeight += XMVectorGetX(weights[index]);
@@ -511,16 +482,15 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
     // changed when the blur occurs. An optional multiplier variable is used to
     // add or remove image intensity during the blur.
     const XMVECTOR vtw = XMVectorReplicate(totalWeight);
-    const XMVECTOR vm = XMVectorReplicate(multiplier);
+    const XMVECTOR vm  = XMVectorReplicate(multiplier);
     for (size_t i = 0; i < index; ++i)
     {
         const XMVECTOR w = XMVectorDivide(weights[i], vtw);
-        weights[i] = XMVectorMultiply(w, vm);
+        weights[i]       = XMVectorMultiply(w, vm);
     }
 }
 
-
-void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightness)
+void BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightness)
 {
     mUseConstants = true;
 
@@ -545,14 +515,14 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
 
     // Fill the center texel
     float weight = brightness * GaussianDistribution(0, 0, size);
-    weights[0] = XMFLOAT4(weight, weight, weight, 1.0f);
+    weights[0]   = XMFLOAT4(weight, weight, weight, 1.0f);
     offsets[0].x = offsets[0].y = offsets[0].z = offsets[0].w = 0.f;
 
     // Fill the first half
     for (int i = 1; i < 8; ++i)
     {
         // Get the Gaussian intensity for this offset
-        weight = brightness * GaussianDistribution(float(i), 0, size);
+        weight     = brightness * GaussianDistribution(float(i), 0, size);
         weights[i] = XMFLOAT4(weight, weight, weight, 1.0f);
         offsets[i] = XMFLOAT4(float(i) * tu, float(i) * tv, 0.f, 0.f);
     }
@@ -565,25 +535,21 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
     }
 }
 
-
 // Public constructor.
 BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
     : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {}
 
-
 // Move constructor.
-BasicPostProcess::BasicPostProcess(BasicPostProcess&&) noexcept = default;
-BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&&) noexcept = default;
-BasicPostProcess::~BasicPostProcess() = default;
-
+BasicPostProcess::BasicPostProcess(BasicPostProcess&&) noexcept            = default;
+BasicPostProcess& BasicPostProcess::operator=(BasicPostProcess&&) noexcept = default;
+BasicPostProcess::~BasicPostProcess()                                      = default;
 
 // IPostProcess methods.
 void BasicPostProcess::Process(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Process(commandList);
 }
-
 
 // Properties
 void BasicPostProcess::SetSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_opt_ ID3D12Resource* resource)
@@ -592,13 +558,13 @@ void BasicPostProcess::SetSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescripto
 
     if (resource)
     {
-    #if defined(_MSC_VER) || !defined(_WIN32)
+#if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
-    #else
+#else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto& desc = *resource->GetDesc(&tmpDesc);
-    #endif
-        pImpl->texWidth = static_cast<unsigned>(desc.Width);
+        const auto&         desc = *resource->GetDesc(&tmpDesc);
+#endif
+        pImpl->texWidth  = static_cast<unsigned>(desc.Width);
         pImpl->texHeight = desc.Height;
     }
     else
@@ -607,13 +573,11 @@ void BasicPostProcess::SetSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescripto
     }
 }
 
-
 void BasicPostProcess::SetGaussianParameter(float multiplier)
 {
     pImpl->guassianMultiplier = multiplier;
     pImpl->SetDirtyFlag();
 }
-
 
 void BasicPostProcess::SetBloomExtractParameter(float threshold)
 {
@@ -621,10 +585,9 @@ void BasicPostProcess::SetBloomExtractParameter(float threshold)
     pImpl->SetDirtyFlag();
 }
 
-
 void BasicPostProcess::SetBloomBlurParameters(bool horizontal, float size, float brightness)
 {
-    pImpl->bloomSize = size;
+    pImpl->bloomSize       = size;
     pImpl->bloomBrightness = brightness;
     pImpl->bloomHorizontal = horizontal;
     pImpl->SetDirtyFlag();

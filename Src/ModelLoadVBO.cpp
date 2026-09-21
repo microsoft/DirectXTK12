@@ -28,10 +28,10 @@ namespace
 {
     //--------------------------------------------------------------------------------------
     // Shared VB input element description
-    INIT_ONCE g_InitOnce = INIT_ONCE_STATIC_INIT;
+    INIT_ONCE                                             g_InitOnce = INIT_ONCE_STATIC_INIT;
     std::shared_ptr<ModelMeshPart::InputLayoutCollection> g_vbdecl;
 
-    BOOL CALLBACK InitializeDecl(PINIT_ONCE initOnce, PVOID Parameter, PVOID *lpContext)
+    BOOL CALLBACK InitializeDecl(PINIT_ONCE initOnce, PVOID Parameter, PVOID* lpContext)
     {
         UNREFERENCED_PARAMETER(initOnce);
         UNREFERENCED_PARAMETER(Parameter);
@@ -42,15 +42,11 @@ namespace
 
         return TRUE;
     }
-}
-
+} // namespace
 
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-std::unique_ptr<Model> Model::CreateFromVBO(
-    ID3D12Device* device,
-    const uint8_t* meshData, size_t dataSize,
-    ModelLoaderFlags flags)
+_Use_decl_annotations_ std::unique_ptr<Model>
+                       Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataSize, ModelLoaderFlags flags)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "InitOnceExecuteOnce");
@@ -106,17 +102,17 @@ std::unique_ptr<Model> Model::CreateFromVBO(
     auto ib = GraphicsMemory::Get(device).Allocate(indexSize, 16, GraphicsMemory::TAG_INDEX);
     memcpy(ib.Memory(), indices, indexSize);
 
-    auto part = std::make_unique<ModelMeshPart>(0);
-    part->materialIndex = 0;
-    part->indexCount = header->numIndices;
-    part->startIndex = 0;
-    part->vertexStride = static_cast<uint32_t>(sizeof(VertexPositionNormalTexture));
-    part->vertexCount = header->numVertices;
-    part->indexBufferSize = static_cast<uint32_t>(indexSize);
+    auto part              = std::make_unique<ModelMeshPart>(0);
+    part->materialIndex    = 0;
+    part->indexCount       = header->numIndices;
+    part->startIndex       = 0;
+    part->vertexStride     = static_cast<uint32_t>(sizeof(VertexPositionNormalTexture));
+    part->vertexCount      = header->numVertices;
+    part->indexBufferSize  = static_cast<uint32_t>(indexSize);
     part->vertexBufferSize = static_cast<uint32_t>(vertSize);
-    part->indexBuffer = std::move(ib);
-    part->vertexBuffer = std::move(vb);
-    part->vbDecl = g_vbdecl;
+    part->indexBuffer      = std::move(ib);
+    part->vertexBuffer     = std::move(vb);
+    part->vbDecl           = g_vbdecl;
 
     auto mesh = std::make_shared<ModelMesh>();
     BoundingSphere::CreateFromPoints(mesh->boundingSphere, header->numVertices, &verts->position, sizeof(VertexPositionNormalTexture));
@@ -131,21 +127,15 @@ std::unique_ptr<Model> Model::CreateFromVBO(
     return model;
 }
 
-
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-std::unique_ptr<Model> Model::CreateFromVBO(
-    ID3D12Device* device,
-    const wchar_t* szFileName,
-    ModelLoaderFlags flags)
+_Use_decl_annotations_ std::unique_ptr<Model> Model::CreateFromVBO(ID3D12Device* device, const wchar_t* szFileName, ModelLoaderFlags flags)
 {
-    size_t dataSize = 0;
+    size_t                     dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
-    HRESULT hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
+    HRESULT                    hr = BinaryReader::ReadEntireFile(szFileName, data, &dataSize);
     if (FAILED(hr))
     {
-        DebugTrace("ERROR: CreateFromVBO failed (%08X) loading '%ls'\n",
-            static_cast<unsigned int>(hr), szFileName);
+        DebugTrace("ERROR: CreateFromVBO failed (%08X) loading '%ls'\n", static_cast<unsigned int>(hr), szFileName);
         throw std::runtime_error("CreateFromVBO");
     }
 
@@ -156,17 +146,13 @@ std::unique_ptr<Model> Model::CreateFromVBO(
     return model;
 }
 
-
 //--------------------------------------------------------------------------------------
 // Adapters for /Zc:wchar_t- clients
 
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
-_Use_decl_annotations_
-std::unique_ptr<Model> Model::CreateFromVBO(
-    ID3D12Device* device,
-    const __wchar_t* szFileName,
-    ModelLoaderFlags flags)
+_Use_decl_annotations_ std::unique_ptr<Model>
+                       Model::CreateFromVBO(ID3D12Device* device, const __wchar_t* szFileName, ModelLoaderFlags flags)
 {
     return CreateFromVBO(device, reinterpret_cast<const unsigned short*>(szFileName), flags);
 }
