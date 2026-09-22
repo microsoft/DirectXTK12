@@ -94,8 +94,8 @@ namespace DirectX
         // by 1 page (64k).
         LinearAllocator(_In_ ID3D12Device* pDevice, _In_ size_t pageSize, _In_ size_t preallocateBytes = 0) noexcept(false);
 
-        LinearAllocator(LinearAllocator&&)            = default;
-        LinearAllocator& operator=(LinearAllocator&&) = default;
+        LinearAllocator(LinearAllocator&&)            = delete;
+        LinearAllocator& operator=(LinearAllocator&&) = delete;
 
         LinearAllocator(LinearAllocator const&)            = delete;
         LinearAllocator& operator=(LinearAllocator const&) = delete;
