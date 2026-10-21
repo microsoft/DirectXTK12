@@ -26,12 +26,16 @@ namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
 #include "XboxGamingScarlettGenerateMips_main.inc"
+#include "XboxGamingScarlettGenerateMips_sRGB.inc"
 #elif defined(_GAMING_XBOX)
 #include "XboxGamingXboxOneGenerateMips_main.inc"
+#include "XboxGamingXboxOneGenerateMips_sRGB.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
 #include "XboxOneGenerateMips_main.inc"
+#include "XboxOneGenerateMips_sRGB.inc"
 #else
 #include "GenerateMips_main.inc"
+#include "GenerateMips_sRGB.inc"
 #endif
 
     bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept
@@ -206,11 +210,13 @@ namespace
 
         ComPtr<ID3D12RootSignature> rootSignature;
         ComPtr<ID3D12PipelineState> generateMipsPSO;
+        ComPtr<ID3D12PipelineState> generateMipsPSO_sRGB;
 
         GenerateMipsResources(_In_ ID3D12Device* device)
         {
-            rootSignature   = CreateGenMipsRootSignature(device);
-            generateMipsPSO = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
+            rootSignature        = CreateGenMipsRootSignature(device);
+            generateMipsPSO      = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
+            generateMipsPSO_sRGB = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_sRGB, sizeof(GenerateMips_sRGB));
         }
 
         GenerateMipsResources(const GenerateMipsResources&)            = delete;
@@ -623,7 +629,7 @@ public:
 
 private:
     // Resource is UAV compatible
-    void GenerateMips_UnorderedAccessPath(_In_ ID3D12Resource* resource)
+    void GenerateMips_UnorderedAccessPath(_In_ ID3D12Resource* resource, bool srgb = false)
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
         const auto desc = resource->GetDesc();
@@ -632,6 +638,7 @@ private:
         const auto&         desc = *resource->GetDesc(&tmpDesc);
 #endif
         assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
+        assert(!srgb || desc.Format == DXGI_FORMAT_R8G8B8A8_TYPELESS);
 
         const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -694,11 +701,12 @@ private:
         std::ignore = descriptorHeap->GetCPUDescriptorHandleForHeapStart(&handleIt);
 #endif
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format                          = desc.Format;
-        srvDesc.ViewDimension                   = D3D12_SRV_DIMENSION_TEXTURE2D;
-        srvDesc.Shader4ComponentMapping         = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-        srvDesc.Texture2D.MostDetailedMip       = 0;
-        srvDesc.Texture2D.MipLevels             = desc.MipLevels;
+        // Use an sRGB SRV to decode texels before filtering.
+        srvDesc.Format                    = srgb ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : desc.Format;
+        srvDesc.ViewDimension             = D3D12_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Shader4ComponentMapping   = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+        srvDesc.Texture2D.MostDetailedMip = 0;
+        srvDesc.Texture2D.MipLevels       = desc.MipLevels;
 
         mDevice->CreateShaderResourceView(staging.Get(), &srvDesc, handleIt);
 
@@ -706,7 +714,7 @@ private:
         for (uint16_t mip = 1; mip < desc.MipLevels; ++mip)
         {
             D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-            uavDesc.Format                           = desc.Format;
+            uavDesc.Format                           = srgb ? DXGI_FORMAT_R8G8B8A8_UNORM : desc.Format;
             uavDesc.ViewDimension                    = D3D12_UAV_DIMENSION_TEXTURE2D;
             uavDesc.Texture2D.MipSlice               = mip;
 
@@ -737,7 +745,7 @@ private:
         uav2srvDesc.Transition.StateAfter  = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
 
         // based on format, select srgb or not
-        ComPtr<ID3D12PipelineState> pso = mGenMipsResources->generateMipsPSO;
+        ComPtr<ID3D12PipelineState> pso = srgb ? mGenMipsResources->generateMipsPSO_sRGB : mGenMipsResources->generateMipsPSO;
 
         // Set up state
         mList->SetComputeRootSignature(mGenMipsResources->rootSignature.Get());
@@ -839,13 +847,14 @@ private:
 #endif
         assert(!FormatIsBGR(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
 
-        auto copyDesc   = resourceDesc;
-        copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        const bool srgb     = FormatIsSRGB(resourceDesc.Format);
+        auto       copyDesc = resourceDesc;
+        copyDesc.Format     = srgb ? DXGI_FORMAT_R8G8B8A8_TYPELESS : DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
         const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
-        // Create a resource with the same description, but without SRGB, and with UAV flags
+        // Create a UAV-capable resource, using typeless storage for sRGB views.
         ComPtr<ID3D12Resource> resourceCopy;
         ThrowIfFailed(mDevice->CreateCommittedResource(&heapProperties,
             D3D12_HEAP_FLAG_NONE,
@@ -870,7 +879,7 @@ private:
         TransitionResource(mList.Get(), resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, originalState);
 
         // Generate the mips
-        GenerateMips_UnorderedAccessPath(resourceCopy.Get());
+        GenerateMips_UnorderedAccessPath(resourceCopy.Get(), srgb);
 
         // Direct copy back
         D3D12_RESOURCE_BARRIER barrier[2] = {};
@@ -908,8 +917,9 @@ private:
         assert(FormatIsBGR(resourceDesc.Format));
 
         // Create a resource with the same description with RGB and with UAV flags
-        auto copyDesc   = resourceDesc;
-        copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        const bool srgb     = FormatIsSRGB(resourceDesc.Format);
+        auto       copyDesc = resourceDesc;
+        copyDesc.Format     = srgb ? DXGI_FORMAT_R8G8B8A8_TYPELESS : DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 #if !defined(_GAMING_XBOX) && !(defined(_XBOX_ONE) && defined(_TITLE))
         copyDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE;
@@ -990,7 +1000,7 @@ private:
         aliasBarrier[1].Transition.StateAfter  = originalState;
 
         mList->ResourceBarrier(2, aliasBarrier);
-        GenerateMips_UnorderedAccessPath(resourceCopy.Get());
+        GenerateMips_UnorderedAccessPath(resourceCopy.Get(), srgb);
 
         // Direct copy back RGB to BGR
         aliasBarrier[0].Aliasing.pResourceBefore = resourceCopy.Get();
