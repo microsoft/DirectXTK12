@@ -124,9 +124,9 @@ namespace DirectX
             bool                        lightingEnabled);
 
         int             SetLightEnabled(int                             whichLight,
-                        bool                                            value,
-                        _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant,
-                        _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant);
+            bool                                            value,
+            _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant,
+            _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightSpecularConstant);
         int XM_CALLCONV SetLightDiffuseColor(int            whichLight,
             FXMVECTOR                                       value,
             _Inout_updates_(MaxDirectionalLights) XMVECTOR* lightDiffuseConstant);

@@ -46,7 +46,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataSize, ModelLoaderFlags flags)
+Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataSize, ModelLoaderFlags flags)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "InitOnceExecuteOnce");
@@ -128,7 +128,7 @@ _Use_decl_annotations_ std::unique_ptr<Model>
 }
 
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_ std::unique_ptr<Model> Model::CreateFromVBO(ID3D12Device* device, const wchar_t* szFileName, ModelLoaderFlags flags)
+std::unique_ptr<Model> Model::CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z_ const wchar_t* szFileName, ModelLoaderFlags flags)
 {
     size_t                     dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -151,8 +151,7 @@ _Use_decl_annotations_ std::unique_ptr<Model> Model::CreateFromVBO(ID3D12Device*
 
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
-_Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromVBO(ID3D12Device* device, const __wchar_t* szFileName, ModelLoaderFlags flags)
+std::unique_ptr<Model> Model::CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z_ const __wchar_t* szFileName, ModelLoaderFlags flags)
 {
     return CreateFromVBO(device, reinterpret_cast<const unsigned short*>(szFileName), flags);
 }
