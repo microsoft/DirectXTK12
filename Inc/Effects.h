@@ -971,8 +971,7 @@ namespace DirectX
                 const EffectPipelineStateDescription&                               alphaPipelineState,
                 const D3D12_INPUT_LAYOUT_DESC&                                      inputLayout,
                 int                                                                 textureDescriptorOffset = 0,
-                int                                                                 samplerDescriptorOffset = 0)
-                = 0;
+                int                                                                 samplerDescriptorOffset = 0) = 0;
 
         protected:
             IEffectFactory()                            = default;

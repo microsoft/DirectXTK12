@@ -821,8 +821,8 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 }
 
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromCMO(ID3D12Device* device, const wchar_t* szFileName, ModelLoaderFlags flags, size_t* animsOffset)
+std::unique_ptr<Model>
+Model::CreateFromCMO(_In_opt_ ID3D12Device* device, _In_z_ const wchar_t* szFileName, ModelLoaderFlags flags, _Out_opt_ size_t* animsOffset)
 {
     if (animsOffset)
     {
@@ -850,8 +850,10 @@ _Use_decl_annotations_ std::unique_ptr<Model>
 
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
-_Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromCMO(ID3D12Device* device, const __wchar_t* szFileName, ModelLoaderFlags flags, size_t* animsOffset)
+std::unique_ptr<Model> Model::CreateFromCMO(_In_opt_ ID3D12Device* device,
+    _In_z_ const __wchar_t*                                        szFileName,
+    ModelLoaderFlags                                               flags,
+    _Out_opt_ size_t*                                              animsOffset)
 {
     return CreateFromCMO(device, reinterpret_cast<const unsigned short*>(szFileName), flags, animsOffset);
 }

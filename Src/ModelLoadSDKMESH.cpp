@@ -451,7 +451,7 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t idataSize, ModelLoaderFlags flags)
+Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t idataSize, ModelLoaderFlags flags)
 {
     if (!meshData)
         throw std::invalid_argument("meshData cannot be null");
@@ -851,8 +851,7 @@ _Use_decl_annotations_ std::unique_ptr<Model>
 }
 
 //--------------------------------------------------------------------------------------
-_Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromSDKMESH(ID3D12Device* device, const wchar_t* szFileName, ModelLoaderFlags flags)
+std::unique_ptr<Model> Model::CreateFromSDKMESH(_In_opt_ ID3D12Device* device, _In_z_ const wchar_t* szFileName, ModelLoaderFlags flags)
 {
     size_t                     dataSize = 0;
     std::unique_ptr<uint8_t[]> data;
@@ -875,8 +874,7 @@ _Use_decl_annotations_ std::unique_ptr<Model>
 
 #if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
 
-_Use_decl_annotations_ std::unique_ptr<Model>
-                       Model::CreateFromSDKMESH(ID3D12Device* device, const __wchar_t* szFileName, ModelLoaderFlags flags)
+std::unique_ptr<Model> Model::CreateFromSDKMESH(_In_opt_ ID3D12Device* device, _In_z_ const __wchar_t* szFileName, ModelLoaderFlags flags)
 {
     return CreateFromSDKMESH(device, reinterpret_cast<const unsigned short*>(szFileName), flags);
 }
