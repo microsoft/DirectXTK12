@@ -28,3 +28,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
 {
     OutMip[DTid.xy] = Mip(DTid.xy);
 }
+
+float LinearToSRGB(float color)
+{
+    return (color <= 0.0031308f) ? 12.92f * color : 1.055f * pow(abs(color), 1.0f / 2.4f) - 0.055f;
+}
+
+[RootSignature(GenerateMipsRS)]
+[numthreads(8, 8, 1)]
+void sRGB(uint3 DTid : SV_DispatchThreadID)
+{
+    float4 color = Mip(DTid.xy);
+    // Encode the filtered RGB to sRGB before writing to the UNORM UAV.
+    OutMip[DTid.xy] = float4(LinearToSRGB(color.r), LinearToSRGB(color.g), LinearToSRGB(color.b), color.a);
+}
