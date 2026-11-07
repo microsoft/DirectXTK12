@@ -265,7 +265,7 @@ namespace
         }
         else if (width > maxsize || height > maxsize)
         {
-            const float ar = static_cast<float>(height) / static_cast<float>(width);
+            float const ar = static_cast<float>(height) / static_cast<float>(width);
             if (width > height)
             {
                 twidth  = static_cast<UINT>(maxsize);
@@ -424,14 +424,14 @@ namespace
         }
 
         // Allocate memory for decoded image
-        const uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
-        const uint64_t numBytes = rowBytes * uint64_t(theight);
+        uint64_t const rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
+        uint64_t const numBytes = rowBytes * uint64_t(theight);
 
         if (rowBytes > UINT32_MAX || numBytes > UINT32_MAX)
             return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
-        const auto rowPitch  = static_cast<size_t>(rowBytes);
-        const auto imageSize = static_cast<size_t>(numBytes);
+        auto const rowPitch  = static_cast<size_t>(rowBytes);
+        auto const imageSize = static_cast<size_t>(numBytes);
 
         decodedData.reset(new (std::nothrow) uint8_t[imageSize]);
         if (!decodedData)
@@ -530,7 +530,7 @@ namespace
         }
 
         // Count the number of mips
-        const uint32_t mipCount
+        uint32_t const mipCount
             = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE)) ? LoaderHelpers::CountMips(twidth, theight) : 1u;
 
         // Create texture
@@ -574,7 +574,7 @@ namespace
     void SetDebugTextureInfo(_In_z_ const wchar_t* fileName, _In_ ID3D12Resource* texture) noexcept
     {
 #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
-        const wchar_t* pstrName = wcsrchr(fileName, '\\');
+        wchar_t const* pstrName = wcsrchr(fileName, '\\');
         if (!pstrName)
         {
             pstrName = fileName;
@@ -615,7 +615,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromMemory(ID3D12Device* device,
-    const uint8_t*                                                             wicData,
+    uint8_t const*                                                             wicData,
     size_t                                                                     wicDataSize,
     ID3D12Resource**                                                           texture,
     std::unique_ptr<uint8_t[]>&                                                decodedData,
@@ -635,7 +635,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromMemory(ID3D12Device* d
 
 _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemory(ID3D12Device* device,
     ResourceUploadBatch&                                                         resourceUpload,
-    const uint8_t*                                                               wicData,
+    uint8_t const*                                                               wicData,
     size_t                                                                       wicDataSize,
     ID3D12Resource**                                                             texture,
     bool                                                                         generateMips,
@@ -653,7 +653,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemory(ID3D12Device*
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromMemoryEx(ID3D12Device* device,
-    const uint8_t*                                                               wicData,
+    uint8_t const*                                                               wicData,
     size_t                                                                       wicDataSize,
     size_t                                                                       maxsize,
     D3D12_RESOURCE_FLAGS                                                         resFlags,
@@ -713,7 +713,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromMemoryEx(ID3D12Device*
 
 _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemoryEx(ID3D12Device* device,
     ResourceUploadBatch&                                                           resourceUpload,
-    const uint8_t*                                                                 wicData,
+    uint8_t const*                                                                 wicData,
     size_t                                                                         wicDataSize,
     size_t                                                                         maxsize,
     D3D12_RESOURCE_FLAGS                                                           resFlags,
@@ -796,7 +796,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemoryEx(ID3D12Devic
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromFile(ID3D12Device* device,
-    const wchar_t*                                                           fileName,
+    wchar_t const*                                                           fileName,
     ID3D12Resource**                                                         texture,
     std::unique_ptr<uint8_t[]>&                                              wicData,
     D3D12_SUBRESOURCE_DATA&                                                  subresource,
@@ -807,7 +807,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromFile(ID3D12Device* dev
 
 _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromFile(ID3D12Device* device,
     ResourceUploadBatch&                                                       resourceUpload,
-    const wchar_t*                                                             fileName,
+    wchar_t const*                                                             fileName,
     ID3D12Resource**                                                           texture,
     bool                                                                       generateMips,
     size_t                                                                     maxsize)
@@ -823,7 +823,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromFile(ID3D12Device* d
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromFileEx(ID3D12Device* device,
-    const wchar_t*                                                             fileName,
+    wchar_t const*                                                             fileName,
     size_t                                                                     maxsize,
     D3D12_RESOURCE_FLAGS                                                       resFlags,
     WIC_LOADER_FLAGS                                                           loadFlags,
@@ -866,7 +866,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadWICTextureFromFileEx(ID3D12Device* d
 
 _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromFileEx(ID3D12Device* device,
     ResourceUploadBatch&                                                         resourceUpload,
-    const wchar_t*                                                               fileName,
+    wchar_t const*                                                               fileName,
     size_t                                                                       maxsize,
     D3D12_RESOURCE_FLAGS                                                         resFlags,
     WIC_LOADER_FLAGS                                                             loadFlags,
@@ -943,7 +943,7 @@ namespace DirectX
         size_t                                                maxsize) noexcept
     {
         return LoadWICTextureFromFile(device,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             texture,
             decodedData,
             subresource,
@@ -959,7 +959,7 @@ namespace DirectX
     {
         return CreateWICTextureFromFile(device,
             resourceUpload,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             texture,
             generateMips,
             maxsize);
@@ -975,7 +975,7 @@ namespace DirectX
         D3D12_SUBRESOURCE_DATA&                                 subresource) noexcept
     {
         return LoadWICTextureFromFileEx(device,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             maxsize,
             resFlags,
             loadFlags,
@@ -994,7 +994,7 @@ namespace DirectX
     {
         return CreateWICTextureFromFileEx(device,
             resourceUpload,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             maxsize,
             resFlags,
             loadFlags,

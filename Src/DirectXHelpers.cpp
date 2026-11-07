@@ -21,10 +21,10 @@ DirectX::CreateShaderResourceView(ID3D12Device* device, ID3D12Resource* tex, D3D
         throw std::invalid_argument("Direct3D device and resource must be valid");
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = tex->GetDesc();
+    auto const desc = tex->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *tex->GetDesc(&tmpDesc);
+    auto const&         desc = *tex->GetDesc(&tmpDesc);
 #endif
 
     if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) != 0)
@@ -108,10 +108,10 @@ DirectX::CreateUnorderedAccessView(ID3D12Device* device, ID3D12Resource* tex, D3
         throw std::invalid_argument("Direct3D device and resource must be valid");
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = tex->GetDesc();
+    auto const desc = tex->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *tex->GetDesc(&tmpDesc);
+    auto const&         desc = *tex->GetDesc(&tmpDesc);
 #endif
 
     if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0)
@@ -179,10 +179,10 @@ DirectX::CreateRenderTargetView(ID3D12Device* device, ID3D12Resource* tex, D3D12
         throw std::invalid_argument("Direct3D device and resource must be valid");
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = tex->GetDesc();
+    auto const desc = tex->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *tex->GetDesc(&tmpDesc);
+    auto const&         desc = *tex->GetDesc(&tmpDesc);
 #endif
 
     if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) == 0)
@@ -264,10 +264,10 @@ _Use_decl_annotations_ void DirectX::CreateBufferShaderResourceView(ID3D12Device
         throw std::invalid_argument("Direct3D device and resource must be valid");
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = buffer->GetDesc();
+    auto const desc = buffer->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *buffer->GetDesc(&tmpDesc);
+    auto const&         desc = *buffer->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER || (desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) != 0)
@@ -299,10 +299,10 @@ _Use_decl_annotations_ void DirectX::CreateBufferUnorderedAccessView(ID3D12Devic
         throw std::invalid_argument("Direct3D device and resource must be valid");
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = buffer->GetDesc();
+    auto const desc = buffer->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *buffer->GetDesc(&tmpDesc);
+    auto const&         desc = *buffer->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER || (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0)

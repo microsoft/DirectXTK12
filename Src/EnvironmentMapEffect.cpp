@@ -59,11 +59,11 @@ class EnvironmentMapEffect::Impl : public EffectBase<EnvironmentMapEffectTraits>
 public:
     Impl(_In_ ID3D12Device*                   device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         EnvironmentMapEffect::Mapping         mapping);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -217,7 +217,7 @@ const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::VertexShader
 };
 
 template<>
-const int EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] = {
     0, // basic
     0, // basic, no fog
     1, // fresnel
@@ -292,7 +292,7 @@ const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::PixelShaderB
 };
 
 template<>
-const int EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] = {
     0,  // basic
     1,  // basic, no fog
     0,  // fresnel
@@ -351,7 +351,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<EnvironmentMapEffectTraits>::Device
 // Constructor.
 EnvironmentMapEffect::Impl::Impl(_In_ ID3D12Device* device,
     uint32_t                                        effectFlags,
-    const EffectPipelineStateDescription&           pipelineDescription,
+    EffectPipelineStateDescription const&           pipelineDescription,
     EnvironmentMapEffect::Mapping                   mapping)
     : EffectBase(device),
       texture{},
@@ -440,14 +440,14 @@ EnvironmentMapEffect::Impl::Impl(_In_ ID3D12Device* device,
     lights.InitializeConstants(unwantedOutput[0], constants.lightDirection, constants.lightDiffuseColor, unwantedOutput);
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(mapping, effectFlags);
+    int const sp = GetPipelineStatePermutation(mapping, effectFlags);
     assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
 
@@ -462,7 +462,7 @@ EnvironmentMapEffect::Impl::Impl(_In_ ID3D12Device* device,
 
 int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(EnvironmentMapEffect::Mapping mapping, uint32_t effectFlags) const noexcept
 {
-    const bool biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
+    bool const biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     int permutation = 0;
 
@@ -575,7 +575,7 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
 // Public constructor.
 EnvironmentMapEffect::EnvironmentMapEffect(_In_ ID3D12Device* device,
     uint32_t                                                  effectFlags,
-    const EffectPipelineStateDescription&                     pipelineDescription,
+    EffectPipelineStateDescription const&                     pipelineDescription,
     EnvironmentMapEffect::Mapping                             mapping)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, mapping))
 {}

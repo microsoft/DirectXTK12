@@ -56,8 +56,8 @@ namespace DirectX
         public:
             virtual ~IPostProcess() = default;
 
-            IPostProcess(const IPostProcess&)            = delete;
-            IPostProcess& operator=(const IPostProcess&) = delete;
+            IPostProcess(IPostProcess const&)            = delete;
+            IPostProcess& operator=(IPostProcess const&) = delete;
 
             virtual void __cdecl Process(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
@@ -85,7 +85,7 @@ namespace DirectX
                 Effect_Max
             };
 
-            DIRECTX_TOOLKIT_API BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+            DIRECTX_TOOLKIT_API BasicPostProcess(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect fx);
 
             DIRECTX_TOOLKIT_API                   BasicPostProcess(BasicPostProcess&&) noexcept;
             DIRECTX_TOOLKIT_API BasicPostProcess& operator=(BasicPostProcess&&) noexcept;
@@ -129,7 +129,7 @@ namespace DirectX
                 Effect_Max
             };
 
-            DIRECTX_TOOLKIT_API DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+            DIRECTX_TOOLKIT_API DualPostProcess(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect fx);
 
             DIRECTX_TOOLKIT_API                  DualPostProcess(DualPostProcess&&) noexcept;
             DIRECTX_TOOLKIT_API DualPostProcess& operator=(DualPostProcess&&) noexcept;
@@ -193,7 +193,7 @@ namespace DirectX
             };
 
             DIRECTX_TOOLKIT_API ToneMapPostProcess(_In_ ID3D12Device* device,
-                const RenderTargetState&                              rtState,
+                RenderTargetState const&                              rtState,
                 Operator                                              op,
                 TransferFunction                                      func
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)

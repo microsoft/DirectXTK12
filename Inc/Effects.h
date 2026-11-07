@@ -70,8 +70,8 @@ namespace DirectX
         public:
             virtual ~IEffect() = default;
 
-            IEffect(const IEffect&)            = delete;
-            IEffect& operator=(const IEffect&) = delete;
+            IEffect(IEffect const&)            = delete;
+            IEffect& operator=(IEffect const&) = delete;
 
             virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
@@ -87,8 +87,8 @@ namespace DirectX
         public:
             virtual ~IEffectMatrices() = default;
 
-            IEffectMatrices(const IEffectMatrices&)            = delete;
-            IEffectMatrices& operator=(const IEffectMatrices&) = delete;
+            IEffectMatrices(IEffectMatrices const&)            = delete;
+            IEffectMatrices& operator=(IEffectMatrices const&) = delete;
 
             virtual void XM_CALLCONV SetWorld(FXMMATRIX value)      = 0;
             virtual void XM_CALLCONV SetView(FXMMATRIX value)       = 0;
@@ -107,8 +107,8 @@ namespace DirectX
         public:
             virtual ~IEffectLights() = default;
 
-            IEffectLights(const IEffectLights&)            = delete;
-            IEffectLights& operator=(const IEffectLights&) = delete;
+            IEffectLights(IEffectLights const&)            = delete;
+            IEffectLights& operator=(IEffectLights const&) = delete;
 
             virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
 
@@ -133,8 +133,8 @@ namespace DirectX
         public:
             virtual ~IEffectFog() = default;
 
-            IEffectFog(const IEffectFog&)            = delete;
-            IEffectFog& operator=(const IEffectFog&) = delete;
+            IEffectFog(IEffectFog const&)            = delete;
+            IEffectFog& operator=(IEffectFog const&) = delete;
 
             virtual void __cdecl     SetFogStart(float value)     = 0;
             virtual void __cdecl     SetFogEnd(float value)       = 0;
@@ -152,8 +152,8 @@ namespace DirectX
         public:
             virtual ~IEffectSkinning() = default;
 
-            IEffectSkinning(const IEffectSkinning&)            = delete;
-            IEffectSkinning& operator=(const IEffectSkinning&) = delete;
+            IEffectSkinning(IEffectSkinning const&)            = delete;
+            IEffectSkinning& operator=(IEffectSkinning const&) = delete;
 
             virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
             virtual void __cdecl ResetBoneTransforms()                                                    = 0;
@@ -202,7 +202,7 @@ namespace DirectX
         {
         public:
             DIRECTX_TOOLKIT_API
-            BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+            BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
             DIRECTX_TOOLKIT_API              BasicEffect(BasicEffect&&) noexcept;
             DIRECTX_TOOLKIT_API BasicEffect& operator=(BasicEffect&&) noexcept;
@@ -262,7 +262,7 @@ namespace DirectX
         public:
             DIRECTX_TOOLKIT_API AlphaTestEffect(_In_ ID3D12Device* device,
                 uint32_t                                           effectFlags,
-                const EffectPipelineStateDescription&              pipelineDescription,
+                EffectPipelineStateDescription const&              pipelineDescription,
                 D3D12_COMPARISON_FUNC                              alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
 
             DIRECTX_TOOLKIT_API                  AlphaTestEffect(AlphaTestEffect&&) noexcept;
@@ -311,7 +311,7 @@ namespace DirectX
         {
         public:
             DIRECTX_TOOLKIT_API
-            DualTextureEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+            DualTextureEffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
             DIRECTX_TOOLKIT_API                    DualTextureEffect(DualTextureEffect&&) noexcept;
             DIRECTX_TOOLKIT_API DualTextureEffect& operator=(DualTextureEffect&&) noexcept;
@@ -366,7 +366,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API EnvironmentMapEffect(_In_ ID3D12Device* device,
                 uint32_t                                                effectFlags,
-                const EffectPipelineStateDescription&                   pipelineDescription,
+                EffectPipelineStateDescription const&                   pipelineDescription,
                 Mapping                                                 mapping = Mapping_Cube);
 
             DIRECTX_TOOLKIT_API                       EnvironmentMapEffect(EnvironmentMapEffect&&) noexcept;
@@ -430,7 +430,7 @@ namespace DirectX
         {
         public:
             DIRECTX_TOOLKIT_API
-            SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+            SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
             DIRECTX_TOOLKIT_API                SkinnedEffect(SkinnedEffect&&) noexcept;
             DIRECTX_TOOLKIT_API SkinnedEffect& operator=(SkinnedEffect&&) noexcept;
@@ -495,7 +495,7 @@ namespace DirectX
         public:
             DIRECTX_TOOLKIT_API inline NormalMapEffect(_In_ ID3D12Device* device,
                 uint32_t                                                  effectFlags,
-                const EffectPipelineStateDescription&                     pipelineDescription)
+                EffectPipelineStateDescription const&                     pipelineDescription)
                 : NormalMapEffect(device, effectFlags, pipelineDescription, false)
             {}
 
@@ -554,7 +554,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API NormalMapEffect(_In_ ID3D12Device* device,
                 uint32_t                                           effectFlags,
-                const EffectPipelineStateDescription&              pipelineDescription,
+                EffectPipelineStateDescription const&              pipelineDescription,
                 bool                                               skinningEnabled);
         };
 
@@ -563,7 +563,7 @@ namespace DirectX
         public:
             SkinnedNormalMapEffect(_In_ ID3D12Device* device,
                 uint32_t                              effectFlags,
-                const EffectPipelineStateDescription& pipelineDescription)
+                EffectPipelineStateDescription const& pipelineDescription)
                 : NormalMapEffect(device, effectFlags, pipelineDescription, true)
             {}
 
@@ -587,7 +587,7 @@ namespace DirectX
         public:
             DIRECTX_TOOLKIT_API inline PBREffect(_In_ ID3D12Device* device,
                 uint32_t                                            effectFlags,
-                const EffectPipelineStateDescription&               pipelineDescription)
+                EffectPipelineStateDescription const&               pipelineDescription)
                 : PBREffect(device, effectFlags, pipelineDescription, false)
             {}
 
@@ -650,7 +650,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API PBREffect(_In_ ID3D12Device* device,
                 uint32_t                                     effectFlags,
-                const EffectPipelineStateDescription&        pipelineDescription,
+                EffectPipelineStateDescription const&        pipelineDescription,
                 bool                                         skinningEnabled);
 
         private:
@@ -662,7 +662,7 @@ namespace DirectX
         class DIRECTX_TOOLKIT_API SkinnedPBREffect : public PBREffect, public IEffectSkinning
         {
         public:
-            SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+            SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
                 : PBREffect(device, effectFlags, pipelineDescription, true)
             {}
 
@@ -694,7 +694,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API DebugEffect(_In_ ID3D12Device* device,
                 uint32_t                                       effectFlags,
-                const EffectPipelineStateDescription&          pipelineDescription,
+                EffectPipelineStateDescription const&          pipelineDescription,
                 Mode                                           debugMode = Mode_Default);
 
             DIRECTX_TOOLKIT_API              DebugEffect(DebugEffect&&) noexcept;
@@ -739,7 +739,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API inline NPREffect(_In_ ID3D12Device* device,
                 uint32_t                                            effectFlags,
-                const EffectPipelineStateDescription&               pipelineDescription,
+                EffectPipelineStateDescription const&               pipelineDescription,
                 Mode                                                nprMode = Mode_Cel)
                 : NPREffect(device, effectFlags, pipelineDescription, nprMode, false)
             {}
@@ -806,7 +806,7 @@ namespace DirectX
 
             DIRECTX_TOOLKIT_API NPREffect(_In_ ID3D12Device* device,
                 uint32_t                                     effectFlags,
-                const EffectPipelineStateDescription&        pipelineDescription,
+                EffectPipelineStateDescription const&        pipelineDescription,
                 Mode                                         nprMode,
                 bool                                         skinningEnabled);
 
@@ -823,7 +823,7 @@ namespace DirectX
         public:
             SkinnedNPREffect(_In_ ID3D12Device*       device,
                 uint32_t                              effectFlags,
-                const EffectPipelineStateDescription& pipelineDescription,
+                EffectPipelineStateDescription const& pipelineDescription,
                 Mode                                  nprMode = Mode_Cel)
                 : NPREffect(device, effectFlags, pipelineDescription, nprMode, true)
             {}
@@ -851,8 +851,8 @@ namespace DirectX
         public:
             virtual ~IEffectTextureFactory() = default;
 
-            IEffectTextureFactory(const IEffectTextureFactory&)            = delete;
-            IEffectTextureFactory& operator=(const IEffectTextureFactory&) = delete;
+            IEffectTextureFactory(IEffectTextureFactory const&)            = delete;
+            IEffectTextureFactory& operator=(IEffectTextureFactory const&) = delete;
 
             virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
 
@@ -921,8 +921,8 @@ namespace DirectX
         public:
             virtual ~IEffectFactory() = default;
 
-            IEffectFactory(const IEffectFactory&)            = delete;
-            IEffectFactory& operator=(const IEffectFactory&) = delete;
+            IEffectFactory(IEffectFactory const&)            = delete;
+            IEffectFactory& operator=(IEffectFactory const&) = delete;
 
             struct DIRECTX_TOOLKIT_API EffectInfo
             {
@@ -966,9 +966,9 @@ namespace DirectX
                 {}
             };
 
-            virtual std::shared_ptr<IEffect> __cdecl CreateEffect(const EffectInfo& info,
-                const EffectPipelineStateDescription&                               opaquePipelineState,
-                const EffectPipelineStateDescription&                               alphaPipelineState,
+            virtual std::shared_ptr<IEffect> __cdecl CreateEffect(EffectInfo const& info,
+                EffectPipelineStateDescription const&                               opaquePipelineState,
+                EffectPipelineStateDescription const&                               alphaPipelineState,
                 const D3D12_INPUT_LAYOUT_DESC&                                      inputLayout,
                 int                                                                 textureDescriptorOffset = 0,
                 int                                                                 samplerDescriptorOffset = 0) = 0;
@@ -995,9 +995,9 @@ namespace DirectX
             DIRECTX_TOOLKIT_API ~EffectFactory() override;
 
             // IEffectFactory methods.
-            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(const EffectInfo& info,
-                const EffectPipelineStateDescription&                                                   opaquePipelineState,
-                const EffectPipelineStateDescription&                                                   alphaPipelineState,
+            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(EffectInfo const& info,
+                EffectPipelineStateDescription const&                                                   opaquePipelineState,
+                EffectPipelineStateDescription const&                                                   alphaPipelineState,
                 const D3D12_INPUT_LAYOUT_DESC&                                                          inputLayout,
                 int                                                                                     textureDescriptorOffset = 0,
                 int samplerDescriptorOffset = 0) override;
@@ -1044,9 +1044,9 @@ namespace DirectX
             DIRECTX_TOOLKIT_API ~PBREffectFactory() override;
 
             // IEffectFactory methods.
-            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(const EffectInfo& info,
-                const EffectPipelineStateDescription&                                                   opaquePipelineState,
-                const EffectPipelineStateDescription&                                                   alphaPipelineState,
+            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(EffectInfo const& info,
+                EffectPipelineStateDescription const&                                                   opaquePipelineState,
+                EffectPipelineStateDescription const&                                                   alphaPipelineState,
                 const D3D12_INPUT_LAYOUT_DESC&                                                          inputLayout,
                 int                                                                                     textureDescriptorOffset = 0,
                 int samplerDescriptorOffset = 0) override;
@@ -1085,9 +1085,9 @@ namespace DirectX
             DIRECTX_TOOLKIT_API ~NPREffectFactory() override;
 
             // IEffectFactory methods.
-            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(const EffectInfo& info,
-                const EffectPipelineStateDescription&                                                   opaquePipelineState,
-                const EffectPipelineStateDescription&                                                   alphaPipelineState,
+            DIRECTX_TOOLKIT_API virtual std::shared_ptr<IEffect> __cdecl CreateEffect(EffectInfo const& info,
+                EffectPipelineStateDescription const&                                                   opaquePipelineState,
+                EffectPipelineStateDescription const&                                                   alphaPipelineState,
                 const D3D12_INPUT_LAYOUT_DESC&                                                          inputLayout,
                 int                                                                                     textureDescriptorOffset = 0,
                 int samplerDescriptorOffset = 0) override;

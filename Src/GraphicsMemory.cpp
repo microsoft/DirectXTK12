@@ -50,7 +50,7 @@ namespace
 
     inline size_t GetPoolIndexFromSize(size_t x) noexcept
     {
-        const size_t allocatorPageSize = x >> AllocatorIndexShift;
+        size_t const allocatorPageSize = x >> AllocatorIndexShift;
         // gives a value from range:
         // 0 - sub-4k allocator
         // 1 - 4k allocator
@@ -115,7 +115,7 @@ namespace
         // Explicitly destroy LinearAllocators inside a critical section
         ~DeviceAllocator()
         {
-            const ScopedLock lock(mMutex);
+            ScopedLock const lock(mMutex);
 
             for (auto& allocator : mPools)
             {
@@ -128,8 +128,8 @@ namespace
             ScopedLock lock(mMutex);
 
             // Which memory pool does it live in?
-            const size_t poolSize  = NextPow2((alignment + size) * PoolIndexScale);
-            const size_t poolIndex = GetPoolIndexFromSize(poolSize);
+            size_t const poolSize  = NextPow2((alignment + size) * PoolIndexScale);
+            size_t const poolIndex = GetPoolIndexFromSize(poolSize);
             assert(poolIndex < mPools.size());
 
             // If the allocator isn't initialized yet, do so now
@@ -567,7 +567,7 @@ SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource
     : mSharedResource(std::move(resource.mSharedResource))
 {}
 
-SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource) noexcept
+SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource const& resource) noexcept
     : mSharedResource(resource.mSharedResource)
 {}
 
@@ -585,7 +585,7 @@ SharedGraphicsResource&& SharedGraphicsResource::operator=(GraphicsResource&& re
     return std::move(*this);
 }
 
-SharedGraphicsResource& SharedGraphicsResource::operator=(const SharedGraphicsResource& resource) noexcept
+SharedGraphicsResource& SharedGraphicsResource::operator=(SharedGraphicsResource const& resource) noexcept
 {
     mSharedResource = resource.mSharedResource;
     return *this;
@@ -606,7 +606,7 @@ void SharedGraphicsResource::Reset(SharedGraphicsResource&& resource) noexcept
     mSharedResource = std::move(resource.mSharedResource);
 }
 
-void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource) noexcept
+void SharedGraphicsResource::Reset(SharedGraphicsResource const& resource) noexcept
 {
     mSharedResource = resource.mSharedResource;
 }

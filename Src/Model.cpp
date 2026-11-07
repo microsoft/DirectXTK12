@@ -122,9 +122,9 @@ ModelMeshPart::DrawInstanced(ID3D12GraphicsCommandList* commandList, uint32_t in
     commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, startInstance);
 }
 
-_Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
+_Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, ModelMeshPart::Collection const& meshParts)
 {
-    for (const auto& it : meshParts)
+    for (auto const& it : meshParts)
     {
         auto part = it.get();
         assert(part != nullptr);
@@ -134,10 +134,10 @@ _Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandLi
 }
 
 _Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
-    const ModelMeshPart::Collection&                                                meshParts,
+    ModelMeshPart::Collection const&                                                meshParts,
     ModelMeshPart::DrawCallback                                                     callback)
 {
-    for (const auto& it : meshParts)
+    for (auto const& it : meshParts)
     {
         auto part = it.get();
         assert(part != nullptr);
@@ -148,7 +148,7 @@ _Use_decl_annotations_ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandLi
 }
 
 _Use_decl_annotations_ void
-ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, IEffect* effect)
+ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, ModelMeshPart::Collection const& meshParts, IEffect* effect)
 {
     effect->Apply(commandList);
     DrawMeshParts(commandList, meshParts);
@@ -212,7 +212,7 @@ Model::Model(Model const& other)
       bones(other.bones),
       name(other.name)
 {
-    const size_t nbones = other.bones.size();
+    size_t const nbones = other.bones.size();
     if (nbones > 0)
     {
         if (other.boneMatrices)
@@ -258,7 +258,7 @@ int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescri
 // Load texture resources (helper function).
 _Use_decl_annotations_ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device,
     ResourceUploadBatch&                                                                       resourceUploadBatch,
-    const wchar_t*                                                                             texturesPath,
+    wchar_t const*                                                                             texturesPath,
     D3D12_DESCRIPTOR_HEAP_FLAGS                                                                flags) const
 {
     if (textureNames.empty())
@@ -284,13 +284,13 @@ _Use_decl_annotations_ void Model::LoadStaticBuffers(ID3D12Device* device, Resou
 
     // Gather all unique parts
     std::set<ModelMeshPart*> uniqueParts;
-    for (const auto& mesh : meshes)
+    for (auto const& mesh : meshes)
     {
-        for (const auto& part : mesh->opaqueMeshParts)
+        for (auto const& part : mesh->opaqueMeshParts)
         {
             uniqueParts.insert(part.get());
         }
-        for (const auto& part : mesh->alphaMeshParts)
+        for (auto const& part : mesh->alphaMeshParts)
         {
             uniqueParts.insert(part.get());
         }
@@ -313,7 +313,7 @@ _Use_decl_annotations_ void Model::LoadStaticBuffers(ID3D12Device* device, Resou
 
             part->vertexBufferSize = static_cast<uint32_t>(part->vertexBuffer.Size());
 
-            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
+            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
                 D3D12_HEAP_FLAG_NONE,
@@ -368,7 +368,7 @@ _Use_decl_annotations_ void Model::LoadStaticBuffers(ID3D12Device* device, Resou
 
             part->indexBufferSize = static_cast<uint32_t>(part->indexBuffer.Size());
 
-            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
+            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
                 D3D12_HEAP_FLAG_NONE,
@@ -416,8 +416,8 @@ _Use_decl_annotations_ void Model::LoadStaticBuffers(ID3D12Device* device, Resou
 
 // Create effects for each mesh piece.
 Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
-    const EffectPipelineStateDescription&                    opaquePipelineState,
-    const EffectPipelineStateDescription&                    alphaPipelineState,
+    EffectPipelineStateDescription const&                    opaquePipelineState,
+    EffectPipelineStateDescription const&                    alphaPipelineState,
     int                                                      textureDescriptorOffset,
     int                                                      samplerDescriptorOffset) const
 {
@@ -431,11 +431,11 @@ Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
 
     // Count the number of parts
     uint32_t partCount = 0;
-    for (const auto& mesh : meshes)
+    for (auto const& mesh : meshes)
     {
-        for (const auto& part : mesh->opaqueMeshParts)
+        for (auto const& part : mesh->opaqueMeshParts)
             partCount = std::max(part->partIndex + 1, partCount);
-        for (const auto& part : mesh->alphaMeshParts)
+        for (auto const& part : mesh->alphaMeshParts)
             partCount = std::max(part->partIndex + 1, partCount);
     }
 
@@ -447,11 +447,11 @@ Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
     // wants to.
     effects.resize(partCount);
 
-    for (const auto& mesh : meshes)
+    for (auto const& mesh : meshes)
     {
         assert(mesh != nullptr);
 
-        for (const auto& part : mesh->opaqueMeshParts)
+        for (auto const& part : mesh->opaqueMeshParts)
         {
             assert(part != nullptr);
 
@@ -469,7 +469,7 @@ Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
                 part.get());
         }
 
-        for (const auto& part : mesh->alphaMeshParts)
+        for (auto const& part : mesh->alphaMeshParts)
         {
             assert(part != nullptr);
 
@@ -493,14 +493,14 @@ Model::EffectCollection Model::CreateEffects(IEffectFactory& fxFactory,
 
 // Private helper for creating an effect for a mesh part.
 _Use_decl_annotations_ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(IEffectFactory& fxFactory,
-    const EffectPipelineStateDescription&                                                      opaquePipelineState,
-    const EffectPipelineStateDescription&                                                      alphaPipelineState,
+    EffectPipelineStateDescription const&                                                      opaquePipelineState,
+    EffectPipelineStateDescription const&                                                      alphaPipelineState,
     int                                                                                        textureDescriptorOffset,
     int                                                                                        samplerDescriptorOffset,
-    const ModelMeshPart*                                                                       part) const
+    ModelMeshPart const*                                                                       part) const
 {
     assert(part->materialIndex < materials.size());
-    const auto& m = materials[part->materialIndex];
+    auto const& m = materials[part->materialIndex];
 
     if (!part->vbDecl || part->vbDecl->empty())
         throw std::runtime_error("Model mesh part missing vertex buffer input elements data");
@@ -516,8 +516,8 @@ _Use_decl_annotations_ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(I
 }
 
 // Create effects for each mesh piece with the default factory.
-_Use_decl_annotations_ Model::EffectCollection Model::CreateEffects(const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription&                                                                 alphaPipelineState,
+_Use_decl_annotations_ Model::EffectCollection Model::CreateEffects(EffectPipelineStateDescription const& opaquePipelineState,
+    EffectPipelineStateDescription const&                                                                 alphaPipelineState,
     ID3D12DescriptorHeap*                                                                                 textureDescriptorHeap,
     ID3D12DescriptorHeap*                                                                                 samplerDescriptorHeap,
     int                                                                                                   textureDescriptorOffset,
@@ -778,7 +778,7 @@ _Use_decl_annotations_ std::unique_ptr<EffectTextureFactory> Model::LoadTextures
     const __wchar_t*                                                                           texturesPath,
     D3D12_DESCRIPTOR_HEAP_FLAGS                                                                flags) const
 {
-    return LoadTextures(device, resourceUploadBatch, reinterpret_cast<const unsigned short*>(texturesPath), flags);
+    return LoadTextures(device, resourceUploadBatch, reinterpret_cast<unsigned short const*>(texturesPath), flags);
 }
 
 #endif

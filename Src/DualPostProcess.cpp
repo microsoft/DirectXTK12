@@ -86,8 +86,8 @@ namespace
             : mDevice(device)
         {}
 
-        DeviceResources(const DeviceResources&)            = delete;
-        DeviceResources& operator=(const DeviceResources&) = delete;
+        DeviceResources(DeviceResources const&)            = delete;
+        DeviceResources& operator=(DeviceResources const&) = delete;
 
         DeviceResources(DeviceResources&&)            = delete;
         DeviceResources& operator=(DeviceResources&&) = delete;
@@ -120,10 +120,10 @@ namespace
 class DualPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
 public:
-    Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx);
+    Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect ifx);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -174,7 +174,7 @@ private:
 SharedResourcePool<ID3D12Device*, DeviceResources> DualPostProcess::Impl::deviceResourcesPool;
 
 // Constructor.
-DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx)
+DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect ifx)
     : fx(ifx),
       constants{},
       texture{},
@@ -241,7 +241,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    const EffectPipelineStateDescription psd(nullptr,
+    EffectPipelineStateDescription const psd(nullptr,
         CommonStates::Opaque,
         CommonStates::DepthNone,
         CommonStates::CullNone,
@@ -308,7 +308,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
+DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect fx)
     : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {}
 

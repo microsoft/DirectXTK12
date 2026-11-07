@@ -81,7 +81,7 @@ namespace
             else
             {
                 // Plane 1
-                res.pData      = static_cast<const uint8_t*>(res.pData) + uintptr_t(res.RowPitch) * height;
+                res.pData      = static_cast<uint8_t const*>(res.pData) + uintptr_t(res.RowPitch) * height;
                 res.SlicePitch = res.RowPitch * ((static_cast<LONG>(height) + 1) >> 1);
             }
             break;
@@ -95,7 +95,7 @@ namespace
             else
             {
                 // Plane 1
-                res.pData      = static_cast<const uint8_t*>(res.pData) + uintptr_t(res.RowPitch) * height;
+                res.pData      = static_cast<uint8_t const*>(res.pData) + uintptr_t(res.RowPitch) * height;
                 res.RowPitch   = (res.RowPitch >> 1);
                 res.SlicePitch = res.RowPitch * static_cast<LONG>(height);
             }
@@ -134,13 +134,13 @@ namespace
 
         size_t         NumBytes = 0;
         size_t         RowBytes = 0;
-        const uint8_t* pEndBits = bitData + bitSize;
+        uint8_t const* pEndBits = bitData + bitSize;
 
         initData.clear();
 
         for (size_t p = 0; p < numberOfPlanes; ++p)
         {
-            const uint8_t* pSrcBits = bitData;
+            uint8_t const* pSrcBits = bitData;
 
             for (size_t j = 0; j < arraySize; j++)
             {
@@ -295,7 +295,7 @@ namespace
 
         if ((header->ddspf.flags & DDS_FOURCC) && (MAKEFOURCC('D', 'X', '1', '0') == header->ddspf.fourCC))
         {
-            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>(reinterpret_cast<const char*>(header) + sizeof(DDS_HEADER));
+            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>(reinterpret_cast<char const*>(header) + sizeof(DDS_HEADER));
 
             arraySize = d3d10ext->arraySize;
             if (arraySize == 0)
@@ -621,7 +621,7 @@ namespace
     void SetDebugTextureInfo(_In_z_ const wchar_t* fileName, _In_ ID3D12Resource* texture) noexcept
     {
 #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
-        const wchar_t* pstrName = wcsrchr(fileName, '\\');
+        wchar_t const* pstrName = wcsrchr(fileName, '\\');
         if (!pstrName)
         {
             pstrName = fileName;
@@ -642,7 +642,7 @@ namespace
     {
         if ((header->ddspf.flags & DDS_FOURCC) && (MAKEFOURCC('D', 'X', '1', '0') == header->ddspf.fourCC))
         {
-            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>(reinterpret_cast<const char*>(header) + sizeof(DDS_HEADER));
+            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>(reinterpret_cast<char const*>(header) + sizeof(DDS_HEADER));
             return d3d10ext->dxgiFormat;
         }
         else
@@ -652,7 +652,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromMemory(ID3D12Device* device,
-    const uint8_t*                                                             ddsData,
+    uint8_t const*                                                             ddsData,
     size_t                                                                     ddsDataSize,
     ID3D12Resource**                                                           texture,
     std::vector<D3D12_SUBRESOURCE_DATA>&                                       subresources,
@@ -673,7 +673,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromMemory(ID3D12Device* d
 }
 
 _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromMemoryEx(ID3D12Device* device,
-    const uint8_t*                                                               ddsData,
+    uint8_t const*                                                               ddsData,
     size_t                                                                       ddsDataSize,
     size_t                                                                       maxsize,
     D3D12_RESOURCE_FLAGS                                                         resFlags,
@@ -703,7 +703,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromMemoryEx(ID3D12Device*
 
     // Validate DDS file in memory
     const DDS_HEADER* header  = nullptr;
-    const uint8_t*    bitData = nullptr;
+    uint8_t const*    bitData = nullptr;
     size_t            bitSize = 0;
 
     HRESULT hr = LoadTextureDataFromMemory(ddsData, ddsDataSize, &header, &bitData, &bitSize);
@@ -726,7 +726,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromMemoryEx(ID3D12Device*
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromFile(ID3D12Device* device,
-    const wchar_t*                                                           fileName,
+    wchar_t const*                                                           fileName,
     ID3D12Resource**                                                         texture,
     std::unique_ptr<uint8_t[]>&                                              ddsData,
     std::vector<D3D12_SUBRESOURCE_DATA>&                                     subresources,
@@ -747,7 +747,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromFile(ID3D12Device* dev
 }
 
 _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromFileEx(ID3D12Device* device,
-    const wchar_t*                                                             fileName,
+    wchar_t const*                                                             fileName,
     size_t                                                                     maxsize,
     D3D12_RESOURCE_FLAGS                                                       resFlags,
     DDS_LOADER_FLAGS                                                           loadFlags,
@@ -776,7 +776,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromFileEx(ID3D12Device* d
     }
 
     const DDS_HEADER* header  = nullptr;
-    const uint8_t*    bitData = nullptr;
+    uint8_t const*    bitData = nullptr;
     size_t            bitSize = 0;
 
     HRESULT hr = LoadTextureDataFromFile(fileName, ddsData, &header, &bitData, &bitSize);
@@ -801,7 +801,7 @@ _Use_decl_annotations_ HRESULT DirectX::LoadDDSTextureFromFileEx(ID3D12Device* d
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemory(ID3D12Device* device,
     ResourceUploadBatch&                                                         resourceUpload,
-    const uint8_t*                                                               ddsData,
+    uint8_t const*                                                               ddsData,
     size_t                                                                       ddsDataSize,
     ID3D12Resource**                                                             texture,
     bool                                                                         generateMipsIfMissing,
@@ -823,7 +823,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemory(ID3D12Device*
 
 _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemoryEx(ID3D12Device* device,
     ResourceUploadBatch&                                                           resourceUpload,
-    const uint8_t*                                                                 ddsData,
+    uint8_t const*                                                                 ddsData,
     size_t                                                                         ddsDataSize,
     size_t                                                                         maxsize,
     D3D12_RESOURCE_FLAGS                                                           resFlags,
@@ -852,7 +852,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemoryEx(ID3D12Devic
 
     // Validate DDS file in memory
     const DDS_HEADER* header  = nullptr;
-    const uint8_t*    bitData = nullptr;
+    uint8_t const*    bitData = nullptr;
     size_t            bitSize = 0;
 
     HRESULT hr = LoadTextureDataFromMemory(ddsData, ddsDataSize, &header, &bitData, &bitSize);
@@ -888,10 +888,10 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemoryEx(ID3D12Devic
 
         // If it's missing mips, let's generate them
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const size_t mipLevels = (*texture)->GetDesc().MipLevels;
+        size_t const mipLevels = (*texture)->GetDesc().MipLevels;
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const size_t        mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
+        size_t const        mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
 #endif
 
         if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != mipLevels)
@@ -906,7 +906,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromMemoryEx(ID3D12Devic
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromFile(ID3D12Device* device,
     ResourceUploadBatch&                                                       resourceUpload,
-    const wchar_t*                                                             fileName,
+    wchar_t const*                                                             fileName,
     ID3D12Resource**                                                           texture,
     bool                                                                       generateMipsIfMissing,
     size_t                                                                     maxsize,
@@ -926,7 +926,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromFile(ID3D12Device* d
 
 _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromFileEx(ID3D12Device* device,
     ResourceUploadBatch&                                                         resourceUpload,
-    const wchar_t*                                                               fileName,
+    wchar_t const*                                                               fileName,
     size_t                                                                       maxsize,
     D3D12_RESOURCE_FLAGS                                                         resFlags,
     DDS_LOADER_FLAGS                                                             loadFlags,
@@ -953,7 +953,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromFileEx(ID3D12Device*
     }
 
     const DDS_HEADER* header  = nullptr;
-    const uint8_t*    bitData = nullptr;
+    uint8_t const*    bitData = nullptr;
     size_t            bitSize = 0;
 
     std::unique_ptr<uint8_t[]> ddsData;
@@ -990,10 +990,10 @@ _Use_decl_annotations_ HRESULT DirectX::CreateDDSTextureFromFileEx(ID3D12Device*
 
         // If it's missing mips, let's generate them
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const size_t mipLevels = (*texture)->GetDesc().MipLevels;
+        size_t const mipLevels = (*texture)->GetDesc().MipLevels;
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const size_t        mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
+        size_t const        mipLevels = (*texture)->GetDesc(&tmpDesc)->MipLevels;
 #endif
 
         if ((loadFlags & DDS_LOADER_MIP_AUTOGEN) && subresources.size() != mipLevels)
@@ -1022,7 +1022,7 @@ namespace DirectX
         _Out_opt_ bool*                                       isCubeMap)
     {
         return LoadDDSTextureFromFile(device,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             texture,
             ddsData,
             subresources,
@@ -1042,7 +1042,7 @@ namespace DirectX
     {
         return CreateDDSTextureFromFile(device,
             resourceUpload,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             texture,
             generateMipsIfMissing,
             maxsize,
@@ -1062,7 +1062,7 @@ namespace DirectX
         _Out_opt_ bool*                                         isCubeMap)
     {
         return LoadDDSTextureFromFileEx(device,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             maxsize,
             resFlags,
             loadFlags,
@@ -1085,7 +1085,7 @@ namespace DirectX
     {
         return CreateDDSTextureFromFileEx(device,
             resourceUpload,
-            reinterpret_cast<const unsigned short*>(szFileName),
+            reinterpret_cast<unsigned short const*>(szFileName),
             maxsize,
             resFlags,
             loadFlags,

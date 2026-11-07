@@ -63,8 +63,8 @@ namespace DirectX
         DescriptorHeap(DescriptorHeap&&)            = default;
         DescriptorHeap& operator=(DescriptorHeap&&) = default;
 
-        DescriptorHeap(const DescriptorHeap&)            = delete;
-        DescriptorHeap& operator=(const DescriptorHeap&) = delete;
+        DescriptorHeap(DescriptorHeap const&)            = delete;
+        DescriptorHeap& operator=(DescriptorHeap const&) = delete;
 
         DIRECTX_TOOLKIT_API D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(_In_ ID3D12Device* device,
             uint32_t                                                                                offsetIntoHeap,
@@ -194,8 +194,8 @@ namespace DirectX
         DescriptorPile(DescriptorPile&&)            = default;
         DescriptorPile& operator=(DescriptorPile&&) = default;
 
-        DescriptorPile(const DescriptorPile&)            = delete;
-        DescriptorPile& operator=(const DescriptorPile&) = delete;
+        DescriptorPile(DescriptorPile const&)            = delete;
+        DescriptorPile& operator=(DescriptorPile const&) = delete;
 
         DIRECTX_TOOLKIT_API inline IndexType Allocate()
         {

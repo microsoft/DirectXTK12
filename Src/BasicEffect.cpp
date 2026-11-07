@@ -53,10 +53,10 @@ namespace
 class BasicEffect::Impl : public EffectBase<BasicEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -290,7 +290,7 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::VertexShaderBytecode[
 };
 
 template<>
-const int EffectBase<BasicEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<BasicEffectTraits>::VertexShaderIndices[] = {
     0,  // basic
     1,  // no fog
     2,  // vertex color
@@ -354,7 +354,7 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::PixelShaderBytecode[]
 };
 
 template<>
-const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<BasicEffectTraits>::PixelShaderIndices[] = {
     0, // basic
     1, // no fog
     0, // vertex color
@@ -407,7 +407,7 @@ template<>
 SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources> EffectBase<BasicEffectTraits>::deviceResourcesPool = {};
 
 // Constructor.
-BasicEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+BasicEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
     : EffectBase(device),
       texture{},
       sampler{}
@@ -481,14 +481,14 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const E
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
@@ -588,7 +588,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-BasicEffect::BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+BasicEffect::BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {}
 

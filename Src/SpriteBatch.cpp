@@ -76,11 +76,11 @@ XM_ALIGNED_STRUCT(16) SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
 public:
     Impl(_In_ ID3D12Device * device,
         ResourceUploadBatch & upload,
-        const SpriteBatchPipelineStateDescription& psoDesc,
+        SpriteBatchPipelineStateDescription const& psoDesc,
         _In_opt_ const D3D12_VIEWPORT*             viewport);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -303,7 +303,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
     static_assert((MaxBatchSize * VerticesPerSprite) < USHRT_MAX, "MaxBatchSize too large for 16-bit indices");
 
     const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
-    const auto                    bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(short) * MaxBatchSize * IndicesPerSprite);
+    auto const                    bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(short) * MaxBatchSize * IndicesPerSprite);
 
     // Create the constant buffer.
     ThrowIfFailed(device->CreateCommittedResource(&heapProps,
@@ -398,7 +398,7 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 
     for (size_t j = 0; j < MaxBatchSize * VerticesPerSprite; j += VerticesPerSprite)
     {
-        const auto i = static_cast<short>(j);
+        auto const i = static_cast<short>(j);
 
         indices.push_back(i);
         indices.push_back(i + 1);
@@ -415,7 +415,7 @@ std::vector<short> SpriteBatch::Impl::DeviceResources::CreateIndexValues()
 // Per-SpriteBatch constructor.
 _Use_decl_annotations_ SpriteBatch::Impl::Impl(ID3D12Device* device,
     ResourceUploadBatch&                                     upload,
-    const SpriteBatchPipelineStateDescription&               psoDesc,
+    SpriteBatchPipelineStateDescription const&               psoDesc,
     const D3D12_VIEWPORT*                                    viewport)
     : mRotation(DXGI_MODE_ROTATION_IDENTITY),
       mSetViewport(false),
@@ -627,7 +627,7 @@ _Use_decl_annotations_ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRI
 void SpriteBatch::Impl::GrowSpriteQueue()
 {
     // Grow by a factor of 2.
-    const size_t newSize = std::max(InitialQueueSize, mSpriteQueueArraySize * 2);
+    size_t const newSize = std::max(InitialQueueSize, mSpriteQueueArraySize * 2);
 
     // Allocate the new array.
     auto newArray = std::make_unique<SpriteInfo[]>(newSize);
@@ -774,7 +774,7 @@ void SpriteBatch::Impl::SortSprites()
 // Populates the mSortedSprites vector with pointers to individual elements of the mSpriteQueue array.
 void SpriteBatch::Impl::GrowSortedSprites()
 {
-    const size_t previousSize = mSortedSprites.size();
+    size_t const previousSize = mSortedSprites.size();
 
     mSortedSprites.resize(mSpriteQueueCount);
 
@@ -809,7 +809,7 @@ SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTOR tex
         size_t batchSize = count;
 
         // How many sprites does the D3D vertex buffer have room for?
-        const size_t remainingSpace = MaxBatchSize - mSpriteCount;
+        size_t const remainingSpace = MaxBatchSize - mSpriteCount;
 
         if (batchSize > remainingSpace)
         {
@@ -878,8 +878,8 @@ _Use_decl_annotations_ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteIn
     const XMVECTOR color               = XMLoadFloat4A(&sprite->color);
     const XMVECTOR originRotationDepth = XMLoadFloat4A(&sprite->originRotationDepth);
 
-    const float        rotation = sprite->originRotationDepth.z;
-    const unsigned int flags    = sprite->flags;
+    float const        rotation = sprite->originRotationDepth.z;
+    unsigned int const flags    = sprite->flags;
 
     // Extract the source and destination sizes into separate vectors.
     XMVECTOR sourceSize      = XMVectorSwizzle<2, 3, 2, 3>(source);
@@ -948,7 +948,7 @@ _Use_decl_annotations_ void XM_CALLCONV SpriteBatch::Impl::RenderSprite(SpriteIn
     static_assert(SpriteEffects_FlipHorizontally == 1 && SpriteEffects_FlipVertically == 2,
         "If you change these enum values, the mirroring implementation must be updated to match");
 
-    const unsigned int mirrorBits = flags & 3u;
+    unsigned int const mirrorBits = flags & 3u;
 
     // Generate the four output vertices.
     for (size_t i = 0; i < VerticesPerSprite; i++)
@@ -989,8 +989,8 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
     }
 
     // Compute the matrix.
-    const float xScale = (mViewPort.Width > 0) ? 2.0f / mViewPort.Width : 0.0f;
-    const float yScale = (mViewPort.Height > 0) ? 2.0f / mViewPort.Height : 0.0f;
+    float const xScale = (mViewPort.Width > 0) ? 2.0f / mViewPort.Width : 0.0f;
+    float const yScale = (mViewPort.Height > 0) ? 2.0f / mViewPort.Height : 0.0f;
 
     switch (rotation)
     {
@@ -1007,7 +1007,7 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
 // Public constructor.
 _Use_decl_annotations_ SpriteBatch::SpriteBatch(ID3D12Device* device,
     ResourceUploadBatch&                                      upload,
-    const SpriteBatchPipelineStateDescription&                psoDesc,
+    SpriteBatchPipelineStateDescription const&                psoDesc,
     const D3D12_VIEWPORT*                                     viewport)
     : pImpl(std::make_unique<Impl>(device, upload, psoDesc, viewport))
 {}

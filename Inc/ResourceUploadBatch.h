@@ -72,7 +72,7 @@ namespace DirectX
             _In_reads_(numSubresources) const D3D12_SUBRESOURCE_DATA* subRes,
             uint32_t                                                  numSubresources);
 
-        DIRECTX_TOOLKIT_API void __cdecl Upload(_In_ ID3D12Resource* resource, const SharedGraphicsResource& buffer);
+        DIRECTX_TOOLKIT_API void __cdecl Upload(_In_ ID3D12Resource* resource, SharedGraphicsResource const& buffer);
 
         // Asynchronously generate mips from a resource.
         // Resource must be in the PIXEL_SHADER_RESOURCE state

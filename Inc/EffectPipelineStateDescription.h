@@ -54,7 +54,7 @@ namespace DirectX
             const D3D12_BLEND_DESC&                                            blend,
             const D3D12_DEPTH_STENCIL_DESC&                                    depthStencil,
             const D3D12_RASTERIZER_DESC&                                       rasterizer,
-            const RenderTargetState&                                           renderTarget,
+            RenderTargetState const&                                           renderTarget,
             D3D12_PRIMITIVE_TOPOLOGY_TYPE                                      iprimitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
             D3D12_INDEX_BUFFER_STRIP_CUT_VALUE istripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED) noexcept
             : inputLayout{},
@@ -69,8 +69,8 @@ namespace DirectX
                 this->inputLayout = *iinputLayout;
         }
 
-        EffectPipelineStateDescription(const EffectPipelineStateDescription&)            = default;
-        EffectPipelineStateDescription& operator=(const EffectPipelineStateDescription&) = default;
+        EffectPipelineStateDescription(EffectPipelineStateDescription const&)            = default;
+        EffectPipelineStateDescription& operator=(EffectPipelineStateDescription const&) = default;
 
         EffectPipelineStateDescription(EffectPipelineStateDescription&&)            = default;
         EffectPipelineStateDescription& operator=(EffectPipelineStateDescription&&) = default;

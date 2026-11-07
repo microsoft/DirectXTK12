@@ -23,7 +23,7 @@ namespace
 {
     template<typename T>
     void SetPBRProperties(_In_ T*        effect,
-        const EffectFactory::EffectInfo& info,
+        EffectFactory::EffectInfo const& info,
         _In_ const DescriptorHeap*       textures,
         int                              textureDescriptorOffset,
         _In_ const DescriptorHeap*       samplers,
@@ -36,17 +36,17 @@ namespace
         if (info.diffuseTextureIndex != -1)
         {
             // Textured PBR material
-            const int albedoTextureIndex = info.diffuseTextureIndex + textureDescriptorOffset;
-            const int rmaTextureIndex    = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
-            const int normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
-            const int samplerIndex       = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
+            int const albedoTextureIndex = info.diffuseTextureIndex + textureDescriptorOffset;
+            int const rmaTextureIndex    = (info.specularTextureIndex != -1) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+            int const normalTextureIndex = (info.normalTextureIndex != -1) ? info.normalTextureIndex + textureDescriptorOffset : -1;
+            int const samplerIndex       = (info.samplerIndex != -1) ? info.samplerIndex + samplerDescriptorOffset : -1;
 
             effect->SetSurfaceTextures(textures->GetGpuHandle(static_cast<size_t>(albedoTextureIndex)),
                 textures->GetGpuHandle(static_cast<size_t>(normalTextureIndex)),
                 textures->GetGpuHandle(static_cast<size_t>(rmaTextureIndex)),
                 samplers->GetGpuHandle(static_cast<size_t>(samplerIndex)));
 
-            const int emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
+            int const emissiveTextureIndex = (info.emissiveTextureIndex != -1) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
 
             if (emissiveTextureIndex != -1)
             {
@@ -64,7 +64,7 @@ namespace
                 // Derived from specularPower = 2 / roughness ^ 4 - 2
                 // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
 
-                const float roughness = powf(2.f / (info.specularPower + 2.f), 1.f / 4.f);
+                float const roughness = powf(2.f / (info.specularPower + 2.f), 1.f / 4.f);
                 effect->SetConstantRoughness(roughness);
             }
 
@@ -95,15 +95,15 @@ public:
             mSamplerDescriptors = std::make_unique<DescriptorHeap>(samplerDescriptors);
     }
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = delete;
     Impl& operator=(Impl&&) = delete;
 
-    std::shared_ptr<IEffect> CreateEffect(const EffectInfo& info,
-        const EffectPipelineStateDescription&               opaquePipelineState,
-        const EffectPipelineStateDescription&               alphaPipelineState,
+    std::shared_ptr<IEffect> CreateEffect(EffectInfo const& info,
+        EffectPipelineStateDescription const&               opaquePipelineState,
+        EffectPipelineStateDescription const&               alphaPipelineState,
         const D3D12_INPUT_LAYOUT_DESC&                      inputLayout,
         int                                                 textureDescriptorOffset,
         int                                                 samplerDescriptorOffset);
@@ -127,9 +127,9 @@ private:
     std::mutex mutex;
 };
 
-std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(const EffectInfo& info,
-    const EffectPipelineStateDescription&                                       opaquePipelineState,
-    const EffectPipelineStateDescription&                                       alphaPipelineState,
+std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(EffectInfo const& info,
+    EffectPipelineStateDescription const&                                       opaquePipelineState,
+    EffectPipelineStateDescription const&                                       alphaPipelineState,
     const D3D12_INPUT_LAYOUT_DESC&                                              inputLayoutDesc,
     int                                                                         textureDescriptorOffset,
     int                                                                         samplerDescriptorOffset)
@@ -170,7 +170,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(const EffectInfo& 
         std::wstring cacheName;
         if (mSharing && !info.name.empty())
         {
-            const uint32_t hash = derivedPSD.ComputeHash();
+            uint32_t const hash = derivedPSD.ComputeHash();
             cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheSkinning.find(cacheName);
@@ -209,7 +209,7 @@ std::shared_ptr<IEffect> PBREffectFactory::Impl::CreateEffect(const EffectInfo& 
         std::wstring cacheName;
         if (mSharing && !info.name.empty())
         {
-            const uint32_t hash = derivedPSD.ComputeHash();
+            uint32_t const hash = derivedPSD.ComputeHash();
             cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCache.find(cacheName);
@@ -301,9 +301,9 @@ PBREffectFactory::PBREffectFactory(PBREffectFactory&&) noexcept            = def
 PBREffectFactory& PBREffectFactory::operator=(PBREffectFactory&&) noexcept = default;
 PBREffectFactory::~PBREffectFactory()                                      = default;
 
-std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(const EffectInfo& info,
-    const EffectPipelineStateDescription&                                 opaquePipelineState,
-    const EffectPipelineStateDescription&                                 alphaPipelineState,
+std::shared_ptr<IEffect> PBREffectFactory::CreateEffect(EffectInfo const& info,
+    EffectPipelineStateDescription const&                                 opaquePipelineState,
+    EffectPipelineStateDescription const&                                 alphaPipelineState,
     const D3D12_INPUT_LAYOUT_DESC&                                        inputLayout,
     int                                                                   textureDescriptorOffset,
     int                                                                   samplerDescriptorOffset)

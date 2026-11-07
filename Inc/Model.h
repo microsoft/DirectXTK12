@@ -144,7 +144,7 @@ namespace DirectX
             virtual ~ModelMeshPart();
 
             using Collection            = std::vector<std::unique_ptr<ModelMeshPart>>;
-            using DrawCallback          = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, const ModelMeshPart& part)>;
+            using DrawCallback          = std::function<void(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart const& part)>;
             using InputLayoutCollection = std::vector<D3D12_INPUT_ELEMENT_DESC>;
 
             uint32_t                               partIndex;     // Unique index assigned per-part in a model.
@@ -175,27 +175,27 @@ namespace DirectX
             //
 
             // Draw the mesh
-            static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts);
+            static void __cdecl DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, Collection const& meshParts);
 
             // Draw the mesh with an effect
             static void __cdecl
-            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts, _In_ IEffect* effect);
+            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, Collection const& meshParts, _In_ IEffect* effect);
 
             // Draw the mesh with a callback for each mesh part
             static void __cdecl
-            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts, DrawCallback callback);
+            DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, Collection const& meshParts, DrawCallback callback);
 
             // Draw the mesh with a range of effects that mesh parts will index into.
             // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
             // The iterator passed to this method should have random access capabilities for best performance.
             template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
-            static void DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, const Collection& meshParts, TEffectIterator partEffects)
+            static void DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList, Collection const& meshParts, TEffectIterator partEffects)
             {
                 // This assert is here to prevent accidental use of containers that would cause undesirable performance penalties.
                 static_assert(std::is_base_of<std::random_access_iterator_tag, TEffectIteratorCategory>::value,
                     "Providing an iterator without random access capabilities -- such as from std::list -- is not supported.");
 
-                for (const auto& it : meshParts)
+                for (auto const& it : meshParts)
                 {
                     auto part = it.get();
                     assert(part != nullptr);
@@ -212,7 +212,7 @@ namespace DirectX
 
             template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
             static void XM_CALLCONV DrawMeshParts(_In_ ID3D12GraphicsCommandList* commandList,
-                const Collection&                                                 meshParts,
+                Collection const&                                                 meshParts,
                 FXMMATRIX                                                         world,
                 TEffectIterator                                                   partEffects)
             {
@@ -220,7 +220,7 @@ namespace DirectX
                 static_assert(std::is_base_of<std::random_access_iterator_tag, TEffectIteratorCategory>::value,
                     "Providing an iterator without random access capabilities -- such as from std::list -- is not supported.");
 
-                for (const auto& it : meshParts)
+                for (auto const& it : meshParts)
                 {
                     auto part = it.get();
                     assert(part != nullptr);
@@ -243,8 +243,8 @@ namespace DirectX
 
             template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
             static void XM_CALLCONV DrawSkinnedMeshParts(_In_ ID3D12GraphicsCommandList* commandList,
-                const ModelMesh&                                                         mesh,
-                const Collection&                                                        meshParts,
+                ModelMesh const&                                                         mesh,
+                Collection const&                                                        meshParts,
                 size_t                                                                   nbones,
                 _In_reads_(nbones) const XMMATRIX*                                       boneTransforms,
                 FXMMATRIX                                                                world,
@@ -408,7 +408,7 @@ namespace DirectX
             void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
             {
                 // Draw opaque parts
-                for (const auto& it : meshes)
+                for (auto const& it : meshes)
                 {
                     auto mesh = it.get();
                     assert(mesh != nullptr);
@@ -421,7 +421,7 @@ namespace DirectX
             void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
             {
                 // Draw alpha parts
-                for (const auto& it : meshes)
+                for (auto const& it : meshes)
                 {
                     auto mesh = it.get();
                     assert(mesh != nullptr);
@@ -442,7 +442,7 @@ namespace DirectX
             void DrawSkinnedOpaque(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
             {
                 // Draw opaque parts
-                for (const auto& it : meshes)
+                for (auto const& it : meshes)
                 {
                     auto mesh = it.get();
                     assert(mesh != nullptr);
@@ -455,7 +455,7 @@ namespace DirectX
             void DrawSkinnedAlpha(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
             {
                 // Draw alpha parts
-                for (const auto& it : meshes)
+                for (auto const& it : meshes)
                 {
                     auto mesh = it.get();
                     assert(mesh != nullptr);
@@ -484,8 +484,8 @@ namespace DirectX
             void __cdecl LoadStaticBuffers(_In_ ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch, bool keepMemory = false);
 
             // Create effects using the default effect factory
-            EffectCollection __cdecl CreateEffects(const EffectPipelineStateDescription& opaquePipelineState,
-                const EffectPipelineStateDescription&                                    alphaPipelineState,
+            EffectCollection __cdecl CreateEffects(EffectPipelineStateDescription const& opaquePipelineState,
+                EffectPipelineStateDescription const&                                    alphaPipelineState,
                 _In_ ID3D12DescriptorHeap*                                               textureDescriptorHeap,
                 _In_ ID3D12DescriptorHeap*                                               samplerDescriptorHeap,
                 int                                                                      textureDescriptorOffset = 0,
@@ -493,8 +493,8 @@ namespace DirectX
 
             // Create effects using a custom effect factory
             EffectCollection __cdecl CreateEffects(IEffectFactory& fxFactory,
-                const EffectPipelineStateDescription&              opaquePipelineState,
-                const EffectPipelineStateDescription&              alphaPipelineState,
+                EffectPipelineStateDescription const&              opaquePipelineState,
+                EffectPipelineStateDescription const&              alphaPipelineState,
                 int                                                textureDescriptorOffset = 0,
                 int                                                samplerDescriptorOffset = 0) const;
 
@@ -546,7 +546,7 @@ namespace DirectX
                 ModelLoaderFlags                                                       flags       = ModelLoader_Default,
                 _Out_opt_ size_t*                                                      animsOffset = nullptr)
             {
-                return CreateFromCMO(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags, animsOffset);
+                return CreateFromCMO(device, reinterpret_cast<uint8_t const*>(meshData), dataSize, flags, animsOffset);
             }
 
             static std::unique_ptr<Model> __cdecl CreateFromSDKMESH(_In_opt_ ID3D12Device* device,
@@ -554,7 +554,7 @@ namespace DirectX
                 _In_ size_t                                                                dataSize,
                 ModelLoaderFlags                                                           flags = ModelLoader_Default)
             {
-                return CreateFromSDKMESH(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
+                return CreateFromSDKMESH(device, reinterpret_cast<uint8_t const*>(meshData), dataSize, flags);
             }
 
             static std::unique_ptr<Model> __cdecl CreateFromVBO(_In_opt_ ID3D12Device* device,
@@ -562,7 +562,7 @@ namespace DirectX
                 _In_ size_t                                                            dataSize,
                 ModelLoaderFlags                                                       flags = ModelLoader_Default)
             {
-                return CreateFromVBO(device, reinterpret_cast<const uint8_t*>(meshData), dataSize, flags);
+                return CreateFromVBO(device, reinterpret_cast<uint8_t const*>(meshData), dataSize, flags);
             }
 #endif //  __cpp_lib_byte
 
@@ -578,7 +578,7 @@ namespace DirectX
                 if (materialIndex >= materials.size())
                     return handle;
 
-                const int textureIndex = materials[materialIndex].diffuseTextureIndex;
+                int const textureIndex = materials[materialIndex].diffuseTextureIndex;
                 if (textureIndex == -1)
                     return handle;
 
@@ -634,8 +634,8 @@ namespace DirectX
 
         private:
             std::shared_ptr<IEffect> __cdecl CreateEffectForMeshPart(IEffectFactory& fxFactory,
-                const EffectPipelineStateDescription&                                opaquePipelineState,
-                const EffectPipelineStateDescription&                                alphaPipelineState,
+                EffectPipelineStateDescription const&                                opaquePipelineState,
+                EffectPipelineStateDescription const&                                alphaPipelineState,
                 int                                                                  textureDescriptorOffset,
                 int                                                                  samplerDescriptorOffset,
                 _In_ const ModelMeshPart*                                            part) const;
@@ -650,8 +650,8 @@ namespace DirectX
 
         template<typename TEffectIterator, typename TEffectIteratorCategory>
         void XM_CALLCONV ModelMeshPart::DrawSkinnedMeshParts(_In_ ID3D12GraphicsCommandList* commandList,
-            const ModelMesh&                                                                 mesh,
-            const ModelMeshPart::Collection&                                                 meshParts,
+            ModelMesh const&                                                                 mesh,
+            ModelMeshPart::Collection const&                                                 meshParts,
             size_t                                                                           nbones,
             _In_reads_(nbones) const XMMATRIX*                                               boneTransforms,
             FXMMATRIX                                                                        world,
@@ -665,7 +665,7 @@ namespace DirectX
 
             ModelBone::TransformArray temp;
 
-            for (const auto& mit : meshParts)
+            for (auto const& mit : meshParts)
             {
                 auto part = mit.get();
                 assert(part != nullptr);

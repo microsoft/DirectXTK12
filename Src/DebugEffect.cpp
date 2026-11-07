@@ -45,11 +45,11 @@ class DebugEffect::Impl : public EffectBase<DebugEffectTraits>
 public:
     Impl(_In_ ID3D12Device*                   device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         DebugEffect::Mode                     debugMode);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -153,7 +153,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DebugEffectTraits>::VertexShaderBytecode[
 };
 
 template<>
-const int EffectBase<DebugEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<DebugEffectTraits>::VertexShaderIndices[] = {
     0, // default
     0, // normals
     0, // tangents
@@ -204,7 +204,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DebugEffectTraits>::PixelShaderBytecode[]
 };
 
 template<>
-const int EffectBase<DebugEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<DebugEffectTraits>::PixelShaderIndices[] = {
     0, // default
     1, // normals
     2, // tangents
@@ -254,7 +254,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<DebugEffectTraits>::DeviceResources
 // Constructor.
 DebugEffect::Impl::Impl(_In_ ID3D12Device* device,
     uint32_t                               effectFlags,
-    const EffectPipelineStateDescription&  pipelineDescription,
+    EffectPipelineStateDescription const&  pipelineDescription,
     DebugEffect::Mode                      debugMode)
     : EffectBase(device)
 {
@@ -309,14 +309,14 @@ DebugEffect::Impl::Impl(_In_ ID3D12Device* device,
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(debugMode, effectFlags);
+    int const sp = GetPipelineStatePermutation(debugMode, effectFlags);
     assert(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DebugEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<DebugEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<DebugEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < DebugEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<DebugEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<DebugEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < DebugEffectTraits::PixelShaderCount);
 
@@ -376,7 +376,7 @@ void DebugEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 DebugEffect::DebugEffect(_In_ ID3D12Device* device,
     uint32_t                                effectFlags,
-    const EffectPipelineStateDescription&   pipelineDescription,
+    EffectPipelineStateDescription const&   pipelineDescription,
     Mode                                    debugMode)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, debugMode))
 {}

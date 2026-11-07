@@ -70,15 +70,15 @@ class NormalMapEffect::Impl : public EffectBase<NormalMapEffectTraits>
 public:
     explicit Impl(_In_ ID3D12Device* device);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     void Initialize(_In_ ID3D12Device*        device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         bool                                  enableSkinning);
 
     enum RootParameterIndex
@@ -272,7 +272,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::VertexShaderBytec
 };
 
 template<>
-const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] = {
     0,  // pixel lighting + texture
     0,  // pixel lighting + texture, no fog
     4,  // pixel lighting + texture, no specular
@@ -333,7 +333,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NormalMapEffectTraits>::PixelShaderByteco
 };
 
 template<>
-const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] = {
     0, // pixel lighting + texture
     1, // pixel lighting + texture, no fog
     2, // pixel lighting + texture, no specular
@@ -418,7 +418,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device)
 
 void NormalMapEffect::Impl::Initialize(_In_ ID3D12Device* device,
     uint32_t                                              effectFlags,
-    const EffectPipelineStateDescription&                 pipelineDescription,
+    EffectPipelineStateDescription const&                 pipelineDescription,
     bool                                                  enableSkinning)
 {
     specularMap = (effectFlags & EffectFlags::Specular) != 0;
@@ -497,14 +497,14 @@ void NormalMapEffect::Impl::Initialize(_In_ ID3D12Device* device,
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < NormalMapEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<NormalMapEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < NormalMapEffectTraits::PixelShaderCount);
 
@@ -624,7 +624,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    const auto cbuffer = GetConstantBufferGpuAddress();
+    auto const cbuffer = GetConstantBufferGpuAddress();
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
         (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);
@@ -639,7 +639,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 NormalMapEffect::NormalMapEffect(_In_ ID3D12Device* device,
     uint32_t                                        effectFlags,
-    const EffectPipelineStateDescription&           pipelineDescription,
+    EffectPipelineStateDescription const&           pipelineDescription,
     bool                                            skinningEnabled)
     : pImpl(std::make_unique<Impl>(device))
 {

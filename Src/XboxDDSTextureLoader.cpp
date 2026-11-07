@@ -34,7 +34,7 @@ namespace
     //--------------------------------------------------------------------------------------
     // Default XMemAlloc attributes for texture loading
     //--------------------------------------------------------------------------------------
-    const uint64_t c_XMemAllocAttributes = MAKE_XALLOC_ATTRIBUTES(eXALLOCAllocatorId_MiddlewareReservedMin,
+    uint64_t const c_XMemAllocAttributes = MAKE_XALLOC_ATTRIBUTES(eXALLOCAllocatorId_MiddlewareReservedMin,
         0,
         XALLOC_MEMTYPE_GRAPHICS_WRITECOMBINE_GPU_READONLY,
         XALLOC_PAGESIZE_64KB,
@@ -241,7 +241,7 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
         }
 
-        auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<const uint8_t*>(header) + sizeof(DDS_HEADER));
+        auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<uint8_t const*>(header) + sizeof(DDS_HEADER));
 
         uint32_t arraySize = xboxext->arraySize;
         if (arraySize == 0)
@@ -392,7 +392,7 @@ namespace
         {
             if (MAKEFOURCC('X', 'B', 'O', 'X') == header->ddspf.fourCC)
             {
-                auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<const uint8_t*>(header) + sizeof(DDS_HEADER));
+                auto xboxext = reinterpret_cast<const DDS_HEADER_XBOX*>(reinterpret_cast<uint8_t const*>(header) + sizeof(DDS_HEADER));
                 auto mode    = static_cast<DDS_ALPHA_MODE>(xboxext->miscFlags2 & DDS_MISC_FLAGS2_ALPHA_MODE_MASK);
                 switch (mode)
                 {
@@ -412,7 +412,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT Xbox::CreateDDSTextureFromMemory(ID3D12Device* device,
-    const uint8_t*                                                            ddsData,
+    uint8_t const*                                                            ddsData,
     size_t                                                                    ddsDataSize,
     ID3D12Resource**                                                          texture,
     void**                                                                    grfxMemory,
@@ -451,7 +451,7 @@ _Use_decl_annotations_ HRESULT Xbox::CreateDDSTextureFromMemory(ID3D12Device* de
         return E_FAIL;
     }
 
-    auto dwMagicNumber = *reinterpret_cast<const uint32_t*>(ddsData);
+    auto dwMagicNumber = *reinterpret_cast<uint32_t const*>(ddsData);
     if (dwMagicNumber != DDS_MAGIC)
     {
         return E_FAIL;
@@ -495,7 +495,7 @@ _Use_decl_annotations_ HRESULT Xbox::CreateDDSTextureFromMemory(ID3D12Device* de
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT Xbox::CreateDDSTextureFromFile(ID3D12Device* device,
-    const wchar_t*                                                          fileName,
+    wchar_t const*                                                          fileName,
     ID3D12Resource**                                                        texture,
     void**                                                                  grfxMemory,
     DDS_ALPHA_MODE*                                                         alphaMode,

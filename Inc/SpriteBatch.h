@@ -76,7 +76,7 @@ namespace DirectX
         class DIRECTX_TOOLKIT_API SpriteBatchPipelineStateDescription
         {
         public:
-            explicit SpriteBatchPipelineStateDescription(const RenderTargetState& renderTarget,
+            explicit SpriteBatchPipelineStateDescription(RenderTargetState const& renderTarget,
                 _In_opt_ const D3D12_BLEND_DESC*                                  blend              = nullptr,
                 _In_opt_ const D3D12_DEPTH_STENCIL_DESC*                          depthStencil       = nullptr,
                 _In_opt_ const D3D12_RASTERIZER_DESC*                             rasterizer         = nullptr,
@@ -116,7 +116,7 @@ namespace DirectX
         public:
             DIRECTX_TOOLKIT_API SpriteBatch(_In_ ID3D12Device* device,
                 ResourceUploadBatch&                           upload,
-                const SpriteBatchPipelineStateDescription&     psoDesc,
+                SpriteBatchPipelineStateDescription const&     psoDesc,
                 _In_opt_ const D3D12_VIEWPORT*                 viewport = nullptr);
 
             DIRECTX_TOOLKIT_API              SpriteBatch(SpriteBatch&&) noexcept;

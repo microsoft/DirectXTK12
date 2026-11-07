@@ -182,7 +182,7 @@ namespace DirectX
         _Out_opt_ bool*                                                isCubeMap = nullptr)
     {
         return LoadDDSTextureFromMemory(device,
-            reinterpret_cast<const uint8_t*>(ddsData),
+            reinterpret_cast<uint8_t const*>(ddsData),
             ddsDataSize,
             texture,
             subresources,
@@ -204,7 +204,7 @@ namespace DirectX
     {
         return CreateDDSTextureFromMemory(device,
             resourceUpload,
-            reinterpret_cast<const uint8_t*>(ddsData),
+            reinterpret_cast<uint8_t const*>(ddsData),
             ddsDataSize,
             texture,
             generateMipsIfMissing,
@@ -226,7 +226,7 @@ namespace DirectX
         _Out_opt_ bool*                                                  isCubeMap = nullptr)
     {
         return LoadDDSTextureFromMemoryEx(device,
-            reinterpret_cast<const uint8_t*>(ddsData),
+            reinterpret_cast<uint8_t const*>(ddsData),
             ddsDataSize,
             maxsize,
             resFlags,
@@ -251,7 +251,7 @@ namespace DirectX
     {
         return CreateDDSTextureFromMemoryEx(device,
             resourceUpload,
-            reinterpret_cast<const uint8_t*>(ddsData),
+            reinterpret_cast<uint8_t const*>(ddsData),
             ddsDataSize,
             maxsize,
             resFlags,

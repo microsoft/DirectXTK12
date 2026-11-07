@@ -165,7 +165,7 @@ namespace DirectX
         size_t                                                         maxsize = 0) noexcept
     {
         return LoadWICTextureFromMemory(device,
-            reinterpret_cast<const uint8_t*>(wicData),
+            reinterpret_cast<uint8_t const*>(wicData),
             wicDataSize,
             texture,
             decodedData,
@@ -184,7 +184,7 @@ namespace DirectX
     {
         return CreateWICTextureFromMemory(device,
             resourceUpload,
-            reinterpret_cast<const uint8_t*>(wicData),
+            reinterpret_cast<uint8_t const*>(wicData),
             wicDataSize,
             texture,
             generateMips,
@@ -203,7 +203,7 @@ namespace DirectX
         D3D12_SUBRESOURCE_DATA&                                          subresource) noexcept
     {
         return LoadWICTextureFromMemoryEx(device,
-            reinterpret_cast<const uint8_t*>(wicData),
+            reinterpret_cast<uint8_t const*>(wicData),
             wicDataSize,
             maxsize,
             resFlags,
@@ -225,7 +225,7 @@ namespace DirectX
     {
         return CreateWICTextureFromMemoryEx(device,
             resourceUpload,
-            reinterpret_cast<const uint8_t*>(wicData),
+            reinterpret_cast<uint8_t const*>(wicData),
             wicDataSize,
             maxsize,
             resFlags,
