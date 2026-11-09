@@ -89,6 +89,17 @@
       }
     },
     {
+      "name": "MSVC_ARM64",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "toolset": {
+        "value": "host=arm64",
+        "strategy": "external"
+      }
+    },
+    {
       "name": "Clang",
       "hidden": true,
       "cacheVariables": {
@@ -344,8 +355,8 @@
     { "name": "x86-Release-VCPKG"         , "description": "MSVC for x86 (Release) using VCPKG", "inherits": [ "base", "x86", "Release", "MSVC", "VCPKG", "X64_X86" ] },
     { "name": "arm64-Debug-VCPKG"         , "description": "MSVC for ARM64 (Debug) using VCPKG", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "X64_ARM64" ] },
     { "name": "arm64-Release-VCPKG"       , "description": "MSVC for ARM64 (Release) using VCPKG", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "X64_ARM64" ] },
-    { "name": "arm64-Native-Debug-VCPKG"  , "description": "MSVC for ARM64 Native (Debug) using VCPKG", "inherits": [ "base", "ARM64", "Debug", "MSVC", "VCPKG", "ARM64_ARM64" ] },
-    { "name": "arm64-Native-Release-VCPKG", "description": "MSVC for ARM64 Native (Release) using VCPKG", "inherits": [ "base", "ARM64", "Release", "MSVC", "VCPKG", "ARM64_ARM64" ] },
+    { "name": "arm64-Native-Debug-VCPKG"  , "description": "MSVC for ARM64 Native (Debug) using VCPKG", "inherits": [ "base", "ARM64", "Debug", "MSVC_ARM64", "VCPKG", "ARM64_ARM64" ] },
+    { "name": "arm64-Native-Release-VCPKG", "description": "MSVC for ARM64 Native (Release) using VCPKG", "inherits": [ "base", "ARM64", "Release", "MSVC_ARM64", "VCPKG", "ARM64_ARM64" ] },
     { "name": "arm64ec-Debug-VCPKG"       , "description": "MSVC for ARM64EC (Debug) using VCPKG", "inherits": [ "base", "ARM64EC", "Debug", "MSVC", "VCPKG", "X64_ARM64EC" ] },
     { "name": "arm64ec-Release-VCPKG"     , "description": "MSVC for ARM64EC (Release) using VCPKG", "inherits": [ "base", "ARM64EC", "Release", "MSVC", "VCPKG", "X64_ARM64EC" ] },
 
@@ -423,6 +434,9 @@
     { "name": "x86-Release-VCPKG"   , "configurePreset": "x86-Release-VCPKG" },
     { "name": "arm64-Debug-VCPKG"   , "configurePreset": "arm64-Debug-VCPKG" },
     { "name": "arm64-Release-VCPKG" , "configurePreset": "arm64-Release-VCPKG" },
+
+    { "name": "arm64-Native-Debug-VCPKG"   , "configurePreset": "arm64-Native-Debug-VCPKG" },
+    { "name": "arm64-Native-Release-VCPKG" , "configurePreset": "arm64-Native-Release-VCPKG" },
 
     { "name": "x64-Debug-Clang"    , "configurePreset": "x64-Debug-Clang" },
     { "name": "x64-Release-Clang"  , "configurePreset": "x64-Release-Clang" },
