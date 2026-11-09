@@ -53,8 +53,8 @@ namespace DirectX
             DIRECTX_TOOLKIT_API               CommonStates(CommonStates&&) noexcept;
             DIRECTX_TOOLKIT_API CommonStates& operator=(CommonStates&&) noexcept;
 
-            CommonStates(const CommonStates&)            = delete;
-            CommonStates& operator=(const CommonStates&) = delete;
+            CommonStates(CommonStates const&)            = delete;
+            CommonStates& operator=(CommonStates const&) = delete;
 
             DIRECTX_TOOLKIT_API virtual ~CommonStates();
 

@@ -197,7 +197,7 @@ namespace
 
     static_assert(static_cast<int>(std::size(pixelShaders)) == PixelShaderCount, "array/max mismatch");
 
-    const int pixelShaderIndices[] = {
+    int const pixelShaderIndices[] = {
         // Linear EOTF
         0, // Copy
         1, // Saturate
@@ -247,8 +247,8 @@ namespace
             : mDevice(device)
         {}
 
-        DeviceResources(const DeviceResources&)            = delete;
-        DeviceResources& operator=(const DeviceResources&) = delete;
+        DeviceResources(DeviceResources const&)            = delete;
+        DeviceResources& operator=(DeviceResources const&) = delete;
 
         DeviceResources(DeviceResources&&)            = delete;
         DeviceResources& operator=(DeviceResources&&) = delete;
@@ -281,10 +281,10 @@ namespace
 class ToneMapPostProcess::Impl : public AlignedNew<ToneMapConstants>
 {
 public:
-    Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func, bool mrt = false);
+    Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Operator op, TransferFunction func, bool mrt = false);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -328,7 +328,7 @@ private:
 SharedResourcePool<ID3D12Device*, DeviceResources> ToneMapPostProcess::Impl::deviceResourcesPool;
 
 // Constructor.
-ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func, bool mrt)
+ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Operator op, TransferFunction func, bool mrt)
     : constants{},
       texture{},
       linearExposure(1.f),
@@ -396,18 +396,18 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     permutation += (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
 #else
     UNREFERENCED_PARAMETER(mrt);
-    const int permutation = (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
+    int const permutation = (static_cast<int>(func) * static_cast<int>(Operator_Max)) + static_cast<int>(op);
 #endif
 
     assert(permutation >= 0 && permutation < ShaderPermutationCount);
     _Analysis_assume_(permutation >= 0 && permutation < ShaderPermutationCount);
 
-    const int shaderIndex = pixelShaderIndices[permutation];
+    int const shaderIndex = pixelShaderIndices[permutation];
     assert(shaderIndex >= 0 && shaderIndex < PixelShaderCount);
     _Analysis_assume_(shaderIndex >= 0 && shaderIndex < PixelShaderCount);
 
     // Create pipeline state.
-    const EffectPipelineStateDescription psd(nullptr,
+    EffectPipelineStateDescription const psd(nullptr,
         CommonStates::Opaque,
         CommonStates::DepthNone,
         CommonStates::CullNone,
@@ -463,13 +463,13 @@ void ToneMapPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandLi
 // Public constructor.
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device,
-    const RenderTargetState&                              rtState,
+    RenderTargetState const&                              rtState,
     Operator                                              op,
     TransferFunction                                      func,
     bool                                                  mrt)
     : pImpl(std::make_unique<Impl>(device, rtState, op, func, mrt))
 #else
-ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Operator op, TransferFunction func)
+ToneMapPostProcess::ToneMapPostProcess(_In_ ID3D12Device* device, RenderTargetState const& rtState, Operator op, TransferFunction func)
     : pImpl(std::make_unique<Impl>(device, rtState, op, func))
 #endif
 {}

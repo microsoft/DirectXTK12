@@ -46,7 +46,7 @@ namespace
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ std::unique_ptr<Model>
-Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataSize, ModelLoaderFlags flags)
+Model::CreateFromVBO(ID3D12Device* device, uint8_t const* meshData, size_t dataSize, ModelLoaderFlags flags)
 {
     if (!InitOnceExecuteOnce(&g_InitOnce, InitializeDecl, nullptr, nullptr))
         throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "InitOnceExecuteOnce");
@@ -57,7 +57,7 @@ Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
     // File Header
     if (dataSize < sizeof(VBO::header_t))
         throw std::runtime_error("End of file");
-    auto header = reinterpret_cast<const VBO::header_t*>(meshData);
+    auto header = reinterpret_cast<VBO::header_t const*>(meshData);
 
     if (!header->numVertices || !header->numIndices)
         throw std::runtime_error("No vertices or indices found");
@@ -72,11 +72,11 @@ Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             throw std::runtime_error("VB too large for DirectX 12");
     }
 
-    const auto vertSize = static_cast<size_t>(sizeInBytes);
+    auto const vertSize = static_cast<size_t>(sizeInBytes);
 
     if (dataSize < (vertSize + sizeof(VBO::header_t)))
         throw std::runtime_error("End of file");
-    auto verts = reinterpret_cast<const VertexPositionNormalTexture*>(meshData + sizeof(VBO::header_t));
+    auto verts = reinterpret_cast<VertexPositionNormalTexture const*>(meshData + sizeof(VBO::header_t));
 
     sizeInBytes = uint64_t(header->numIndices) * sizeof(uint16_t);
     if (sizeInBytes > UINT32_MAX)
@@ -88,11 +88,11 @@ Model::CreateFromVBO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             throw std::runtime_error("IB too large for DirectX 12");
     }
 
-    const auto indexSize = static_cast<size_t>(sizeInBytes);
+    auto const indexSize = static_cast<size_t>(sizeInBytes);
 
     if (dataSize < (sizeof(VBO::header_t) + vertSize + indexSize))
         throw std::runtime_error("End of file");
-    auto indices = reinterpret_cast<const uint16_t*>(meshData + sizeof(VBO::header_t) + vertSize);
+    auto indices = reinterpret_cast<uint16_t const*>(meshData + sizeof(VBO::header_t) + vertSize);
 
     // Create vertex buffer
     auto vb = GraphicsMemory::Get(device).Allocate(vertSize, 16, GraphicsMemory::TAG_VERTEX);
@@ -153,7 +153,7 @@ std::unique_ptr<Model> Model::CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z
 
 std::unique_ptr<Model> Model::CreateFromVBO(_In_opt_ ID3D12Device* device, _In_z_ const __wchar_t* szFileName, ModelLoaderFlags flags)
 {
-    return CreateFromVBO(device, reinterpret_cast<const unsigned short*>(szFileName), flags);
+    return CreateFromVBO(device, reinterpret_cast<unsigned short const*>(szFileName), flags);
 }
 
 #endif

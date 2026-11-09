@@ -23,8 +23,8 @@ class PrimitiveBatchBase::Impl
 public:
     Impl(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -167,8 +167,8 @@ _Use_decl_annotations_ void PrimitiveBatchBase::Impl::Draw(D3D_PRIMITIVE_TOPOLOG
     assert(pMappedVertices != nullptr);
 
     // Can we merge this primitive in with an existing batch, or must we flush first?
-    const bool wrapIndexBuffer  = (mIndexCount + indexCount > mMaxIndices);
-    const bool wrapVertexBuffer = (mVertexCount + vertexCount > mMaxVertices);
+    bool const wrapIndexBuffer  = (mIndexCount + indexCount > mMaxIndices);
+    bool const wrapVertexBuffer = (mVertexCount + vertexCount > mMaxVertices);
 
     if ((topology != mCurrentTopology) || (isIndexed != mCurrentlyIndexed) || !CanBatchPrimitives(topology) || wrapIndexBuffer
         || wrapVertexBuffer)

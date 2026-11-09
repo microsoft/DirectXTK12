@@ -219,8 +219,8 @@ namespace
             generateMipsPSO_sRGB = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_sRGB, sizeof(GenerateMips_sRGB));
         }
 
-        GenerateMipsResources(const GenerateMipsResources&)            = delete;
-        GenerateMipsResources& operator=(const GenerateMipsResources&) = delete;
+        GenerateMipsResources(GenerateMipsResources const&)            = delete;
+        GenerateMipsResources& operator=(GenerateMipsResources const&) = delete;
 
         GenerateMipsResources(GenerateMipsResources&&)            = default;
         GenerateMipsResources& operator=(GenerateMipsResources&&) = default;
@@ -302,8 +302,8 @@ public:
         }
     }
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -354,7 +354,7 @@ public:
         const UINT64 uploadSize = GetRequiredIntermediateSize(resource, subresourceIndexStart, numSubresources);
 
         const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-        const auto                    resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+        auto const                    resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
 
         // Create a temporary buffer
         ComPtr<ID3D12Resource> scratchResource = nullptr;
@@ -386,7 +386,7 @@ public:
         mTrackedObjects.push_back(scratchResource);
     }
 
-    void Upload(_In_ ID3D12Resource* resource, const SharedGraphicsResource& buffer)
+    void Upload(_In_ ID3D12Resource* resource, SharedGraphicsResource const& buffer)
     {
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
@@ -418,10 +418,10 @@ public:
         }
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto desc = resource->GetDesc();
+        auto const desc = resource->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         desc = *resource->GetDesc(&tmpDesc);
+        auto const&         desc = *resource->GetDesc(&tmpDesc);
 #endif
 
         if (desc.MipLevels == 1)
@@ -442,7 +442,7 @@ public:
             throw std::runtime_error("GenerateMips only supports 2D textures of array size 1");
         }
 
-        const bool uavCompat = FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, desc.Format);
+        bool const uavCompat = FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, desc.Format);
 
         if (!uavCompat && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
         {
@@ -632,10 +632,10 @@ private:
     void GenerateMips_UnorderedAccessPath(_In_ ID3D12Resource* resource, bool srgb = false)
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto desc = resource->GetDesc();
+        auto const desc = resource->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         desc = *resource->GetDesc(&tmpDesc);
+        auto const&         desc = *resource->GetDesc(&tmpDesc);
 #endif
         assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
         assert(!srgb || desc.Format == DXGI_FORMAT_R8G8B8A8_TYPELESS);
@@ -691,7 +691,7 @@ private:
 
         SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
 
-        const auto descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+        auto const descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         // Create the top-level SRV
 #if defined(_MSC_VER) || !defined(_WIN32)
@@ -840,14 +840,14 @@ private:
     void GenerateMips_TexturePath(_In_ ID3D12Resource* resource)
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto resourceDesc = resource->GetDesc();
+        auto const resourceDesc = resource->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         resourceDesc = *resource->GetDesc(&tmpDesc);
+        auto const&         resourceDesc = *resource->GetDesc(&tmpDesc);
 #endif
         assert(!FormatIsBGR(resourceDesc.Format) || FormatIsSRGB(resourceDesc.Format));
 
-        const bool srgb     = FormatIsSRGB(resourceDesc.Format);
+        bool const srgb     = FormatIsSRGB(resourceDesc.Format);
         auto       copyDesc = resourceDesc;
         copyDesc.Format     = srgb ? DXGI_FORMAT_R8G8B8A8_TYPELESS : DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
@@ -909,15 +909,15 @@ private:
     void GenerateMips_TexturePathBGR(_In_ ID3D12Resource* resource)
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto resourceDesc = resource->GetDesc();
+        auto const resourceDesc = resource->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         resourceDesc = *resource->GetDesc(&tmpDesc);
+        auto const&         resourceDesc = *resource->GetDesc(&tmpDesc);
 #endif
         assert(FormatIsBGR(resourceDesc.Format));
 
         // Create a resource with the same description with RGB and with UAV flags
-        const bool srgb     = FormatIsSRGB(resourceDesc.Format);
+        bool const srgb     = FormatIsSRGB(resourceDesc.Format);
         auto       copyDesc = resourceDesc;
         copyDesc.Format     = srgb ? DXGI_FORMAT_R8G8B8A8_TYPELESS : DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
@@ -927,7 +927,7 @@ private:
 
         D3D12_HEAP_DESC heapDesc = {};
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
+        auto const allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
 #else
         D3D12_RESOURCE_ALLOCATION_INFO allocInfo;
         std::ignore = mDevice->GetResourceAllocationInfo(&allocInfo, 0, 1, &copyDesc);
@@ -1074,7 +1074,7 @@ _Use_decl_annotations_ void ResourceUploadBatch::Upload(ID3D12Resource* resource
     pImpl->Upload(resource, subresourceIndexStart, subRes, numSubresources);
 }
 
-_Use_decl_annotations_ void ResourceUploadBatch::Upload(ID3D12Resource* resource, const SharedGraphicsResource& buffer)
+_Use_decl_annotations_ void ResourceUploadBatch::Upload(ID3D12Resource* resource, SharedGraphicsResource const& buffer)
 {
     pImpl->Upload(resource, buffer);
 }

@@ -221,10 +221,10 @@ namespace DirectX
             return XMUINT2(0, 0);
 
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto desc = tex->GetDesc();
+        auto const desc = tex->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         desc = *tex->GetDesc(&tmpDesc);
+        auto const&         desc = *tex->GetDesc(&tmpDesc);
 #endif
         return XMUINT2(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height));
     }

@@ -74,15 +74,15 @@ class NPREffect::Impl : public EffectBase<NPREffectTraits>
 public:
     Impl(_In_ ID3D12Device* device);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     void Initialize(_In_ ID3D12Device*        device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         NPREffect::Mode                       nprMode,
         bool                                  enableSkinning);
 
@@ -444,7 +444,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::VertexShaderBytecode[] 
 };
 
 template<>
-const int EffectBase<NPREffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<NPREffectTraits>::VertexShaderIndices[] = {
     0,  // cel shading
     0,  // gooch shading
     16, // matcap shading
@@ -532,7 +532,7 @@ const D3D12_SHADER_BYTECODE EffectBase<NPREffectTraits>::PixelShaderBytecode[] =
 };
 
 template<>
-const int EffectBase<NPREffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<NPREffectTraits>::PixelShaderIndices[] = {
     0, // cel shading
     1, // gooch shading
     2, // matcap shading
@@ -634,7 +634,7 @@ NPREffect::Impl::Impl(_In_ ID3D12Device* device)
 
 void NPREffect::Impl::Initialize(_In_ ID3D12Device* device,
     uint32_t                                        effectFlags,
-    const EffectPipelineStateDescription&           pipelineDescription,
+    EffectPipelineStateDescription const&           pipelineDescription,
     NPREffect::Mode                                 nprMode,
     bool                                            enableSkinning)
 {
@@ -793,14 +793,14 @@ void NPREffect::Impl::Initialize(_In_ ID3D12Device* device,
     }
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(nprMode, effectFlags);
+    int const sp = GetPipelineStatePermutation(nprMode, effectFlags);
     assert(sp >= 0 && sp < NPREffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < NPREffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<NPREffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<NPREffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < NPREffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < NPREffectTraits::VertexShaderCount);
-    const int pi = EffectBase<NPREffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<NPREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < NPREffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < NPREffectTraits::PixelShaderCount);
 
@@ -987,7 +987,7 @@ void NPREffect::Impl::ApplySkinning(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 NPREffect::NPREffect(_In_ ID3D12Device*   device,
     uint32_t                              effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
+    EffectPipelineStateDescription const& pipelineDescription,
     Mode                                  nprMode,
     bool                                  skinningEnabled)
     : pImpl(std::make_unique<Impl>(device))

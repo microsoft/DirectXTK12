@@ -44,11 +44,11 @@ class AlphaTestEffect::Impl : public EffectBase<AlphaTestEffectTraits>
 public:
     Impl(_In_ ID3D12Device*                   device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         D3D12_COMPARISON_FUNC                 alphaFunction);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -130,7 +130,7 @@ const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::VertexShaderBytec
 };
 
 template<>
-const int EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] = {
     0, // lt/gt
     1, // lt/gt, no fog
     2, // lt/gt, vertex color
@@ -151,7 +151,7 @@ const D3D12_SHADER_BYTECODE EffectBase<AlphaTestEffectTraits>::PixelShaderByteco
 };
 
 template<>
-const int EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] = {
     0, // lt/gt
     1, // lt/gt, no fog
     0, // lt/gt, vertex color
@@ -172,7 +172,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResou
 // Constructor.
 AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     uint32_t                                   effectFlags,
-    const EffectPipelineStateDescription&      pipelineDescription,
+    EffectPipelineStateDescription const&      pipelineDescription,
     D3D12_COMPARISON_FUNC                      alphaFunction)
     : EffectBase(device),
       mAlphaFunction(alphaFunction),
@@ -238,14 +238,14 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     }
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
 
@@ -297,7 +297,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (dirtyFlags & EffectDirtyFlags::AlphaTest)
     {
         // Convert reference alpha from 8 bit integer to 0-1 float format.
-        const auto reference = static_cast<float>(referenceAlpha) / 255.0f;
+        auto const reference = static_cast<float>(referenceAlpha) / 255.0f;
 
         // Comparison tolerance of half the 8 bit integer precision.
         constexpr float threshold = 0.5f / 255.0f;
@@ -396,7 +396,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 AlphaTestEffect::AlphaTestEffect(_In_ ID3D12Device* device,
     uint32_t                                        effectFlags,
-    const EffectPipelineStateDescription&           pipelineDescription,
+    EffectPipelineStateDescription const&           pipelineDescription,
     D3D12_COMPARISON_FUNC                           alphaFunction)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, alphaFunction))
 {}

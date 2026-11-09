@@ -72,15 +72,15 @@ class PBREffect::Impl : public EffectBase<PBREffectTraits>
 public:
     explicit Impl(_In_ ID3D12Device* device);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
 
     void Initialize(_In_ ID3D12Device*        device,
         uint32_t                              effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
+        EffectPipelineStateDescription const& pipelineDescription,
         bool                                  enableSkinning);
 
     enum RootParameterIndex
@@ -210,7 +210,7 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::VertexShaderBytecode[] 
 };
 
 template<>
-const int EffectBase<PBREffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<PBREffectTraits>::VertexShaderIndices[] = {
     0, // constant
     0, // textured
     0, // textured + emissive
@@ -252,7 +252,7 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::PixelShaderBytecode[] =
 };
 
 template<>
-const int EffectBase<PBREffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<PBREffectTraits>::PixelShaderIndices[] = {
     0, // constant
     1, // textured
     2, // textured + emissive
@@ -311,7 +311,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device)
 
 void PBREffect::Impl::Initialize(_In_ ID3D12Device* device,
     uint32_t                                        effectFlags,
-    const EffectPipelineStateDescription&           pipelineDescription,
+    EffectPipelineStateDescription const&           pipelineDescription,
     bool                                            enableSkinning)
 {
     emissiveMap = (effectFlags & EffectFlags::Emissive) != 0;
@@ -430,14 +430,14 @@ void PBREffect::Impl::Initialize(_In_ ID3D12Device* device,
     }
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
-    const int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
 
@@ -604,7 +604,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set constants
-    const auto cbuffer = GetConstantBufferGpuAddress();
+    auto const cbuffer = GetConstantBufferGpuAddress();
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, cbuffer);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBufferBones,
         (weightsPerVertex > 0) ? mBones.GpuAddress() : cbuffer);
@@ -619,7 +619,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 PBREffect::PBREffect(_In_ ID3D12Device*   device,
     uint32_t                              effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
+    EffectPipelineStateDescription const& pipelineDescription,
     bool                                  skinningEnabled)
     : pImpl(std::make_unique<Impl>(device))
 {

@@ -23,7 +23,7 @@ namespace
         D3D12_DESCRIPTOR_HEAP_FLAGS Flags;
     };
 
-    static const DescriptorHeapDesc c_DescriptorHeapDescs[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES]
+    static DescriptorHeapDesc const c_DescriptorHeapDescs[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES]
         = { { D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE },
               { D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE },
               { D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE },
@@ -82,7 +82,7 @@ _Use_decl_annotations_ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescript
     uint32_t                                                                                      offsetIntoHeap,
     uint32_t                                                                                      totalDescriptorCount,
     const D3D12_CPU_DESCRIPTOR_HANDLE*                                                            pDescriptorRangeStarts,
-    const uint32_t*                                                                               pDescriptorRangeSizes,
+    uint32_t const*                                                                               pDescriptorRangeSizes,
     uint32_t                                                                                      descriptorRangeCount)
 {
     assert((size_t(offsetIntoHeap) + size_t(totalDescriptorCount)) <= size_t(m_desc.NumDescriptors));
@@ -105,7 +105,7 @@ _Use_decl_annotations_ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescript
 _Use_decl_annotations_ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(ID3D12Device* device,
     uint32_t                                                                                      offsetIntoHeap,
     const D3D12_CPU_DESCRIPTOR_HANDLE*                                                            pDescriptorRangeStarts,
-    const uint32_t*                                                                               pDescriptorRangeSizes,
+    uint32_t const*                                                                               pDescriptorRangeSizes,
     uint32_t                                                                                      descriptorRangeCount)
 {
     uint32_t totalDescriptorCount = 0;

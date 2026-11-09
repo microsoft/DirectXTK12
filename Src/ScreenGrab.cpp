@@ -253,7 +253,7 @@ namespace
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_ HRESULT DirectX::SaveDDSTextureToFile(ID3D12CommandQueue* pCommandQ,
     ID3D12Resource*                                                              pSource,
-    const wchar_t*                                                               fileName,
+    wchar_t const*                                                               fileName,
     D3D12_RESOURCE_STATES                                                        beforeState,
     D3D12_RESOURCE_STATES                                                        afterState) noexcept
 {
@@ -265,10 +265,10 @@ _Use_decl_annotations_ HRESULT DirectX::SaveDDSTextureToFile(ID3D12CommandQueue*
 
     // Get the size of the image
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = pSource->GetDesc();
+    auto const desc = pSource->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *pSource->GetDesc(&tmpDesc);
+    auto const&         desc = *pSource->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Width > UINT32_MAX)
@@ -447,7 +447,7 @@ _Use_decl_annotations_ HRESULT DirectX::SaveDDSTextureToFile(ID3D12CommandQueue*
     if (FAILED(hr))
         return hr;
 
-    auto sptr = static_cast<const uint8_t*>(pMappedMemory);
+    auto sptr = static_cast<uint8_t const*>(pMappedMemory);
     if (!sptr)
     {
         pStaging->Unmap(0, &writeRange);
@@ -456,7 +456,7 @@ _Use_decl_annotations_ HRESULT DirectX::SaveDDSTextureToFile(ID3D12CommandQueue*
 
     uint8_t* dptr = pixels.get();
 
-    const size_t msize = std::min<size_t>(rowPitch, size_t(dstRowPitch));
+    size_t const msize = std::min<size_t>(rowPitch, size_t(dstRowPitch));
     for (size_t h = 0; h < rowCount; ++h)
     {
         memcpy(dptr, sptr, msize);
@@ -500,7 +500,7 @@ namespace DirectX
 _Use_decl_annotations_ HRESULT DirectX::SaveWICTextureToFile(ID3D12CommandQueue* pCommandQ,
     ID3D12Resource*                                                              pSource,
     REFGUID                                                                      guidContainerFormat,
-    const wchar_t*                                                               fileName,
+    wchar_t const*                                                               fileName,
     D3D12_RESOURCE_STATES                                                        beforeState,
     D3D12_RESOURCE_STATES                                                        afterState,
     const GUID*                                                                  targetFormat,
@@ -517,10 +517,10 @@ _Use_decl_annotations_ HRESULT DirectX::SaveWICTextureToFile(ID3D12CommandQueue*
 
     // Get the size of the image
 #if defined(_MSC_VER) || !defined(_WIN32)
-    const auto desc = pSource->GetDesc();
+    auto const desc = pSource->GetDesc();
 #else
     D3D12_RESOURCE_DESC tmpDesc;
-    const auto&         desc = *pSource->GetDesc(&tmpDesc);
+    auto const&         desc = *pSource->GetDesc(&tmpDesc);
 #endif
 
     if (desc.Width > UINT32_MAX)
@@ -864,7 +864,7 @@ namespace DirectX
         D3D12_RESOURCE_STATES                                     beforeState,
         D3D12_RESOURCE_STATES                                     afterState) noexcept
     {
-        return SaveDDSTextureToFile(pCommandQueue, pSource, reinterpret_cast<const unsigned short*>(fileName), beforeState, afterState);
+        return SaveDDSTextureToFile(pCommandQueue, pSource, reinterpret_cast<unsigned short const*>(fileName), beforeState, afterState);
     }
 
     HRESULT __cdecl SaveWICTextureToFile(_In_ ID3D12CommandQueue* pCommandQ,
@@ -880,7 +880,7 @@ namespace DirectX
         return SaveWICTextureToFile(pCommandQ,
             pSource,
             guidContainerFormat,
-            reinterpret_cast<const unsigned short*>(fileName),
+            reinterpret_cast<unsigned short const*>(fileName),
             beforeState,
             afterState,
             targetFormat,

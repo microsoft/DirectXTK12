@@ -36,7 +36,7 @@ namespace
         USES_OBSOLETE_DEC3N   = 0x20,
     };
 
-    int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
+    int GetUniqueTextureIndex(wchar_t const* textureName, std::map<std::wstring, int>& textureDictionary)
     {
         if (textureName == nullptr || !textureName[0])
             return -1;
@@ -72,12 +72,12 @@ namespace
     }
 
     template<size_t sizeOfBuffer>
-    inline void ASCIIToWChar(wchar_t (&buffer)[sizeOfBuffer], const char* ascii)
+    inline void ASCIIToWChar(wchar_t (&buffer)[sizeOfBuffer], char const* ascii)
     {
         MultiByteToWideChar(CP_UTF8, 0, ascii, -1, buffer, sizeOfBuffer);
     }
 
-    void InitMaterial(const DXUT::SDKMESH_MATERIAL& mh,
+    void InitMaterial(DXUT::SDKMESH_MATERIAL const& mh,
         unsigned int                                flags,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary,
@@ -149,7 +149,7 @@ namespace
         m.samplerIndex2 = (flags & DUAL_TEXTURE) ? static_cast<int>(CommonStates::SamplerIndex::AnisotropicWrap) : -1;
     }
 
-    void InitMaterial(const DXUT::SDKMESH_MATERIAL_V2& mh,
+    void InitMaterial(DXUT::SDKMESH_MATERIAL_V2 const& mh,
         unsigned int                                   flags,
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int>& textureDictionary)
@@ -451,19 +451,19 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_ std::unique_ptr<Model>
-Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t idataSize, ModelLoaderFlags flags)
+Model::CreateFromSDKMESH(ID3D12Device* device, uint8_t const* meshData, size_t idataSize, ModelLoaderFlags flags)
 {
     if (!meshData)
         throw std::invalid_argument("meshData cannot be null");
 
-    const uint64_t dataSize = idataSize;
+    uint64_t const dataSize = idataSize;
 
     // File Headers
     if (dataSize < sizeof(DXUT::SDKMESH_HEADER))
         throw std::runtime_error("End of file");
-    auto header = reinterpret_cast<const DXUT::SDKMESH_HEADER*>(meshData);
+    auto header = reinterpret_cast<DXUT::SDKMESH_HEADER const*>(meshData);
 
-    const uint64_t headerSize = sizeof(DXUT::SDKMESH_HEADER)
+    uint64_t const headerSize = sizeof(DXUT::SDKMESH_HEADER)
                                 + uint64_t(header->NumVertexBuffers) * sizeof(DXUT::SDKMESH_VERTEX_BUFFER_HEADER)
                                 + uint64_t(header->NumIndexBuffers) * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER);
     if (header->HeaderSize != headerSize)
@@ -500,7 +500,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
     if (dataSize < header->VertexStreamHeadersOffset || (dataSize < (header->VertexStreamHeadersOffset + sizeBytes)))
         throw std::runtime_error("End of file");
-    auto vbArray = reinterpret_cast<const DXUT::SDKMESH_VERTEX_BUFFER_HEADER*>(meshData + header->VertexStreamHeadersOffset);
+    auto vbArray = reinterpret_cast<DXUT::SDKMESH_VERTEX_BUFFER_HEADER const*>(meshData + header->VertexStreamHeadersOffset);
 
     sizeBytes = uint64_t(header->NumIndexBuffers) * sizeof(DXUT::SDKMESH_INDEX_BUFFER_HEADER);
     if (sizeBytes > UINT32_MAX)
@@ -508,7 +508,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
     if (dataSize < header->IndexStreamHeadersOffset || (dataSize < (header->IndexStreamHeadersOffset + sizeBytes)))
         throw std::runtime_error("End of file");
-    auto ibArray = reinterpret_cast<const DXUT::SDKMESH_INDEX_BUFFER_HEADER*>(meshData + header->IndexStreamHeadersOffset);
+    auto ibArray = reinterpret_cast<DXUT::SDKMESH_INDEX_BUFFER_HEADER const*>(meshData + header->IndexStreamHeadersOffset);
 
     sizeBytes = uint64_t(header->NumMeshes) * sizeof(DXUT::SDKMESH_MESH);
     if (sizeBytes > UINT32_MAX)
@@ -516,7 +516,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
     if (dataSize < header->MeshDataOffset || (dataSize < (header->MeshDataOffset + sizeBytes)))
         throw std::runtime_error("End of file");
-    auto meshArray = reinterpret_cast<const DXUT::SDKMESH_MESH*>(meshData + header->MeshDataOffset);
+    auto meshArray = reinterpret_cast<DXUT::SDKMESH_MESH const*>(meshData + header->MeshDataOffset);
 
     sizeBytes = uint64_t(header->NumTotalSubsets) * sizeof(DXUT::SDKMESH_SUBSET);
     if (sizeBytes > UINT32_MAX)
@@ -524,9 +524,9 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
     if (dataSize < header->SubsetDataOffset || (dataSize < (header->SubsetDataOffset + sizeBytes)))
         throw std::runtime_error("End of file");
-    auto subsetArray = reinterpret_cast<const DXUT::SDKMESH_SUBSET*>(meshData + header->SubsetDataOffset);
+    auto subsetArray = reinterpret_cast<DXUT::SDKMESH_SUBSET const*>(meshData + header->SubsetDataOffset);
 
-    const DXUT::SDKMESH_FRAME* frameArray = nullptr;
+    DXUT::SDKMESH_FRAME const* frameArray = nullptr;
     if (header->NumFrames > 0)
     {
         sizeBytes = uint64_t(header->NumFrames) * sizeof(DXUT::SDKMESH_FRAME);
@@ -538,7 +538,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
         if (flags & ModelLoader_IncludeBones)
         {
-            frameArray = reinterpret_cast<const DXUT::SDKMESH_FRAME*>(meshData + header->FrameDataOffset);
+            frameArray = reinterpret_cast<DXUT::SDKMESH_FRAME const*>(meshData + header->FrameDataOffset);
         }
     }
 
@@ -549,22 +549,22 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
     if (dataSize < header->MaterialDataOffset || (dataSize < (header->MaterialDataOffset + sizeBytes)))
         throw std::runtime_error("End of file");
 
-    const DXUT::SDKMESH_MATERIAL*    materialArray    = nullptr;
-    const DXUT::SDKMESH_MATERIAL_V2* materialArray_v2 = nullptr;
+    DXUT::SDKMESH_MATERIAL const*    materialArray    = nullptr;
+    DXUT::SDKMESH_MATERIAL_V2 const* materialArray_v2 = nullptr;
     if (header->Version == DXUT::SDKMESH_FILE_VERSION_V2)
     {
-        materialArray_v2 = reinterpret_cast<const DXUT::SDKMESH_MATERIAL_V2*>(meshData + header->MaterialDataOffset);
+        materialArray_v2 = reinterpret_cast<DXUT::SDKMESH_MATERIAL_V2 const*>(meshData + header->MaterialDataOffset);
     }
     else
     {
-        materialArray = reinterpret_cast<const DXUT::SDKMESH_MATERIAL*>(meshData + header->MaterialDataOffset);
+        materialArray = reinterpret_cast<DXUT::SDKMESH_MATERIAL const*>(meshData + header->MaterialDataOffset);
     }
 
     // Buffer data
-    const uint64_t bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
+    uint64_t const bufferDataOffset = header->HeaderSize + header->NonBufferDataSize;
     if ((dataSize < bufferDataOffset) || (dataSize < bufferDataOffset + header->BufferDataSize))
         throw std::runtime_error("End of file");
-    const uint8_t* bufferData = meshData + bufferDataOffset;
+    uint8_t const* bufferData = meshData + bufferDataOffset;
 
     // Create vertex buffers
     std::vector<std::shared_ptr<ModelMeshPart::InputLayoutCollection>> vbDecls;
@@ -666,9 +666,9 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
         if (dataSize < mh.SubsetOffset || (dataSize < mh.SubsetOffset + sizeBytes))
             throw std::runtime_error("End of file");
 
-        auto subsets = reinterpret_cast<const uint32_t*>(meshData + mh.SubsetOffset);
+        auto subsets = reinterpret_cast<uint32_t const*>(meshData + mh.SubsetOffset);
 
-        const uint32_t* influences = nullptr;
+        uint32_t const* influences = nullptr;
         if (mh.NumFrameInfluences > 0)
         {
             sizeBytes = uint64_t(mh.NumFrameInfluences) * sizeof(uint32_t);
@@ -680,7 +680,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
             if (flags & ModelLoader_IncludeBones)
             {
-                influences = reinterpret_cast<const uint32_t*>(meshData + mh.FrameInfluenceOffset);
+                influences = reinterpret_cast<uint32_t const*>(meshData + mh.FrameInfluenceOffset);
             }
         }
 
@@ -704,7 +704,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
         // Create subsets
         for (size_t j = 0; j < mh.NumSubsets; ++j)
         {
-            const auto sIndex = subsets[j];
+            auto const sIndex = subsets[j];
             if (sIndex >= header->NumTotalSubsets)
                 throw std::out_of_range("Invalid mesh found");
 
@@ -734,7 +734,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
             auto& mat = materials[subset.MaterialID];
 
-            const size_t vi = mh.VertexBuffers[0];
+            size_t const vi = mh.VertexBuffers[0];
             if (materialArray_v2)
             {
                 InitMaterial(materialArray_v2[subset.MaterialID], materialFlags[vi], mat, textureDictionary);
@@ -750,8 +750,8 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
             auto part = std::make_unique<ModelMeshPart>(partCount++);
 
-            const auto& vh = vbArray[mh.VertexBuffers[0]];
-            const auto& ih = ibArray[mh.IndexBuffer];
+            auto const& vh = vbArray[mh.VertexBuffers[0]];
+            auto const& ih = ibArray[mh.IndexBuffer];
 
             part->indexCount    = static_cast<uint32_t>(subset.IndexCount);
             part->startIndex    = static_cast<uint32_t>(subset.IndexStart);
@@ -763,14 +763,14 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
             // Vertex data
             auto       verts       = bufferData + (vh.DataOffset - bufferDataOffset);
-            const auto vbytes      = static_cast<size_t>(vh.SizeBytes);
+            auto const vbytes      = static_cast<size_t>(vh.SizeBytes);
             part->vertexBufferSize = static_cast<uint32_t>(vh.SizeBytes);
             part->vertexBuffer     = GraphicsMemory::Get(device).Allocate(vbytes, 16, GraphicsMemory::TAG_VERTEX);
             memcpy(part->vertexBuffer.Memory(), verts, vbytes);
 
             // Index data
             auto       indices    = bufferData + (ih.DataOffset - bufferDataOffset);
-            const auto ibytes     = static_cast<size_t>(ih.SizeBytes);
+            auto const ibytes     = static_cast<size_t>(ih.SizeBytes);
             part->indexBufferSize = static_cast<uint32_t>(ih.SizeBytes);
             part->indexBuffer     = GraphicsMemory::Get(device).Allocate(ibytes, 16, GraphicsMemory::TAG_INDEX);
             memcpy(part->indexBuffer.Memory(), indices, ibytes);
@@ -815,7 +815,7 @@ Model::CreateFromSDKMESH(ID3D12Device* device, const uint8_t* meshData, size_t i
 
             transforms[j] = XMLoadFloat4x4(&frameArray[j].Matrix);
 
-            const uint32_t index = frameArray[j].Mesh;
+            uint32_t const index = frameArray[j].Mesh;
             if (index != DXUT::INVALID_MESH)
             {
                 if (index >= model->meshes.size())
@@ -876,7 +876,7 @@ std::unique_ptr<Model> Model::CreateFromSDKMESH(_In_opt_ ID3D12Device* device, _
 
 std::unique_ptr<Model> Model::CreateFromSDKMESH(_In_opt_ ID3D12Device* device, _In_z_ const __wchar_t* szFileName, ModelLoaderFlags flags)
 {
-    return CreateFromSDKMESH(device, reinterpret_cast<const unsigned short*>(szFileName), flags);
+    return CreateFromSDKMESH(device, reinterpret_cast<unsigned short const*>(szFileName), flags);
 }
 
 #endif

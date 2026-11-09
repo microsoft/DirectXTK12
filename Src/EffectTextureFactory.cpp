@@ -69,8 +69,8 @@ public:
         SetDebugObjectName(mTextureDescriptorHeap.Heap(), L"EffectTextureFactory");
     }
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = delete;
     Impl& operator=(Impl&&) = delete;
@@ -133,7 +133,7 @@ _Use_decl_annotations_ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ c
 
         wchar_t ext[_MAX_EXT] = {};
         _wsplitpath_s(name, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
-        const bool isdds = _wcsicmp(ext, L".dds") == 0;
+        bool const isdds = _wcsicmp(ext, L".dds") == 0;
 
         DDS_LOADER_FLAGS loadFlags = DDS_LOADER_DEFAULT;
         if (mForceSRGB)
@@ -197,7 +197,7 @@ _Use_decl_annotations_ size_t EffectTextureFactory::Impl::CreateTexture(_In_z_ c
     assert(textureEntry.mResource != nullptr);
 
     // bind a new descriptor in slot
-    const auto textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
+    auto const textureDescriptor = mTextureDescriptorHeap.GetCpuHandle(static_cast<size_t>(descriptorSlot));
     DirectX::CreateShaderResourceView(mDevice.Get(), textureEntry.mResource.Get(), textureDescriptor, textureEntry.mIsCubeMap);
 
     return textureEntry.slot;
@@ -302,7 +302,7 @@ _Use_decl_annotations_ void EffectTextureFactory::GetResource(size_t slot, ID3D1
     if (slot >= pImpl->mResources.size())
         throw std::invalid_argument("Resource slot is invalid");
 
-    const auto& textureEntry = pImpl->mResources[slot];
+    auto const& textureEntry = pImpl->mResources[slot];
 
     textureEntry.mResource.CopyTo(resource);
 

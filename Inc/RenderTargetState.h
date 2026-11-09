@@ -58,8 +58,8 @@ namespace DirectX
               nodeMask(0)
         {}
 
-        RenderTargetState(const RenderTargetState&)            = default;
-        RenderTargetState& operator=(const RenderTargetState&) = default;
+        RenderTargetState(RenderTargetState const&)            = default;
+        RenderTargetState& operator=(RenderTargetState const&) = default;
 
         RenderTargetState(RenderTargetState&&)            = default;
         RenderTargetState& operator=(RenderTargetState&&) = default;

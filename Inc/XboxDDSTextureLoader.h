@@ -125,7 +125,7 @@ namespace Xbox
         _Out_opt_ bool*                                                  isCubeMap = nullptr) noexcept
     {
         return CreateDDSTextureFromMemory(device,
-            reinterpret_cast<const uint8_t*>(ddsData),
+            reinterpret_cast<uint8_t const*>(ddsData),
             ddsDataSize,
             texture,
             grfxMemory,

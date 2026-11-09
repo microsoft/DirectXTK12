@@ -79,8 +79,8 @@ namespace DirectX
             GraphicsResource(GraphicsResource&& other) noexcept;
             GraphicsResource&& operator=(GraphicsResource&&) noexcept;
 
-            GraphicsResource(const GraphicsResource&)            = delete;
-            GraphicsResource& operator=(const GraphicsResource&) = delete;
+            GraphicsResource(GraphicsResource const&)            = delete;
+            GraphicsResource& operator=(GraphicsResource const&) = delete;
 
             ~GraphicsResource();
 
@@ -116,11 +116,11 @@ namespace DirectX
             SharedGraphicsResource(GraphicsResource&&);
             SharedGraphicsResource&& operator=(GraphicsResource&&);
 
-            SharedGraphicsResource(const SharedGraphicsResource&) noexcept;
-            SharedGraphicsResource& operator=(const SharedGraphicsResource&) noexcept;
+            SharedGraphicsResource(SharedGraphicsResource const&) noexcept;
+            SharedGraphicsResource& operator=(SharedGraphicsResource const&) noexcept;
 
-            SharedGraphicsResource(const GraphicsResource&)            = delete;
-            SharedGraphicsResource& operator=(const GraphicsResource&) = delete;
+            SharedGraphicsResource(GraphicsResource const&)            = delete;
+            SharedGraphicsResource& operator=(GraphicsResource const&) = delete;
 
             ~SharedGraphicsResource();
 
@@ -132,11 +132,11 @@ namespace DirectX
 
             explicit operator bool() const noexcept { return mSharedResource != nullptr; }
 
-            bool operator==(const SharedGraphicsResource& other) const noexcept
+            bool operator==(SharedGraphicsResource const& other) const noexcept
             {
                 return mSharedResource.get() == other.mSharedResource.get();
             }
-            bool operator!=(const SharedGraphicsResource& other) const noexcept
+            bool operator!=(SharedGraphicsResource const& other) const noexcept
             {
                 return mSharedResource.get() != other.mSharedResource.get();
             }
@@ -145,7 +145,7 @@ namespace DirectX
             void __cdecl Reset() noexcept;
             void __cdecl Reset(GraphicsResource&&);
             void __cdecl Reset(SharedGraphicsResource&&) noexcept;
-            void __cdecl Reset(const SharedGraphicsResource& resource) noexcept;
+            void __cdecl Reset(SharedGraphicsResource const& resource) noexcept;
 
         private:
             std::shared_ptr<GraphicsResource> mSharedResource;
@@ -215,7 +215,7 @@ namespace DirectX
                 return alloc;
             }
             template<typename T>
-            GraphicsResource AllocateConstant(const T& setData)
+            GraphicsResource AllocateConstant(T const& setData)
             {
                 GraphicsResource alloc = AllocateConstant<T>();
                 memcpy(alloc.Memory(), &setData, sizeof(T));

@@ -55,10 +55,10 @@ namespace
 class SkinnedEffect::Impl : public EffectBase<SkinnedEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -133,7 +133,7 @@ const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::VertexShaderBytecod
 };
 
 template<>
-const int EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<SkinnedEffectTraits>::VertexShaderIndices[] = {
     0, // vertex lighting, four bones
     0, // vertex lighting, four bones, no fog
 
@@ -155,7 +155,7 @@ const D3D12_SHADER_BYTECODE EffectBase<SkinnedEffectTraits>::PixelShaderBytecode
 };
 
 template<>
-const int EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<SkinnedEffectTraits>::PixelShaderIndices[] = {
     0, // vertex lighting, four bones
     1, // vertex lighting, four bones, no fog
 
@@ -176,7 +176,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<SkinnedEffectTraits>::DeviceResourc
     = {};
 
 // Constructor.
-SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
     : EffectBase(device),
       texture{},
       sampler{}
@@ -248,14 +248,14 @@ SkinnedEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const
     }
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < SkinnedEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<SkinnedEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < SkinnedEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<SkinnedEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < SkinnedEffectTraits::PixelShaderCount);
 
@@ -333,7 +333,7 @@ void SkinnedEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+SkinnedEffect::SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {}
 

@@ -133,8 +133,8 @@ namespace
               mMutex{}
         {}
 
-        DeviceResources(const DeviceResources&)            = delete;
-        DeviceResources& operator=(const DeviceResources&) = delete;
+        DeviceResources(DeviceResources const&)            = delete;
+        DeviceResources& operator=(DeviceResources const&) = delete;
 
         DeviceResources(DeviceResources&&)            = delete;
         DeviceResources& operator=(DeviceResources&&) = delete;
@@ -170,10 +170,10 @@ namespace
 class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
 public:
-    Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx);
+    Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect ifx);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -229,7 +229,7 @@ private:
 SharedResourcePool<ID3D12Device*, DeviceResources> BasicPostProcess::Impl::deviceResourcesPool;
 
 // Constructor.
-BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect ifx)
+BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect ifx)
     : fx(ifx),
       constants{},
       texture{},
@@ -316,7 +316,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
     assert(mRootSignature != nullptr);
 
     // Create pipeline state.
-    const EffectPipelineStateDescription psd(nullptr,
+    EffectPipelineStateDescription const psd(nullptr,
         CommonStates::Opaque,
         CommonStates::DepthNone,
         CommonStates::CullNone,
@@ -392,8 +392,8 @@ void BasicPostProcess::Impl::DownScale2x2()
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    const float tu = 1.0f / float(texWidth);
-    const float tv = 1.0f / float(texHeight);
+    float const tu = 1.0f / float(texWidth);
+    float const tv = 1.0f / float(texHeight);
 
     // Sample from the 4 surrounding points. Since the center point will be in the exact
     // center of 4 texels, a 0.5f offset is needed to specify a texel center.
@@ -418,8 +418,8 @@ void BasicPostProcess::Impl::DownScale4x4()
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    const float tu = 1.0f / float(texWidth);
-    const float tv = 1.0f / float(texHeight);
+    float const tu = 1.0f / float(texWidth);
+    float const tv = 1.0f / float(texHeight);
 
     // Sample from the 16 surrounding points. Since the center point will be in the
     // exact center of 16 texels, a 1.5f offset is needed to specify a texel center.
@@ -444,8 +444,8 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
         throw std::logic_error("Call SetSourceTexture before setting post-process effect");
     }
 
-    const float tu = 1.0f / float(texWidth);
-    const float tv = 1.0f / float(texHeight);
+    float const tu = 1.0f / float(texWidth);
+    float const tv = 1.0f / float(texHeight);
 
     float  totalWeight = 0.0f;
     size_t index       = 0;
@@ -468,7 +468,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
             offsets[index].z = 0.0f;
             offsets[index].w = 0.0f;
 
-            const float g  = GaussianDistribution(float(x), float(y), 1.0f);
+            float const g  = GaussianDistribution(float(x), float(y), 1.0f);
             weights[index] = XMVectorReplicate(g);
 
             totalWeight += XMVectorGetX(weights[index]);
@@ -536,7 +536,7 @@ void BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightness
 }
 
 // Public constructor.
-BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
+BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, RenderTargetState const& rtState, Effect fx)
     : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {}
 
@@ -559,10 +559,10 @@ void BasicPostProcess::SetSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescripto
     if (resource)
     {
 #if defined(_MSC_VER) || !defined(_WIN32)
-        const auto desc = resource->GetDesc();
+        auto const desc = resource->GetDesc();
 #else
         D3D12_RESOURCE_DESC tmpDesc;
-        const auto&         desc = *resource->GetDesc(&tmpDesc);
+        auto const&         desc = *resource->GetDesc(&tmpDesc);
 #endif
         pImpl->texWidth  = static_cast<unsigned>(desc.Width);
         pImpl->texHeight = desc.Height;

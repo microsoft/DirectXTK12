@@ -22,7 +22,7 @@ using Microsoft::WRL::ComPtr;
 namespace
 {
     template<typename T>
-    void SetMaterialProperties(_In_ T* effect, const EffectFactory::EffectInfo& info)
+    void SetMaterialProperties(_In_ T* effect, EffectFactory::EffectInfo const& info)
     {
         effect->EnableDefaultLighting();
 
@@ -78,15 +78,15 @@ public:
             mSamplerDescriptors = std::make_unique<DescriptorHeap>(samplerDescriptors);
     }
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = delete;
     Impl& operator=(Impl&&) = delete;
 
-    std::shared_ptr<IEffect> CreateEffect(const EffectInfo& info,
-        const EffectPipelineStateDescription&               opaquePipelineState,
-        const EffectPipelineStateDescription&               alphaPipelineState,
+    std::shared_ptr<IEffect> CreateEffect(EffectInfo const& info,
+        EffectPipelineStateDescription const&               opaquePipelineState,
+        EffectPipelineStateDescription const&               alphaPipelineState,
         const D3D12_INPUT_LAYOUT_DESC&                      inputLayout,
         int                                                 textureDescriptorOffset,
         int                                                 samplerDescriptorOffset);
@@ -117,9 +117,9 @@ private:
     std::mutex mutex;
 };
 
-std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& info,
-    const EffectPipelineStateDescription&                                    opaquePipelineState,
-    const EffectPipelineStateDescription&                                    alphaPipelineState,
+std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(EffectInfo const& info,
+    EffectPipelineStateDescription const&                                    opaquePipelineState,
+    EffectPipelineStateDescription const&                                    alphaPipelineState,
     const D3D12_INPUT_LAYOUT_DESC&                                           inputLayoutDesc,
     int                                                                      textureDescriptorOffset,
     int                                                                      samplerDescriptorOffset)
@@ -161,16 +161,16 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
         throw std::runtime_error("EffectFactory");
     }
 
-    const int diffuseTextureIndex
+    int const diffuseTextureIndex
         = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
-    const int specularTextureIndex
+    int const specularTextureIndex
         = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
-    const int emissiveTextureIndex
+    int const emissiveTextureIndex
         = (info.emissiveTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.emissiveTextureIndex + textureDescriptorOffset : -1;
-    const int normalTextureIndex
+    int const normalTextureIndex
         = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
-    const int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
-    const int samplerIndex2
+    int const samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
+    int const samplerIndex2
         = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
 
     // Modify base pipeline state
@@ -202,7 +202,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
 
             if (mSharing && !info.name.empty())
             {
-                const uint32_t hash = derivedPSD.ComputeHash();
+                uint32_t const hash = derivedPSD.ComputeHash();
                 cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
                 auto it = mEffectCacheNormalMapSkinned.find(cacheName);
@@ -246,7 +246,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
             // SkinnedEffect
             if (mSharing && !info.name.empty())
             {
-                const uint32_t hash = derivedPSD.ComputeHash();
+                uint32_t const hash = derivedPSD.ComputeHash();
                 cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
                 auto it = mEffectCacheSkinning.find(cacheName);
@@ -288,7 +288,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
 
         if (mSharing && !info.name.empty())
         {
-            const uint32_t hash = derivedPSD.ComputeHash();
+            uint32_t const hash = derivedPSD.ComputeHash();
             cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheDualTexture.find(cacheName);
@@ -382,7 +382,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
 
         if (mSharing && !info.name.empty())
         {
-            const uint32_t hash = derivedPSD.ComputeHash();
+            uint32_t const hash = derivedPSD.ComputeHash();
             cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCacheNormalMap.find(cacheName);
@@ -454,7 +454,7 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(const EffectInfo& inf
         // BasicEffect
         if (mSharing && !info.name.empty())
         {
-            const uint32_t hash = derivedPSD.ComputeHash();
+            uint32_t const hash = derivedPSD.ComputeHash();
             cacheName           = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
 
             auto it = mEffectCache.find(cacheName);
@@ -549,9 +549,9 @@ EffectFactory::EffectFactory(EffectFactory&&) noexcept            = default;
 EffectFactory& EffectFactory::operator=(EffectFactory&&) noexcept = default;
 EffectFactory::~EffectFactory()                                   = default;
 
-std::shared_ptr<IEffect> EffectFactory::CreateEffect(const EffectInfo& info,
-    const EffectPipelineStateDescription&                              opaquePipelineState,
-    const EffectPipelineStateDescription&                              alphaPipelineState,
+std::shared_ptr<IEffect> EffectFactory::CreateEffect(EffectInfo const& info,
+    EffectPipelineStateDescription const&                              opaquePipelineState,
+    EffectPipelineStateDescription const&                              alphaPipelineState,
     const D3D12_INPUT_LAYOUT_DESC&                                     inputLayout,
     int                                                                textureDescriptorOffset,
     int                                                                samplerDescriptorOffset)

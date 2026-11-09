@@ -21,7 +21,7 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
+    int GetUniqueTextureIndex(wchar_t const* textureName, std::map<std::wstring, int>& textureDictionary)
     {
         if (textureName == nullptr || !textureName[0])
             return -1;
@@ -115,7 +115,7 @@ namespace
     //----------------------------------------------------------------------------------
     struct MaterialRecordCMO
     {
-        const VSD3DStarter::Material* pMaterial;
+        VSD3DStarter::Material const* pMaterial;
         uint32_t                      materialIndex;
         std::wstring                  name;
         std::wstring                  pixelShader;
@@ -174,7 +174,7 @@ namespace
 //======================================================================================
 
 _Use_decl_annotations_ std::unique_ptr<Model>
-Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataSize, ModelLoaderFlags flags, size_t* animsOffset)
+Model::CreateFromCMO(ID3D12Device* device, uint8_t const* meshData, size_t dataSize, ModelLoaderFlags flags, size_t* animsOffset)
 {
     if (animsOffset)
     {
@@ -188,7 +188,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         throw std::invalid_argument("Device and meshData cannot be null");
 
     // Meshes
-    auto   nMesh    = reinterpret_cast<const uint32_t*>(meshData);
+    auto   nMesh    = reinterpret_cast<uint32_t const*>(meshData);
     size_t usedSize = sizeof(uint32_t);
     if (dataSize < usedSize)
         throw std::runtime_error("End of file");
@@ -210,12 +210,12 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
     for (size_t meshIndex = 0; meshIndex < *nMesh; ++meshIndex)
     {
         // Mesh name
-        auto nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nName = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
 
-        auto meshName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(
+        auto meshName = reinterpret_cast<wchar_t const*>(static_cast<void const*>(
             meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
         usedSize += sizeof(wchar_t) * (*nName);
@@ -226,7 +226,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         mesh->name.assign(meshName, *nName);
 
         // Materials
-        auto nMats = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nMats = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -236,19 +236,19 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
         std::vector<MaterialRecordCMO> materials;
         materials.reserve(*nMats);
-        const size_t baseMaterialIndex = modelmats.size();
+        size_t const baseMaterialIndex = modelmats.size();
         for (size_t j = 0; j < *nMats; ++j)
         {
             MaterialRecordCMO m;
             m.materialIndex = static_cast<uint32_t>(baseMaterialIndex + j);
 
             // Material name
-            nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+            nName = reinterpret_cast<uint32_t const*>(meshData + usedSize);
             usedSize += sizeof(uint32_t);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
 
-            auto matName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(
+            auto matName = reinterpret_cast<wchar_t const*>(static_cast<void const*>(
                 meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
             usedSize += sizeof(wchar_t) * (*nName);
@@ -258,7 +258,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             m.name.assign(matName, *nName);
 
             // Material settings
-            auto matSetting = reinterpret_cast<const VSD3DStarter::Material*>(meshData + usedSize);
+            auto matSetting = reinterpret_cast<VSD3DStarter::Material const*>(meshData + usedSize);
             usedSize += sizeof(VSD3DStarter::Material);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -266,12 +266,12 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             m.pMaterial = matSetting;
 
             // Pixel shader name
-            nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+            nName = reinterpret_cast<uint32_t const*>(meshData + usedSize);
             usedSize += sizeof(uint32_t);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
 
-            auto psName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(
+            auto psName = reinterpret_cast<wchar_t const*>(static_cast<void const*>(
                 meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
             usedSize += sizeof(wchar_t) * (*nName);
@@ -282,12 +282,12 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
             for (size_t t = 0; t < VSD3DStarter::MAX_TEXTURE; ++t)
             {
-                nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+                nName = reinterpret_cast<uint32_t const*>(meshData + usedSize);
                 usedSize += sizeof(uint32_t);
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
 
-                auto txtName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(
+                auto txtName = reinterpret_cast<wchar_t const*>(static_cast<void const*>(
                     meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
                 usedSize += sizeof(wchar_t) * (*nName);
@@ -313,13 +313,13 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         }
 
         // Skeletal data?
-        const uint8_t* bSkeleton = meshData + usedSize;
+        uint8_t const* bSkeleton = meshData + usedSize;
         usedSize += sizeof(uint8_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
 
         // Submeshes
-        auto nSubmesh = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nSubmesh = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -327,13 +327,13 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         if (!*nSubmesh)
             throw std::runtime_error("No submeshes found\n");
 
-        auto subMesh = reinterpret_cast<const VSD3DStarter::SubMesh*>(meshData + usedSize);
+        auto subMesh = reinterpret_cast<VSD3DStarter::SubMesh const*>(meshData + usedSize);
         usedSize += sizeof(VSD3DStarter::SubMesh) * (*nSubmesh);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
 
         // Index buffers
-        auto nIBs = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nIBs = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -347,7 +347,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         struct IBData
         {
             size_t          nIndices;
-            const uint16_t* ptr;
+            uint16_t const* ptr;
         };
 
         std::vector<IBData> ibData;
@@ -358,7 +358,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
         for (size_t j = 0; j < *nIBs; ++j)
         {
-            auto nIndexes = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+            auto nIndexes = reinterpret_cast<uint32_t const*>(meshData + usedSize);
             usedSize += sizeof(uint32_t);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -366,7 +366,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             if (!*nIndexes)
                 throw std::runtime_error("Empty index buffer found\n");
 
-            const uint64_t sizeInBytes = uint64_t(*(nIndexes)) * sizeof(uint16_t);
+            uint64_t const sizeInBytes = uint64_t(*(nIndexes)) * sizeof(uint16_t);
 
             if (sizeInBytes > UINT32_MAX)
                 throw std::runtime_error("IB too large");
@@ -377,9 +377,9 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                     throw std::runtime_error("IB too large for DirectX 12");
             }
 
-            const auto ibBytes = static_cast<size_t>(sizeInBytes);
+            auto const ibBytes = static_cast<size_t>(sizeInBytes);
 
-            auto indexes = reinterpret_cast<const uint16_t*>(meshData + usedSize);
+            auto indexes = reinterpret_cast<uint16_t const*>(meshData + usedSize);
             usedSize += ibBytes;
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -397,7 +397,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         assert(ibs.size() == *nIBs);
 
         // Vertex buffers
-        auto nVBs = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nVBs = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -411,15 +411,15 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         struct VBData
         {
             size_t                                         nVerts;
-            const VertexPositionNormalTangentColorTexture* ptr;
-            const VSD3DStarter::SkinningVertex*            skinPtr;
+            VertexPositionNormalTangentColorTexture const* ptr;
+            VSD3DStarter::SkinningVertex const*            skinPtr;
         };
 
         std::vector<VBData> vbData;
         vbData.reserve(*nVBs);
         for (size_t j = 0; j < *nVBs; ++j)
         {
-            auto nVerts = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+            auto nVerts = reinterpret_cast<uint32_t const*>(meshData + usedSize);
             usedSize += sizeof(uint32_t);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -427,9 +427,9 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             if (!*nVerts)
                 throw std::runtime_error("Empty vertex buffer found\n");
 
-            const size_t vbBytes = sizeof(VertexPositionNormalTangentColorTexture) * (*(nVerts));
+            size_t const vbBytes = sizeof(VertexPositionNormalTangentColorTexture) * (*(nVerts));
 
-            auto verts = reinterpret_cast<const VertexPositionNormalTangentColorTexture*>(meshData + usedSize);
+            auto verts = reinterpret_cast<VertexPositionNormalTangentColorTexture const*>(meshData + usedSize);
             usedSize += vbBytes;
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -444,7 +444,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         assert(vbData.size() == *nVBs);
 
         // Skinning vertex buffers
-        auto nSkinVBs = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+        auto nSkinVBs = reinterpret_cast<uint32_t const*>(meshData + usedSize);
         usedSize += sizeof(uint32_t);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -456,7 +456,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
             for (size_t j = 0; j < *nSkinVBs; ++j)
             {
-                auto nVerts = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+                auto nVerts = reinterpret_cast<uint32_t const*>(meshData + usedSize);
                 usedSize += sizeof(uint32_t);
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
@@ -467,9 +467,9 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                 if (vbData[j].nVerts != *nVerts)
                     throw std::runtime_error("Mismatched number of verts for skin VBs");
 
-                const size_t vbBytes = sizeof(VSD3DStarter::SkinningVertex) * (*(nVerts));
+                size_t const vbBytes = sizeof(VSD3DStarter::SkinningVertex) * (*(nVerts));
 
-                auto verts = reinterpret_cast<const VSD3DStarter::SkinningVertex*>(meshData + usedSize);
+                auto verts = reinterpret_cast<VSD3DStarter::SkinningVertex const*>(meshData + usedSize);
                 usedSize += vbBytes;
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
@@ -479,7 +479,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         }
 
         // Extents
-        auto extents = reinterpret_cast<const VSD3DStarter::MeshExtents*>(meshData + usedSize);
+        auto extents = reinterpret_cast<VSD3DStarter::MeshExtents const*>(meshData + usedSize);
         usedSize += sizeof(VSD3DStarter::MeshExtents);
         if (dataSize < usedSize)
             throw std::runtime_error("End of file");
@@ -497,7 +497,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         if (*bSkeleton && (flags & ModelLoader_IncludeBones))
         {
             // Bones
-            auto nBones = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+            auto nBones = reinterpret_cast<uint32_t const*>(meshData + usedSize);
             usedSize += sizeof(uint32_t);
             if (dataSize < usedSize)
                 throw std::runtime_error("End of file");
@@ -513,12 +513,12 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             for (uint32_t j = 0; j < *nBones; ++j)
             {
                 // Bone name
-                nName = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+                nName = reinterpret_cast<uint32_t const*>(meshData + usedSize);
                 usedSize += sizeof(uint32_t);
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
 
-                auto boneName = reinterpret_cast<const wchar_t*>(static_cast<const void*>(
+                auto boneName = reinterpret_cast<wchar_t const*>(static_cast<void const*>(
                     meshData + usedSize)); // CodeQL [SM02986] The cast here is intentional to interpret the string in the buffer.
 
                 usedSize += sizeof(wchar_t) * (*nName);
@@ -528,7 +528,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                 bones[j].name = boneName;
 
                 // Bone settings
-                auto cmobones = reinterpret_cast<const VSD3DStarter::Bone*>(meshData + usedSize);
+                auto cmobones = reinterpret_cast<VSD3DStarter::Bone const*>(meshData + usedSize);
                 usedSize += sizeof(VSD3DStarter::Bone);
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
@@ -548,7 +548,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                         if (visited >= *nBones)
                             throw std::runtime_error("Skeleton bones form an invalid graph");
 
-                        const uint32_t sibling = bones[index].siblingIndex;
+                        uint32_t const sibling = bones[index].siblingIndex;
                         if (sibling == ModelBone::c_Invalid)
                         {
                             bones[index].siblingIndex = j;
@@ -588,7 +588,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                             if (visited >= *nBones)
                                 throw std::runtime_error("Skeleton bones form an invalid graph");
 
-                            const uint32_t sibling = bones[index].siblingIndex;
+                            uint32_t const sibling = bones[index].siblingIndex;
                             if (sibling == ModelBone::c_Invalid)
                             {
                                 bones[index].siblingIndex = j;
@@ -615,7 +615,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
                 size_t offset = usedSize;
 
-                auto nClips = reinterpret_cast<const uint32_t*>(meshData + usedSize);
+                auto nClips = reinterpret_cast<uint32_t const*>(meshData + usedSize);
                 usedSize += sizeof(uint32_t);
                 if (dataSize < usedSize)
                     throw std::runtime_error("End of file");
@@ -627,20 +627,20 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
             }
         }
 
-        const bool enableSkinning = (*nSkinVBs) != 0 && !(flags & ModelLoader_DisableSkinning);
+        bool const enableSkinning = (*nSkinVBs) != 0 && !(flags & ModelLoader_DisableSkinning);
 
         // Build vertex buffers
         std::vector<SharedGraphicsResource> vbs;
         vbs.resize(*nVBs);
 
-        const size_t stride
+        size_t const stride
             = enableSkinning ? sizeof(VertexPositionNormalTangentColorTextureSkinning) : sizeof(VertexPositionNormalTangentColorTexture);
 
         for (size_t j = 0; j < *nVBs; ++j)
         {
-            const size_t nVerts = vbData[j].nVerts;
+            size_t const nVerts = vbData[j].nVerts;
 
-            const uint64_t sizeInBytes = uint64_t(stride) * uint64_t(nVerts);
+            uint64_t const sizeInBytes = uint64_t(stride) * uint64_t(nVerts);
 
             if (sizeInBytes > UINT32_MAX)
                 throw std::runtime_error("VB too large");
@@ -651,7 +651,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
                     throw std::runtime_error("VB too large for DirectX 12");
             }
 
-            const size_t bytes = static_cast<size_t>(sizeInBytes);
+            size_t const bytes = static_cast<size_t>(sizeInBytes);
 
             {
                 auto temp = std::make_unique<uint8_t[]>(bytes + (sizeof(uint32_t) * nVerts));
@@ -703,7 +703,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
 
                         auto ib = ibData[sm.IndexBufferIndex].ptr;
 
-                        const size_t count = ibData[sm.IndexBufferIndex].nIndices;
+                        size_t const count = ibData[sm.IndexBufferIndex].nIndices;
 
                         for (size_t q = 0; q < count; ++q)
                         {
@@ -752,7 +752,7 @@ Model::CreateFromCMO(ID3D12Device* device, const uint8_t* meshData, size_t dataS
         assert(vbs.size() == *nVBs);
 
         // Create model materials
-        const bool srgb = (flags & ModelLoader_MaterialColorsSRGB) != 0;
+        bool const srgb = (flags & ModelLoader_MaterialColorsSRGB) != 0;
 
         for (size_t j = 0; j < materials.size(); ++j)
         {
@@ -855,7 +855,7 @@ std::unique_ptr<Model> Model::CreateFromCMO(_In_opt_ ID3D12Device* device,
     ModelLoaderFlags                                               flags,
     _Out_opt_ size_t*                                              animsOffset)
 {
-    return CreateFromCMO(device, reinterpret_cast<const unsigned short*>(szFileName), flags, animsOffset);
+    return CreateFromCMO(device, reinterpret_cast<unsigned short const*>(szFileName), flags, animsOffset);
 }
 
 #endif

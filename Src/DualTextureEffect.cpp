@@ -42,10 +42,10 @@ namespace
 class DualTextureEffect::Impl : public EffectBase<DualTextureEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription);
 
-    Impl(const Impl&)            = delete;
-    Impl& operator=(const Impl&) = delete;
+    Impl(Impl const&)            = delete;
+    Impl& operator=(Impl const&) = delete;
 
     Impl(Impl&&)            = default;
     Impl& operator=(Impl&&) = default;
@@ -121,7 +121,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::VertexShaderByt
 };
 
 template<>
-const int EffectBase<DualTextureEffectTraits>::VertexShaderIndices[] = {
+int const EffectBase<DualTextureEffectTraits>::VertexShaderIndices[] = {
     0, // basic
     1, // no fog
     2, // vertex color
@@ -136,7 +136,7 @@ const D3D12_SHADER_BYTECODE EffectBase<DualTextureEffectTraits>::PixelShaderByte
 };
 
 template<>
-const int EffectBase<DualTextureEffectTraits>::PixelShaderIndices[] = {
+int const EffectBase<DualTextureEffectTraits>::PixelShaderIndices[] = {
     0, // basic
     1, // no fog
     0, // vertex color
@@ -150,7 +150,7 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
     EffectBase<DualTextureEffectTraits>::deviceResourcesPool = {};
 
 // Constructor.
-DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, EffectPipelineStateDescription const& pipelineDescription)
     : EffectBase(device),
       texture1{},
       texture1Sampler{},
@@ -224,14 +224,14 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, uint32_t effectFlags, c
     }
 
     // Create pipeline state.
-    const int sp = GetPipelineStatePermutation(effectFlags);
+    int const sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
-    const int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+    int const vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
-    const int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+    int const pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
@@ -309,7 +309,7 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 DualTextureEffect::DualTextureEffect(_In_ ID3D12Device* device,
     uint32_t                                            effectFlags,
-    const EffectPipelineStateDescription&               pipelineDescription)
+    EffectPipelineStateDescription const&               pipelineDescription)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {}
 

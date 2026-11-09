@@ -123,9 +123,9 @@ namespace DirectX
 
 #if defined(_DEBUG) || defined(PROFILE)
         // Debug info
-        const wchar_t* GetDebugName() const noexcept { return m_debugName.c_str(); }
-        void           SetDebugName(const wchar_t* name);
-        void           SetDebugName(const char* name);
+        wchar_t const* GetDebugName() const noexcept { return m_debugName.c_str(); }
+        void           SetDebugName(wchar_t const* name);
+        void           SetDebugName(char const* name);
 #endif
 
     private:

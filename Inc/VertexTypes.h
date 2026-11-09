@@ -54,8 +54,8 @@ namespace DirectX
         {
             VertexPosition() = default;
 
-            VertexPosition(const VertexPosition&)            = default;
-            VertexPosition& operator=(const VertexPosition&) = default;
+            VertexPosition(VertexPosition const&)            = default;
+            VertexPosition& operator=(VertexPosition const&) = default;
 
             VertexPosition(VertexPosition&&)            = default;
             VertexPosition& operator=(VertexPosition&&) = default;
@@ -80,8 +80,8 @@ namespace DirectX
         {
             VertexPositionColor() = default;
 
-            VertexPositionColor(const VertexPositionColor&)            = default;
-            VertexPositionColor& operator=(const VertexPositionColor&) = default;
+            VertexPositionColor(VertexPositionColor const&)            = default;
+            VertexPositionColor& operator=(VertexPositionColor const&) = default;
 
             VertexPositionColor(VertexPositionColor&&)            = default;
             VertexPositionColor& operator=(VertexPositionColor&&) = default;
@@ -112,8 +112,8 @@ namespace DirectX
         {
             VertexPositionTexture() = default;
 
-            VertexPositionTexture(const VertexPositionTexture&)            = default;
-            VertexPositionTexture& operator=(const VertexPositionTexture&) = default;
+            VertexPositionTexture(VertexPositionTexture const&)            = default;
+            VertexPositionTexture& operator=(VertexPositionTexture const&) = default;
 
             VertexPositionTexture(VertexPositionTexture&&)            = default;
             VertexPositionTexture& operator=(VertexPositionTexture&&) = default;
@@ -144,8 +144,8 @@ namespace DirectX
         {
             VertexPositionDualTexture() = default;
 
-            VertexPositionDualTexture(const VertexPositionDualTexture&)            = default;
-            VertexPositionDualTexture& operator=(const VertexPositionDualTexture&) = default;
+            VertexPositionDualTexture(VertexPositionDualTexture const&)            = default;
+            VertexPositionDualTexture& operator=(VertexPositionDualTexture const&) = default;
 
             VertexPositionDualTexture(VertexPositionDualTexture&&)            = default;
             VertexPositionDualTexture& operator=(VertexPositionDualTexture&&) = default;
@@ -181,8 +181,8 @@ namespace DirectX
         {
             VertexPositionNormal() = default;
 
-            VertexPositionNormal(const VertexPositionNormal&)            = default;
-            VertexPositionNormal& operator=(const VertexPositionNormal&) = default;
+            VertexPositionNormal(VertexPositionNormal const&)            = default;
+            VertexPositionNormal& operator=(VertexPositionNormal const&) = default;
 
             VertexPositionNormal(VertexPositionNormal&&)            = default;
             VertexPositionNormal& operator=(VertexPositionNormal&&) = default;
@@ -213,8 +213,8 @@ namespace DirectX
         {
             VertexPositionColorTexture() = default;
 
-            VertexPositionColorTexture(const VertexPositionColorTexture&)            = default;
-            VertexPositionColorTexture& operator=(const VertexPositionColorTexture&) = default;
+            VertexPositionColorTexture(VertexPositionColorTexture const&)            = default;
+            VertexPositionColorTexture& operator=(VertexPositionColorTexture const&) = default;
 
             VertexPositionColorTexture(VertexPositionColorTexture&&)            = default;
             VertexPositionColorTexture& operator=(VertexPositionColorTexture&&) = default;
@@ -248,8 +248,8 @@ namespace DirectX
         {
             VertexPositionNormalColor() = default;
 
-            VertexPositionNormalColor(const VertexPositionNormalColor&)            = default;
-            VertexPositionNormalColor& operator=(const VertexPositionNormalColor&) = default;
+            VertexPositionNormalColor(VertexPositionNormalColor const&)            = default;
+            VertexPositionNormalColor& operator=(VertexPositionNormalColor const&) = default;
 
             VertexPositionNormalColor(VertexPositionNormalColor&&)            = default;
             VertexPositionNormalColor& operator=(VertexPositionNormalColor&&) = default;
@@ -283,8 +283,8 @@ namespace DirectX
         {
             VertexPositionNormalTexture() = default;
 
-            VertexPositionNormalTexture(const VertexPositionNormalTexture&)            = default;
-            VertexPositionNormalTexture& operator=(const VertexPositionNormalTexture&) = default;
+            VertexPositionNormalTexture(VertexPositionNormalTexture const&)            = default;
+            VertexPositionNormalTexture& operator=(VertexPositionNormalTexture const&) = default;
 
             VertexPositionNormalTexture(VertexPositionNormalTexture&&)            = default;
             VertexPositionNormalTexture& operator=(VertexPositionNormalTexture&&) = default;
@@ -318,8 +318,8 @@ namespace DirectX
         {
             VertexPositionNormalColorTexture() = default;
 
-            VertexPositionNormalColorTexture(const VertexPositionNormalColorTexture&)            = default;
-            VertexPositionNormalColorTexture& operator=(const VertexPositionNormalColorTexture&) = default;
+            VertexPositionNormalColorTexture(VertexPositionNormalColorTexture const&)            = default;
+            VertexPositionNormalColorTexture& operator=(VertexPositionNormalColorTexture const&) = default;
 
             VertexPositionNormalColorTexture(VertexPositionNormalColorTexture&&)            = default;
             VertexPositionNormalColorTexture& operator=(VertexPositionNormalColorTexture&&) = default;

@@ -18,7 +18,7 @@ using namespace DirectX;
 namespace
 {
     // 0x04C11DB7 is the official polynomial used by PKZip, WinZip and Ethernet
-    static const uint32_t s_crc32[] = {
+    static uint32_t const s_crc32[] = {
         0x00000000,
         0x77073096,
         0xee0e612c,
@@ -284,7 +284,7 @@ uint32_t EffectPipelineStateDescription::ComputeHash() const noexcept
     uint32_t crc = 0xFFFFFFFF;
 
     // Ignores the input layout which contains pointers
-    auto ptr = reinterpret_cast<const uint8_t*>(this) + sizeof(D3D12_INPUT_LAYOUT_DESC);
+    auto ptr = reinterpret_cast<uint8_t const*>(this) + sizeof(D3D12_INPUT_LAYOUT_DESC);
     for (size_t j = 0; j < (sizeof(EffectPipelineStateDescription) - sizeof(D3D12_INPUT_LAYOUT_DESC)); ++j)
     {
         crc = (crc >> 8) ^ s_crc32[(crc & 0xff) ^ *ptr++];

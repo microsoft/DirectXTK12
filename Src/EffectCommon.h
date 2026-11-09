@@ -209,8 +209,8 @@ namespace DirectX
         static const D3D12_SHADER_BYTECODE VertexShaderBytecode[Traits::VertexShaderCount];
         static const D3D12_SHADER_BYTECODE PixelShaderBytecode[Traits::PixelShaderCount];
         // .. and shader entry points
-        static const int VertexShaderIndices[Traits::ShaderPermutationCount];
-        static const int PixelShaderIndices[Traits::ShaderPermutationCount];
+        static int const VertexShaderIndices[Traits::ShaderPermutationCount];
+        static int const PixelShaderIndices[Traits::ShaderPermutationCount];
         // ... and vertex layout tables
         static const D3D12_INPUT_LAYOUT_DESC VertexShaderInputLayouts[Traits::ShaderPermutationCount];
 
